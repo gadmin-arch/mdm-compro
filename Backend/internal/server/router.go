@@ -1,0 +1,176 @@
+package server
+
+import (
+	"context"
+	"log/slog"
+	"net/http"
+	"strings"
+	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
+	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/auth"
+	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/config"
+	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/handler"
+	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/mailer"
+	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/repository"
+	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/service"
+	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/storage"
+	"github.com/jackc/pgx/v5/pgxpool"
+)
+
+func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool) http.Handler {
+	publicRepo := repository.NewPublicRepository(pool)
+	authRepo := repository.NewAuthRepository(pool)
+	adminRepo := repository.NewAdminRepository(pool)
+	mediaStore, err := storage.New(cfg)
+	if err != nil {
+		logger.Warn("media storage init failed", "error", err, "driver", cfg.StorageDriver)
+	}
+
+	publicHandler := handler.NewPublicHandler(service.NewPublicService(publicRepo))
+	mail := mailer.New(logger, cfg)
+	authService := service.NewAuthService(cfg, authRepo, mail)
+	authHandler := handler.NewAuthHandler(authService)
+	adminHandler := handler.NewAdminHandler(service.NewAdminService(adminRepo))
+	mediaHandler := handler.NewMediaHandler(adminRepo, mediaStore)
+	tokenManager := authService.TokenManager()
+
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.CleanPath)
+	r.Use(middleware.Timeout(60 * time.Second))
+	r.Use(secureHeaders)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   cfg.FrontendOrigins,
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
+
+	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		ctx, cancel := context.WithTimeout(r.Context(), 2*time.Second)
+		defer cancel()
+		if err := publicRepo.Health(ctx); err != nil {
+			logger.Warn("health check failed", "error", err)
+			handler.Error(w, http.StatusServiceUnavailable, "unhealthy", "Database is not reachable.")
+			return
+		}
+		handler.JSON(w, http.StatusOK, map[string]string{"status": "ok"})
+	})
+
+	// Per-IP request budgets for the endpoints an attacker would hammer;
+	// the durable per-account lockout lives in the auth service.
+	loginLimit := newRateLimiter(10, 5*time.Minute)
+	codeLimit := newRateLimiter(10, 15*time.Minute)
+	sendLimit := newRateLimiter(5, 15*time.Minute)
+	refreshLimit := newRateLimiter(60, 5*time.Minute)
+	contactLimit := newRateLimiter(5, 10*time.Minute)
+
+	r.Route("/api/v1", func(r chi.Router) {
+		r.Route("/auth", func(r chi.Router) {
+			r.With(loginLimit.Middleware).Post("/login", authHandler.Login)
+			r.With(refreshLimit.Middleware).Post("/refresh", authHandler.Refresh)
+			r.Post("/logout", authHandler.Logout)
+			r.With(sendLimit.Middleware).Post("/forgot-password", authHandler.RequestPasswordReset)
+			r.With(codeLimit.Middleware).Post("/reset-password", authHandler.ResetPassword)
+			r.With(codeLimit.Middleware).Post("/verify-invite", authHandler.VerifyInvitation)
+		})
+
+		r.Route("/public", func(r chi.Router) {
+			r.Get("/navigation", publicHandler.Navigation)
+			r.Get("/pages", publicHandler.Pages)
+			r.Get("/pages/{key}", publicHandler.Page)
+			r.Get("/services", publicHandler.Services)
+			r.Get("/services/*", publicHandler.Service)
+			r.Get("/products", publicHandler.Products)
+			r.Get("/products/*", publicHandler.Product)
+			r.Get("/news", publicHandler.News)
+			r.Get("/news/{slug}", publicHandler.NewsItem)
+			r.Get("/careers", publicHandler.Careers)
+			r.Get("/careers/{slug}", publicHandler.Career)
+			r.Get("/search", publicHandler.Search)
+			r.Get("/media/*", mediaHandler.Serve)
+			r.With(contactLimit.Middleware).Post("/contacts", publicHandler.Contact)
+		})
+
+		r.Route("/admin", func(r chi.Router) {
+			r.Use(requireAuth(tokenManager, authRepo))
+			r.Get("/dashboard", adminHandler.Dashboard)
+			r.Get("/navigation", adminHandler.Navigation)
+			r.Put("/navigation", adminHandler.UpdateNavigation)
+			r.Get("/users", authHandler.Users)
+			r.Post("/users", authHandler.InviteUser)
+			r.Put("/users/{id}/role", authHandler.UpdateUserRole)
+			r.Delete("/users/{id}", authHandler.DeleteUser)
+			r.Get("/profile", authHandler.Profile)
+			r.Put("/profile", authHandler.UpdateProfile)
+			r.Put("/profile/password", authHandler.ChangePassword)
+			r.Get("/contacts", adminHandler.Contacts)
+			r.Get("/archive", adminHandler.ArchivedItems)
+			r.Post("/archive/{type}/{id}/restore", adminHandler.RestoreItem)
+			r.Delete("/archive/{type}/{id}", adminHandler.HardDeleteItem)
+			r.Post("/media/upload", mediaHandler.Upload)
+			r.Get("/pages", adminHandler.Pages)
+			r.Post("/pages", adminHandler.CreatePage)
+			r.Get("/pages/{id}", adminHandler.Page)
+			r.Put("/pages/{id}", adminHandler.UpdatePage)
+			r.Delete("/pages/{id}", adminHandler.DeletePage)
+			r.Get("/news", adminHandler.News)
+			r.Post("/news", adminHandler.CreateNews)
+			r.Get("/news/{id}", adminHandler.NewsItem)
+			r.Put("/news/{id}", adminHandler.UpdateNews)
+			r.Delete("/news/{id}", adminHandler.DeleteNews)
+			r.Get("/careers", adminHandler.Careers)
+			r.Post("/careers", adminHandler.CreateCareer)
+			r.Get("/careers/{id}", adminHandler.Career)
+			r.Put("/careers/{id}", adminHandler.UpdateCareer)
+			r.Delete("/careers/{id}", adminHandler.DeleteCareer)
+			r.Get("/{module:services|products}", adminHandler.Content)
+			r.Post("/{module:services|products}", adminHandler.CreateContent)
+			r.Get("/{module:services|products}/{id}", adminHandler.ContentItem)
+			r.Put("/{module:services|products}/{id}", adminHandler.UpdateContent)
+			r.Delete("/{module:services|products}/{id}", adminHandler.DeleteContent)
+			for _, module := range []string{"roles", "permissions", "media", "seo-meta", "settings"} {
+				r.Get("/"+module, adminHandler.ModuleContract)
+				r.Post("/"+module, adminHandler.ModuleContract)
+				r.Put("/"+module+"/{id}", adminHandler.ModuleContract)
+				r.Delete("/"+module+"/{id}", adminHandler.ModuleContract)
+			}
+		})
+	})
+
+	return r
+}
+
+func requireAuth(manager auth.Manager, repo repository.AuthRepository) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			header := strings.TrimSpace(r.Header.Get("Authorization"))
+			tokenValue, ok := strings.CutPrefix(header, "Bearer ")
+			if !ok || strings.TrimSpace(tokenValue) == "" {
+				handler.Error(w, http.StatusUnauthorized, "unauthorized", "Bearer token is required.")
+				return
+			}
+			claims, err := manager.Parse(strings.TrimSpace(tokenValue))
+			if err != nil {
+				handler.Error(w, http.StatusUnauthorized, "unauthorized", "Bearer token is invalid or expired.")
+				return
+			}
+			user, err := repo.UserByID(r.Context(), claims.UserID)
+			if err != nil || !user.IsActive {
+				handler.Error(w, http.StatusUnauthorized, "unauthorized", "User account is inactive or no longer exists.")
+				return
+			}
+			claims.Role = user.Role
+			claims.Permissions = user.Permissions
+			ctx := auth.ContextWithClaims(r.Context(), claims)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}

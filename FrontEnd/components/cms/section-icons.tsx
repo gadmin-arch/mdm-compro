@@ -1,0 +1,63 @@
+import {
+  Award,
+  BellRing,
+  Building2,
+  CheckCircle2,
+  Cog,
+  Compass,
+  Cpu,
+  Droplets,
+  Factory,
+  Flame,
+  FlaskConical,
+  Handshake,
+  Headphones,
+  Layers,
+  Lightbulb,
+  Network,
+  Pill,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  TrendingUp,
+  UtensilsCrossed,
+  Users,
+  Wheat,
+  Wrench,
+  Zap,
+  type LucideIcon,
+} from "lucide-react"
+
+export const sectionIcons: Record<string, LucideIcon> = {
+  zap: Zap,
+  cpu: Cpu,
+  "bell-ring": BellRing,
+  "shield-check": ShieldCheck,
+  award: Award,
+  users: Users,
+  headphones: Headphones,
+  factory: Factory,
+  building: Building2,
+  wrench: Wrench,
+  flame: Flame,
+  droplets: Droplets,
+  network: Network,
+  cog: Cog,
+  target: Target,
+  compass: Compass,
+  handshake: Handshake,
+  "check-circle": CheckCircle2,
+  lightbulb: Lightbulb,
+  "trending-up": TrendingUp,
+  flask: FlaskConical,
+  pill: Pill,
+  wheat: Wheat,
+  utensils: UtensilsCrossed,
+  layers: Layers,
+}
+
+export const DefaultSectionIcon = Sparkles
+
+export function sectionIcon(name: string): LucideIcon {
+  return sectionIcons[name] ?? Sparkles
+}

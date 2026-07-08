@@ -1,0 +1,21 @@
+.DS_Store
+node_modules/
+.next/
+dist/
+coverage/
+.env
+.env.local
+.env.*.local
+*.log
+*.tsbuildinfo
+postgres_data/
+minio_data/
+tmp/
+
+# Compiled Go binaries (build at deploy time, never commit)
+/Backend/api
+/Backend/mdm-api
+mdm-api
+
+# Local media uploads (STORAGE_DRIVER=local)
+data/media/
