@@ -1,4 +1,27 @@
-import DOMPurify from "isomorphic-dompurify"
+import sanitizeHtml from "sanitize-html"
+
+// jsdom-free sanitizer (isomorphic-dompurify pulls jsdom on the server, which
+// crashes on Vercel's Node runtime). Mirrors DOMPurify's html profile: common
+// rich-text tags only, safe URL schemes, no scripts/styles/event handlers.
+const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
+  allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+    "img",
+    "h1",
+    "h2",
+    "u",
+    "s",
+    "figure",
+    "figcaption",
+    "span",
+  ]),
+  allowedAttributes: {
+    ...sanitizeHtml.defaults.allowedAttributes,
+    img: ["src", "alt", "title", "width", "height", "loading"],
+    a: ["href", "name", "target", "rel"],
+    "*": ["class"],
+  },
+  allowedSchemes: ["http", "https", "mailto", "tel"],
+}
 
 type Block = {
   type?: string
@@ -26,7 +49,7 @@ export function RichText({ content }: { content?: { blocks?: Block[] } | unknown
 
         if (block.type === "html") {
           // Rich-text editor output; always sanitized before injection.
-          const clean = DOMPurify.sanitize(block.html ?? "", { USE_PROFILES: { html: true } })
+          const clean = sanitizeHtml(block.html ?? "", SANITIZE_OPTIONS)
           if (!clean) return null
           return <div key={index} className="cms-prose" dangerouslySetInnerHTML={{ __html: clean }} />
         }
