@@ -25,6 +25,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DynamicCmsPage({ params }: PageProps) {
   const { pageKey } = await params
+  // The home page renders at "/" — serving it here too would publish the
+  // same content twice under /home.
+  if (pageKey === "home") {
+    notFound()
+  }
   const page = await getPage(pageKey)
   if (!page || page.status !== "published") {
     notFound()

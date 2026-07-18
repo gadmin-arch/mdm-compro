@@ -21,18 +21,119 @@ func NewAdminRepository(pool *pgxpool.Pool) AdminRepository {
 	return AdminRepository{pool: pool}
 }
 
+// Content tables that support soft delete and a publish status.
+var contentTables = []string{"pages", "services", "products", "news", "careers"}
+
 func (r AdminRepository) DashboardCounts(ctx context.Context) (map[string]int, error) {
+	// Table names are controlled by the static allow-lists, not request
+	// input. All counts run as one round-trip instead of a query per table.
 	tables := []string{"users", "pages", "services", "products", "news", "careers", "media", "contacts"}
-	counts := make(map[string]int, len(tables))
+	keys := make([]string, 0, len(tables)+1)
+	selects := make([]string, 0, len(tables)+1)
 	for _, table := range tables {
-		var total int
-		// Table names are controlled by the static allow-list above, not request input.
-		if err := r.pool.QueryRow(ctx, `SELECT COUNT(*) FROM `+table+` WHERE deleted_at IS NULL`).Scan(&total); err != nil {
-			return nil, err
-		}
-		counts[table] = total
+		keys = append(keys, table)
+		selects = append(selects, `(SELECT COUNT(*) FROM `+table+` WHERE deleted_at IS NULL)`)
+	}
+
+	// Archived (soft-deleted) content across every content table.
+	archived := make([]string, len(contentTables))
+	for i, table := range contentTables {
+		archived[i] = `(SELECT COUNT(*) FROM ` + table + ` WHERE deleted_at IS NOT NULL)`
+	}
+	keys = append(keys, "archive")
+	selects = append(selects, `(SELECT `+strings.Join(archived, " + ")+`)`)
+
+	totals := make([]int, len(keys))
+	dest := make([]any, len(keys))
+	for i := range totals {
+		dest[i] = &totals[i]
+	}
+	if err := r.pool.QueryRow(ctx, `SELECT `+strings.Join(selects, ", ")).Scan(dest...); err != nil {
+		return nil, err
+	}
+
+	counts := make(map[string]int, len(keys))
+	for i, key := range keys {
+		counts[key] = totals[i]
 	}
 	return counts, nil
+}
+
+// DashboardStatusCounts returns per-status record counts for each content
+// module, e.g. {"pages": {"published": 4, "draft": 2}}.
+func (r AdminRepository) DashboardStatusCounts(ctx context.Context) (map[string]map[string]int, error) {
+	parts := make([]string, len(contentTables))
+	for i, table := range contentTables {
+		parts[i] = `SELECT '` + table + `' AS module, status, COUNT(*) FROM ` + table + ` WHERE deleted_at IS NULL GROUP BY status`
+	}
+	rows, err := r.pool.Query(ctx, strings.Join(parts, " UNION ALL "))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	statuses := make(map[string]map[string]int, len(contentTables))
+	for rows.Next() {
+		var module, status string
+		var total int
+		if err := rows.Scan(&module, &status, &total); err != nil {
+			return nil, err
+		}
+		if statuses[module] == nil {
+			statuses[module] = map[string]int{}
+		}
+		statuses[module][status] = total
+	}
+	return statuses, rows.Err()
+}
+
+// RecordActivity appends a content mutation to the audit log. The label is
+// a human-readable identifier (usually the record title) kept in `after` so
+// the activity feed can name what changed.
+func (r AdminRepository) RecordActivity(ctx context.Context, actorID, action, entityType, entityID, label string) error {
+	var actor any
+	if actorID != "" {
+		actor = actorID
+	}
+	var entity any
+	if entityID != "" {
+		entity = entityID
+	}
+	after, err := json.Marshal(map[string]string{"label": label})
+	if err != nil {
+		return err
+	}
+	_, err = r.pool.Exec(ctx, `
+		INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, after)
+		VALUES ($1, $2, $3, $4, $5, $6)
+	`, uuid.NewString(), actor, action, entityType, entity, after)
+	return err
+}
+
+func (r AdminRepository) RecentActivity(ctx context.Context, limit int) ([]model.ActivityEntry, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT a.id::text, a.action, a.entity_type, COALESCE(a.entity_id::text, ''),
+		       COALESCE(a.after->>'label', ''), COALESCE(u.name, ''), a.created_at
+		FROM audit_logs a
+		LEFT JOIN users u ON u.id = a.actor_id
+		WHERE a.deleted_at IS NULL AND a.entity_type <> 'auth'
+		ORDER BY a.created_at DESC
+		LIMIT $1
+	`, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var entries []model.ActivityEntry
+	for rows.Next() {
+		var item model.ActivityEntry
+		if err := rows.Scan(&item.ID, &item.Action, &item.EntityType, &item.EntityID, &item.Label, &item.ActorName, &item.CreatedAt); err != nil {
+			return nil, err
+		}
+		entries = append(entries, item)
+	}
+	return entries, rows.Err()
 }
 
 func (r AdminRepository) CreateMedia(ctx context.Context, media model.MediaUpload) (model.MediaUpload, error) {
@@ -52,6 +153,59 @@ func (r AdminRepository) CreateMedia(ctx context.Context, media model.MediaUploa
 		&media.SizeBytes,
 	)
 	return media, err
+}
+
+func (r AdminRepository) ListMedia(ctx context.Context, page, perPage int, search string) (model.ListResponse[model.MediaUpload], error) {
+	page, perPage, offset := normalizePagination(page, perPage)
+	rows, err := r.pool.Query(ctx, `
+		SELECT id::text, file_name, object_key, url, mime_type, size_bytes, created_at, COUNT(*) OVER()
+		FROM media
+		WHERE deleted_at IS NULL
+		  AND ($3 = '' OR file_name ILIKE '%' || $3 || '%')
+		ORDER BY created_at DESC
+		LIMIT $1 OFFSET $2
+	`, perPage, offset, search)
+	if err != nil {
+		return model.ListResponse[model.MediaUpload]{}, err
+	}
+	defer rows.Close()
+
+	var total int
+	var data []model.MediaUpload
+	for rows.Next() {
+		var item model.MediaUpload
+		if err := rows.Scan(&item.ID, &item.FileName, &item.ObjectKey, &item.URL, &item.MimeType, &item.SizeBytes, &item.CreatedAt, &total); err != nil {
+			return model.ListResponse[model.MediaUpload]{}, err
+		}
+		data = append(data, item)
+	}
+
+	return model.ListResponse[model.MediaUpload]{
+		Data: data,
+		Pagination: model.Pagination{
+			Page:       page,
+			PerPage:    perPage,
+			Total:      total,
+			TotalPages: totalPages(total, perPage),
+		},
+	}, rows.Err()
+}
+
+// DeleteMedia removes the media row and returns it so the caller can delete
+// the stored object as well.
+func (r AdminRepository) DeleteMedia(ctx context.Context, id string) (model.MediaUpload, error) {
+	row := r.pool.QueryRow(ctx, `
+		DELETE FROM media WHERE id = $1
+		RETURNING id::text, file_name, object_key, url, mime_type, size_bytes
+	`, id)
+	var media model.MediaUpload
+	if err := row.Scan(&media.ID, &media.FileName, &media.ObjectKey, &media.URL, &media.MimeType, &media.SizeBytes); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return model.MediaUpload{}, ErrNotFound
+		}
+		return model.MediaUpload{}, err
+	}
+	return media, nil
 }
 
 func (r AdminRepository) ListContacts(ctx context.Context, limit int) ([]model.ContactInquiry, error) {
@@ -80,8 +234,11 @@ func (r AdminRepository) ListContacts(ctx context.Context, limit int) ([]model.C
 
 func (r AdminRepository) ListPages(ctx context.Context, page, perPage int, search, status string) (model.ListResponse[model.Page], error) {
 	page, perPage, offset := normalizePagination(page, perPage)
+	// List consumers (admin table, navigation page options) never read the
+	// page body, so skip shipping content — section-built pages can carry
+	// tens of KB each. PageByID still returns the full document.
 	rows, err := r.pool.Query(ctx, `
-		SELECT p.id::text, p.page_key, p.title, p.content, p.status, p.published_at,
+		SELECT p.id::text, p.page_key, p.title, '{}'::jsonb AS content, p.status, p.published_at,
 		       COALESCE(s.title, ''), COALESCE(s.description, ''), COALESCE(s.canonical_url, ''), COALESCE(s.no_index, false),
 		       p.version, COUNT(*) OVER()
 		FROM pages p

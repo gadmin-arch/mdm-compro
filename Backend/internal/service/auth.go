@@ -77,7 +77,9 @@ func NewAuthService(cfg config.Config, repo repository.AuthRepository, mail mail
 	}
 }
 
-func (s AuthService) Login(ctx context.Context, input model.LoginInput, meta model.AuthMeta) (model.AuthTokens, error) {
+// Login verifies the password (step 1). Depending on policy and device trust
+// it either issues tokens directly or opens an email-code challenge (step 2).
+func (s AuthService) Login(ctx context.Context, input model.LoginInput, meta model.AuthMeta) (model.LoginResult, error) {
 	v := validator.New()
 	if !validator.Email(input.Email) {
 		v = v.Add("email", "A valid email is required.")
@@ -86,31 +88,257 @@ func (s AuthService) Login(ctx context.Context, input model.LoginInput, meta mod
 		v = v.Add("password", "Password is required.")
 	}
 	if v.HasErrors() {
-		return model.AuthTokens{}, v
+		return model.LoginResult{}, v
 	}
 
 	email := strings.ToLower(strings.TrimSpace(input.Email))
 	throttleKey := "login:" + email
 	if locked, err := s.lockedError(ctx, throttleKey); err != nil {
-		return model.AuthTokens{}, err
+		return model.LoginResult{}, err
 	} else if locked != nil {
-		return model.AuthTokens{}, *locked
+		return model.LoginResult{}, *locked
 	}
 
 	user, err := s.repo.UserByEmail(ctx, email)
 	if err != nil {
-		return model.AuthTokens{}, s.loginFailure(ctx, throttleKey, nil, meta)
+		return model.LoginResult{}, s.loginFailure(ctx, throttleKey, nil, meta)
 	}
 	if !user.IsActive {
-		return model.AuthTokens{}, ErrVerificationRequired
+		return model.LoginResult{}, ErrVerificationRequired
 	}
 	if bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(input.Password)) != nil {
-		return model.AuthTokens{}, s.loginFailure(ctx, throttleKey, &user.ID, meta)
+		return model.LoginResult{}, s.loginFailure(ctx, throttleKey, &user.ID, meta)
+	}
+	_ = s.repo.ClearAuthThrottle(ctx, throttleKey)
+
+	cfg := s.securityConfig(ctx)
+	if !cfg.TwoFactorEnabled {
+		s.audit(ctx, &user.ID, "auth.login_success", meta)
+		tokens, err := s.issueTokens(ctx, user)
+		if err != nil {
+			return model.LoginResult{}, err
+		}
+		return model.LoginResult{Status: "ok", Tokens: &tokens}, nil
 	}
 
-	_ = s.repo.ClearAuthThrottle(ctx, throttleKey)
+	// Trusted device: a valid, fingerprint-matching token skips the OTP step.
+	if input.TrustedToken != "" {
+		device, err := s.repo.TrustedDeviceByToken(ctx, input.TrustedToken)
+		if err == nil && device.UserID == user.ID && fingerprintMatches(device.FingerprintHash, input.Fingerprint) {
+			_ = s.repo.TouchTrustedDevice(ctx, device.ID, meta.IP)
+			s.audit(ctx, &user.ID, "auth.login_trusted_device", meta)
+			s.audit(ctx, &user.ID, "auth.login_success", meta)
+			tokens, err := s.issueTokens(ctx, user)
+			if err != nil {
+				return model.LoginResult{}, err
+			}
+			return model.LoginResult{Status: "ok", Tokens: &tokens}, nil
+		}
+	}
+
+	return s.startChallenge(ctx, user, cfg, meta)
+}
+
+// startChallenge creates the OTP challenge and emails the code (step 2).
+func (s AuthService) startChallenge(ctx context.Context, user model.User, cfg model.SecurityConfig, meta model.AuthMeta) (model.LoginResult, error) {
+	code, err := randomCodeN(cfg.OTPLength)
+	if err != nil {
+		return model.LoginResult{}, err
+	}
+	expiresAt := time.Now().UTC().Add(time.Duration(cfg.OTPExpiryMinutes) * time.Minute)
+	challengeID, err := s.repo.CreateLoginChallenge(ctx, user.ID, codeHash(code), expiresAt, meta.IP, meta.UserAgent)
+	if err != nil {
+		return model.LoginResult{}, err
+	}
+	if err := s.sendOTPEmail(ctx, user, cfg, code); err != nil {
+		return model.LoginResult{}, err
+	}
+	s.audit(ctx, &user.ID, "auth.otp_sent", meta)
+	return model.LoginResult{
+		Status:            "otp_required",
+		ChallengeID:       challengeID,
+		MaskedEmail:       maskEmail(user.Email),
+		CodeLength:        cfg.OTPLength,
+		ExpiresAt:         &expiresAt,
+		ResendCooldownSec: cfg.ResendCooldownSec,
+		TrustDays:         cfg.TrustDays,
+	}, nil
+}
+
+// VerifyOTP checks the emailed code (step 3) and issues the session (step 4),
+// optionally minting a trusted-device token.
+func (s AuthService) VerifyOTP(ctx context.Context, input model.VerifyOTPInput, meta model.AuthMeta) (model.VerifyOTPResult, error) {
+	input.Code = strings.TrimSpace(input.Code)
+	if input.ChallengeID == "" || input.Code == "" {
+		return model.VerifyOTPResult{}, ErrUnauthorized
+	}
+	cfg := s.securityConfig(ctx)
+
+	challenge, err := s.repo.LoginChallenge(ctx, input.ChallengeID)
+	if err != nil || challenge.ConsumedAt != nil || time.Now().After(challenge.ExpiresAt) {
+		return model.VerifyOTPResult{}, ErrUnauthorized
+	}
+
+	// Count the attempt before comparing so a flood of guesses locks the
+	// challenge no matter how the comparison goes.
+	attempts, err := s.repo.BumpChallengeAttempts(ctx, challenge.ID)
+	if err != nil {
+		return model.VerifyOTPResult{}, ErrUnauthorized
+	}
+	if attempts > cfg.MaxOTPAttempts {
+		s.audit(ctx, &challenge.UserID, "auth.otp_locked", meta)
+		return model.VerifyOTPResult{}, LockedError{Until: challenge.ExpiresAt}
+	}
+	if codeHash(input.Code) != challenge.CodeHash {
+		s.audit(ctx, &challenge.UserID, "auth.otp_failed", meta)
+		return model.VerifyOTPResult{}, ErrUnauthorized
+	}
+	if err := s.repo.ConsumeLoginChallenge(ctx, challenge.ID); err != nil {
+		return model.VerifyOTPResult{}, ErrUnauthorized
+	}
+
+	user, err := s.repo.UserByID(ctx, challenge.UserID)
+	if err != nil || !user.IsActive {
+		return model.VerifyOTPResult{}, ErrUnauthorized
+	}
+	s.audit(ctx, &user.ID, "auth.otp_verified", meta)
 	s.audit(ctx, &user.ID, "auth.login_success", meta)
-	return s.issueTokens(ctx, user)
+
+	tokens, err := s.issueTokens(ctx, user)
+	if err != nil {
+		return model.VerifyOTPResult{}, err
+	}
+	result := model.VerifyOTPResult{Tokens: tokens}
+
+	if input.TrustDevice {
+		token, err := randomToken()
+		if err == nil {
+			expiresAt := time.Now().UTC().Add(time.Duration(cfg.TrustDays) * 24 * time.Hour)
+			device := model.TrustedDevice{
+				UserID:          user.ID,
+				TokenHash:       codeHash(token),
+				FingerprintHash: fingerprintHash(input.Fingerprint),
+				Label:           deviceLabel(meta.UserAgent),
+				IP:              meta.IP,
+				ExpiresAt:       expiresAt,
+			}
+			if _, err := s.repo.CreateTrustedDevice(ctx, device); err == nil {
+				result.TrustToken = token
+				result.TrustExpiresAt = &expiresAt
+				s.audit(ctx, &user.ID, "auth.device_trusted", meta)
+			}
+		}
+	}
+
+	// This login came from a device that had to pass the OTP step — by
+	// definition a device we had not seen. Notify asynchronously so a slow
+	// SMTP server never delays the sign-in.
+	s.notifyNewDevice(user, cfg, meta)
+	return result, nil
+}
+
+// ResendOTP re-sends a fresh code for a pending challenge, with a cooldown
+// and a hard cap on resends.
+func (s AuthService) ResendOTP(ctx context.Context, challengeID string, meta model.AuthMeta) (model.LoginResult, error) {
+	cfg := s.securityConfig(ctx)
+	challenge, err := s.repo.LoginChallenge(ctx, challengeID)
+	if err != nil || challenge.ConsumedAt != nil {
+		return model.LoginResult{}, ErrUnauthorized
+	}
+	if challenge.ResendCount >= cfg.MaxResends {
+		return model.LoginResult{}, LockedError{Until: challenge.ExpiresAt}
+	}
+	cooldownEnds := challenge.LastSentAt.Add(time.Duration(cfg.ResendCooldownSec) * time.Second)
+	if time.Now().Before(cooldownEnds) {
+		return model.LoginResult{}, LockedError{Until: cooldownEnds}
+	}
+
+	user, err := s.repo.UserByID(ctx, challenge.UserID)
+	if err != nil || !user.IsActive {
+		return model.LoginResult{}, ErrUnauthorized
+	}
+	code, err := randomCodeN(cfg.OTPLength)
+	if err != nil {
+		return model.LoginResult{}, err
+	}
+	expiresAt := time.Now().UTC().Add(time.Duration(cfg.OTPExpiryMinutes) * time.Minute)
+	if err := s.repo.RefreshLoginChallenge(ctx, challenge.ID, codeHash(code), expiresAt); err != nil {
+		return model.LoginResult{}, ErrUnauthorized
+	}
+	if err := s.sendOTPEmail(ctx, user, cfg, code); err != nil {
+		return model.LoginResult{}, err
+	}
+	s.audit(ctx, &user.ID, "auth.otp_resent", meta)
+	return model.LoginResult{
+		Status:            "otp_required",
+		ChallengeID:       challenge.ID,
+		MaskedEmail:       maskEmail(user.Email),
+		CodeLength:        cfg.OTPLength,
+		ExpiresAt:         &expiresAt,
+		ResendCooldownSec: cfg.ResendCooldownSec,
+		TrustDays:         cfg.TrustDays,
+	}, nil
+}
+
+func (s AuthService) sendOTPEmail(ctx context.Context, user model.User, cfg model.SecurityConfig, code string) error {
+	subject, body := cfg.OTPEmail(map[string]string{
+		"name":    user.Name,
+		"code":    code,
+		"minutes": fmt.Sprintf("%d", cfg.OTPExpiryMinutes),
+		"site":    "MDM CMS",
+	})
+	return s.mail.SendRaw(ctx, user.Email, subject, body)
+}
+
+func (s AuthService) notifyNewDevice(user model.User, cfg model.SecurityConfig, meta model.AuthMeta) {
+	subject, body := cfg.NewDeviceEmail(map[string]string{
+		"name":   user.Name,
+		"device": deviceLabel(meta.UserAgent),
+		"ip":     meta.IP,
+		"time":   time.Now().UTC().Format("2 Jan 2006 15:04"),
+		"site":   "MDM CMS",
+	})
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+		defer cancel()
+		_ = s.mail.SendRaw(ctx, user.Email, subject, body)
+	}()
+}
+
+// --- trusted device management ---
+
+func (s AuthService) TrustedDevices(ctx context.Context, userID string) ([]model.TrustedDevice, error) {
+	return s.repo.ListTrustedDevices(ctx, userID)
+}
+
+func (s AuthService) RevokeTrustedDevice(ctx context.Context, userID, deviceID string, meta model.AuthMeta) error {
+	if err := s.repo.RevokeTrustedDevice(ctx, userID, deviceID); err != nil {
+		return err
+	}
+	s.audit(ctx, &userID, "auth.trusted_device_revoked", meta)
+	return nil
+}
+
+func (s AuthService) RevokeAllTrustedDevices(ctx context.Context, userID string, meta model.AuthMeta) error {
+	if err := s.repo.RevokeAllTrustedDevices(ctx, userID); err != nil {
+		return err
+	}
+	s.audit(ctx, &userID, "auth.trusted_device_revoked", meta)
+	return nil
+}
+
+func (s AuthService) LoginHistory(ctx context.Context, userID string) ([]model.LoginHistoryEntry, error) {
+	return s.repo.LoginHistory(ctx, userID, 25)
+}
+
+// securityConfig loads the admin-tunable policy; failure falls back to safe
+// defaults so authentication never breaks on a bad settings row.
+func (s AuthService) securityConfig(ctx context.Context) model.SecurityConfig {
+	raw, err := s.repo.SecurityConfigValue(ctx)
+	if err != nil {
+		return model.DefaultSecurityConfig()
+	}
+	return model.ParseSecurityConfig(raw)
 }
 
 // loginFailure registers a failed sign-in and returns either LockedError (when
@@ -474,6 +702,95 @@ func randomCode() (string, error) {
 	}
 	number := int(buffer[0])<<16 | int(buffer[1])<<8 | int(buffer[2])
 	return fmt.Sprintf("%06d", number%1000000), nil
+}
+
+// randomCodeN draws each digit independently (rejection-sampled) so every
+// code of the configured length is equally likely.
+func randomCodeN(length int) (string, error) {
+	if length < 4 || length > 10 {
+		length = 6
+	}
+	digits := make([]byte, 0, length)
+	buffer := make([]byte, 1)
+	for len(digits) < length {
+		if _, err := rand.Read(buffer); err != nil {
+			return "", err
+		}
+		// 0..249 maps evenly onto 0..9; 250..255 would bias, so redraw.
+		if buffer[0] >= 250 {
+			continue
+		}
+		digits = append(digits, '0'+buffer[0]%10)
+	}
+	return string(digits), nil
+}
+
+// maskEmail keeps just enough of the address for the user to recognize it.
+func maskEmail(email string) string {
+	at := strings.Index(email, "@")
+	if at <= 0 {
+		return email
+	}
+	local := email[:at]
+	visible := 2
+	if len(local) < 3 {
+		visible = 1
+	}
+	return local[:visible] + strings.Repeat("•", max(len(local)-visible, 2)) + email[at:]
+}
+
+// deviceLabel condenses a user agent into "Browser on OS" for device lists
+// and notification emails.
+func deviceLabel(userAgent string) string {
+	ua := strings.ToLower(userAgent)
+	browser := "Unknown browser"
+	switch {
+	case strings.Contains(ua, "edg/"):
+		browser = "Edge"
+	case strings.Contains(ua, "opr/"):
+		browser = "Opera"
+	case strings.Contains(ua, "samsungbrowser"):
+		browser = "Samsung Internet"
+	case strings.Contains(ua, "firefox/"):
+		browser = "Firefox"
+	case strings.Contains(ua, "chrome/"):
+		browser = "Chrome"
+	case strings.Contains(ua, "safari/"):
+		browser = "Safari"
+	}
+	os := "unknown OS"
+	switch {
+	case strings.Contains(ua, "windows"):
+		os = "Windows"
+	case strings.Contains(ua, "android"):
+		os = "Android"
+	case strings.Contains(ua, "iphone"), strings.Contains(ua, "ipad"):
+		os = "iOS"
+	case strings.Contains(ua, "mac os"):
+		os = "macOS"
+	case strings.Contains(ua, "linux"):
+		os = "Linux"
+	}
+	return browser + " on " + os
+}
+
+// fingerprintHash normalizes the client-computed device fingerprint. Empty
+// fingerprints stay empty: the trust token then binds to the token alone.
+func fingerprintHash(fingerprint string) string {
+	fingerprint = strings.TrimSpace(fingerprint)
+	if fingerprint == "" {
+		return ""
+	}
+	return codeHash(fingerprint)
+}
+
+// fingerprintMatches enforces the device binding: a device stored with a
+// fingerprint requires the same fingerprint at login.
+func fingerprintMatches(storedHash, presented string) bool {
+	if storedHash == "" {
+		return true
+	}
+	return storedHash == fingerprintHash(presented)
 }
 
 func codeHash(code string) string {

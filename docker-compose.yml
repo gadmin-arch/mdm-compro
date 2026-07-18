@@ -12,6 +12,18 @@ services:
       - ./Backend/migrations/001_init.up.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
       - ./Backend/migrations/002_user_access.up.sql:/docker-entrypoint-initdb.d/002_user_access.sql:ro
       - ./Backend/migrations/003_security.up.sql:/docker-entrypoint-initdb.d/003_security.sql:ro
+      - ./Backend/migrations/004_seed_system_pages.up.sql:/docker-entrypoint-initdb.d/004_seed_system_pages.sql:ro
+      - ./Backend/migrations/005_analytics.up.sql:/docker-entrypoint-initdb.d/005_analytics.sql:ro
+      - ./Backend/migrations/006_two_factor.up.sql:/docker-entrypoint-initdb.d/006_two_factor.sql:ro
+      - ./Backend/migrations/007_redirects.up.sql:/docker-entrypoint-initdb.d/007_redirects.sql:ro
+      - ./Backend/migrations/008_enrich_content.up.sql:/docker-entrypoint-initdb.d/008_enrich_content.sql:ro
+      - ./Backend/migrations/009_category_hierarchy.up.sql:/docker-entrypoint-initdb.d/009_category_hierarchy.sql:ro
+      - ./Backend/migrations/010_sync_data.up.sql:/docker-entrypoint-initdb.d/010_sync_data.sql:ro
+      - ./Backend/migrations/011_seed_source_media.up.sql:/docker-entrypoint-initdb.d/011_seed_source_media.sql:ro
+      - ./Backend/migrations/012_complete_source_catalog.up.sql:/docker-entrypoint-initdb.d/012_complete_source_catalog.sql:ro
+      - ./Backend/migrations/013_source_product_image.up.sql:/docker-entrypoint-initdb.d/013_source_product_image.sql:ro
+      - ./Backend/migrations/014_source_navigation_hierarchy.up.sql:/docker-entrypoint-initdb.d/014_source_navigation_hierarchy.sql:ro
+      - ./Backend/migrations/015_repair_engineering_solution_tree.up.sql:/docker-entrypoint-initdb.d/015_repair_engineering_solution_tree.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U mdm -d mdm_compro"]
       interval: 5s
@@ -91,6 +103,7 @@ services:
     image: mailhog/mailhog:latest
     ports:
       - "8025:8025"
+      - "1025:1025"
 
 volumes:
   postgres_data:

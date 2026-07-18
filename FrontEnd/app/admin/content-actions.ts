@@ -11,7 +11,8 @@ import {
   type NewsPayload,
 } from "@/lib/admin-api"
 import type { Career, ContentNode, NewsItem } from "@/lib/cms"
-import { blocksFromText, slugify, specsFromText, toIsoDateTime } from "@/lib/admin-content"
+import type { SaveResult } from "@/lib/save-result"
+import { blocksFromHtml, blocksFromText, slugify, specsFromText, toIsoDateTime } from "@/lib/admin-content"
 
 type Resource = "services" | "products" | "news" | "careers"
 
@@ -22,10 +23,15 @@ const resourceConfig: Record<Resource, { adminPath: string; publicPath: string }
   careers: { adminPath: "/admin/careers", publicPath: "/career" },
 }
 
-export async function createContentItemAction(formData: FormData) {
+export async function createContentItemAction(formData: FormData): Promise<SaveResult | void> {
   const resource = resourceFromForm(formData)
   const path = resourceConfig[resource].adminPath
-  const payload = await payloadOrRedirect(contentPayload(formData, `${path}/new`), `${path}/new`)
+  let payload: ContentItemPayload
+  try {
+    payload = await contentPayload(formData, `${path}/new`)
+  } catch (error) {
+    return payloadError(error)
+  }
 
   const result = await adminFetch<ContentNode>(
     `/${resource}`,
@@ -38,22 +44,28 @@ export async function createContentItemAction(formData: FormData) {
     .then((item) => ({ ok: true as const, item }))
     .catch(toActionError)
 
-  if (!result.ok) redirect(`${path}/new?error=${errorCode(result.error)}`)
+  if (!result.ok) return createError(result.error)
   revalidateResource(resource, result.item.fullPath || result.item.slug)
   redirect(`${path}/${result.item.id}?created=1`)
 }
 
-export async function updateContentItemAction(formData: FormData) {
+export async function updateContentItemAction(formData: FormData): Promise<SaveResult | void> {
   const resource = resourceFromForm(formData)
   const path = resourceConfig[resource].adminPath
   const id = String(formData.get("id") ?? "")
   const oldPath = String(formData.get("oldPath") ?? "")
-  if (!id) redirect(`${path}?error=missing_id`)
+  const version = Number(formData.get("version") ?? 0)
+  if (!id) return { error: "save_failed" }
 
-  const payload = {
-    ...(await payloadOrRedirect(contentPayload(formData, `${path}/${id}`), `${path}/${id}`)),
-    version: Number(formData.get("version") ?? 0),
-  } satisfies ContentItemPayload
+  let payload: ContentItemPayload
+  try {
+    payload = {
+      ...(await contentPayload(formData, `${path}/${id}`)),
+      version,
+    }
+  } catch (error) {
+    return payloadError(error)
+  }
 
   const result = await adminFetch<ContentNode>(
     `/${resource}/${id}`,
@@ -66,7 +78,11 @@ export async function updateContentItemAction(formData: FormData) {
     .then((item) => ({ ok: true as const, item }))
     .catch(toActionError)
 
-  if (!result.ok) redirect(`${path}/${id}?error=${errorCode(result.error)}`)
+  if (!result.ok) {
+    return updateError(result.error, version, () =>
+      adminFetch<ContentNode>(`/${resource}/${id}`, {}, `${path}/${id}`),
+    )
+  }
   revalidateResource(resource, oldPath, result.item.fullPath || result.item.slug)
   redirect(`${path}/${id}?saved=1`)
 }
@@ -92,8 +108,13 @@ export async function deleteContentItemAction(formData: FormData) {
   redirect(`${path}?deleted=1`)
 }
 
-export async function createNewsAction(formData: FormData) {
-  const payload = await payloadOrRedirect(newsPayload(formData, "/admin/news/new"), "/admin/news/new")
+export async function createNewsAction(formData: FormData): Promise<SaveResult | void> {
+  let payload: NewsPayload
+  try {
+    payload = await newsPayload(formData, "/admin/news/new")
+  } catch (error) {
+    return payloadError(error)
+  }
   const result = await adminFetch<NewsItem>(
     "/news",
     { method: "POST", body: JSON.stringify(payload) },
@@ -102,20 +123,26 @@ export async function createNewsAction(formData: FormData) {
     .then((item) => ({ ok: true as const, item }))
     .catch(toActionError)
 
-  if (!result.ok) redirect(`/admin/news/new?error=${errorCode(result.error)}`)
+  if (!result.ok) return createError(result.error)
   revalidateResource("news", result.item.slug)
   redirect(`/admin/news/${result.item.id}?created=1`)
 }
 
-export async function updateNewsAction(formData: FormData) {
+export async function updateNewsAction(formData: FormData): Promise<SaveResult | void> {
   const id = String(formData.get("id") ?? "")
   const oldSlug = String(formData.get("oldSlug") ?? "")
-  if (!id) redirect("/admin/news?error=missing_id")
+  const version = Number(formData.get("version") ?? 0)
+  if (!id) return { error: "save_failed" }
 
-  const payload = {
-    ...(await payloadOrRedirect(newsPayload(formData, `/admin/news/${id}`), `/admin/news/${id}`)),
-    version: Number(formData.get("version") ?? 0),
-  } satisfies NewsPayload
+  let payload: NewsPayload
+  try {
+    payload = {
+      ...(await newsPayload(formData, `/admin/news/${id}`)),
+      version,
+    }
+  } catch (error) {
+    return payloadError(error)
+  }
   const result = await adminFetch<NewsItem>(
     `/news/${id}`,
     { method: "PUT", body: JSON.stringify(payload) },
@@ -124,7 +151,11 @@ export async function updateNewsAction(formData: FormData) {
     .then((item) => ({ ok: true as const, item }))
     .catch(toActionError)
 
-  if (!result.ok) redirect(`/admin/news/${id}?error=${errorCode(result.error)}`)
+  if (!result.ok) {
+    return updateError(result.error, version, () =>
+      adminFetch<NewsItem>(`/news/${id}`, {}, `/admin/news/${id}`),
+    )
+  }
   revalidateResource("news", oldSlug, result.item.slug)
   redirect(`/admin/news/${id}?saved=1`)
 }
@@ -148,7 +179,7 @@ export async function deleteNewsAction(formData: FormData) {
   redirect("/admin/news?deleted=1")
 }
 
-export async function createCareerAction(formData: FormData) {
+export async function createCareerAction(formData: FormData): Promise<SaveResult | void> {
   const payload = careerPayload(formData)
   const result = await adminFetch<Career>(
     "/careers",
@@ -158,19 +189,20 @@ export async function createCareerAction(formData: FormData) {
     .then((item) => ({ ok: true as const, item }))
     .catch(toActionError)
 
-  if (!result.ok) redirect(`/admin/careers/new?error=${errorCode(result.error)}`)
+  if (!result.ok) return createError(result.error)
   revalidateResource("careers", result.item.slug)
   redirect(`/admin/careers/${result.item.id}?created=1`)
 }
 
-export async function updateCareerAction(formData: FormData) {
+export async function updateCareerAction(formData: FormData): Promise<SaveResult | void> {
   const id = String(formData.get("id") ?? "")
   const oldSlug = String(formData.get("oldSlug") ?? "")
-  if (!id) redirect("/admin/careers?error=missing_id")
+  const version = Number(formData.get("version") ?? 0)
+  if (!id) return { error: "save_failed" }
 
   const payload = {
     ...careerPayload(formData),
-    version: Number(formData.get("version") ?? 0),
+    version,
   } satisfies CareerPayload
   const result = await adminFetch<Career>(
     `/careers/${id}`,
@@ -180,7 +212,11 @@ export async function updateCareerAction(formData: FormData) {
     .then((item) => ({ ok: true as const, item }))
     .catch(toActionError)
 
-  if (!result.ok) redirect(`/admin/careers/${id}?error=${errorCode(result.error)}`)
+  if (!result.ok) {
+    return updateError(result.error, version, () =>
+      adminFetch<Career>(`/careers/${id}`, {}, `/admin/careers/${id}`),
+    )
+  }
   revalidateResource("careers", oldSlug, result.item.slug)
   redirect(`/admin/careers/${id}?saved=1`)
 }
@@ -230,7 +266,7 @@ async function newsPayload(formData: FormData, nextPath: string): Promise<NewsPa
     slug: slugify(String(formData.get("slug") ?? "")),
     title: String(formData.get("title") ?? ""),
     excerpt: String(formData.get("excerpt") ?? ""),
-    body: blocksFromText(String(formData.get("bodyText") ?? "")),
+    body: blocksFromHtml(String(formData.get("bodyHtml") ?? "")),
     category: String(formData.get("category") ?? ""),
     featuredImageUrl: uploadedImageUrl || String(formData.get("featuredImageUrl") ?? ""),
     featured: formData.get("featured") === "on",
@@ -245,7 +281,7 @@ function careerPayload(formData: FormData): CareerPayload {
     slug: slugify(String(formData.get("slug") ?? "")),
     title: String(formData.get("title") ?? ""),
     summary: String(formData.get("summary") ?? ""),
-    description: blocksFromText(String(formData.get("descriptionText") ?? "")),
+    description: blocksFromHtml(String(formData.get("descriptionHtml") ?? "")),
     department: String(formData.get("department") ?? ""),
     location: String(formData.get("location") ?? ""),
     employmentType: String(formData.get("employmentType") ?? "full_time"),
@@ -311,13 +347,33 @@ function errorCode(error: AdminApiError) {
   return "save_failed"
 }
 
-async function payloadOrRedirect<T>(promise: Promise<T>, path: string) {
-  try {
-    return await promise
-  } catch (error) {
-    if (error instanceof AdminApiError) {
-      redirect(`${path}?error=${errorCode(error)}`)
+// Upload failures while building the payload (image/datasheet fields).
+function payloadError(error: unknown): SaveResult {
+  if (error instanceof AdminApiError) return { error: "upload_failed" }
+  throw error
+}
+
+// On create, a version_conflict can only mean the slug is already taken.
+function createError(error: AdminApiError): SaveResult {
+  if (error.code === "version_conflict") return { error: "duplicate" }
+  if (error.code === "validation_error") return { error: "validation" }
+  return { error: "save_failed" }
+}
+
+// On update, stale version and duplicate slug both surface as
+// version_conflict — compare against the stored version to tell them apart.
+async function updateError(
+  error: AdminApiError,
+  sentVersion: number,
+  fetchCurrent: () => Promise<{ version?: number }>,
+): Promise<SaveResult> {
+  if (error.code === "version_conflict") {
+    const current = await fetchCurrent().catch(() => null)
+    if (current?.version && current.version !== sentVersion) {
+      return { error: "conflict", serverVersion: current.version }
     }
-    throw error
+    return { error: "duplicate" }
   }
+  if (error.code === "validation_error") return { error: "validation" }
+  return { error: "save_failed" }
 }

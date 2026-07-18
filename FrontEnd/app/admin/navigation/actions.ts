@@ -4,14 +4,15 @@ import { revalidatePath, updateTag } from "next/cache"
 import { redirect } from "next/navigation"
 import { AdminApiError, adminFetch } from "@/lib/admin-api"
 import type { MenuItem } from "@/lib/cms"
+import type { SaveResult } from "@/lib/save-result"
 
-export async function saveNavigationAction(formData: FormData) {
+export async function saveNavigationAction(formData: FormData): Promise<SaveResult | void> {
   const version = Number(formData.get("version") ?? 0)
   let items: MenuItem[]
   try {
     items = JSON.parse(String(formData.get("items") ?? "[]")) as MenuItem[]
   } catch {
-    redirect("/admin/navigation?error=invalid")
+    return { error: "validation" }
   }
 
   const result = await adminFetch(
@@ -31,13 +32,13 @@ export async function saveNavigationAction(formData: FormData) {
     })
 
   if (!result.ok) {
-    const errorCode =
-      result.error.code === "version_conflict"
-        ? "conflict"
-        : result.error.code === "validation_error"
-          ? "invalid"
-          : "save_failed"
-    redirect(`/admin/navigation?error=${errorCode}`)
+    if (result.error.code === "version_conflict") {
+      const current = await adminFetch<{ version?: number }>("/navigation", {}, "/admin/navigation")
+        .catch(() => null)
+      return { error: "conflict", serverVersion: current?.version }
+    }
+    if (result.error.code === "validation_error") return { error: "validation" }
+    return { error: "save_failed" }
   }
 
   // The menu renders in the shared site header, so purge all public pages.

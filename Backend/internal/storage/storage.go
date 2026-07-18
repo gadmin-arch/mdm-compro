@@ -22,6 +22,7 @@ type Store interface {
 	Ready() bool
 	PutObject(ctx context.Context, objectKey string, reader io.Reader, size int64, contentType string) error
 	GetObject(ctx context.Context, objectKey string) (io.ReadSeekCloser, ObjectInfo, error)
+	Remove(ctx context.Context, objectKey string) error
 }
 
 // New selects the media store from STORAGE_DRIVER: "s3" (default) or "local".

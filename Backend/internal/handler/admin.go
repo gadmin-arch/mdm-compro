@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/auth"
@@ -20,12 +22,37 @@ func NewAdminHandler(service service.AdminService) AdminHandler {
 }
 
 func (h AdminHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
-	counts, err := h.service.Dashboard(r.Context())
+	counts, statuses, err := h.service.Dashboard(r.Context())
 	if err != nil {
 		HandleError(w, err)
 		return
 	}
-	JSON(w, http.StatusOK, map[string]any{"counts": counts})
+	JSON(w, http.StatusOK, map[string]any{"counts": counts, "statuses": statuses})
+}
+
+func (h AdminHandler) Activity(w http.ResponseWriter, r *http.Request) {
+	entries, err := h.service.RecentActivity(r.Context())
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	JSON(w, http.StatusOK, map[string]any{"data": entries})
+}
+
+// audit records a content mutation for the dashboard activity feed. It is
+// best-effort: a failed insert never blocks the response the user waited for.
+func (h AdminHandler) audit(r *http.Request, action, entityType, entityID, label string) {
+	actorID := ""
+	if claims := auth.ClaimsFromContext(r.Context()); claims != nil {
+		actorID = claims.UserID
+	}
+	_ = h.service.RecordActivity(r.Context(), actorID, action, entityType, entityID, label)
+}
+
+// contentEntity maps a chi module param ("services") to an entity type
+// ("service") for audit rows.
+func contentEntity(module string) string {
+	return strings.TrimSuffix(module, "s")
 }
 
 func (h AdminHandler) Contacts(w http.ResponseWriter, r *http.Request) {
@@ -60,6 +87,7 @@ func (h AdminHandler) CreatePage(w http.ResponseWriter, r *http.Request) {
 		respondAdmin(w, page, err)
 		return
 	}
+	h.audit(r, "created", "page", page.ID, page.Title)
 	JSON(w, http.StatusCreated, page)
 }
 
@@ -76,6 +104,9 @@ func (h AdminHandler) UpdatePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	page, err := h.service.UpdatePage(r.Context(), chi.URLParam(r, "id"), input)
+	if err == nil {
+		h.audit(r, "updated", "page", page.ID, page.Title)
+	}
 	respondAdmin(w, page, err)
 }
 
@@ -85,6 +116,7 @@ func (h AdminHandler) DeletePage(w http.ResponseWriter, r *http.Request) {
 		respondAdmin(w, nil, err)
 		return
 	}
+	h.audit(r, "archived", "page", chi.URLParam(r, "id"), "")
 	JSON(w, http.StatusNoContent, nil)
 }
 
@@ -111,6 +143,7 @@ func (h AdminHandler) CreateContent(w http.ResponseWriter, r *http.Request) {
 		respondAdmin(w, data, err)
 		return
 	}
+	h.audit(r, "created", contentEntity(chi.URLParam(r, "module")), data.ID, data.Title)
 	JSON(w, http.StatusCreated, data)
 }
 
@@ -126,6 +159,9 @@ func (h AdminHandler) UpdateContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data, err := h.service.UpdateContent(r.Context(), chi.URLParam(r, "module"), chi.URLParam(r, "id"), input)
+	if err == nil {
+		h.audit(r, "updated", contentEntity(chi.URLParam(r, "module")), data.ID, data.Title)
+	}
 	respondAdmin(w, data, err)
 }
 
@@ -135,6 +171,7 @@ func (h AdminHandler) DeleteContent(w http.ResponseWriter, r *http.Request) {
 		respondAdmin(w, nil, err)
 		return
 	}
+	h.audit(r, "archived", contentEntity(chi.URLParam(r, "module")), chi.URLParam(r, "id"), "")
 	JSON(w, http.StatusNoContent, nil)
 }
 
@@ -160,6 +197,7 @@ func (h AdminHandler) CreateNews(w http.ResponseWriter, r *http.Request) {
 		respondAdmin(w, data, err)
 		return
 	}
+	h.audit(r, "created", "news", data.ID, data.Title)
 	JSON(w, http.StatusCreated, data)
 }
 
@@ -175,6 +213,9 @@ func (h AdminHandler) UpdateNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data, err := h.service.UpdateNews(r.Context(), chi.URLParam(r, "id"), input)
+	if err == nil {
+		h.audit(r, "updated", "news", data.ID, data.Title)
+	}
 	respondAdmin(w, data, err)
 }
 
@@ -184,6 +225,7 @@ func (h AdminHandler) DeleteNews(w http.ResponseWriter, r *http.Request) {
 		respondAdmin(w, nil, err)
 		return
 	}
+	h.audit(r, "archived", "news", chi.URLParam(r, "id"), "")
 	JSON(w, http.StatusNoContent, nil)
 }
 
@@ -209,6 +251,7 @@ func (h AdminHandler) CreateCareer(w http.ResponseWriter, r *http.Request) {
 		respondAdmin(w, data, err)
 		return
 	}
+	h.audit(r, "created", "career", data.ID, data.Title)
 	JSON(w, http.StatusCreated, data)
 }
 
@@ -224,6 +267,9 @@ func (h AdminHandler) UpdateCareer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data, err := h.service.UpdateCareer(r.Context(), chi.URLParam(r, "id"), input)
+	if err == nil {
+		h.audit(r, "updated", "career", data.ID, data.Title)
+	}
 	respondAdmin(w, data, err)
 }
 
@@ -233,6 +279,7 @@ func (h AdminHandler) DeleteCareer(w http.ResponseWriter, r *http.Request) {
 		respondAdmin(w, nil, err)
 		return
 	}
+	h.audit(r, "archived", "career", chi.URLParam(r, "id"), "")
 	JSON(w, http.StatusNoContent, nil)
 }
 
@@ -253,6 +300,45 @@ func (h AdminHandler) UpdateNavigation(w http.ResponseWriter, r *http.Request) {
 		userID = claims.UserID
 	}
 	data, err := h.service.SaveNavigation(r.Context(), input, userID)
+	if err == nil {
+		h.audit(r, "updated", "navigation", "", "Site menu")
+	}
+	respondAdmin(w, data, err)
+}
+
+func (h AdminHandler) Settings(w http.ResponseWriter, r *http.Request) {
+	data, err := h.service.ListSettings(r.Context())
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	JSON(w, http.StatusOK, map[string]any{"data": data})
+}
+
+func (h AdminHandler) Setting(w http.ResponseWriter, r *http.Request) {
+	data, err := h.service.Setting(r.Context(), chi.URLParam(r, "key"))
+	respondAdmin(w, data, err)
+}
+
+func (h AdminHandler) UpdateSetting(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Value   json.RawMessage `json:"value"`
+		Version int             `json:"version"`
+	}
+	if err := DecodeJSON(r, &input); err != nil {
+		Error(w, http.StatusBadRequest, "invalid_json", "Request body must be valid JSON.")
+		return
+	}
+
+	userID := ""
+	if claims := auth.ClaimsFromContext(r.Context()); claims != nil {
+		userID = claims.UserID
+	}
+	key := chi.URLParam(r, "key")
+	data, err := h.service.SaveSetting(r.Context(), key, input.Value, input.Version, userID)
+	if err == nil {
+		h.audit(r, "updated", "setting", key, "Site settings")
+	}
 	respondAdmin(w, data, err)
 }
 
@@ -297,6 +383,7 @@ func (h AdminHandler) RestoreItem(w http.ResponseWriter, r *http.Request) {
 		respondAdmin(w, nil, err)
 		return
 	}
+	h.audit(r, "restored", itemType, id, "")
 	JSON(w, http.StatusOK, map[string]string{"status": "restored"})
 }
 
@@ -308,6 +395,7 @@ func (h AdminHandler) HardDeleteItem(w http.ResponseWriter, r *http.Request) {
 		respondAdmin(w, nil, err)
 		return
 	}
+	h.audit(r, "deleted", itemType, id, "")
 	JSON(w, http.StatusNoContent, nil)
 }
 

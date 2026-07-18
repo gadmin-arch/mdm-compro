@@ -2,14 +2,22 @@ import type { Metadata } from "next"
 import { ContentList } from "@/components/cms/content-list"
 import { CtaBanner } from "@/components/cta-banner"
 import { PageHero } from "@/components/page-hero"
+import { SectionRenderer } from "@/components/cms/section-renderer"
 import { FilterControls } from "@/components/filter-controls"
 import { Pagination } from "@/components/cms/pagination"
-import { getProducts } from "@/lib/cms"
+import { getPage, getProducts, resolveSectionData } from "@/lib/cms"
+import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 
-export const metadata: Metadata = {
-  title: "Products — PT Multi Daya Mitra",
-  description:
-    "Testing equipment, protection relay, instrumentation, and industrial electrical products from PT Multi Daya Mitra.",
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPage("products")
+  return {
+    title: page?.seo?.title || "Products — PT Multi Daya Mitra",
+    description:
+      page?.seo?.description ||
+      "Testing equipment, protection relay, instrumentation, and industrial electrical products from PT Multi Daya Mitra.",
+    alternates: page?.seo?.canonical ? { canonical: page.seo.canonical } : undefined,
+    robots: page?.seo?.noIndex ? { index: false, follow: false } : undefined,
+  }
 }
 
 type Props = {
@@ -46,6 +54,45 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   const products = response.data
 
+  // The automatic catalog block always renders — CMS sections wrap around it
+  // at the `listing` marker, they can never remove it.
+  const listingBlock = (
+    <section className="border-b border-border/60 bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <FilterControls
+          moduleType="products"
+          categories={categories}
+        />
+
+        <div className="mt-8">
+          <ContentList
+            items={products}
+            basePath="/products"
+            empty="No products matched your search or filters."
+          />
+        </div>
+
+        <Pagination page={response.pagination.page} totalPages={response.pagination.totalPages} />
+      </div>
+    </section>
+  )
+
+  // When the CMS "products" page has builder sections, they control
+  // everything around the catalog block. Otherwise keep the built-in layout.
+  const cmsPage = await getPage("products")
+  const sections = cmsPage?.status === "published" ? sectionsFromContent(cmsPage.content) : []
+  if (sections.length > 0) {
+    const { before, after } = splitSectionsAtListing(sections)
+    const data = await resolveSectionData(sections)
+    return (
+      <>
+        <SectionRenderer sections={before} data={data} />
+        {listingBlock}
+        <SectionRenderer sections={after} data={data} />
+      </>
+    )
+  }
+
   return (
     <>
       <PageHero
@@ -54,24 +101,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         description="Explore CMS-managed product categories, datasheets, specifications, galleries, and product details."
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Products" }]}
       />
-      <section className="border-b border-border/60 bg-background">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <FilterControls
-            moduleType="products"
-            categories={categories}
-          />
-          
-          <div className="mt-8">
-            <ContentList
-              items={products}
-              basePath="/products"
-              empty="No products matched your search or filters."
-            />
-          </div>
-
-          <Pagination page={response.pagination.page} totalPages={response.pagination.totalPages} />
-        </div>
-      </section>
+      {listingBlock}
       <CtaBanner
         title="Need a specific product or datasheet?"
         description="Tell us what you are sourcing and our team will respond with availability, specifications, and support options."

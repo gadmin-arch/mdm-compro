@@ -1,5 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
+import { Mail, MapPin, Phone } from "lucide-react"
+import { getSiteSettings } from "@/lib/cms"
 
 const footerNav = [
   {
@@ -30,7 +32,9 @@ const footerNav = [
   },
 ]
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const settings = await getSiteSettings()
+
   return (
     <footer className="border-t border-border bg-background">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
@@ -49,10 +53,48 @@ export function SiteFooter() {
               </span>
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Indonesian electrical, industrial automation, and fire alarm services
-              company — delivering reliable engineering across power, oil &amp; gas,
-              manufacturing, and infrastructure since 2013.
+              {settings.footerDescription}
             </p>
+            <ul className="mt-5 space-y-2 text-sm text-muted-foreground">
+              {settings.address && (
+                <li className="flex items-start gap-2">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span className="max-w-sm">{settings.address}</span>
+                </li>
+              )}
+              {settings.phone && (
+                <li className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 shrink-0 text-primary" />
+                  <a href={`tel:${settings.phone.replace(/\s+/g, "")}`} className="transition-colors hover:text-foreground">
+                    {settings.phone}
+                  </a>
+                </li>
+              )}
+              {settings.email && (
+                <li className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 shrink-0 text-primary" />
+                  <a href={`mailto:${settings.email}`} className="transition-colors hover:text-foreground">
+                    {settings.email}
+                  </a>
+                </li>
+              )}
+            </ul>
+            {settings.socials.length > 0 && (
+              <ul className="mt-5 flex flex-wrap gap-3">
+                {settings.socials.map((social) => (
+                  <li key={`${social.label}-${social.url}`}>
+                    <a
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                    >
+                      {social.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-7">
@@ -82,9 +124,7 @@ export function SiteFooter() {
           <p>
             &copy; {new Date().getFullYear()} PT Multi Daya Mitra. All rights reserved.
           </p>
-          <p className="font-medium uppercase tracking-[0.14em]">
-            Electrical · Automation · Fire System
-          </p>
+          <p className="font-medium uppercase tracking-[0.14em]">{settings.tagline}</p>
         </div>
       </div>
     </footer>

@@ -686,21 +686,35 @@ func (r PublicRepository) CreateContact(ctx context.Context, input model.Contact
 }
 
 func buildTree(items []model.ContentNode) []model.ContentNode {
-	byID := map[string]*model.ContentNode{}
-	for i := range items {
-		items[i].Children = []model.ContentNode{}
-		byID[items[i].ID] = &items[i]
-	}
-	var roots []model.ContentNode
-	for i := range items {
-		item := &items[i]
+	byID := make(map[string]model.ContentNode, len(items))
+	childrenByParent := make(map[string][]string)
+	rootIDs := make([]string, 0)
+
+	for _, item := range items {
+		item.Children = nil
+		byID[item.ID] = item
 		if item.ParentID == nil {
-			roots = append(roots, *item)
+			rootIDs = append(rootIDs, item.ID)
 			continue
 		}
-		if parent, ok := byID[*item.ParentID]; ok {
-			parent.Children = append(parent.Children, *item)
+		childrenByParent[*item.ParentID] = append(childrenByParent[*item.ParentID], item.ID)
+	}
+
+	// Rebuild nodes from their descendants after every row has been indexed.
+	// Appending value copies while iterating would otherwise leave parent nodes
+	// without grandchildren in the JSON returned to the navigation menu.
+	var compose func(id string) model.ContentNode
+	compose = func(id string) model.ContentNode {
+		node := byID[id]
+		for _, childID := range childrenByParent[id] {
+			node.Children = append(node.Children, compose(childID))
 		}
+		return node
+	}
+
+	roots := make([]model.ContentNode, 0, len(rootIDs))
+	for _, id := range rootIDs {
+		roots = append(roots, compose(id))
 	}
 	return roots
 }

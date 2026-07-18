@@ -4,10 +4,12 @@ import { notFound } from "next/navigation"
 import { RichText } from "@/components/cms/rich-text"
 import { CtaBanner } from "@/components/cta-banner"
 import { PageHero } from "@/components/page-hero"
+import { ContentList } from "@/components/cms/content-list"
 import { flattenContent, getService, getServices } from "@/lib/cms"
 
 type Props = {
   params: Promise<{ path: string[] }>
+  searchParams: Promise<{ page?: string }>
 }
 
 export async function generateStaticParams() {
@@ -25,10 +27,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ServiceDetailPage({ params }: Props) {
+export default async function ServiceDetailPage({ params, searchParams }: Props) {
   const path = (await params).path.join("/")
   const service = await getService(path)
   if (!service) notFound()
+
+  // Fetch children if this service acts as a category
+  const query = await searchParams
+  const page = parseInt(query.page || "1", 10)
+  const childServices = await getServices({ category: service.slug, page, limit: 6 })
+  
+  // Filter out the current service itself, only keep its true children
+  const actualChildren = childServices.data.filter(s => s.id !== service.id)
 
   return (
     <>
@@ -50,6 +60,26 @@ export default async function ServiceDetailPage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      {actualChildren.length > 0 && (
+        <section className="border-b border-border/60 bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="mb-10 max-w-2xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Sub-Services
+              </p>
+              <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                {service.title} Services
+              </h2>
+            </div>
+            
+            <div className="mt-8">
+              <ContentList items={actualChildren} basePath="/services" empty="No sub-services found." />
+            </div>
+          </div>
+        </section>
+      )}
+
       <CtaBanner
         title="Discuss this service with our engineers"
         description="Share your project scope and our team will respond with a tailored approach."

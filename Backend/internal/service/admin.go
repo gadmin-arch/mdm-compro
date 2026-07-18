@@ -22,12 +22,28 @@ func NewAdminService(repo repository.AdminRepository) AdminService {
 	return AdminService{repo: repo}
 }
 
-func (s AdminService) Dashboard(ctx context.Context) (map[string]int, error) {
-	return s.repo.DashboardCounts(ctx)
+func (s AdminService) Dashboard(ctx context.Context) (map[string]int, map[string]map[string]int, error) {
+	counts, err := s.repo.DashboardCounts(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+	statuses, err := s.repo.DashboardStatusCounts(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+	return counts, statuses, nil
 }
 
 func (s AdminService) RecentContacts(ctx context.Context) ([]model.ContactInquiry, error) {
 	return s.repo.ListContacts(ctx, 25)
+}
+
+func (s AdminService) RecordActivity(ctx context.Context, actorID, action, entityType, entityID, label string) error {
+	return s.repo.RecordActivity(ctx, actorID, action, entityType, entityID, label)
+}
+
+func (s AdminService) RecentActivity(ctx context.Context) ([]model.ActivityEntry, error) {
+	return s.repo.RecentActivity(ctx, 12)
 }
 
 func (s AdminService) Pages(ctx context.Context, page, perPage int, search, status string) (model.ListResponse[model.Page], error) {
@@ -97,6 +113,13 @@ func (s AdminService) UpdatePage(ctx context.Context, id string, input model.Pag
 		v = v.Add("content", "Content must be valid JSON.")
 	}
 	input.PublishedAt = normalizePublishedAt(input.Status, input.PublishedAt)
+	current, err := s.repo.PageByID(ctx, id)
+	if err != nil {
+		return model.Page{}, err
+	}
+	if model.IsSystemPageKey(current.Key) && input.Key != current.Key {
+		v = v.Add("key", "System page slug cannot be changed.")
+	}
 	if v.HasErrors() {
 		return model.Page{}, v
 	}
@@ -106,6 +129,13 @@ func (s AdminService) UpdatePage(ctx context.Context, id string, input model.Pag
 func (s AdminService) DeletePage(ctx context.Context, id string, version int) error {
 	if version < 1 {
 		return validator.New().Add("version", "A valid version is required.")
+	}
+	current, err := s.repo.PageByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	if model.IsSystemPageKey(current.Key) {
+		return validator.New().Add("key", "System pages cannot be archived.")
 	}
 	return s.repo.DeletePage(ctx, id, version)
 }
@@ -415,6 +445,34 @@ func (s AdminService) SaveSettings(ctx context.Context, settings map[string]json
 	return s.repo.SaveSettings(ctx, settings, userID)
 }
 
+// Setting returns one setting; a missing key comes back as an empty object
+// with version 0 so the admin UI can render a blank form (save creates it).
+func (s AdminService) Setting(ctx context.Context, key string) (model.Setting, error) {
+	setting, err := s.repo.SettingByKey(ctx, key)
+	if errors.Is(err, repository.ErrNotFound) {
+		return model.Setting{Key: key, Value: json.RawMessage(`{}`), Version: 0}, nil
+	}
+	return setting, err
+}
+
+const maxSettingBytes = 64 << 10
+
+func (s AdminService) SaveSetting(ctx context.Context, key string, value json.RawMessage, version int, userID string) (model.Setting, error) {
+	if !model.IsEditableSettingKey(key) {
+		return model.Setting{}, validator.New().Add("key", "This setting cannot be edited here.")
+	}
+	if len(value) == 0 || !json.Valid(value) {
+		return model.Setting{}, validator.New().Add("value", "Setting value must be valid JSON.")
+	}
+	if len(value) > maxSettingBytes {
+		return model.Setting{}, validator.New().Add("value", "Setting value is too large.")
+	}
+	if version < 0 {
+		return model.Setting{}, validator.New().Add("version", "A valid version is required.")
+	}
+	return s.repo.SaveSettingWithVersion(ctx, key, value, version, userID)
+}
+
 func (s AdminService) Navigation(ctx context.Context) (model.NavigationMenu, error) {
 	setting, err := s.repo.SettingByKey(ctx, model.NavigationSettingKey)
 	if errors.Is(err, repository.ErrNotFound) {
@@ -431,7 +489,7 @@ func (s AdminService) Navigation(ctx context.Context) (model.NavigationMenu, err
 }
 
 func (s AdminService) SaveNavigation(ctx context.Context, input model.NavigationMenu, userID string) (model.NavigationMenu, error) {
-	items, verr := normalizeMenuItems(input.Items, 1)
+	items, verr := normalizeMenuItems(input.Items, 1, map[string]bool{})
 	if verr.HasErrors() {
 		return model.NavigationMenu{}, verr
 	}
@@ -453,7 +511,7 @@ func (s AdminService) SaveNavigation(ctx context.Context, input model.Navigation
 
 const menuMaxDepth = 2
 
-func normalizeMenuItems(items []model.MenuItem, depth int) ([]model.MenuItem, validator.ValidationError) {
+func normalizeMenuItems(items []model.MenuItem, depth int, seen map[string]bool) ([]model.MenuItem, validator.ValidationError) {
 	v := validator.New()
 	out := make([]model.MenuItem, 0, len(items))
 	for index, item := range items {
@@ -463,6 +521,12 @@ func normalizeMenuItems(items []model.MenuItem, depth int) ([]model.MenuItem, va
 		if item.ID == "" {
 			item.ID = uuid.NewString()
 		}
+		// Drop duplicate nodes silently — the menu editor can only produce
+		// them through bugs, and duplicated ids break drag-and-drop.
+		if seen[item.ID] {
+			continue
+		}
+		seen[item.ID] = true
 		if item.Label == "" {
 			v = v.Add(menuField(depth, index, "label"), "Label is required.")
 			continue
@@ -497,7 +561,7 @@ func normalizeMenuItems(items []model.MenuItem, depth int) ([]model.MenuItem, va
 				v = v.Add(menuField(depth, index, "children"), "Menu supports two levels only.")
 				continue
 			}
-			children, childErr := normalizeMenuItems(item.Children, depth+1)
+			children, childErr := normalizeMenuItems(item.Children, depth+1, seen)
 			for field, message := range childErr.Fields {
 				v = v.Add(field, message)
 			}

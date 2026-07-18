@@ -1,7 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import { useFormStatus } from "react-dom"
+import { Fragment, useMemo, useRef, useState } from "react"
 import {
   DndContext,
   DragOverlay,
@@ -32,24 +31,35 @@ import {
   GripVertical,
   Link2,
   Lock,
+  Plus,
   Save,
+  Sparkles,
   Trash2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
+import { SaveErrorBanner, useSaveAction } from "@/components/admin/save-state"
 import type { MenuItem } from "@/lib/cms"
+import type { SaveAction } from "@/lib/save-result"
 import { cn } from "@/lib/utils"
 
 const INDENT_WIDTH = 32
 
 export type PageOption = { key: string; title: string; status: string }
 
+export type AutoChild = { label: string; href: string }
+
+// Top-level services/products content nodes; shown read-only under the menu
+// items whose dropdown auto-fills from that content.
+export type AutoChildren = { services: AutoChild[]; products: AutoChild[] }
+
 type NavigationEditorProps = {
-  action: (formData: FormData) => void | Promise<void>
+  action: SaveAction
   initialItems: MenuItem[]
   version: number
   pageOptions: PageOption[]
+  autoChildren?: AutoChildren
 }
 
 type FlatRow = {
@@ -74,11 +84,15 @@ function flattenItems(items: MenuItem[], excludeChildrenOf?: string): FlatRow[] 
 }
 
 // Rebuilds the two-level tree from an ordered flat list; a depth-1 row with
-// no top item above it is promoted to the top level.
-function buildTree(rows: Array<{ item: MenuItem; depth: number }>): MenuItem[] {
+// no top item above it is promoted to the top level. Children fold back in
+// from their own depth-1 rows — only the dragged item (whose children were
+// excluded from the flat list) keeps its original children.
+function buildTree(rows: Array<{ item: MenuItem; depth: number }>, preserveChildrenOf?: string): MenuItem[] {
   const tree: MenuItem[] = []
   for (const row of rows) {
-    const node: MenuItem = { ...row.item, children: row.depth === 0 ? (row.item.children ?? []) : [] }
+    const keepChildren =
+      row.item.id === preserveChildrenOf ? (row.item.children ?? []) : []
+    const node: MenuItem = { ...row.item, children: row.depth === 0 ? keepChildren : [] }
     if (row.depth === 0 || tree.length === 0) {
       if (row.depth === 1 && tree.length === 0) {
         tree.push({ ...node, children: [] })
@@ -93,15 +107,32 @@ function buildTree(rows: Array<{ item: MenuItem; depth: number }>): MenuItem[] {
   return tree
 }
 
+// Collapses duplicate ids (defensive: repairs menus saved by the old buggy
+// drag logic that doubled children).
+function dedupeItems(items: MenuItem[]): MenuItem[] {
+  const seen = new Set<string>()
+  const walk = (list: MenuItem[]): MenuItem[] =>
+    list
+      .filter((item) => {
+        if (seen.has(item.id)) return false
+        seen.add(item.id)
+        return true
+      })
+      .map((item) => ({ ...item, children: walk(item.children ?? []) }))
+  return walk(items)
+}
+
 function makeItemId() {
   return `nav-${Math.random().toString(36).slice(2, 10)}`
 }
 
-export function NavigationEditor({ action, initialItems, version, pageOptions }: NavigationEditorProps) {
-  const [items, setItems] = useState<MenuItem[]>(initialItems)
+export function NavigationEditor({ action, initialItems, version, pageOptions, autoChildren }: NavigationEditorProps) {
+  const [items, setItems] = useState<MenuItem[]>(() => dedupeItems(initialItems))
   const [activeId, setActiveId] = useState<string | null>(null)
   const [offsetLeft, setOffsetLeft] = useState(0)
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+  const { pending, result: saveResult, submit } = useSaveAction(action)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
@@ -157,6 +188,7 @@ export function NavigationEditor({ action, initialItems, version, pageOptions }:
         reordered.map((row, index) =>
           index === draggedIndex ? { item: row.item, depth } : { item: row.item, depth: row.depth },
         ),
+        draggedId,
       ),
     )
   }
@@ -188,6 +220,22 @@ export function NavigationEditor({ action, initialItems, version, pageOptions }:
     if (expandedId === id) setExpandedId(null)
   }
 
+  function addChildItem(parentId: string) {
+    const child: MenuItem = {
+      id: makeItemId(),
+      label: "New link",
+      kind: "custom",
+      href: "/",
+      visible: true,
+    }
+    setItems((current) =>
+      current.map((item) =>
+        item.id === parentId ? { ...item, children: [...(item.children ?? []), child] } : item,
+      ),
+    )
+    setExpandedId(child.id)
+  }
+
   function addItem(kind: "page" | "custom") {
     const item: MenuItem =
       kind === "page"
@@ -213,9 +261,32 @@ export function NavigationEditor({ action, initialItems, version, pageOptions }:
   }
 
   return (
-    <form action={action} className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+    <form
+      ref={formRef}
+      onSubmit={(event) => {
+        // Submitted programmatically so a failed save (e.g. version conflict)
+        // returns here and the arranged menu tree stays intact.
+        event.preventDefault()
+        submit(event.currentTarget)
+      }}
+      className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]"
+    >
       <input name="items" type="hidden" value={itemsJson} />
       <input name="version" type="hidden" value={version} />
+
+      {saveResult && (
+        <div className="xl:col-span-2">
+          <SaveErrorBanner
+            result={saveResult}
+            entity="menu"
+            onOverwrite={
+              saveResult.serverVersion
+                ? () => submit(formRef.current, { version: String(saveResult.serverVersion) })
+                : undefined
+            }
+          />
+        </div>
+      )}
 
       <div className="space-y-4">
         <section className="rounded-lg border border-border bg-background p-5">
@@ -223,7 +294,7 @@ export function NavigationEditor({ action, initialItems, version, pageOptions }:
             <div>
               <h2 className="font-display text-lg font-semibold text-foreground">Menu Structure</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                Drag to reorder. Drag right to nest a link under the item above it.
+                Drag to reorder. Use the + button (or drag right) to nest a link under an item.
               </p>
             </div>
             <div className="flex gap-2">
@@ -248,17 +319,41 @@ export function NavigationEditor({ action, initialItems, version, pageOptions }:
           >
             <SortableContext items={rows.map((row) => row.id)} strategy={verticalListSortingStrategy}>
               <ul className="mt-5 space-y-1.5">
-                {rows.map((row) => (
-                  <SortableNavRow
-                    key={row.id}
-                    row={row}
-                    expanded={expandedId === row.id}
-                    onToggle={() => setExpandedId((current) => (current === row.id ? null : row.id))}
-                    onUpdate={(patch) => updateItem(row.id, patch)}
-                    onRemove={() => removeItem(row.id)}
-                    pageOptions={pageOptions}
-                  />
-                ))}
+                {rows.map((row) => {
+                  const autoEntries =
+                    row.depth === 0 && row.item.auto ? (autoChildren?.[row.item.auto] ?? []) : []
+                  return (
+                    <Fragment key={row.id}>
+                      <SortableNavRow
+                        row={row}
+                        expanded={expandedId === row.id}
+                        onToggle={() => setExpandedId((current) => (current === row.id ? null : row.id))}
+                        onUpdate={(patch) => updateItem(row.id, patch)}
+                        onRemove={() => removeItem(row.id)}
+                        onAddChild={row.depth === 0 ? () => addChildItem(row.id) : undefined}
+                        autoCount={autoEntries.length}
+                        pageOptions={pageOptions}
+                      />
+                      {/* Read-only ghosts of the dropdown entries auto-filled
+                          from CMS content. Not sortable, never submitted. */}
+                      {autoEntries.map((child, index) => (
+                        <li
+                          key={`${row.id}-auto-${index}`}
+                          style={{ marginLeft: INDENT_WIDTH }}
+                          className="flex items-center gap-2 rounded-md border border-dashed border-border bg-secondary/20 px-3 py-1.5 text-sm text-muted-foreground"
+                        >
+                          <CornerDownRight className="h-3.5 w-3.5 shrink-0" />
+                          <span className="truncate font-medium">{child.label}</span>
+                          <span className="hidden truncate text-xs sm:inline">{child.href}</span>
+                          <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
+                            <Sparkles className="h-2.5 w-2.5" />
+                            auto
+                          </span>
+                        </li>
+                      ))}
+                    </Fragment>
+                  )
+                })}
               </ul>
             </SortableContext>
             <DragOverlay>
@@ -289,7 +384,7 @@ export function NavigationEditor({ action, initialItems, version, pageOptions }:
             <p>Version: {version}</p>
             <p>Top-level items: {items.length}</p>
           </div>
-          <SubmitButton />
+          <SubmitButton pending={pending} />
         </section>
         <section className="rounded-lg border border-border bg-background p-5 text-sm leading-relaxed text-muted-foreground">
           <p className="font-medium text-foreground">Tips</p>
@@ -304,8 +399,7 @@ export function NavigationEditor({ action, initialItems, version, pageOptions }:
   )
 }
 
-function SubmitButton() {
-  const { pending } = useFormStatus()
+function SubmitButton({ pending }: { pending: boolean }) {
   return (
     <Button className="mt-4 w-full" disabled={pending} type="submit">
       <Save className="h-4 w-4" />
@@ -320,6 +414,8 @@ function SortableNavRow({
   onToggle,
   onUpdate,
   onRemove,
+  onAddChild,
+  autoCount = 0,
   pageOptions,
 }: {
   row: FlatRow
@@ -327,6 +423,8 @@ function SortableNavRow({
   onToggle: () => void
   onUpdate: (patch: Partial<MenuItem>) => void
   onRemove: () => void
+  onAddChild?: () => void
+  autoCount?: number
   pageOptions: PageOption[]
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -335,6 +433,10 @@ function SortableNavRow({
   const item = row.item
   const isSystem = item.kind === "system"
   const hidden = item.visible === false
+  // Which content tree this item's dropdown would auto-fill from, based on
+  // its path; lets the switch re-enable auto after it was turned off.
+  const autoSource =
+    item.href === "/services" ? "services" : item.href === "/products" ? "products" : undefined
 
   return (
     <li
@@ -382,10 +484,26 @@ function SortableNavRow({
           {item.kind}
         </span>
 
-        {row.childCount > 0 && (
+        {(row.childCount > 0 || autoCount > 0) && (
           <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground">
-            {row.childCount}
+            {row.childCount > 0 && row.childCount}
+            {row.childCount > 0 && autoCount > 0 && " · "}
+            {autoCount > 0 && `+${autoCount} auto`}
           </span>
+        )}
+
+        {onAddChild && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={onAddChild}
+            aria-label="Add sub-item"
+            title="Add a link under this item"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
         )}
 
         <Button
@@ -491,6 +609,21 @@ function SortableNavRow({
             />
             Visible on the website
           </label>
+
+          {autoSource && (
+            <label className="flex items-center gap-3 rounded-md border border-border bg-background px-3 py-2 text-sm sm:col-span-2">
+              <Switch
+                checked={Boolean(item.auto)}
+                onCheckedChange={(checked) => onUpdate({ auto: checked ? autoSource : undefined })}
+              />
+              <span>
+                Fill dropdown automatically from {autoSource === "services" ? "Services" : "Products"} content
+                <span className="block text-xs text-muted-foreground">
+                  Manual sub-items appear after the automatic entries.
+                </span>
+              </span>
+            </label>
+          )}
         </div>
       )}
     </li>

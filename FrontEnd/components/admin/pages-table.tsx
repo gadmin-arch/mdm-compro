@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { Archive, Copy, Edit3, ChevronUp, ChevronDown, ArrowUpDown } from "lucide-react"
+import { Archive, Copy, Edit3, ChevronUp, ChevronDown, ArrowUpDown, Lock } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,7 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import type { PageContent } from "@/lib/cms"
+import { isSystemPageKey, type PageContent } from "@/lib/cms"
 import { deletePageAction, duplicatePageAction } from "@/app/admin/pages/actions"
 
 type PagesTableProps = {
@@ -137,15 +137,28 @@ export function PagesTable({ pages }: PagesTableProps) {
                       Copy
                     </Button>
                   </form>
-                  <Button 
-                    size="sm" 
-                    type="button" 
-                    variant="ghost"
-                    onClick={() => setRowToArchive(page)}
-                  >
-                    <Archive className="h-4 w-4" />
-                    Archive
-                  </Button>
+                  {isSystemPageKey(page.key) ? (
+                    <Button
+                      size="sm"
+                      type="button"
+                      variant="ghost"
+                      disabled
+                      title="System page — the website routes here, so it cannot be archived."
+                    >
+                      <Lock className="h-4 w-4" />
+                      System
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setRowToArchive(page)}
+                    >
+                      <Archive className="h-4 w-4" />
+                      Archive
+                    </Button>
+                  )}
                 </div>
               </TableCell>
             </TableRow>

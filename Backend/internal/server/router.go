@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/analytics"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/auth"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/config"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/handler"
@@ -20,7 +21,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool) http.Handler {
+func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, collector *analytics.Collector) http.Handler {
 	publicRepo := repository.NewPublicRepository(pool)
 	authRepo := repository.NewAuthRepository(pool)
 	adminRepo := repository.NewAdminRepository(pool)
@@ -35,6 +36,8 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool) http.
 	authHandler := handler.NewAuthHandler(authService)
 	adminHandler := handler.NewAdminHandler(service.NewAdminService(adminRepo))
 	mediaHandler := handler.NewMediaHandler(adminRepo, mediaStore)
+	analyticsHandler := handler.NewAnalyticsHandler(collector, service.NewAnalyticsService(repository.NewAnalyticsRepository(pool)), cfg.SiteURL)
+	redirectHandler := handler.NewRedirectHandler(service.NewRedirectService(repository.NewRedirectRepository(pool), collector), cfg.SiteURL)
 	tokenManager := authService.TokenManager()
 
 	r := chi.NewRouter()
@@ -71,10 +74,14 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool) http.
 	sendLimit := newRateLimiter(5, 15*time.Minute)
 	refreshLimit := newRateLimiter(60, 5*time.Minute)
 	contactLimit := newRateLimiter(5, 10*time.Minute)
+	collectLimit := newRateLimiter(120, time.Minute)
 
 	r.Route("/api/v1", func(r chi.Router) {
+		r.Use(apiTiming(collector))
 		r.Route("/auth", func(r chi.Router) {
 			r.With(loginLimit.Middleware).Post("/login", authHandler.Login)
+			r.With(codeLimit.Middleware).Post("/verify-otp", authHandler.VerifyOTP)
+			r.With(sendLimit.Middleware).Post("/resend-otp", authHandler.ResendOTP)
 			r.With(refreshLimit.Middleware).Post("/refresh", authHandler.Refresh)
 			r.Post("/logout", authHandler.Logout)
 			r.With(sendLimit.Middleware).Post("/forgot-password", authHandler.RequestPasswordReset)
@@ -84,6 +91,7 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool) http.
 
 		r.Route("/public", func(r chi.Router) {
 			r.Get("/navigation", publicHandler.Navigation)
+			r.Get("/settings", publicHandler.Settings)
 			r.Get("/pages", publicHandler.Pages)
 			r.Get("/pages/{key}", publicHandler.Page)
 			r.Get("/services", publicHandler.Services)
@@ -97,11 +105,15 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool) http.
 			r.Get("/search", publicHandler.Search)
 			r.Get("/media/*", mediaHandler.Serve)
 			r.With(contactLimit.Middleware).Post("/contacts", publicHandler.Contact)
+			r.With(collectLimit.Middleware).Post("/analytics/collect", analyticsHandler.Collect)
+			r.Get("/analytics/config", analyticsHandler.Config)
+			r.Get("/redirects/resolve", redirectHandler.Resolve)
 		})
 
 		r.Route("/admin", func(r chi.Router) {
 			r.Use(requireAuth(tokenManager, authRepo))
 			r.Get("/dashboard", adminHandler.Dashboard)
+			r.Get("/activity", adminHandler.Activity)
 			r.Get("/navigation", adminHandler.Navigation)
 			r.Put("/navigation", adminHandler.UpdateNavigation)
 			r.Get("/users", authHandler.Users)
@@ -111,11 +123,36 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool) http.
 			r.Get("/profile", authHandler.Profile)
 			r.Put("/profile", authHandler.UpdateProfile)
 			r.Put("/profile/password", authHandler.ChangePassword)
+			r.Get("/profile/devices", authHandler.TrustedDevices)
+			r.Delete("/profile/devices/{id}", authHandler.RevokeTrustedDevice)
+			r.Post("/profile/devices/revoke-all", authHandler.RevokeAllTrustedDevices)
+			r.Get("/profile/login-history", authHandler.LoginHistory)
 			r.Get("/contacts", adminHandler.Contacts)
 			r.Get("/archive", adminHandler.ArchivedItems)
 			r.Post("/archive/{type}/{id}/restore", adminHandler.RestoreItem)
 			r.Delete("/archive/{type}/{id}", adminHandler.HardDeleteItem)
 			r.Post("/media/upload", mediaHandler.Upload)
+			r.Get("/media", mediaHandler.List)
+			r.Delete("/media/{id}", mediaHandler.Delete)
+			r.Get("/settings", adminHandler.Settings)
+			r.Get("/settings/{key}", adminHandler.Setting)
+			r.Put("/settings/{key}", adminHandler.UpdateSetting)
+			r.Get("/analytics/dashboard", analyticsHandler.Dashboard)
+			r.Get("/analytics/realtime", analyticsHandler.Realtime)
+			r.Get("/analytics/admin-activity", analyticsHandler.AdminActivity)
+			r.Get("/analytics/options", analyticsHandler.FilterOptions)
+			r.Get("/analytics/export", analyticsHandler.Export)
+			r.Get("/redirects", redirectHandler.List)
+			r.Post("/redirects", redirectHandler.Create)
+			r.Get("/redirects/dashboard", redirectHandler.Dashboard)
+			r.Get("/redirects/export", redirectHandler.Export)
+			r.Post("/redirects/bulk-delete", redirectHandler.BulkDelete)
+			r.Get("/redirects/{id}", redirectHandler.Get)
+			r.Put("/redirects/{id}", redirectHandler.Update)
+			r.Delete("/redirects/{id}", redirectHandler.Delete)
+			r.Post("/redirects/{id}/duplicate", redirectHandler.Duplicate)
+			r.Get("/redirects/{id}/stats", redirectHandler.Stats)
+			r.Get("/redirects/{id}/qr", redirectHandler.QR)
 			r.Get("/pages", adminHandler.Pages)
 			r.Post("/pages", adminHandler.CreatePage)
 			r.Get("/pages/{id}", adminHandler.Page)
@@ -136,7 +173,7 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool) http.
 			r.Get("/{module:services|products}/{id}", adminHandler.ContentItem)
 			r.Put("/{module:services|products}/{id}", adminHandler.UpdateContent)
 			r.Delete("/{module:services|products}/{id}", adminHandler.DeleteContent)
-			for _, module := range []string{"roles", "permissions", "media", "seo-meta", "settings"} {
+			for _, module := range []string{"roles", "permissions", "seo-meta"} {
 				r.Get("/"+module, adminHandler.ModuleContract)
 				r.Post("/"+module, adminHandler.ModuleContract)
 				r.Put("/"+module+"/{id}", adminHandler.ModuleContract)
@@ -146,6 +183,26 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool) http.
 	})
 
 	return r
+}
+
+// apiTiming feeds request durations into the analytics collector so the
+// dashboard can report API response times and error counts. Non-blocking:
+// TrackAPI drops on a full buffer.
+func apiTiming(collector *analytics.Collector) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			start := time.Now()
+			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
+			next.ServeHTTP(ww, r)
+			// RoutePattern already includes the /api/v1 mount prefix.
+			route := chi.RouteContext(r.Context()).RoutePattern()
+			// The collect endpoint would only measure itself.
+			if route == "" || strings.HasSuffix(route, "/analytics/collect") {
+				return
+			}
+			collector.TrackAPI(r.Method+" "+route, ww.Status(), time.Since(start))
+		})
+	}
 }
 
 func requireAuth(manager auth.Manager, repo repository.AuthRepository) func(http.Handler) http.Handler {

@@ -9,6 +9,7 @@ import {
   type PageUpdatePayload,
 } from "@/lib/admin-api"
 import type { PageContent } from "@/lib/cms"
+import type { SaveResult } from "@/lib/save-result"
 
 function pagePayload(formData: FormData): PageCreatePayload {
   const contentText = String(formData.get("content") ?? '{"blocks":[]}')
@@ -51,12 +52,12 @@ function revalidatePagePaths(...keys: string[]) {
   revalidatePath("/admin/pages")
 }
 
-export async function createPageAction(formData: FormData) {
+export async function createPageAction(formData: FormData): Promise<SaveResult | void> {
   let payload: PageCreatePayload
   try {
     payload = pagePayload(formData)
   } catch {
-    redirect("/admin/pages/new?error=invalid_json")
+    return { error: "validation" }
   }
 
   const result = await adminFetch<PageContent>(
@@ -76,28 +77,30 @@ export async function createPageAction(formData: FormData) {
     })
 
   if (!result.ok) {
-    const errorCode = result.error.code === "version_conflict" ? "conflict" : "save_failed"
-    redirect(`/admin/pages/new?error=${errorCode}`)
+    // On create, a conflict can only mean the key is already taken.
+    if (result.error.code === "version_conflict") return { error: "duplicate" }
+    if (result.error.code === "validation_error") return { error: "validation" }
+    return { error: "save_failed" }
   }
 
   revalidatePagePaths(result.page.key)
   redirect(`/admin/pages/${result.page.id}?created=1`)
 }
 
-export async function updatePageAction(formData: FormData) {
+export async function updatePageAction(formData: FormData): Promise<SaveResult | void> {
   const id = String(formData.get("id") ?? "")
   const version = Number(formData.get("version") ?? 0)
   const oldKey = String(formData.get("oldKey") ?? "")
 
   if (!id) {
-    redirect("/admin/pages?error=missing_id")
+    return { error: "save_failed" }
   }
 
   let payloadBase: PageCreatePayload
   try {
     payloadBase = pagePayload(formData)
   } catch {
-    redirect(`/admin/pages/${id}?error=invalid_json`)
+    return { error: "validation" }
   }
 
   const payload: PageUpdatePayload = {
@@ -122,8 +125,18 @@ export async function updatePageAction(formData: FormData) {
     })
 
   if (!result.ok) {
-    const errorCode = result.error.code === "version_conflict" ? "conflict" : "save_failed"
-    redirect(`/admin/pages/${id}?error=${errorCode}`)
+    if (result.error.code === "version_conflict") {
+      // Stale version and duplicate key both surface as version_conflict —
+      // compare against the stored version to tell them apart.
+      const current = await adminFetch<PageContent>(`/pages/${id}`, {}, `/admin/pages/${id}`)
+        .catch(() => null)
+      if (current && current.version !== version) {
+        return { error: "conflict", serverVersion: current.version }
+      }
+      return { error: "duplicate" }
+    }
+    if (result.error.code === "validation_error") return { error: "validation" }
+    return { error: "save_failed" }
   }
 
   revalidatePagePaths(oldKey, payload.key)

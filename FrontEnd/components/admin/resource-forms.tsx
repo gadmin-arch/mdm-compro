@@ -2,20 +2,23 @@
 
 import type { ReactNode } from "react"
 import { useState, useRef } from "react"
-import { useFormStatus } from "react-dom"
 import type { Career, ContentNode, NewsItem } from "@/lib/cms"
+import type { SaveAction, SaveResult } from "@/lib/save-result"
 import {
   adminStatusOptions,
   employmentTypeOptions,
+  htmlFromBlocks,
   specsToText,
   textFromBlocks,
   toDateTimeLocal,
 } from "@/lib/admin-content"
+import { RichTextField } from "@/components/admin/rich-text-editor"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Save } from "lucide-react"
 import { MediaUpload } from "@/components/admin/media-upload"
+import { SaveErrorBanner, useSaveAction } from "@/components/admin/save-state"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,10 +30,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
-type Action = (formData: FormData) => void | Promise<void>
-
 type ContentItemFormProps = {
-  action: Action
+  action: SaveAction
   item?: ContentNode
   mode: "create" | "edit"
   parentOptions?: ContentNode[]
@@ -38,22 +39,42 @@ type ContentItemFormProps = {
 }
 
 type NewsFormProps = {
-  action: Action
+  action: SaveAction
   item?: NewsItem
   mode: "create" | "edit"
 }
 
 type CareerFormProps = {
-  action: Action
+  action: SaveAction
   item?: Career
   mode: "create" | "edit"
 }
 
+// Shared banner slot spanning both grid columns at the top of a form.
+function FormBanner({
+  result,
+  entity,
+  onOverwrite,
+}: {
+  result: SaveResult | null
+  entity: string
+  onOverwrite?: () => void
+}) {
+  if (!result) return null
+  return (
+    <div className="xl:col-span-2">
+      <SaveErrorBanner result={result} entity={entity} onOverwrite={onOverwrite} />
+    </div>
+  )
+}
+
 export function ContentItemForm({ action, item, mode, parentOptions = [], resource }: ContentItemFormProps) {
   const isProduct = resource === "products"
+  const entity = isProduct ? "product" : "service"
   const selectableParents = parentOptions.filter((option) => option.id !== item?.id)
   const formRef = useRef<HTMLFormElement>(null)
   const [showConfirm, setShowConfirm] = useState(false)
+  const { pending, result, submit } = useSaveAction(action)
 
   const handleSaveClick = () => {
     if (formRef.current) {
@@ -66,7 +87,23 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
   }
 
   return (
-    <form ref={formRef} action={action} className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+    <form
+      ref={formRef}
+      onSubmit={(event) => {
+        event.preventDefault()
+        submit(event.currentTarget)
+      }}
+      className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]"
+    >
+      <FormBanner
+        result={result}
+        entity={entity}
+        onOverwrite={
+          result?.serverVersion
+            ? () => submit(formRef.current, { version: String(result.serverVersion) })
+            : undefined
+        }
+      />
       <input name="resource" type="hidden" value={resource} />
       {mode === "edit" && item && (
         <>
@@ -130,6 +167,7 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
       <Sidebar
         buttonLabel={mode === "create" ? `Create ${isProduct ? "Product" : "Service"}` : "Save Changes"}
         itemVersion={item?.version}
+        pending={pending}
         onClickSubmit={handleSaveClick}
       >
         <StatusField defaultValue={item?.status} />
@@ -166,6 +204,7 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
 export function NewsForm({ action, item, mode }: NewsFormProps) {
   const formRef = useRef<HTMLFormElement>(null)
   const [showConfirm, setShowConfirm] = useState(false)
+  const { pending, result, submit } = useSaveAction(action)
 
   const handleSaveClick = () => {
     if (formRef.current) {
@@ -178,7 +217,23 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
   }
 
   return (
-    <form ref={formRef} action={action} className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+    <form
+      ref={formRef}
+      onSubmit={(event) => {
+        event.preventDefault()
+        submit(event.currentTarget)
+      }}
+      className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]"
+    >
+      <FormBanner
+        result={result}
+        entity="news post"
+        onOverwrite={
+          result?.serverVersion
+            ? () => submit(formRef.current, { version: String(result.serverVersion) })
+            : undefined
+        }
+      />
       {mode === "edit" && item && (
         <>
           <input name="id" type="hidden" value={item.id} />
@@ -196,7 +251,7 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
           <Field label="Excerpt" name="excerpt" defaultValue={item?.excerpt} />
           <Field label="Category" name="category" defaultValue={item?.category} />
         </div>
-        <TextAreaField label="Body" name="bodyText" rows={14} defaultValue={textFromBlocks(item?.body)} />
+        <RichTextField label="Body" name="bodyHtml" defaultValue={htmlFromBlocks(item?.body)} />
         <MediaUpload
           label="Featured Image"
           name="featuredImageUrl"
@@ -206,7 +261,7 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
         />
       </div>
 
-      <Sidebar buttonLabel={mode === "create" ? "Create News" : "Save News"} itemVersion={item?.version} onClickSubmit={handleSaveClick}>
+      <Sidebar buttonLabel={mode === "create" ? "Create News" : "Save News"} itemVersion={item?.version} pending={pending} onClickSubmit={handleSaveClick}>
         <StatusField defaultValue={item?.status} />
         <Field label="Publish date" name="publishedAt" type="datetime-local" defaultValue={toDateTimeLocal(item?.publishedAt)} />
         <label className="flex items-center gap-3 rounded-md border border-border px-3 py-2 text-sm">
@@ -244,6 +299,7 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
 export function CareerForm({ action, item, mode }: CareerFormProps) {
   const formRef = useRef<HTMLFormElement>(null)
   const [showConfirm, setShowConfirm] = useState(false)
+  const { pending, result, submit } = useSaveAction(action)
 
   const handleSaveClick = () => {
     if (formRef.current) {
@@ -256,7 +312,23 @@ export function CareerForm({ action, item, mode }: CareerFormProps) {
   }
 
   return (
-    <form ref={formRef} action={action} className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+    <form
+      ref={formRef}
+      onSubmit={(event) => {
+        event.preventDefault()
+        submit(event.currentTarget)
+      }}
+      className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]"
+    >
+      <FormBanner
+        result={result}
+        entity="career"
+        onOverwrite={
+          result?.serverVersion
+            ? () => submit(formRef.current, { version: String(result.serverVersion) })
+            : undefined
+        }
+      />
       {mode === "edit" && item && (
         <>
           <input name="id" type="hidden" value={item.id} />
@@ -275,16 +347,15 @@ export function CareerForm({ action, item, mode }: CareerFormProps) {
           <Field label="Department" name="department" required defaultValue={item?.department} />
           <Field label="Location" name="location" required defaultValue={item?.location} />
         </div>
-        <TextAreaField
+        <RichTextField
           label="Job description"
-          name="descriptionText"
-          rows={14}
-          defaultValue={textFromBlocks(item?.description)}
+          name="descriptionHtml"
+          defaultValue={htmlFromBlocks(item?.description)}
         />
         <Field label="Apply URL" name="applyUrl" placeholder="https://docs.google.com/forms/..." defaultValue={item?.applyUrl} />
       </div>
 
-      <Sidebar buttonLabel={mode === "create" ? "Create Career" : "Save Career"} itemVersion={item?.version} onClickSubmit={handleSaveClick}>
+      <Sidebar buttonLabel={mode === "create" ? "Create Career" : "Save Career"} itemVersion={item?.version} pending={pending} onClickSubmit={handleSaveClick}>
         <StatusField defaultValue={item?.status} />
         <SelectField
           label="Employment"
@@ -325,14 +396,15 @@ function Sidebar({
   buttonLabel,
   children,
   itemVersion,
+  pending,
   onClickSubmit,
 }: {
   buttonLabel: string
   children: ReactNode
   itemVersion?: number
+  pending: boolean
   onClickSubmit?: () => void
 }) {
-  const { pending } = useFormStatus()
   return (
     <aside className="space-y-4 rounded-lg border border-border bg-background p-5 xl:sticky xl:top-6 xl:self-start">
       <h2 className="font-display text-lg font-semibold text-foreground">Publish</h2>

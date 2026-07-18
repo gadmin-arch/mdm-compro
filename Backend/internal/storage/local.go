@@ -86,6 +86,17 @@ func (s LocalStorage) GetObject(_ context.Context, objectKey string) (io.ReadSee
 	}, nil
 }
 
+func (s LocalStorage) Remove(_ context.Context, objectKey string) error {
+	target, err := s.resolve(objectKey)
+	if err != nil {
+		return err
+	}
+	if err := os.Remove(target); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+	return nil
+}
+
 // resolve maps an object key to a path inside the media root and rejects
 // traversal attempts like "uploads/../../etc/passwd".
 func (s LocalStorage) resolve(objectKey string) (string, error) {

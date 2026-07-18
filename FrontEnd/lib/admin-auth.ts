@@ -2,6 +2,9 @@ import { NextResponse, type NextRequest } from "next/server"
 
 const LOCAL_NEXT_FALLBACK = "/admin"
 
+// HTTP-only cookie carrying the opaque trusted-device token (30-day 2FA skip).
+export const TRUST_COOKIE = "cms_trusted_device"
+
 export function safeAdminNext(value: FormDataEntryValue | string | null | undefined) {
   if (typeof value !== "string" || value.trim() === "") {
     return LOCAL_NEXT_FALLBACK
@@ -38,6 +41,20 @@ export function adminRefreshLocation(nextPath: string) {
 
 export function externalUrl(request: NextRequest, path: string) {
   return new URL(path, requestOrigin(request))
+}
+
+// crossOriginPost rejects browser POSTs whose Origin doesn't match the site
+// (CSRF hardening for the cookie-setting auth routes). Requests without an
+// Origin header (curl, same-origin form GETs) pass through.
+export function crossOriginPost(request: NextRequest): boolean {
+  const origin = request.headers.get("origin")
+  if (!origin) return false
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? ""
+  try {
+    return new URL(origin).host !== host
+  } catch {
+    return true
+  }
 }
 
 export function adminCookieOptions(request: NextRequest, expires: Date) {

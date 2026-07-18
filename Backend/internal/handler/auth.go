@@ -48,7 +48,7 @@ func (h AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusBadRequest, "invalid_json", "Request body must be valid JSON.")
 		return
 	}
-	tokens, err := h.service.Login(r.Context(), input, authMeta(r))
+	result, err := h.service.Login(r.Context(), input, authMeta(r))
 	if writeLocked(w, err) {
 		return
 	}
@@ -64,7 +64,114 @@ func (h AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		HandleError(w, err)
 		return
 	}
-	JSON(w, http.StatusOK, tokens)
+	JSON(w, http.StatusOK, result)
+}
+
+// VerifyOTP completes the two-step sign-in with the emailed code.
+func (h AuthHandler) VerifyOTP(w http.ResponseWriter, r *http.Request) {
+	var input model.VerifyOTPInput
+	if err := DecodeJSON(r, &input); err != nil {
+		Error(w, http.StatusBadRequest, "invalid_json", "Request body must be valid JSON.")
+		return
+	}
+	result, err := h.service.VerifyOTP(r.Context(), input, authMeta(r))
+	if writeLocked(w, err) {
+		return
+	}
+	if errors.Is(err, service.ErrUnauthorized) {
+		Error(w, http.StatusUnauthorized, "invalid_code", "The verification code is invalid or expired.")
+		return
+	}
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	JSON(w, http.StatusOK, result)
+}
+
+// ResendOTP sends a fresh code for a pending challenge (cooldown enforced).
+func (h AuthHandler) ResendOTP(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		ChallengeID string `json:"challengeId"`
+	}
+	if err := DecodeJSON(r, &input); err != nil {
+		Error(w, http.StatusBadRequest, "invalid_json", "Request body must be valid JSON.")
+		return
+	}
+	result, err := h.service.ResendOTP(r.Context(), input.ChallengeID, authMeta(r))
+	if writeLocked(w, err) {
+		return
+	}
+	if errors.Is(err, service.ErrUnauthorized) {
+		Error(w, http.StatusUnauthorized, "invalid_challenge", "The sign-in session is invalid or already completed.")
+		return
+	}
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	JSON(w, http.StatusOK, result)
+}
+
+// TrustedDevices lists the signed-in user's trusted devices.
+func (h AuthHandler) TrustedDevices(w http.ResponseWriter, r *http.Request) {
+	claims := auth.ClaimsFromContext(r.Context())
+	if claims == nil {
+		Error(w, http.StatusUnauthorized, "unauthorized", "Sign in first.")
+		return
+	}
+	devices, err := h.service.TrustedDevices(r.Context(), claims.UserID)
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	JSON(w, http.StatusOK, map[string]any{"data": devices})
+}
+
+func (h AuthHandler) RevokeTrustedDevice(w http.ResponseWriter, r *http.Request) {
+	claims := auth.ClaimsFromContext(r.Context())
+	if claims == nil {
+		Error(w, http.StatusUnauthorized, "unauthorized", "Sign in first.")
+		return
+	}
+	err := h.service.RevokeTrustedDevice(r.Context(), claims.UserID, chi.URLParam(r, "id"), authMeta(r))
+	if errors.Is(err, repository.ErrNotFound) {
+		Error(w, http.StatusNotFound, "not_found", "Device was not found.")
+		return
+	}
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	JSON(w, http.StatusNoContent, nil)
+}
+
+func (h AuthHandler) RevokeAllTrustedDevices(w http.ResponseWriter, r *http.Request) {
+	claims := auth.ClaimsFromContext(r.Context())
+	if claims == nil {
+		Error(w, http.StatusUnauthorized, "unauthorized", "Sign in first.")
+		return
+	}
+	if err := h.service.RevokeAllTrustedDevices(r.Context(), claims.UserID, authMeta(r)); err != nil {
+		HandleError(w, err)
+		return
+	}
+	JSON(w, http.StatusNoContent, nil)
+}
+
+// LoginHistory returns the user's recent sign-in events (incl. failures).
+func (h AuthHandler) LoginHistory(w http.ResponseWriter, r *http.Request) {
+	claims := auth.ClaimsFromContext(r.Context())
+	if claims == nil {
+		Error(w, http.StatusUnauthorized, "unauthorized", "Sign in first.")
+		return
+	}
+	entries, err := h.service.LoginHistory(r.Context(), claims.UserID)
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	JSON(w, http.StatusOK, map[string]any{"data": entries})
 }
 
 func (h AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {

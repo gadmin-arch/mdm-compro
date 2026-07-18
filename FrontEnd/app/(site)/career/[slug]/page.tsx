@@ -66,7 +66,13 @@ export default async function CareerDetailPage({ params }: Props) {
                 </div>
               </dl>
               <Button asChild className="mt-6 w-full">
-                <a href={career.applyUrl || "mailto:hr@multidayamitra.co.id"}>Apply Now</a>
+                <a
+                  href={career.applyUrl || "mailto:hr@multidayamitra.co.id"}
+                  data-analytics-event="career_apply"
+                  data-analytics-label={career.title}
+                >
+                  Apply Now
+                </a>
               </Button>
             </div>
           </aside>

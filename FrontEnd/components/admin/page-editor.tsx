@@ -1,7 +1,6 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { useFormStatus } from "react-dom"
 import {
   ArrowDown,
   ArrowUp,
@@ -32,13 +31,15 @@ import {
 } from "@/components/ui/alert-dialog"
 import * as React from "react"
 import { SectionBuilder } from "@/components/admin/section-builder"
+import { SaveErrorBanner, useSaveAction } from "@/components/admin/save-state"
 import {
   SectionRenderer,
   emptySectionData,
   type SectionData,
 } from "@/components/cms/section-renderer"
-import type { PageContent, SEO } from "@/lib/cms"
-import { sectionsFromContent, type Section } from "@/lib/sections"
+import { isSystemPageKey, type PageContent, type SEO } from "@/lib/cms"
+import type { SaveAction } from "@/lib/save-result"
+import { presetSectionsForKey, sectionsFromContent, type Section } from "@/lib/sections"
 
 type ContactOffice = {
   name: string
@@ -69,7 +70,7 @@ type BlockRow = {
 }
 
 type PageEditorProps = {
-  action: (formData: FormData) => void | Promise<void>
+  action: SaveAction
   mode: "create" | "edit"
   page?: PageContent
   previewData?: SectionData
@@ -85,9 +86,19 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
   const [seo, setSeo] = useState<SEO>(page?.seo ?? {})
   const [fields, setFields] = useState<FieldRow[]>(() => contentToFields(initialContent))
   const [blocks, setBlocks] = useState<BlockRow[]>(() => contentToBlocks(initialContent))
-  const [sections, setSections] = useState<Section[]>(() => sectionsFromContent(initialContent))
+  const [sections, setSections] = useState<Section[]>(() => {
+    const existing = sectionsFromContent(initialContent)
+    if (existing.length > 0) return existing
+    // Built-in pages (home/about) open prefilled with their live design so
+    // editing here edits exactly what visitors already see.
+    return presetSectionsForKey(page?.key ?? "", initialContent) ?? []
+  })
   const formRef = React.useRef<HTMLFormElement>(null)
   const [showConfirm, setShowConfirm] = useState(false)
+  const { pending, result: saveResult, submit } = useSaveAction(action)
+  // System pages are routed by the public site; their slug is fixed and the
+  // backend rejects renames, so lock the field up front.
+  const slugLocked = mode === "edit" && isSystemPageKey(page?.key ?? "")
 
   const [contactEmail, setContactEmail] = useState(() => String(initialContent.email ?? "info@multidayamitra.co.id"))
   const [contactPhone, setContactPhone] = useState(() => String(initialContent.phone ?? "+62 31 592 1256"))
@@ -193,8 +204,44 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
     })
   }
 
+  // Enter in a text input triggers the browser's implicit form submission,
+  // which would save without the confirmation dialog — route it through the
+  // same confirm flow as the Save button instead.
+  function handleFormKeyDown(event: React.KeyboardEvent<HTMLFormElement>) {
+    if (event.key !== "Enter" || !(event.target instanceof HTMLInputElement)) return
+    event.preventDefault()
+    if (formRef.current?.checkValidity()) {
+      setShowConfirm(true)
+    } else {
+      formRef.current?.reportValidity()
+    }
+  }
+
   return (
-    <form ref={formRef} action={action} className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+    <form
+      ref={formRef}
+      onSubmit={(event) => {
+        // Submitted programmatically so a failed save returns state here and
+        // the user's edits stay alive instead of the page re-rendering.
+        event.preventDefault()
+        submit(event.currentTarget)
+      }}
+      onKeyDown={handleFormKeyDown}
+      className="mt-2 grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]"
+    >
+      {saveResult && (
+        <div className="xl:col-span-2">
+          <SaveErrorBanner
+            result={saveResult}
+            entity="page"
+            onOverwrite={
+              saveResult.serverVersion
+                ? () => submit(formRef.current, { version: String(saveResult.serverVersion) })
+                : undefined
+            }
+          />
+        </div>
+      )}
       {mode === "edit" && page && (
         <>
           <input name="id" type="hidden" value={page.id} />
@@ -230,16 +277,23 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
                 Slug
               </label>
               <Input
-                className="mt-2"
+                className={slugLocked ? "mt-2 cursor-not-allowed bg-secondary/60 opacity-70" : "mt-2"}
                 id="key"
                 name="key"
                 onChange={(event) => {
+                  if (slugLocked) return
                   setSlugTouched(true)
                   setKey(slugify(event.target.value))
                 }}
                 required
                 value={key}
+                readOnly={slugLocked}
               />
+              {slugLocked && (
+                <p className="mt-1.5 text-xs text-muted-foreground">
+                  System page — the slug is fixed because the website routes to /{key === "home" ? "" : key}.
+                </p>
+              )}
             </div>
           </div>
         </section>
@@ -616,18 +670,18 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
               <section className="overflow-hidden rounded-lg border border-border">
                 <div className="flex items-center justify-between border-b border-border bg-secondary/40 px-4 py-2">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    /{key || "new-page"}
+                    {publicPath(key)}
                   </p>
                   <p className="text-xs text-muted-foreground">Live section preview</p>
                 </div>
                 <div className="bg-background">
-                  <SectionRenderer sections={sections} data={previewData ?? emptySectionData} />
+                  <SectionRenderer sections={sections} data={previewData ?? emptySectionData} listingPlaceholder />
                 </div>
               </section>
             ) : (
             <section className="rounded-lg border border-border bg-background p-5">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                /{key || "new-page"}
+                {publicPath(key)}
               </p>
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground">
                 {title || "Untitled page"}
@@ -715,12 +769,13 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
             {mode === "edit" && page && (
               <div className="rounded-md bg-secondary px-3 py-2 text-sm text-muted-foreground">
                 <p>Version: {page.version}</p>
-                <p>Current URL: /{page.key}</p>
+                <p>Current URL: {publicPath(page.key)}</p>
               </div>
             )}
 
-            <SubmitButton 
-              mode={mode} 
+            <SubmitButton
+              mode={mode}
+              pending={pending}
               onClick={() => {
                 if (formRef.current) {
                   if (formRef.current.checkValidity()) {
@@ -729,7 +784,7 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
                     formRef.current.reportValidity()
                   }
                 }
-              }} 
+              }}
             />
           </div>
         </section>
@@ -819,8 +874,15 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
   )
 }
 
-function SubmitButton({ mode, onClick }: { mode: "create" | "edit"; onClick?: () => void }) {
-  const { pending } = useFormStatus()
+function SubmitButton({
+  mode,
+  pending,
+  onClick,
+}: {
+  mode: "create" | "edit"
+  pending: boolean
+  onClick?: () => void
+}) {
   return (
     <Button className="w-full" disabled={pending} type="button" onClick={onClick}>
       <Save className="h-4 w-4" />
@@ -964,6 +1026,12 @@ function valueToText(value: unknown) {
     return JSON.stringify(value, null, 2)
   }
   return value == null ? "" : String(value)
+}
+
+// The "home" page is served at the site root, not at /home.
+function publicPath(key: string) {
+  if (key === "home") return "/"
+  return `/${key || "new-page"}`
 }
 
 function slugify(value: string) {

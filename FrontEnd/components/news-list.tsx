@@ -1,13 +1,49 @@
+"use client"
+
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowUpRight, CalendarDays, Clock } from "lucide-react"
+import { ArrowUpRight, CalendarDays, Clock, Loader2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import type { ListResponse, NewsItem } from "@/lib/cms"
 import { fallbackNews, formatDate } from "@/lib/cms"
+import { fetchNewsAction } from "@/app/(site)/news/actions"
 
-export function NewsList({ news = fallbackNews }: { news?: ListResponse<NewsItem> }) {
+type NewsListProps = {
+  initialNews?: ListResponse<NewsItem>
+  searchParams?: {
+    search?: string
+    category?: string
+    sort?: string
+    featured?: boolean
+    publishedDate?: string
+  }
+}
+
+export function NewsList({ initialNews = fallbackNews, searchParams = {} }: NewsListProps) {
+  const [news, setNews] = useState<ListResponse<NewsItem>>(initialNews)
+  const [loading, setLoading] = useState(false)
+
   const featured = news.data.find((n) => n.featured) ?? news.data[0]
   const rest = news.data.filter((n) => n.slug !== featured?.slug)
+  const hasMore = news.pagination.page < news.pagination.totalPages
+
+  const handleLoadMore = async () => {
+    if (loading || !hasMore) return
+    setLoading(true)
+    try {
+      const next = await fetchNewsAction({ ...searchParams, page: news.pagination.page + 1 })
+      setNews((prev) => ({
+        data: [...prev.data, ...next.data],
+        pagination: next.pagination,
+      }))
+    } catch (error) {
+      console.error("Failed to load more news:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   if (!featured) {
     return (
@@ -119,6 +155,15 @@ export function NewsList({ news = fallbackNews }: { news?: ListResponse<NewsItem
               </Link>
             ))}
           </div>
+
+          {hasMore && (
+            <div className="mt-12 flex justify-center">
+              <Button onClick={handleLoadMore} disabled={loading} variant="outline" size="lg" className="min-w-[200px]">
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {loading ? "Loading..." : "Load More"}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </section>

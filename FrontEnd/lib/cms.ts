@@ -94,6 +94,14 @@ export type Navigation = {
   menu?: MenuItem[]
 }
 
+// Mirrors model.SystemPageKeys in the backend: pages the public site routes
+// to directly. Their slugs are fixed and they cannot be archived.
+export const systemPageKeys = ["home", "about", "contact", "services", "products", "news", "career"]
+
+export function isSystemPageKey(key: string): boolean {
+  return systemPageKeys.includes(key)
+}
+
 // Mirrors model.DefaultMenuItems in the backend.
 export const defaultMenuItems: MenuItem[] = [
   { id: "home", label: "Home", href: "/", kind: "system", visible: true },
@@ -318,11 +326,11 @@ export const fallbackPages: Record<string, PageContent> = {
           mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.6974775466453!2d112.77587847427672!3d-7.275217492731802!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fa6ab5480eb1%3A0xe54df63b8274305c!2sRuko%20Klampis%20Megah%20Surabaya!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
         },
         {
-          name: "Jakarta Branch Office",
-          address: "Gedung Buncit 36, Jl. Warung Jati Barat No. 36, Ragunan, Pasar Minggu, Jakarta Selatan 12550, Indonesia",
-          phone: "+62 21 3049 6101",
+          name: "Workshop",
+          address: "Ruko Jati Kepuh Indah E-21, Sidoarjo 61271, East Java, Indonesia",
+          phone: "+62 811 830 3250",
           email: "info@multidayamitra.co.id",
-          mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.845345719391!2d106.82239457426868!3d-6.2840599937048745!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3d53fb7969f%3A0x6e9f16ef0e85d95e!2sGedung%20Buncit%2036!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
+          mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.4005934522964!2d112.72146907427909!3d-7.420845992589574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e42d7cd58117%3A0xc3fec86c4293f0b4!2sRuko%20Jati%20Kepuh%20Indah!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
         },
         {
           name: "Surabaya Operations Branch",
@@ -332,6 +340,24 @@ export const fallbackPages: Record<string, PageContent> = {
       ],
     },
   },
+}
+
+// Analytics feature flags served to the public tracker. Fail closed: if the
+// API is unreachable the tracker simply does not mount.
+export type AnalyticsPublicConfig = {
+  enabled: boolean
+  ignoreAdmins: boolean
+  respectDnt: boolean
+  trackVitals: boolean
+  trackEvents: boolean
+}
+
+export async function getAnalyticsConfig(): Promise<AnalyticsPublicConfig> {
+  return cmsFetch<AnalyticsPublicConfig>(
+    "/analytics/config",
+    { enabled: false, ignoreAdmins: true, respectDnt: true, trackVitals: false, trackEvents: false },
+    60,
+  )
 }
 
 // Everything fetched here carries the "cms" tag so admin mutations can
@@ -371,6 +397,47 @@ export async function getNavigation() {
 
 export async function getPage(key: string) {
   return cmsFetch<PageContent | null>(`/pages/${key}`, fallbackPages[key] ?? null)
+}
+
+// Global site document edited on the admin Site Settings page (backend
+// settings key "site"); feeds the footer and other shared chrome.
+export type SiteSettings = {
+  tagline: string
+  footerDescription: string
+  email: string
+  phone: string
+  fax: string
+  address: string
+  socials: { label: string; url: string }[]
+}
+
+export const fallbackSiteSettings: SiteSettings = {
+  tagline: "Electrical · Automation · Fire System",
+  footerDescription:
+    "Indonesian electrical, industrial automation, and fire alarm services company — delivering reliable engineering across power, oil & gas, manufacturing, and infrastructure since 2013.",
+  email: "info@multidayamitra.co.id",
+  phone: "+62 31 592 1256",
+  fax: "+62 31 591 7845",
+  address: "Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, East Java, Indonesia",
+  socials: [],
+}
+
+export async function getSiteSettings(): Promise<SiteSettings> {
+  const response = await cmsFetch<{ site?: Partial<SiteSettings> } | null>("/settings", null)
+  const site = response?.site ?? {}
+  return {
+    tagline: site.tagline ?? fallbackSiteSettings.tagline,
+    footerDescription: site.footerDescription ?? fallbackSiteSettings.footerDescription,
+    email: site.email ?? fallbackSiteSettings.email,
+    phone: site.phone ?? fallbackSiteSettings.phone,
+    fax: site.fax ?? fallbackSiteSettings.fax,
+    address: site.address ?? fallbackSiteSettings.address,
+    socials: Array.isArray(site.socials)
+      ? site.socials.filter(
+          (item) => item && typeof item.label === "string" && typeof item.url === "string" && item.label && item.url,
+        )
+      : fallbackSiteSettings.socials,
+  }
 }
 
 export type PageFilters = {
@@ -756,6 +823,9 @@ export async function resolveSectionData(
       .filter((section) => section.type === "contentGrid")
       .map((section) => String(section.props.source ?? "services")),
   )
+  if (sections.some((section) => section.type === "servicesShowcase")) {
+    sources.add("services")
+  }
 
   const [services, products, news] = await Promise.all([
     sources.has("services") ? getServices() : Promise.resolve([]),

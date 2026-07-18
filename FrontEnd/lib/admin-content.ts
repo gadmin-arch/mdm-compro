@@ -11,6 +11,7 @@ type TextBlock = {
   type?: string
   text?: string
   items?: string[]
+  html?: string
 }
 
 export function blocksFromText(value: string) {
@@ -21,6 +22,42 @@ export function blocksFromText(value: string) {
     .map((text) => ({ type: "paragraph", text }))
 
   return { blocks }
+}
+
+// Rich-text editor output is stored as a single html block inside the same
+// { blocks } envelope, so old plain-text content keeps rendering unchanged.
+export function blocksFromHtml(html: string) {
+  const trimmed = html.trim()
+  const isEmpty = !trimmed || trimmed === "<p></p>"
+  return { blocks: isEmpty ? [] : [{ type: "html", html: trimmed }] }
+}
+
+// Initial editor content for a record saved before the rich-text editor
+// existed: legacy blocks are converted to simple HTML so they stay editable.
+export function htmlFromBlocks(value: unknown): string {
+  if (!isBlockContent(value)) return ""
+  return value.blocks
+    .map((block) => {
+      if (block.type === "html") return block.html ?? ""
+      if (block.type === "heading") return `<h2>${escapeHtml(block.text ?? "")}</h2>`
+      if (block.type === "quote") return `<blockquote><p>${escapeHtml(block.text ?? "")}</p></blockquote>`
+      if (block.type === "list") {
+        const items = (block.items ?? []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")
+        return items ? `<ul>${items}</ul>` : ""
+      }
+      return block.text ? `<p>${escapeHtml(block.text)}</p>` : ""
+    })
+    .filter(Boolean)
+    .join("")
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;")
 }
 
 export function textFromBlocks(value: unknown) {

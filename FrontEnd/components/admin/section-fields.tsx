@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons"
+import { RichTextEditor } from "@/components/admin/rich-text-editor"
 import { SECTION_ICON_NAMES, type FieldDef } from "@/lib/sections"
 
 const selectClass =
@@ -122,6 +123,12 @@ function FieldControl({
       )
     case "icon":
       return <IconField label={def.label} value={asString(value)} onChange={onChange} />
+    case "richtext":
+      return (
+        <LabeledField label={def.label}>
+          <RichTextEditor value={asString(value)} onChange={(html) => onChange(html)} />
+        </LabeledField>
+      )
     case "image":
       return <ImageField label={def.label} value={asString(value)} onChange={onChange} />
     case "list":

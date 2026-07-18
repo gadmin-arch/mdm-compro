@@ -69,6 +69,10 @@ func (s S3Storage) GetObject(ctx context.Context, objectKey string) (io.ReadSeek
 	}, nil
 }
 
+func (s S3Storage) Remove(ctx context.Context, objectKey string) error {
+	return s.client.RemoveObject(ctx, s.bucket, objectKey, minio.RemoveObjectOptions{})
+}
+
 func (s S3Storage) PresignedPutURL(ctx context.Context, objectKey string, expires time.Duration) (*url.URL, error) {
 	return s.client.PresignedPutObject(ctx, s.bucket, objectKey, expires)
 }

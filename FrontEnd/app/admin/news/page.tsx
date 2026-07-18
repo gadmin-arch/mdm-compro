@@ -1,4 +1,5 @@
 import { AdminShell } from "@/components/admin-shell"
+import { AdminPagination } from "@/components/admin/admin-pagination"
 import { ResourceToolbar, resourceMessage } from "@/components/admin/resource-toolbar"
 import { AdminResourceTable } from "@/components/admin/resource-table"
 import { AdminApiError, adminFetch, type AdminNewsResponse } from "@/lib/admin-api"
@@ -7,12 +8,13 @@ import { deleteNewsAction } from "../content-actions"
 export default async function AdminNewsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string; deleted?: string; error?: string }>
+  searchParams: Promise<{ q?: string; status?: string; page?: string; deleted?: string; error?: string }>
 }) {
   const query = await searchParams
   const q = query.q?.trim() ?? ""
   const status = query.status?.trim() ?? ""
-  const params = new URLSearchParams({ perPage: "50" })
+  const pageNum = Math.max(1, Number(query.page) || 1)
+  const params = new URLSearchParams({ perPage: "20", page: String(pageNum) })
   if (q) params.set("q", q)
   if (status) params.set("status", status)
 
@@ -44,6 +46,15 @@ export default async function AdminNewsPage({
           meta: item.category || item.excerpt,
         }))}
       />
+      {response && (
+        <AdminPagination
+          basePath="/admin/news"
+          page={response.pagination.page}
+          totalPages={response.pagination.totalPages}
+          total={response.pagination.total}
+          query={{ q, status }}
+        />
+      )}
     </AdminShell>
   )
 }

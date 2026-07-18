@@ -1,8 +1,13 @@
 openapi: 3.1.0
 info:
   title: PT Multi Daya Mitra Company Profile CMS API
-  version: 1.0.0
+  version: 1.2.0
   summary: REST API for the public corporate website and protected CMS.
+  description: |
+    Sign-in is two-step: POST /auth/login verifies the password and returns
+    either tokens (2FA disabled or a valid trusted-device token was presented)
+    or an OTP challenge completed via POST /auth/verify-otp. Analytics
+    collection is first-party and feature-flagged via the "analytics" setting.
 servers:
   - url: http://localhost:8080/api/v1
     description: Local Docker API
@@ -11,6 +16,11 @@ tags:
   - name: Public
   - name: Auth
   - name: Admin
+  - name: Profile
+  - name: Settings
+  - name: Media
+  - name: Analytics
+  - name: Redirects
 paths:
   /public/navigation:
     get:
@@ -179,10 +189,89 @@ paths:
                 $ref: "#/components/schemas/Contact"
         "400":
           $ref: "#/components/responses/ValidationError"
+  /public/settings:
+    get:
+      tags: [Public]
+      summary: Get public site settings (whitelisted "site" document only).
+      responses:
+        "200":
+          description: Site settings document.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  site:
+                    type: object
+                    additionalProperties: true
+  /public/analytics/config:
+    get:
+      tags: [Analytics]
+      summary: Analytics feature flags for the browser tracker.
+      responses:
+        "200":
+          description: Collection flags.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsConfig"
+  /public/analytics/collect:
+    post:
+      tags: [Analytics]
+      summary: Ingest a batch of tracker events (non-blocking, buffered).
+      description: |
+        Always answers before any database work. Bots (user-agent), admin
+        sessions, and Do-Not-Track requests are dropped server-side. Content
+        type may be text/plain so sendBeacon avoids a CORS preflight.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyticsCollectInput"
+      responses:
+        "202":
+          description: Accepted (or silently dropped by policy).
+        "204":
+          description: Analytics is disabled.
+        "429":
+          description: Rate limited.
+  /public/redirects/resolve:
+    get:
+      tags: [Redirects]
+      summary: Resolve a branded short-link slug (hot path, memory-cached).
+      description: |
+        Called by the frontend middleware for company.com/{slug}. The visitor's
+        forwarded headers feed asynchronous scan analytics; the response never
+        waits for logging. The middleware issues the actual 301/302.
+      parameters:
+        - name: slug
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Live target.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  found: { type: boolean }
+                  destination: { type: string }
+                  redirectType: { type: integer, enum: [301, 302] }
+        "404":
+          description: Unknown, inactive, or expired slug ({ found:false }).
   /auth/login:
     post:
       tags: [Auth]
-      summary: Authenticate CMS user and return access/refresh tokens.
+      summary: "Step 1: verify email + password."
+      description: |
+        Returns status "ok" with tokens when 2FA is disabled or a valid
+        trusted-device token (matching the stored device fingerprint) is
+        presented; otherwise opens an email-code challenge and returns
+        status "otp_required".
       requestBody:
         required: true
         content:
@@ -191,7 +280,120 @@ paths:
               $ref: "#/components/schemas/LoginInput"
       responses:
         "200":
-          description: Tokens.
+          description: Tokens or a pending OTP challenge.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResult"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /auth/verify-otp:
+    post:
+      tags: [Auth]
+      summary: "Step 3: exchange the emailed code for a session."
+      description: |
+        Codes are single-use and expire per the security settings (default 5
+        minutes). Wrong attempts are counted per challenge and lock it once
+        the budget is spent. With trustDevice=true the response includes an
+        opaque trusted-device token to store in an HTTP-only cookie.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyOTPInput"
+      responses:
+        "200":
+          description: Session issued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyOTPResult"
+        "401":
+          description: Invalid, expired, or already-used code.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /auth/resend-otp:
+    post:
+      tags: [Auth]
+      summary: Re-send a fresh code for a pending challenge.
+      description: Enforces a cooldown and a per-challenge resend cap; a new code replaces the old one.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challengeId]
+              properties:
+                challengeId:
+                  type: string
+                  format: uuid
+      responses:
+        "200":
+          description: New code sent; challenge details refreshed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResult"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /auth/forgot-password:
+    post:
+      tags: [Auth]
+      summary: Request a password reset code by email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        "202":
+          description: Always accepted (never reveals whether the account exists).
+  /auth/reset-password:
+    post:
+      tags: [Auth]
+      summary: Set a new password using the emailed reset code.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyCodeInput"
+      responses:
+        "200":
+          description: Password updated.
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+  /auth/verify-invite:
+    post:
+      tags: [Auth]
+      summary: Activate an invited account with the emailed code and a new password.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyCodeInput"
+      responses:
+        "200":
+          description: Account activated; tokens issued.
           content:
             application/json:
               schema:
@@ -252,6 +454,484 @@ paths:
                     type: object
                     additionalProperties:
                       type: integer
+  /admin/navigation:
+    get:
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      summary: Get the editable menu tree with its version.
+      responses:
+        "200":
+          description: Menu items + version for optimistic locking.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NavigationMenu"
+    put:
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      summary: Replace the menu tree (two levels max, validated + normalized).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NavigationMenu"
+      responses:
+        "200":
+          description: Saved menu.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NavigationMenu"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /admin/settings:
+    get:
+      tags: [Settings]
+      security:
+        - bearerAuth: []
+      summary: List all settings values keyed by name.
+      responses:
+        "200":
+          description: Map of setting key to raw JSON value.
+  /admin/settings/{key}:
+    get:
+      tags: [Settings]
+      security:
+        - bearerAuth: []
+      summary: Get one setting with its version (missing keys return {} at version 0).
+      parameters:
+        - $ref: "#/components/parameters/SettingKey"
+      responses:
+        "200":
+          description: Setting document.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Setting"
+    put:
+      tags: [Settings]
+      security:
+        - bearerAuth: []
+      summary: Upsert an editable setting under optimistic locking.
+      description: "Editable keys: site, analytics, security. The navigation key has its own endpoint and is rejected here."
+      parameters:
+        - $ref: "#/components/parameters/SettingKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [value, version]
+              properties:
+                value:
+                  type: object
+                  additionalProperties: true
+                version:
+                  type: integer
+                  description: 0 to create; current version to update.
+      responses:
+        "200":
+          description: Saved setting.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Setting"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /admin/media:
+    get:
+      tags: [Media]
+      security:
+        - bearerAuth: []
+      summary: List uploaded media files, newest first.
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Filter by file name.
+      responses:
+        "200":
+          description: Paginated media.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaList"
+  /admin/media/upload:
+    post:
+      tags: [Media]
+      security:
+        - bearerAuth: []
+      summary: Upload a file (multipart form, field "file", max 25MB).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Stored file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MediaFile"
+  /admin/media/{id}:
+    delete:
+      tags: [Media]
+      security:
+        - bearerAuth: []
+      summary: Permanently delete a media file (row + stored object).
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      responses:
+        "204":
+          description: Deleted.
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /admin/profile/devices:
+    get:
+      tags: [Profile]
+      security:
+        - bearerAuth: []
+      summary: List the signed-in user's trusted devices.
+      responses:
+        "200":
+          description: Active trusted devices.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TrustedDevice"
+  /admin/profile/devices/{id}:
+    delete:
+      tags: [Profile]
+      security:
+        - bearerAuth: []
+      summary: Revoke one of the user's own trusted devices.
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      responses:
+        "204":
+          description: Revoked.
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /admin/profile/devices/revoke-all:
+    post:
+      tags: [Profile]
+      security:
+        - bearerAuth: []
+      summary: Revoke all of the user's trusted devices.
+      responses:
+        "204":
+          description: Revoked.
+  /admin/profile/login-history:
+    get:
+      tags: [Profile]
+      security:
+        - bearerAuth: []
+      summary: Recent sign-in events for the current user, including failures.
+      responses:
+        "200":
+          description: Audit-log entries (entity_type=auth).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LoginHistoryEntry"
+  /admin/analytics/dashboard:
+    get:
+      tags: [Analytics]
+      security:
+        - bearerAuth: []
+      summary: Full analytics dashboard payload for a date range (cached ~60s).
+      parameters:
+        - $ref: "#/components/parameters/AnalyticsRange"
+        - name: interval
+          in: query
+          schema:
+            type: string
+            enum: [hour, day, week, month, year]
+            default: day
+        - name: device
+          in: query
+          schema: { type: string, enum: [desktop, mobile, tablet] }
+        - name: country
+          in: query
+          schema: { type: string }
+        - name: page
+          in: query
+          schema: { type: string }
+        - name: source
+          in: query
+          schema: { type: string, enum: [direct, organic, referral, social] }
+      responses:
+        "200":
+          description: Overview, timeseries, breakdowns, pages, events, vitals, API stats.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsDashboard"
+  /admin/analytics/realtime:
+    get:
+      tags: [Analytics]
+      security:
+        - bearerAuth: []
+      summary: Live picture (last 5 minutes) from in-memory state.
+      responses:
+        "200":
+          description: Active visitors, current pages, recent events.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsRealtime"
+  /admin/analytics/admin-activity:
+    get:
+      tags: [Analytics]
+      security:
+        - bearerAuth: []
+      summary: Admin usage counters (logins, failed logins, content changes) + recent audit rows.
+      parameters:
+        - $ref: "#/components/parameters/AnalyticsRange"
+      responses:
+        "200":
+          description: Admin activity summary.
+  /admin/analytics/options:
+    get:
+      tags: [Analytics]
+      security:
+        - bearerAuth: []
+      summary: Filter dropdown options (recent paths and countries).
+      responses:
+        "200":
+          description: Options.
+  /admin/analytics/export:
+    get:
+      tags: [Analytics]
+      security:
+        - bearerAuth: []
+      summary: Export the dashboard as CSV (one report) or XLSX (full workbook).
+      parameters:
+        - $ref: "#/components/parameters/AnalyticsRange"
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [csv, xlsx]
+            default: csv
+        - name: report
+          in: query
+          description: CSV only.
+          schema:
+            type: string
+            enum: [summary, timeseries, pages, events, breakdowns]
+            default: summary
+      responses:
+        "200":
+          description: File download (text/csv or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet).
+  /admin/redirects:
+    get:
+      tags: [Redirects]
+      security:
+        - bearerAuth: []
+      summary: List short links (q search; status active|inactive|expired).
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PerPage"
+        - name: q
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string, enum: [active, inactive, expired] }
+      responses:
+        "200":
+          description: Paginated redirects with lifetime scan totals.
+    post:
+      tags: [Redirects]
+      security:
+        - bearerAuth: []
+      summary: Create a short link.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RedirectInput"
+      responses:
+        "201":
+          description: Created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Redirect"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /admin/redirects/dashboard:
+    get:
+      tags: [Redirects]
+      security:
+        - bearerAuth: []
+      summary: Top scanned links, scan trends, recent scans, geo distribution.
+      parameters:
+        - $ref: "#/components/parameters/AnalyticsRange"
+      responses:
+        "200":
+          description: Dashboard payload.
+  /admin/redirects/export:
+    get:
+      tags: [Redirects]
+      security:
+        - bearerAuth: []
+      summary: Export every live short link (with scan totals) as CSV.
+      responses:
+        "200":
+          description: CSV download.
+  /admin/redirects/bulk-delete:
+    post:
+      tags: [Redirects]
+      security:
+        - bearerAuth: []
+      summary: Archive up to 200 short links at once.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids:
+                  type: array
+                  items: { type: string, format: uuid }
+      responses:
+        "200":
+          description: "{ archived: n }"
+  /admin/redirects/{id}:
+    get:
+      tags: [Redirects]
+      security:
+        - bearerAuth: []
+      summary: Get one short link.
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      responses:
+        "200":
+          description: Redirect.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Redirect"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags: [Redirects]
+      security:
+        - bearerAuth: []
+      summary: Update a short link (optimistic locking).
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RedirectInput"
+      responses:
+        "200":
+          description: Updated.
+        "409":
+          $ref: "#/components/responses/Conflict"
+    delete:
+      tags: [Redirects]
+      security:
+        - bearerAuth: []
+      summary: Archive a short link (stops redirecting; scan history kept).
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+        - name: version
+          in: query
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Archived.
+        "409":
+          $ref: "#/components/responses/Conflict"
+  /admin/redirects/{id}/duplicate:
+    post:
+      tags: [Redirects]
+      security:
+        - bearerAuth: []
+      summary: Copy a short link as an inactive draft with a derived slug.
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+      responses:
+        "201":
+          description: The copy.
+  /admin/redirects/{id}/stats:
+    get:
+      tags: [Redirects]
+      security:
+        - bearerAuth: []
+      summary: Scan analytics for one link (totals, uniques, trend, breakdowns, history).
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+        - $ref: "#/components/parameters/AnalyticsRange"
+      responses:
+        "200":
+          description: Redirect + stats + short URL.
+  /admin/redirects/{id}/qr:
+    get:
+      tags: [Redirects]
+      security:
+        - bearerAuth: []
+      summary: QR code for the short URL (level-H error correction, optional centered logo).
+      parameters:
+        - $ref: "#/components/parameters/UUID"
+        - name: format
+          in: query
+          schema: { type: string, enum: [png, svg, pdf], default: png }
+        - name: size
+          in: query
+          schema: { type: integer, enum: [256, 512, 1024, 2048, 4096], default: 1024 }
+        - name: bg
+          in: query
+          schema: { type: string, enum: [white, transparent], default: white }
+          description: PDF is always white.
+        - name: logo
+          in: query
+          schema: { type: string, enum: ["0", "1"], default: "1" }
+        - name: download
+          in: query
+          schema: { type: string, enum: ["0", "1"] }
+          description: 1 = attachment disposition, else inline.
+      responses:
+        "200":
+          description: image/png, image/svg+xml, or application/pdf (100×100 mm page).
   /admin/{module}:
     get:
       tags: [Admin]
@@ -317,7 +997,22 @@ components:
       required: true
       schema:
         type: string
-        enum: [about, contact]
+        pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
+        description: "System pages: home, about, contact, services, products, news, career — plus any admin-created page slug."
+    SettingKey:
+      name: key
+      in: path
+      required: true
+      schema:
+        type: string
+        examples: [site, analytics, security]
+    AnalyticsRange:
+      name: from
+      in: query
+      description: "Inclusive start date (YYYY-MM-DD, UTC). Pair with `to` (inclusive end date). Defaults to the last 30 days."
+      schema:
+        type: string
+        format: date
     Slug:
       name: slug
       in: path
@@ -360,7 +1055,8 @@ components:
       required: true
       schema:
         type: string
-        enum: [users, roles, permissions, pages, services, products, news, careers, media, seo-meta, contacts, settings]
+        enum: [users, pages, services, products, news, careers, contacts]
+        description: "roles, permissions, and seo-meta remain reserved (501); settings, media, navigation, and analytics have dedicated paths above."
   schemas:
     SEO:
       type: object
@@ -597,6 +1293,394 @@ components:
         password:
           type: string
           format: password
+        trustedToken:
+          type: string
+          description: Opaque trusted-device token (from the HTTP-only cookie); skips the OTP step when valid.
+        fingerprint:
+          type: string
+          description: Coarse client-computed device hash the trust token is bound to.
+    LoginResult:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok, otp_required]
+        tokens:
+          $ref: "#/components/schemas/AuthTokens"
+        challengeId:
+          type: string
+          format: uuid
+        maskedEmail:
+          type: string
+          examples: ["ir••••@gmail.com"]
+        codeLength:
+          type: integer
+        expiresAt:
+          type: string
+          format: date-time
+        resendCooldownSec:
+          type: integer
+        trustDays:
+          type: integer
+    VerifyOTPInput:
+      type: object
+      required: [challengeId, code]
+      properties:
+        challengeId:
+          type: string
+          format: uuid
+        code:
+          type: string
+        trustDevice:
+          type: boolean
+          description: Mint a trusted-device token so this browser skips the OTP step.
+        fingerprint:
+          type: string
+    VerifyOTPResult:
+      type: object
+      required: [tokens]
+      properties:
+        tokens:
+          $ref: "#/components/schemas/AuthTokens"
+        trustToken:
+          type: string
+          description: Store in a Secure, HTTP-only cookie; never persisted server-side in plain form.
+        trustExpiresAt:
+          type: string
+          format: date-time
+    VerifyCodeInput:
+      type: object
+      required: [email, code, password]
+      properties:
+        email:
+          type: string
+          format: email
+        code:
+          type: string
+        password:
+          type: string
+          format: password
+    TrustedDevice:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+          examples: ["Chrome on macOS"]
+        ip:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        lastUsedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+    LoginHistoryEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        action:
+          type: string
+          examples: ["auth.login_success", "auth.login_failed", "auth.otp_verified"]
+        ip:
+          type: string
+        userAgent:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    Setting:
+      type: object
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+        value:
+          type: object
+          additionalProperties: true
+        version:
+          type: integer
+        updatedAt:
+          type: string
+          format: date-time
+    MenuItem:
+      type: object
+      required: [id, label, kind, visible]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        href:
+          type: string
+        kind:
+          type: string
+          enum: [system, page, custom]
+        pageKey:
+          type: string
+        auto:
+          type: string
+          enum: [services, products, ""]
+          description: When set, the public dropdown auto-fills from that content tree.
+        visible:
+          type: boolean
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItem"
+    NavigationMenu:
+      type: object
+      required: [items, version]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/MenuItem"
+        version:
+          type: integer
+    MediaFile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        objectKey:
+          type: string
+        url:
+          type: string
+        mimeType:
+          type: string
+        sizeBytes:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+    MediaList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaFile"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+    AnalyticsConfig:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        ignoreAdmins:
+          type: boolean
+        respectDnt:
+          type: boolean
+        trackVitals:
+          type: boolean
+        trackEvents:
+          type: boolean
+        retentionDays:
+          type: integer
+    AnalyticsCollectInput:
+      type: object
+      required: [visitorId, sessionId, events]
+      properties:
+        visitorId:
+          type: string
+          description: Anonymous random id from localStorage (no PII).
+        sessionId:
+          type: string
+        newVisitor:
+          type: boolean
+        device:
+          type: string
+          enum: [desktop, mobile, tablet]
+        browser:
+          type: string
+        os:
+          type: string
+        screen:
+          type: string
+          examples: ["1920x1080"]
+        language:
+          type: string
+        events:
+          type: array
+          maxItems: 50
+          items:
+            type: object
+            required: [type, path]
+            properties:
+              type:
+                type: string
+                enum: [pageview, pageleave, event, vital, error]
+              name:
+                type: string
+                description: Event name (cta_click, download_file, ...) or vital metric (LCP, CLS, ...).
+              path:
+                type: string
+              referrer:
+                type: string
+              value:
+                type: number
+                description: Dwell ms (pageleave) or metric value (vital).
+              scrollPct:
+                type: integer
+              ts:
+                type: integer
+                description: Epoch milliseconds (clamped server-side to ±10 minutes).
+    AnalyticsDashboard:
+      type: object
+      description: One cached payload backing the whole admin dashboard.
+      properties:
+        overview:
+          $ref: "#/components/schemas/AnalyticsOverview"
+        previous:
+          $ref: "#/components/schemas/AnalyticsOverview"
+        interval:
+          type: string
+        timeSeries:
+          type: array
+          items:
+            type: object
+            properties:
+              bucket: { type: string, format: date-time }
+              views: { type: integer }
+              sessions: { type: integer }
+              visitors: { type: integer }
+        breakdowns:
+          type: object
+          description: Keyed by dimension (source, device, browser, os, screen, country, city, language).
+          additionalProperties:
+            type: array
+            items:
+              type: object
+              properties:
+                value: { type: string }
+                sessions: { type: integer }
+        pages:
+          type: array
+          items:
+            type: object
+            properties:
+              path: { type: string }
+              views: { type: integer }
+              uniqueViews: { type: integer }
+              avgTimeSec: { type: number }
+              avgScroll: { type: number }
+              entries: { type: integer }
+              exits: { type: integer }
+              exitRate: { type: number }
+              engagement: { type: number }
+        entryPages:
+          type: array
+          items:
+            type: object
+        exitPages:
+          type: array
+          items:
+            type: object
+        events:
+          type: array
+          items:
+            type: object
+            properties:
+              name: { type: string }
+              count: { type: integer }
+        vitals:
+          type: array
+          items:
+            type: object
+            properties:
+              metric: { type: string }
+              avg: { type: number }
+              max: { type: number }
+              samples: { type: integer }
+              rating: { type: string, enum: [good, needs-improvement, poor, ""] }
+        slowPages:
+          type: array
+          items:
+            type: object
+        api:
+          type: object
+          properties:
+            requests: { type: integer }
+            errors: { type: integer }
+            avgMs: { type: number }
+        clientErrors:
+          type: integer
+    AnalyticsOverview:
+      type: object
+      properties:
+        visitors: { type: integer }
+        uniqueVisitors: { type: integer }
+        sessions: { type: integer }
+        pageViews: { type: integer }
+        newVisitors: { type: integer }
+        returningVisitors: { type: integer }
+        avgSessionSec: { type: number }
+        bounceRate: { type: number }
+    Redirect:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        slug: { type: string }
+        destination: { type: string }
+        description: { type: string }
+        redirectType: { type: integer, enum: [301, 302] }
+        isActive: { type: boolean }
+        expiresAt: { type: [string, "null"], format: date-time }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        version: { type: integer }
+        totalScans: { type: integer, description: Lifetime scans from hourly rollups. }
+    RedirectInput:
+      type: object
+      required: [name, slug, destination, redirectType]
+      properties:
+        name: { type: string }
+        slug:
+          type: string
+          pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
+          description: Must not collide with site routes, system pages, or CMS page keys.
+        destination: { type: string, format: uri }
+        description: { type: string }
+        redirectType: { type: integer, enum: [301, 302] }
+        isActive: { type: boolean }
+        expiresAt: { type: [string, "null"], format: date-time }
+        version: { type: integer, description: Required on update. }
+    AnalyticsRealtime:
+      type: object
+      properties:
+        activeVisitors:
+          type: integer
+        pages:
+          type: array
+          items:
+            type: object
+            properties:
+              path: { type: string }
+              sessions: { type: integer }
+        events:
+          type: array
+          items:
+            type: object
+            properties:
+              at: { type: string, format: date-time }
+              type: { type: string }
+              name: { type: string }
+              path: { type: string }
+              country: { type: string }
+              device: { type: string }
     AuthTokens:
       type: object
       properties:
@@ -655,6 +1739,16 @@ components:
             $ref: "#/components/schemas/Error"
     Conflict:
       description: Slug conflict or optimistic locking conflict.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    RateLimited:
+      description: Too many attempts; Retry-After header carries the wait in seconds.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
       content:
         application/json:
           schema:

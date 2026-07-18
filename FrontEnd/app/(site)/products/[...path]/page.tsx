@@ -6,10 +6,12 @@ import { RichText } from "@/components/cms/rich-text"
 import { CtaBanner } from "@/components/cta-banner"
 import { PageHero } from "@/components/page-hero"
 import { Button } from "@/components/ui/button"
+import { ContentList } from "@/components/cms/content-list"
 import { flattenContent, getProduct, getProducts } from "@/lib/cms"
 
 type Props = {
   params: Promise<{ path: string[] }>
+  searchParams: Promise<{ page?: string }>
 }
 
 export async function generateStaticParams() {
@@ -27,11 +29,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ProductDetailPage({ params }: Props) {
+export default async function ProductDetailPage({ params, searchParams }: Props) {
   const path = (await params).path.join("/")
   const product = await getProduct(path)
   if (!product) notFound()
   const specs = Object.entries(product.specs ?? {})
+
+  const query = await searchParams
+  const page = parseInt(query.page || "1", 10)
+  const childProducts = await getProducts({ category: product.slug, page, limit: 6 })
+  const actualChildren = childProducts.data.filter(p => p.id !== product.id)
 
   return (
     <>
@@ -71,6 +78,26 @@ export default async function ProductDetailPage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      {actualChildren.length > 0 && (
+        <section className="border-b border-border/60 bg-background">
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="mb-10 max-w-2xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Sub-Products
+              </p>
+              <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                {product.title} Solutions
+              </h2>
+            </div>
+            
+            <div className="mt-8">
+              <ContentList items={actualChildren} basePath="/products" empty="No sub-products found." />
+            </div>
+          </div>
+        </section>
+      )}
+
       <CtaBanner
         title="Need product availability or a datasheet?"
         description="Send us your requirement and our product team will respond with specifications and next steps."

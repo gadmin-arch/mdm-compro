@@ -30,6 +30,15 @@ func (h PublicHandler) Page(w http.ResponseWriter, r *http.Request) {
 	respond(w, data, err)
 }
 
+func (h PublicHandler) Settings(w http.ResponseWriter, r *http.Request) {
+	data, err := h.service.SiteSettings(r.Context())
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	JSON(w, http.StatusOK, map[string]any{"site": data})
+}
+
 func (h PublicHandler) Services(w http.ResponseWriter, r *http.Request) {
 	search := r.URL.Query().Get("search")
 	category := r.URL.Query().Get("category")

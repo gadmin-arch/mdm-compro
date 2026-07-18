@@ -38,7 +38,7 @@ export function CtaBanner({
               </Button>
             )}
             <Button asChild size="lg">
-              <Link href={primaryHref}>
+              <Link href={primaryHref} data-analytics-event="cta_click" data-analytics-label={primaryLabel}>
                 {primaryLabel}
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Link>

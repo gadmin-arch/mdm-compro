@@ -104,6 +104,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
     if (response?.ok) {
       event.currentTarget.reset()
       setStatus("success")
+      window.mdmTrack?.("contact_form_submit")
       return
     }
     setStatus("error")

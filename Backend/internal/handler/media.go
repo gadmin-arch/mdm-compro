@@ -74,6 +74,38 @@ func (h MediaHandler) Upload(w http.ResponseWriter, r *http.Request) {
 	JSON(w, http.StatusCreated, media)
 }
 
+func (h MediaHandler) List(w http.ResponseWriter, r *http.Request) {
+	data, err := h.repo.ListMedia(
+		r.Context(),
+		intQuery(r, "page", 1),
+		intQuery(r, "perPage", 24),
+		r.URL.Query().Get("q"),
+	)
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	JSON(w, http.StatusOK, data)
+}
+
+func (h MediaHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	media, err := h.repo.DeleteMedia(r.Context(), chi.URLParam(r, "id"))
+	if errors.Is(err, repository.ErrNotFound) {
+		Error(w, http.StatusNotFound, "not_found", "Media was not found.")
+		return
+	}
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
+	// Best-effort: the row is already gone, so an orphaned object only wastes
+	// storage — it can never be served again once the DB reference is removed.
+	if h.store != nil && h.store.Ready() {
+		_ = h.store.Remove(r.Context(), media.ObjectKey)
+	}
+	JSON(w, http.StatusNoContent, nil)
+}
+
 func (h MediaHandler) Serve(w http.ResponseWriter, r *http.Request) {
 	if h.store == nil || !h.store.Ready() {
 		Error(w, http.StatusServiceUnavailable, "storage_unavailable", "Media storage is not configured.")

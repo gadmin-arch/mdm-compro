@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/analytics"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/config"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/db"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/server"
@@ -41,7 +42,12 @@ func main() {
 	}
 	defer pool.Close()
 
-	router := server.NewRouter(cfg, logger, pool)
+	// Analytics ingest pipeline: buffers events in memory, writes in batches,
+	// and rolls raw rows up into hourly aggregates in the background.
+	collector := analytics.New(pool, logger)
+	collector.Start(ctx)
+
+	router := server.NewRouter(cfg, logger, pool, collector)
 	httpServer := &http.Server{
 		Addr:              cfg.HTTPAddr,
 		Handler:           router,
@@ -64,7 +70,10 @@ func main() {
 	defer cancel()
 	if err := httpServer.Shutdown(shutdownCtx); err != nil {
 		logger.Error("api shutdown failed", "error", err)
+		collector.Stop()
 		os.Exit(1)
 	}
+	// After the server stops accepting requests, flush buffered analytics.
+	collector.Stop()
 	logger.Info("api stopped")
 }

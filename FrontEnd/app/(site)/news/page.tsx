@@ -2,14 +2,22 @@ import type { Metadata } from "next"
 import { CtaBanner } from "@/components/cta-banner"
 import { NewsList } from "@/components/news-list"
 import { PageHero } from "@/components/page-hero"
+import { SectionRenderer } from "@/components/cms/section-renderer"
 import { FilterControls } from "@/components/filter-controls"
 import { Pagination } from "@/components/cms/pagination"
-import { getNews } from "@/lib/cms"
+import { getNews, getPage, resolveSectionData } from "@/lib/cms"
+import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 
-export const metadata: Metadata = {
-  title: "News & Insights — PT Multi Daya Mitra",
-  description:
-    "Latest project milestones, company updates, and engineering insights from PT Multi Daya Mitra.",
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPage("news")
+  return {
+    title: page?.seo?.title || "News & Insights — PT Multi Daya Mitra",
+    description:
+      page?.seo?.description ||
+      "Latest project milestones, company updates, and engineering insights from PT Multi Daya Mitra.",
+    alternates: page?.seo?.canonical ? { canonical: page.seo.canonical } : undefined,
+    robots: page?.seo?.noIndex ? { index: false, follow: false } : undefined,
+  }
 }
 
 type Props = {
@@ -67,6 +75,40 @@ export default async function NewsPage({ searchParams }: Props) {
     publishedDate,
   })
 
+  // The automatic news feed always renders — CMS sections wrap around it at
+  // the `listing` marker, they can never remove it.
+  const listingBlock = (
+    <>
+      <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8 bg-background animate-fade-in">
+        <FilterControls
+          moduleType="news"
+          categories={categories}
+          years={years}
+        />
+      </div>
+      <NewsList 
+        initialNews={news} 
+        searchParams={{ search, category, sort, featured, publishedDate }} 
+      />
+    </>
+  )
+
+  // When the CMS "news" page has builder sections, they control everything
+  // around the feed. Otherwise keep the built-in layout.
+  const cmsPage = await getPage("news")
+  const sections = cmsPage?.status === "published" ? sectionsFromContent(cmsPage.content) : []
+  if (sections.length > 0) {
+    const { before, after } = splitSectionsAtListing(sections)
+    const data = await resolveSectionData(sections)
+    return (
+      <>
+        <SectionRenderer sections={before} data={data} />
+        {listingBlock}
+        <SectionRenderer sections={after} data={data} />
+      </>
+    )
+  }
+
   return (
     <>
       <PageHero
@@ -75,17 +117,7 @@ export default async function NewsPage({ searchParams }: Props) {
         description="Stay current on what our engineers are delivering across power, oil & gas, manufacturing, and infrastructure projects."
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "News" }]}
       />
-      <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8 bg-background animate-fade-in">
-        <FilterControls
-          moduleType="news"
-          categories={categories}
-          years={years}
-        />
-      </div>
-      <NewsList news={news} />
-      <div className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8 bg-background">
-        <Pagination page={news.pagination.page} totalPages={news.pagination.totalPages} />
-      </div>
+      {listingBlock}
       <CtaBanner
         title="Have a project worth talking about?"
         description="We work with industrial owners, EPC partners, and infrastructure operators across Indonesia. Let's talk about your next milestone."

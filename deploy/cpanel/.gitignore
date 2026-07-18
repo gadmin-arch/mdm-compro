@@ -1,0 +1,8 @@
+# Artefak build (regenerasi lewat build-backend.sh / build-frontend.sh)
+mdm-api
+frontend-dist/
+
+# Rahasia & runtime — jangan pernah di-commit
+.env
+*.log
+api.pid

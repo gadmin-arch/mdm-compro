@@ -3,14 +3,22 @@ import { CareerBenefits } from "@/components/career-benefits"
 import { CareerOpenings } from "@/components/career-openings"
 import { CtaBanner } from "@/components/cta-banner"
 import { PageHero } from "@/components/page-hero"
+import { SectionRenderer } from "@/components/cms/section-renderer"
 import { FilterControls } from "@/components/filter-controls"
 import { Pagination } from "@/components/cms/pagination"
-import { getCareers, employmentTypeLabel } from "@/lib/cms"
+import { getCareers, getPage, employmentTypeLabel, resolveSectionData } from "@/lib/cms"
+import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 
-export const metadata: Metadata = {
-  title: "Career — PT Multi Daya Mitra",
-  description:
-    "Join PT Multi Daya Mitra. Open roles in electrical engineering, automation, project management, and operations across Indonesia.",
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPage("career")
+  return {
+    title: page?.seo?.title || "Career — PT Multi Daya Mitra",
+    description:
+      page?.seo?.description ||
+      "Join PT Multi Daya Mitra. Open roles in electrical engineering, automation, project management, and operations across Indonesia.",
+    alternates: page?.seo?.canonical ? { canonical: page.seo.canonical } : undefined,
+    robots: page?.seo?.noIndex ? { index: false, follow: false } : undefined,
+  }
 }
 
 type Props = {
@@ -54,14 +62,10 @@ export default async function CareerPage({ searchParams }: Props) {
     limit: 10,
   })
 
-  return (
+  // The benefits grid + automatic openings list always render — CMS sections
+  // wrap around them at the `listing` marker, they can never remove them.
+  const listingBlock = (
     <>
-      <PageHero
-        eyebrow="Career"
-        title="Build your engineering career on real, large-scale projects."
-        description="Join a team that designs, installs, and maintains the electrical and automation systems behind Indonesia's most demanding industries."
-        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Career" }]}
-      />
       <CareerBenefits />
       <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8 bg-secondary/40">
         <FilterControls
@@ -75,6 +79,34 @@ export default async function CareerPage({ searchParams }: Props) {
       <div className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8 bg-secondary/40">
         <Pagination page={response.pagination.page} totalPages={response.pagination.totalPages} />
       </div>
+    </>
+  )
+
+  // When the CMS "career" page has builder sections, they control everything
+  // around the openings list. Otherwise keep the built-in layout.
+  const cmsPage = await getPage("career")
+  const sections = cmsPage?.status === "published" ? sectionsFromContent(cmsPage.content) : []
+  if (sections.length > 0) {
+    const { before, after } = splitSectionsAtListing(sections)
+    const data = await resolveSectionData(sections)
+    return (
+      <>
+        <SectionRenderer sections={before} data={data} />
+        {listingBlock}
+        <SectionRenderer sections={after} data={data} />
+      </>
+    )
+  }
+
+  return (
+    <>
+      <PageHero
+        eyebrow="Career"
+        title="Build your engineering career on real, large-scale projects."
+        description="Join a team that designs, installs, and maintains the electrical and automation systems behind Indonesia's most demanding industries."
+        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Career" }]}
+      />
+      {listingBlock}
       <CtaBanner
         title="Don't see the right role?"
         description="We're always interested in meeting talented engineers and operators. Send us your CV and we'll keep you in mind."

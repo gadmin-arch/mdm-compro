@@ -24,7 +24,9 @@ import {
 import { CSS } from "@dnd-kit/utilities"
 import {
   BarChart3,
+  Building2,
   ChevronDown,
+  Compass,
   Copy,
   Database,
   Factory,
@@ -41,6 +43,7 @@ import {
   Sparkles,
   Text,
   Trash2,
+  Wrench,
   type LucideIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -68,6 +71,9 @@ const paletteIcons: Record<string, LucideIcon> = {
   "help-circle": HelpCircle,
   megaphone: Megaphone,
   "monitor-play": MonitorPlay,
+  building: Building2,
+  compass: Compass,
+  wrench: Wrench,
 }
 
 
@@ -166,7 +172,7 @@ export function SectionBuilder({ sections, onChange }: SectionBuilderProps) {
       onDragEnd={handleDragEnd}
       onDragCancel={() => setActiveDrag(null)}
     >
-      <div className="grid gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
+      <div className="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)]">
         <SectionPalette onAdd={(type) => addSection(type)} />
         <BuilderCanvas
           sections={sections}

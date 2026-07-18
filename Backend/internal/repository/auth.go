@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"net"
 	"strings"
@@ -462,4 +463,195 @@ func (r AuthRepository) RecordAuthEvent(ctx context.Context, actorID *string, ac
 func hashToken(token string) string {
 	sum := sha256.Sum256([]byte(token))
 	return hex.EncodeToString(sum[:])
+}
+
+// --- two-factor login challenges ---
+
+// SecurityConfigValue reads the raw security policy (settings key "security").
+func (r AuthRepository) SecurityConfigValue(ctx context.Context) (json.RawMessage, error) {
+	var raw []byte
+	err := r.pool.QueryRow(ctx, `
+		SELECT value FROM settings WHERE key = $1 AND deleted_at IS NULL
+	`, model.SecuritySettingKey).Scan(&raw)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil
+	}
+	return json.RawMessage(raw), err
+}
+
+func (r AuthRepository) CreateLoginChallenge(ctx context.Context, userID, codeHash string, expiresAt time.Time, ip, userAgent string) (string, error) {
+	id := uuid.NewString()
+	_, err := r.pool.Exec(ctx, `
+		INSERT INTO login_challenges (id, user_id, code_hash, expires_at, ip, user_agent)
+		VALUES ($1, $2, $3, $4, $5, $6)
+	`, id, userID, codeHash, expiresAt, ip, userAgent)
+	return id, err
+}
+
+func (r AuthRepository) LoginChallenge(ctx context.Context, id string) (model.LoginChallenge, error) {
+	var challenge model.LoginChallenge
+	err := r.pool.QueryRow(ctx, `
+		SELECT id::text, user_id::text, code_hash, expires_at, attempts, resend_count, last_sent_at, consumed_at
+		FROM login_challenges WHERE id = $1
+	`, id).Scan(
+		&challenge.ID, &challenge.UserID, &challenge.CodeHash, &challenge.ExpiresAt,
+		&challenge.Attempts, &challenge.ResendCount, &challenge.LastSentAt, &challenge.ConsumedAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return model.LoginChallenge{}, ErrNotFound
+	}
+	return challenge, err
+}
+
+// BumpChallengeAttempts counts a verification try and returns the new total.
+func (r AuthRepository) BumpChallengeAttempts(ctx context.Context, id string) (int, error) {
+	var attempts int
+	err := r.pool.QueryRow(ctx, `
+		UPDATE login_challenges SET attempts = attempts + 1 WHERE id = $1 RETURNING attempts
+	`, id).Scan(&attempts)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return 0, ErrNotFound
+	}
+	return attempts, err
+}
+
+// ConsumeLoginChallenge marks the challenge used exactly once; a second call
+// (replay, concurrent submit) reports ErrNotFound.
+func (r AuthRepository) ConsumeLoginChallenge(ctx context.Context, id string) error {
+	tag, err := r.pool.Exec(ctx, `
+		UPDATE login_challenges SET consumed_at = now()
+		WHERE id = $1 AND consumed_at IS NULL AND expires_at > now()
+	`, id)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+// RefreshLoginChallenge swaps in a new code on resend and extends the expiry.
+func (r AuthRepository) RefreshLoginChallenge(ctx context.Context, id, codeHash string, expiresAt time.Time) error {
+	tag, err := r.pool.Exec(ctx, `
+		UPDATE login_challenges
+		SET code_hash = $2, expires_at = $3, resend_count = resend_count + 1, last_sent_at = now(), attempts = 0
+		WHERE id = $1 AND consumed_at IS NULL
+	`, id, codeHash, expiresAt)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+// --- trusted devices ---
+
+func (r AuthRepository) CreateTrustedDevice(ctx context.Context, device model.TrustedDevice) (model.TrustedDevice, error) {
+	device.ID = uuid.NewString()
+	err := r.pool.QueryRow(ctx, `
+		INSERT INTO trusted_devices (id, user_id, token_hash, fingerprint_hash, label, ip, expires_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		RETURNING created_at, last_used_at
+	`, device.ID, device.UserID, device.TokenHash, device.FingerprintHash, device.Label, device.IP, device.ExpiresAt).
+		Scan(&device.CreatedAt, &device.LastUsedAt)
+	return device, err
+}
+
+// TrustedDeviceByToken resolves a presented token to a live (unexpired,
+// unrevoked) device row.
+func (r AuthRepository) TrustedDeviceByToken(ctx context.Context, token string) (model.TrustedDevice, error) {
+	var device model.TrustedDevice
+	err := r.pool.QueryRow(ctx, `
+		SELECT id::text, user_id::text, token_hash, fingerprint_hash, label, ip, created_at, last_used_at, expires_at
+		FROM trusted_devices
+		WHERE token_hash = $1 AND revoked_at IS NULL AND expires_at > now()
+	`, hashToken(token)).Scan(
+		&device.ID, &device.UserID, &device.TokenHash, &device.FingerprintHash,
+		&device.Label, &device.IP, &device.CreatedAt, &device.LastUsedAt, &device.ExpiresAt,
+	)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return model.TrustedDevice{}, ErrNotFound
+	}
+	return device, err
+}
+
+func (r AuthRepository) TouchTrustedDevice(ctx context.Context, id, ip string) error {
+	_, err := r.pool.Exec(ctx, `
+		UPDATE trusted_devices SET last_used_at = now(), ip = COALESCE(NULLIF($2, ''), ip) WHERE id = $1
+	`, id, ip)
+	return err
+}
+
+func (r AuthRepository) ListTrustedDevices(ctx context.Context, userID string) ([]model.TrustedDevice, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT id::text, user_id::text, label, ip, created_at, last_used_at, expires_at
+		FROM trusted_devices
+		WHERE user_id = $1 AND revoked_at IS NULL AND expires_at > now()
+		ORDER BY last_used_at DESC
+	`, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var devices []model.TrustedDevice
+	for rows.Next() {
+		var device model.TrustedDevice
+		if err := rows.Scan(&device.ID, &device.UserID, &device.Label, &device.IP, &device.CreatedAt, &device.LastUsedAt, &device.ExpiresAt); err != nil {
+			return nil, err
+		}
+		devices = append(devices, device)
+	}
+	return devices, rows.Err()
+}
+
+// RevokeTrustedDevice revokes one of the user's own devices.
+func (r AuthRepository) RevokeTrustedDevice(ctx context.Context, userID, deviceID string) error {
+	tag, err := r.pool.Exec(ctx, `
+		UPDATE trusted_devices SET revoked_at = now()
+		WHERE id = $1 AND user_id = $2 AND revoked_at IS NULL
+	`, deviceID, userID)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+func (r AuthRepository) RevokeAllTrustedDevices(ctx context.Context, userID string) error {
+	_, err := r.pool.Exec(ctx, `
+		UPDATE trusted_devices SET revoked_at = now() WHERE user_id = $1 AND revoked_at IS NULL
+	`, userID)
+	return err
+}
+
+// LoginHistory returns the user's recent authentication events, successes and
+// failures alike, from the audit log.
+func (r AuthRepository) LoginHistory(ctx context.Context, userID string, limit int) ([]model.LoginHistoryEntry, error) {
+	rows, err := r.pool.Query(ctx, `
+		SELECT id::text, action, COALESCE(host(ip_address), ''), COALESCE(user_agent, ''), created_at
+		FROM audit_logs
+		WHERE deleted_at IS NULL AND entity_type = 'auth' AND actor_id = $1
+		ORDER BY created_at DESC
+		LIMIT $2
+	`, userID, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var entries []model.LoginHistoryEntry
+	for rows.Next() {
+		var entry model.LoginHistoryEntry
+		if err := rows.Scan(&entry.ID, &entry.Action, &entry.IP, &entry.UserAgent, &entry.CreatedAt); err != nil {
+			return nil, err
+		}
+		entries = append(entries, entry)
+	}
+	return entries, rows.Err()
 }

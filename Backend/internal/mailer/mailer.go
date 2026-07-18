@@ -47,6 +47,12 @@ func (m Mailer) SendPasswordResetCode(ctx context.Context, email, name, code str
 	return m.send(ctx, email, "Reset your MDM CMS password", body, code)
 }
 
+// SendRaw delivers a pre-rendered plain-text email (used by the 2FA flow,
+// whose subject/body come from admin-editable templates).
+func (m Mailer) SendRaw(ctx context.Context, to, subject, body string) error {
+	return m.send(ctx, to, subject, body, "")
+}
+
 func (m Mailer) send(ctx context.Context, to, subject, body, code string) error {
 	m.logger.InfoContext(ctx, "authentication email queued", "to", to, "subject", subject, "code", code)
 	from := emailAddress(m.cfg.EmailFrom)

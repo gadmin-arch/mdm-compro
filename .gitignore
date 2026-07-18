@@ -19,3 +19,7 @@ mdm-api
 
 # Local media uploads (STORAGE_DRIVER=local)
 data/media/
+
+# Personal Claude Code settings & scratch data
+.claude/settings.local.json
+scraper_results.json

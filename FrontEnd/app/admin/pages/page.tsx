@@ -5,6 +5,7 @@ import { AutoSubmitSelect } from "@/components/admin/auto-submit-select"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AdminApiError, adminFetch, type AdminPagesResponse } from "@/lib/admin-api"
+import { AdminPagination } from "@/components/admin/admin-pagination"
 import { PagesTable } from "@/components/admin/pages-table"
 
 const statusOptions = ["", "draft", "published", "scheduled", "archived"]
@@ -12,16 +13,17 @@ const statusOptions = ["", "draft", "published", "scheduled", "archived"]
 export default async function AdminPagesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string; deleted?: string; error?: string }>
+  searchParams: Promise<{ q?: string; status?: string; page?: string; deleted?: string; error?: string }>
 }) {
   const query = await searchParams
   const q = query.q?.trim() ?? ""
   const status = query.status?.trim() ?? ""
+  const pageNum = Math.max(1, Number(query.page) || 1)
   let pages: AdminPagesResponse | null = null
   let apiError = false
 
   try {
-    const params = new URLSearchParams({ perPage: "50" })
+    const params = new URLSearchParams({ perPage: "20", page: String(pageNum) })
     if (q) params.set("q", q)
     if (status) params.set("status", status)
     pages = await adminFetch<AdminPagesResponse>(`/pages?${params}`, {}, "/admin/pages")
@@ -100,6 +102,15 @@ export default async function AdminPagesPage({
       </form>
 
       <PagesTable pages={pages?.data ?? []} />
+      {pages && (
+        <AdminPagination
+          basePath="/admin/pages"
+          page={pages.pagination.page}
+          totalPages={pages.pagination.totalPages}
+          total={pages.pagination.total}
+          query={{ q, status }}
+        />
+      )}
     </AdminShell>
   )
 }

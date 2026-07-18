@@ -28,6 +28,15 @@ export const SECTION_ICON_NAMES = [
   "wheat",
   "utensils",
   "layers",
+  "hard-hat",
+  "clipboard-list",
+  "hammer",
+  "shield",
+  "activity",
+  "microscope",
+  "search",
+  "stethoscope",
+  "settings",
 ] as const
 
 export type SectionIconName = (typeof SECTION_ICON_NAMES)[number]
@@ -49,6 +58,7 @@ export type FieldDef =
   | { kind: "number"; name: string; label: string; min?: number; max?: number }
   | { kind: "select"; name: string; label: string; options: FieldOption[] }
   | { kind: "icon"; name: string; label: string }
+  | { kind: "richtext"; name: string; label: string }
   | { kind: "list"; name: string; label: string; itemLabel: string; fields: FieldDef[]; max?: number }
 
 export type SectionDef = {
@@ -104,7 +114,7 @@ export const sectionDefs: SectionDef[] = [
       primaryHref: "/contact",
       secondaryLabel: "Explore Services",
       secondaryHref: "/services",
-      imageUrl: "/placeholder.jpg",
+      imageUrl: "/uploads/hero-project.jpg",
       imageAlt: "Engineer inspecting medium voltage substation switchgear",
       stats: [
         { label: "Established", value: "2013" },
@@ -167,15 +177,158 @@ export const sectionDefs: SectionDef[] = [
     },
   },
   {
+    type: "aboutIntro",
+    label: "About Intro",
+    description: "Company intro with image, story, and vision/mission/culture cards.",
+    icon: "building",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "textarea", name: "overview", label: "Opening paragraph" },
+      { kind: "textarea", name: "body", label: "Second paragraph" },
+      { kind: "image", name: "imageUrl", label: "Image" },
+      { kind: "text", name: "imageAlt", label: "Image alt text" },
+      { kind: "textarea", name: "vision", label: "Vision" },
+      { kind: "textarea", name: "mission", label: "Mission" },
+      { kind: "textarea", name: "culture", label: "Culture" },
+    ],
+    defaults: {
+      eyebrow: "About the company",
+      title: "A team built for your most demanding electrical projects.",
+      overview:
+        "Established in 2013, PT Multi Daya Mitra was founded by a group of seasoned engineers with deep expertise in electricity, industrial automation, fire alarm systems, and mechanical works.",
+      body:
+        "We have grown into one of the largest electrical service partners in East Java — delivering projects across Indonesia and on selected overseas assignments. Our company culture of professional discipline drives every milestone, and we are certified to recognized quality management standards.",
+      imageUrl: "/placeholder.jpg",
+      imageAlt: "Industrial automation control room with engineers monitoring SCADA systems",
+      vision: "To become a global electrical, automation, and fire alarm services company.",
+      mission: "Build mutual partnerships and deliver every engagement with professional excellence.",
+      culture:
+        "A professional, fast-moving organization driven by certified engineers, structured processes, and a commitment to safety on every site we operate.",
+    },
+  },
+  {
+    type: "offices",
+    label: "Office Locations",
+    description: "Office cards with address, contacts, and an embedded map.",
+    icon: "compass",
+    fields: [
+      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "textarea", name: "description", label: "Description" },
+      {
+        kind: "list",
+        name: "items",
+        label: "Offices",
+        itemLabel: "Office",
+        fields: [
+          { kind: "text", name: "name", label: "Office name" },
+          { kind: "textarea", name: "address", label: "Address" },
+          { kind: "text", name: "phone", label: "Phone" },
+          { kind: "text", name: "fax", label: "Fax" },
+          { kind: "text", name: "email", label: "Email" },
+          {
+            kind: "text",
+            name: "mapEmbedUrl",
+            label: "Google Maps Embed URL (iframe src)",
+            placeholder: "https://www.google.com/maps/embed?pb=...",
+          },
+        ],
+      },
+    ],
+    defaults: {
+      title: "Our Offices",
+      description: "Find our physical offices across Indonesia.",
+      items: [
+        {
+          name: "Head Office (Surabaya)",
+          address: "Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, East Java, Indonesia",
+          phone: "+62 31 592 1256",
+          fax: "+62 31 591 7845",
+          email: "info@multidayamitra.co.id",
+          mapEmbedUrl:
+            "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.6974775466453!2d112.77587847427672!3d-7.275217492731802!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fa6ab5480eb1%3A0xe54df63b8274305c!2sRuko%20Klampis%20Megah%20Surabaya!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid",
+        },
+        {
+          name: "Jakarta Branch Office",
+          address: "Gedung Buncit 36, Jl. Warung Jati Barat No. 36, Ragunan, Pasar Minggu, Jakarta Selatan 12550, Indonesia",
+          phone: "+62 21 3049 6101",
+          fax: "",
+          email: "info@multidayamitra.co.id",
+          mapEmbedUrl:
+            "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.845345719391!2d106.82239457426868!3d-6.2840599937048745!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3d53fb7969f%3A0x6e9f16ef0e85d95e!2sGedung%20Buncit%2036!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid",
+        },
+      ],
+    },
+  },
+  {
+    type: "capabilities",
+    label: "Capabilities Grid",
+    description: "Compact icon tiles listing engineering capabilities.",
+    icon: "wrench",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "textarea", name: "description", label: "Description" },
+      {
+        kind: "list",
+        name: "items",
+        label: "Capabilities",
+        itemLabel: "Capability",
+        fields: [
+          { kind: "icon", name: "icon", label: "Icon" },
+          { kind: "text", name: "label", label: "Label" },
+        ],
+      },
+    ],
+    defaults: {
+      eyebrow: "Capabilities",
+      title: "End-to-end engineering coverage.",
+      description:
+        "Our team combines hands-on field execution with deep engineering know-how — so we can support your plant from first installation through decades of operation.",
+      items: [
+        { icon: "hard-hat", label: "Installation" },
+        { icon: "clipboard-list", label: "Testing & Commissioning" },
+        { icon: "hammer", label: "Construction" },
+        { icon: "wrench", label: "Curative Maintenance" },
+        { icon: "shield", label: "Preventive Maintenance" },
+        { icon: "activity", label: "Testing & Measurement" },
+        { icon: "cog", label: "Operation & Maintenance" },
+        { icon: "microscope", label: "Predictive Maintenance" },
+        { icon: "lightbulb", label: "Innovation & Improvement" },
+        { icon: "search", label: "Assessment & Study" },
+        { icon: "stethoscope", label: "Diagnostic" },
+        { icon: "settings", label: "Engineering Design" },
+      ],
+    },
+  },
+  {
+    type: "servicesShowcase",
+    label: "Services Showcase",
+    description: "The three service cards with detail lists, pulled from CMS services.",
+    icon: "layout-grid",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "textarea", name: "description", label: "Description" },
+    ],
+    defaults: {
+      eyebrow: "What we do",
+      title: "Three core services. One trusted partner.",
+      description:
+        "From greenfield installation to long-term operation and maintenance, our certified engineers deliver high-quality solutions tailored to each plant and facility.",
+    },
+  },
+  {
     type: "richText",
     label: "Rich Text",
-    description: "Headings, paragraphs, quotes, and lists.",
+    description: "Visual editor with headings, lists, links, quotes, and images.",
     icon: "text",
     fields: [
+      { kind: "richtext", name: "html", label: "Content" },
       {
         kind: "list",
         name: "blocks",
-        label: "Blocks",
+        label: "Legacy blocks (rendered after the content above)",
         itemLabel: "Block",
         fields: [
           {
@@ -194,7 +347,8 @@ export const sectionDefs: SectionDef[] = [
       },
     ],
     defaults: {
-      blocks: [{ type: "paragraph", text: "" }],
+      html: "",
+      blocks: [],
     },
   },
   {
@@ -448,6 +602,29 @@ export const sectionDefs: SectionDef[] = [
       caption: "",
     },
   },
+  {
+    type: "listing",
+    label: "Resource Listing",
+    description:
+      "Marks where the automatic listing (with search, filters, and pagination) appears on the Services, Products, News, and Career pages.",
+    icon: "database",
+    fields: [
+      {
+        kind: "select",
+        name: "source",
+        label: "Listing source",
+        options: [
+          { value: "services", label: "Services" },
+          { value: "products", label: "Products" },
+          { value: "news", label: "News" },
+          { value: "careers", label: "Careers" },
+        ],
+      },
+    ],
+    defaults: {
+      source: "services",
+    },
+  },
 ]
 
 export const sectionDefsByType: Record<string, SectionDef> = Object.fromEntries(
@@ -523,13 +700,220 @@ export function records(props: Record<string, unknown>, name: string): Record<st
     )
 }
 
+// --- presets replicating the live built-in pages ---
+// Editing these in the admin edits exactly what visitors see, because the
+// section defaults equal the hardcoded copy of the original components.
+
+export function homePresetSections(): Section[] {
+  const cta = createSection("cta")
+  cta.props = {
+    ...cta.props,
+    title: "Ready to power your next project?",
+    description:
+      "Tell us about your facility — our engineers will respond with a tailored scope, approach, and quote.",
+    primaryLabel: "Get in Touch",
+    primaryHref: "/contact",
+    secondaryLabel: "View Services",
+    secondaryHref: "/services",
+  }
+  return [
+    createSection("hero"),
+    createSection("servicesShowcase"),
+    createSection("features"),
+    createSection("industries"),
+    cta,
+  ]
+}
+
+export function aboutPresetSections(content: Record<string, unknown> = {}): Section[] {
+  const pageHero = createSection("pageHero")
+  pageHero.props = {
+    eyebrow: "About Us",
+    title: "A team built for your most demanding electrical projects.",
+    description:
+      "Founded in 2013 by seasoned engineers, PT Multi Daya Mitra has grown into one of East Java's largest electrical service partners — delivering across Indonesia and selected overseas assignments.",
+  }
+
+  // Carry over whatever the legacy about page already stored.
+  const intro = createSection("aboutIntro")
+  for (const field of ["overview", "vision", "mission"] as const) {
+    const value = content[field]
+    if (typeof value === "string" && value.trim()) {
+      intro.props[field] = value
+    }
+  }
+
+  const cta = createSection("cta")
+  cta.props = {
+    ...cta.props,
+    title: "Want to know more about our work?",
+    description:
+      "Get in touch with our team to discuss your project, request company credentials, or schedule a site assessment.",
+    primaryLabel: "Contact Us",
+    primaryHref: "/contact",
+    secondaryLabel: "",
+    secondaryHref: "",
+  }
+
+  return [
+    pageHero,
+    intro,
+    createSection("offices"),
+    createSection("features"),
+    createSection("capabilities"),
+    cta,
+  ]
+}
+
+function listingSection(source: string): Section {
+  const listing = createSection("listing")
+  listing.props = { source }
+  return listing
+}
+
+export function servicesPresetSections(): Section[] {
+  const pageHero = createSection("pageHero")
+  pageHero.props = {
+    eyebrow: "Our Services",
+    title: "Three core services. One trusted engineering partner.",
+    description:
+      "From greenfield installation to long-term operation and maintenance, we deliver high-quality solutions tailored to each plant and facility.",
+  }
+  const cta = createSection("cta")
+  cta.props = {
+    ...cta.props,
+    title: "Have a specific scope in mind?",
+    description:
+      "Share your facility details and we'll respond with engineering scope, timeline, and a tailored quotation.",
+    primaryLabel: "Request a Quote",
+    primaryHref: "/contact",
+    secondaryLabel: "See Products",
+    secondaryHref: "/products",
+  }
+  return [
+    pageHero,
+    createSection("servicesShowcase"),
+    listingSection("services"),
+    createSection("capabilities"),
+    cta,
+  ]
+}
+
+export function productsPresetSections(): Section[] {
+  const pageHero = createSection("pageHero")
+  pageHero.props = {
+    eyebrow: "Products",
+    title: "Industrial products for testing, protection, and instrumentation.",
+    description:
+      "Explore CMS-managed product categories, datasheets, specifications, galleries, and product details.",
+  }
+  const cta = createSection("cta")
+  cta.props = {
+    ...cta.props,
+    title: "Need a specific product or datasheet?",
+    description:
+      "Tell us what you are sourcing and our team will respond with availability, specifications, and support options.",
+    primaryLabel: "Ask Our Team",
+    primaryHref: "/contact",
+    secondaryLabel: "View Services",
+    secondaryHref: "/services",
+  }
+  return [pageHero, listingSection("products"), cta]
+}
+
+export function newsPresetSections(): Section[] {
+  const pageHero = createSection("pageHero")
+  pageHero.props = {
+    eyebrow: "News & Insights",
+    title: "Project milestones, company updates, and field-tested insights.",
+    description:
+      "Stay current on what our engineers are delivering across power, oil & gas, manufacturing, and infrastructure projects.",
+  }
+  const cta = createSection("cta")
+  cta.props = {
+    ...cta.props,
+    title: "Have a project worth talking about?",
+    description:
+      "We work with industrial owners, EPC partners, and infrastructure operators across Indonesia. Let's talk about your next milestone.",
+    primaryLabel: "Contact Us",
+    primaryHref: "/contact",
+    secondaryLabel: "",
+    secondaryHref: "",
+  }
+  return [pageHero, listingSection("news"), cta]
+}
+
+export function careerPresetSections(): Section[] {
+  const pageHero = createSection("pageHero")
+  pageHero.props = {
+    eyebrow: "Career",
+    title: "Build your engineering career on real, large-scale projects.",
+    description:
+      "Join a team that designs, installs, and maintains the electrical and automation systems behind Indonesia's most demanding industries.",
+  }
+  const cta = createSection("cta")
+  cta.props = {
+    ...cta.props,
+    title: "Don't see the right role?",
+    description:
+      "We're always interested in meeting talented engineers and operators. Send us your CV and we'll keep you in mind.",
+    primaryLabel: "Send Your CV",
+    primaryHref: "mailto:hr@multidayamitra.co.id",
+    secondaryLabel: "",
+    secondaryHref: "",
+  }
+  return [pageHero, listingSection("careers"), cta]
+}
+
+// Sections to prefill the builder with when a built-in page has no sections
+// yet — so the admin edits the same design the public already sees.
+export function presetSectionsForKey(
+  key: string,
+  content: Record<string, unknown> = {},
+): Section[] | null {
+  switch (key) {
+    case "home":
+      return homePresetSections()
+    case "about":
+      return aboutPresetSections(content)
+    case "services":
+      return servicesPresetSections()
+    case "products":
+      return productsPresetSections()
+    case "news":
+      return newsPresetSections()
+    case "career":
+      return careerPresetSections()
+    default:
+      return null
+  }
+}
+
+// Landing routes render their resource listing at the `listing` marker; the
+// marker itself never renders. The listing must always appear, so a page
+// whose marker was deleted gets it appended after every section.
+export function splitSectionsAtListing(sections: Section[]): {
+  before: Section[]
+  after: Section[]
+} {
+  const index = sections.findIndex((section) => section.type === "listing")
+  const withoutMarkers = (list: Section[]) => list.filter((section) => section.type !== "listing")
+  if (index === -1) {
+    return { before: withoutMarkers(sections), after: [] }
+  }
+  return {
+    before: withoutMarkers(sections.slice(0, index)),
+    after: withoutMarkers(sections.slice(index + 1)),
+  }
+}
+
 // Page templates offered when starting a new page in the builder.
 export const pageTemplates: { key: string; label: string; description: string; sections: () => Section[] }[] = [
   {
     key: "landing",
-    label: "Landing Page",
-    description: "Hero, services grid, features, industries, and CTA.",
-    sections: () => ["hero", "contentGrid", "features", "industries", "cta"].map(createSection),
+    label: "Homepage (current design)",
+    description: "Hero, services showcase, why-us, industries, and CTA — matches the live homepage.",
+    sections: homePresetSections,
   },
   {
     key: "profile",

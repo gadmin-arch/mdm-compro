@@ -1,5 +1,5 @@
-import { type NextRequest } from "next/server"
-import { adminCookieOptions, relativeRedirect, safeAdminNext } from "@/lib/admin-auth"
+import { NextResponse, type NextRequest } from "next/server"
+import { TRUST_COOKIE, adminCookieOptions, crossOriginPost, safeAdminNext } from "@/lib/admin-auth"
 
 const API_BASE =
   process.env.CMS_API_BASE_URL ??
@@ -19,71 +19,114 @@ type LoginAttempt = {
 
 const loginAttempts = new Map<string, LoginAttempt>()
 
+type LoginBody = {
+  email?: string
+  password?: string
+  fingerprint?: string
+  next?: string
+}
+
+// Step 1 of the sign-in. Called with fetch(JSON); responds with either
+// { status: "ok" } (cookies set) or { status: "otp_required", ... }.
 export async function POST(request: NextRequest) {
-  const form = await request.formData()
-  const email = String(form.get("email") ?? "").trim().toLowerCase()
-  const password = String(form.get("password") ?? "")
-  const nextPath = safeAdminNext(form.get("next"))
+  if (crossOriginPost(request)) {
+    return NextResponse.json({ status: "error", code: "forbidden" }, { status: 403 })
+  }
+
+  const body = (await request.json().catch(() => null)) as LoginBody | null
+  const email = String(body?.email ?? "").trim().toLowerCase()
+  const password = String(body?.password ?? "")
+  const fingerprint = String(body?.fingerprint ?? "").slice(0, 128)
+  const nextPath = safeAdminNext(body?.next)
   const attemptKey = loginAttemptKey(request, email)
   const now = Date.now()
 
   if (isLoginLocked(attemptKey, now)) {
-    return loginRedirect("rate_limited", nextPath)
+    return NextResponse.json({ status: "error", code: "rate_limited" }, { status: 429 })
+  }
+  if (!email || !password) {
+    return NextResponse.json({ status: "error", code: "invalid" }, { status: 400 })
   }
 
-  if (!email || !password) {
-    return loginRedirect("1", nextPath)
-  }
+  const trustedToken = request.cookies.get(TRUST_COOKIE)?.value ?? ""
 
   const response = await fetch(`${AUTH_BASE}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, trustedToken, fingerprint }),
     cache: "no-store",
   }).catch(() => null)
 
-  if (!response?.ok) {
-    if (response?.status === 429) {
-      // The API's durable lockout tripped (account or IP throttle).
-      return loginRedirect("rate_limited", nextPath)
+  if (!response) {
+    return NextResponse.json({ status: "error", code: "unavailable" }, { status: 502 })
+  }
+  if (!response.ok) {
+    if (response.status === 429) {
+      return NextResponse.json({ status: "error", code: "rate_limited" }, { status: 429 })
     }
-    if (response?.status === 403) {
+    if (response.status === 403) {
       const payload = (await response.json().catch(() => null)) as { error?: string } | null
       if (payload?.error === "verification_required") {
-        return loginRedirect("verification_required", nextPath)
+        return NextResponse.json({ status: "error", code: "verification_required" }, { status: 403 })
       }
     }
-    if (response && [400, 401].includes(response.status) && recordLoginFailure(attemptKey, now)) {
-      return loginRedirect("rate_limited", nextPath)
+    if ([400, 401].includes(response.status) && recordLoginFailure(attemptKey, now)) {
+      return NextResponse.json({ status: "error", code: "rate_limited" }, { status: 429 })
     }
-    return loginRedirect("1", nextPath)
+    return NextResponse.json({ status: "error", code: "invalid" }, { status: 401 })
   }
 
-  const payload = (await response.json()) as {
-    accessToken: string
-    refreshToken: string
-    accessTokenExpiresAt: string
-    refreshTokenExpiresAt: string
-  }
   clearLoginFailure(attemptKey)
-  const redirectResponse = relativeRedirect(nextPath)
-  redirectResponse.cookies.set(
+  const payload = (await response.json()) as {
+    status: "ok" | "otp_required"
+    tokens?: {
+      accessToken: string
+      refreshToken: string
+      accessTokenExpiresAt: string
+      refreshTokenExpiresAt: string
+    }
+    challengeId?: string
+    maskedEmail?: string
+    codeLength?: number
+    expiresAt?: string
+    resendCooldownSec?: number
+    trustDays?: number
+  }
+
+  if (payload.status === "otp_required") {
+    const otpResponse = NextResponse.json({
+      status: "otp_required",
+      challengeId: payload.challengeId,
+      maskedEmail: payload.maskedEmail,
+      codeLength: payload.codeLength ?? 6,
+      expiresAt: payload.expiresAt,
+      resendCooldownSec: payload.resendCooldownSec ?? 60,
+      trustDays: payload.trustDays ?? 30,
+      next: nextPath,
+    })
+    // A trust cookie was presented but did not skip the OTP step, so it is
+    // stale (expired, revoked, or another user's) — drop it.
+    if (trustedToken) {
+      otpResponse.cookies.delete(TRUST_COOKIE)
+    }
+    return otpResponse
+  }
+
+  if (!payload.tokens) {
+    return NextResponse.json({ status: "error", code: "unavailable" }, { status: 502 })
+  }
+  const okResponse = NextResponse.json({ status: "ok", next: nextPath })
+  okResponse.cookies.set(
     "cms_admin_token",
-    payload.accessToken,
-    adminCookieOptions(request, new Date(payload.accessTokenExpiresAt)),
+    payload.tokens.accessToken,
+    adminCookieOptions(request, new Date(payload.tokens.accessTokenExpiresAt)),
   )
-  redirectResponse.cookies.set(
+  okResponse.cookies.set(
     "cms_refresh_token",
-    payload.refreshToken,
-    adminCookieOptions(request, new Date(payload.refreshTokenExpiresAt)),
+    payload.tokens.refreshToken,
+    adminCookieOptions(request, new Date(payload.tokens.refreshTokenExpiresAt)),
   )
-
-  return redirectResponse
-}
-
-function loginRedirect(error: string, nextPath: string) {
-  const params = new URLSearchParams({ error, next: nextPath })
-  return relativeRedirect(`/admin/login?${params.toString()}`)
+  return okResponse
 }
 
 function loginAttemptKey(request: NextRequest, email: string) {

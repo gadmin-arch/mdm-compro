@@ -16,7 +16,7 @@ export function About({ page }: { page?: PageContent | null }) {
           <div className="lg:col-span-5">
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-secondary">
               <Image
-                src="/placeholder.jpg"
+                src="/uploads/automation-project.jpg"
                 alt="Industrial automation control room with engineers monitoring SCADA systems"
                 fill
                 className="object-cover"
@@ -143,15 +143,15 @@ export function About({ page }: { page?: PageContent | null }) {
             <div className="flex flex-col rounded-xl border border-border bg-card p-6 shadow-xs">
               <h3 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-primary" />
-                Jakarta Branch Office
+                Workshop
               </h3>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-grow">
-                Gedung Buncit 36, Jl. Warung Jati Barat No. 36, Ragunan, Pasar Minggu, Jakarta Selatan 12550, Indonesia
+                Ruko Jati Kepuh Indah E-21, Sidoarjo 61271, East Java, Indonesia
               </p>
               <div className="mt-6 space-y-2 border-t border-border/60 pt-4 text-xs text-muted-foreground">
                 <p className="flex items-center gap-2">
                   <Phone className="h-3.5 w-3.5 text-primary" />
-                  Phone: +62 21 3049 6101
+                  Phone: +62 811 830 3250
                 </p>
                 <p className="flex items-center gap-2">
                   <Mail className="h-3.5 w-3.5 text-primary" />
@@ -160,7 +160,7 @@ export function About({ page }: { page?: PageContent | null }) {
               </div>
               <div className="mt-5">
                 <a
-                  href="https://www.google.com/maps/search/?api=1&query=Gedung+Buncit+36+Jakarta"
+                  href="https://www.google.com/maps/search/?api=1&query=Ruko+Jati+Kepuh+Indah+Sidoarjo"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center text-xs font-semibold text-primary hover:underline"

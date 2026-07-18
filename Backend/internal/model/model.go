@@ -20,12 +20,13 @@ type MediaAsset struct {
 }
 
 type MediaUpload struct {
-	ID        string `json:"id"`
-	FileName  string `json:"fileName"`
-	ObjectKey string `json:"objectKey"`
-	URL       string `json:"url"`
-	MimeType  string `json:"mimeType"`
-	SizeBytes int64  `json:"sizeBytes"`
+	ID        string     `json:"id"`
+	FileName  string     `json:"fileName"`
+	ObjectKey string     `json:"objectKey"`
+	URL       string     `json:"url"`
+	MimeType  string     `json:"mimeType"`
+	SizeBytes int64      `json:"sizeBytes"`
+	CreatedAt *time.Time `json:"createdAt,omitempty"`
 }
 
 type Navigation struct {
@@ -186,6 +187,18 @@ type ContactInquiry struct {
 	Message   string    `json:"message"`
 	Status    string    `json:"status"`
 	CreatedAt time.Time `json:"createdAt"`
+}
+
+// ActivityEntry is one row of the dashboard activity feed, sourced from
+// audit_logs (content mutations only, auth events are excluded).
+type ActivityEntry struct {
+	ID         string    `json:"id"`
+	Action     string    `json:"action"`
+	EntityType string    `json:"entityType"`
+	EntityID   string    `json:"entityId,omitempty"`
+	Label      string    `json:"label,omitempty"`
+	ActorName  string    `json:"actorName,omitempty"`
+	CreatedAt  time.Time `json:"createdAt"`
 }
 
 type Pagination struct {

@@ -1,7 +1,7 @@
 import { AdminShell } from "@/components/admin-shell"
-import { NavigationEditor, type PageOption } from "@/components/admin/navigation-editor"
+import { NavigationEditor, type AutoChildren, type PageOption } from "@/components/admin/navigation-editor"
 import { AdminApiError, adminFetch, type AdminPagesResponse } from "@/lib/admin-api"
-import type { MenuItem } from "@/lib/cms"
+import { getProducts, getServices, type MenuItem } from "@/lib/cms"
 import { saveNavigationAction } from "./actions"
 
 type AdminNavigationResponse = {
@@ -18,12 +18,15 @@ export default async function AdminNavigationPage({
 
   let navigation: AdminNavigationResponse | null = null
   let pageOptions: PageOption[] = []
+  let autoChildren: AutoChildren = { services: [], products: [] }
   let apiError = false
 
   try {
-    const [navResponse, pagesResponse] = await Promise.all([
+    const [navResponse, pagesResponse, servicesTree, productsTree] = await Promise.all([
       adminFetch<AdminNavigationResponse>("/navigation", {}, "/admin/navigation"),
       adminFetch<AdminPagesResponse>("/pages?perPage=100", {}, "/admin/navigation"),
+      getServices(),
+      getProducts(),
     ])
     navigation = navResponse
     pageOptions = (pagesResponse.data ?? []).map((page) => ({
@@ -31,6 +34,12 @@ export default async function AdminNavigationPage({
       title: page.title,
       status: page.status,
     }))
+    // Mirrors contentChildren in the public header: top-level nodes fill the
+    // Services/Products dropdowns automatically.
+    autoChildren = {
+      services: servicesTree.map((node) => ({ label: node.title, href: `/services/${node.fullPath}` })),
+      products: productsTree.map((node) => ({ label: node.title, href: `/products/${node.fullPath}` })),
+    }
   } catch (error) {
     if (error instanceof AdminApiError) {
       apiError = true
@@ -71,6 +80,7 @@ export default async function AdminNavigationPage({
           initialItems={navigation.items}
           version={navigation.version}
           pageOptions={pageOptions}
+          autoChildren={autoChildren}
         />
       )}
     </AdminShell>

@@ -16,6 +16,12 @@ type User struct {
 type LoginInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	// TrustedToken is the opaque trusted-device token (from the HTTP-only
+	// cookie); when valid it skips the email verification step.
+	TrustedToken string `json:"trustedToken"`
+	// Fingerprint is a coarse client-computed device hash the trust token is
+	// bound to.
+	Fingerprint string `json:"fingerprint"`
 }
 
 // AuthMeta carries request metadata (client IP, user agent) into the auth

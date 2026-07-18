@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"strings"
 
@@ -41,6 +42,16 @@ func (s PublicService) Navigation(ctx context.Context) (model.Navigation, error)
 
 func (s PublicService) Page(ctx context.Context, key string) (model.Page, error) {
 	return s.repo.PageByKey(ctx, key)
+}
+
+// SiteSettings returns the public site settings document ({} when unset).
+// Only the whitelisted "site" key is ever exposed publicly.
+func (s PublicService) SiteSettings(ctx context.Context) (json.RawMessage, error) {
+	raw, err := s.repo.SettingValue(ctx, model.SiteSettingKey)
+	if errors.Is(err, repository.ErrNotFound) {
+		return json.RawMessage(`{}`), nil
+	}
+	return raw, err
 }
 
 func (s PublicService) Services(ctx context.Context, page, perPage int, search, category, sort string) (model.ListResponse[model.ContentNode], error) {
