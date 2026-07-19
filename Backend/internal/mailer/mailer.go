@@ -61,6 +61,25 @@ func (m Mailer) SendRaw(ctx context.Context, to, subject, body string) error {
 
 func (m Mailer) send(ctx context.Context, to, subject, body, code string) error {
 	m.logger.InfoContext(ctx, "authentication email queued", "to", to, "subject", subject, "code", code)
+	err := m.deliver(ctx, to, subject, body)
+	if err != nil {
+		// Callers intentionally swallow this (the reset endpoint always returns
+		// a generic 202), so log it here or delivery failures stay invisible.
+		m.logger.ErrorContext(ctx, "email delivery failed", "to", to, "transport", m.transport(), "error", err.Error())
+		return err
+	}
+	m.logger.InfoContext(ctx, "email delivered", "to", to, "transport", m.transport())
+	return nil
+}
+
+func (m Mailer) transport() string {
+	if m.cfg.BrevoAPIKey != "" {
+		return "brevo-api"
+	}
+	return "smtp:" + m.cfg.SMTPHost + ":" + m.cfg.SMTPPort
+}
+
+func (m Mailer) deliver(ctx context.Context, to, subject, body string) error {
 	// Prefer Brevo's HTTP API (port 443) when configured: many hosts (e.g.
 	// Render's free tier) block outbound SMTP ports entirely, so plain SMTP
 	// silently fails there.
