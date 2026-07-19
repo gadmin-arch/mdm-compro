@@ -1,12 +1,17 @@
 package mailer
 
 import (
+	"bytes"
 	"context"
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log/slog"
+	"net/http"
 	"net/smtp"
 	"strings"
+	"time"
 
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/config"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/model"
@@ -56,6 +61,12 @@ func (m Mailer) SendRaw(ctx context.Context, to, subject, body string) error {
 
 func (m Mailer) send(ctx context.Context, to, subject, body, code string) error {
 	m.logger.InfoContext(ctx, "authentication email queued", "to", to, "subject", subject, "code", code)
+	// Prefer Brevo's HTTP API (port 443) when configured: many hosts (e.g.
+	// Render's free tier) block outbound SMTP ports entirely, so plain SMTP
+	// silently fails there.
+	if m.cfg.BrevoAPIKey != "" {
+		return m.sendViaBrevo(ctx, to, subject, body)
+	}
 	from := emailAddress(m.cfg.EmailFrom)
 	message := []byte(fmt.Sprintf(
 		"From: %s\r\nTo: %s\r\nSubject: %s\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n%s\r\n",
@@ -123,6 +134,53 @@ func (a tlsAuth) Start(server *smtp.ServerInfo) (string, []byte, error) {
 	forced := *server
 	forced.TLS = true
 	return a.Auth.Start(&forced)
+}
+
+func (m Mailer) sendViaBrevo(ctx context.Context, to, subject, body string) error {
+	name, email := senderNameEmail(m.cfg.EmailFrom)
+	payload := map[string]any{
+		"sender":      map[string]string{"name": name, "email": email},
+		"to":          []map[string]string{{"email": to}},
+		"subject":     subject,
+		"textContent": body,
+	}
+	buf, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+	reqCtx, cancel := context.WithTimeout(ctx, 20*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(reqCtx, http.MethodPost, "https://api.brevo.com/v3/smtp/email", bytes.NewReader(buf))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("api-key", m.cfg.BrevoAPIKey)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode >= 300 {
+		snippet, _ := io.ReadAll(io.LimitReader(resp.Body, 512))
+		return fmt.Errorf("brevo send failed: status %d: %s", resp.StatusCode, strings.TrimSpace(string(snippet)))
+	}
+	return nil
+}
+
+// senderNameEmail splits an EMAIL_FROM like "MDM CMS <no-reply@x.com>" into its
+// display name and bare address; Brevo's API wants them as separate fields.
+func senderNameEmail(value string) (name, email string) {
+	email = emailAddress(value)
+	if start := strings.LastIndex(value, "<"); start >= 0 {
+		name = strings.TrimSpace(value[:start])
+	}
+	if name == "" {
+		name = email
+	}
+	return name, email
 }
 
 func emailAddress(value string) string {

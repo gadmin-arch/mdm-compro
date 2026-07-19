@@ -28,6 +28,7 @@ type Config struct {
 	SMTPPort           string
 	SMTPUser           string
 	SMTPPassword       string
+	BrevoAPIKey        string
 	EmailFrom          string
 	SiteURL            string
 	ContactNotifyTo    string
@@ -55,6 +56,7 @@ func Load() Config {
 		SMTPPort:           env("SMTP_PORT", "1025"),
 		SMTPUser:           env("SMTP_USER", ""),
 		SMTPPassword:       env("SMTP_PASSWORD", ""),
+		BrevoAPIKey:        env("BREVO_API_KEY", ""),
 		EmailFrom:          env("EMAIL_FROM", "MDM CMS <no-reply@multidayamitra.co.id>"),
 		SiteURL:            env("SITE_URL", "http://localhost:3010"),
 		ContactNotifyTo:    env("CONTACT_NOTIFY_TO", "info@multidayamitra.co.id"),
