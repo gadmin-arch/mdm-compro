@@ -2,6 +2,7 @@ package mailer
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"log/slog"
 	"net/smtp"
@@ -68,7 +69,60 @@ func (m Mailer) send(ctx context.Context, to, subject, body, code string) error 
 	if m.cfg.SMTPUser != "" {
 		auth = smtp.PlainAuth("", m.cfg.SMTPUser, m.cfg.SMTPPassword, m.cfg.SMTPHost)
 	}
+	// Port 465 speaks implicit TLS (SMTPS): the whole connection is wrapped in
+	// TLS from the first byte. Go's smtp.SendMail only knows STARTTLS (587), so
+	// dial the TLS socket ourselves. Some hosts (e.g. cPanel/idcloudhosting)
+	// have a broken STARTTLS on 587 but a working 465, so this is the fallback.
+	if m.cfg.SMTPPort == "465" {
+		return m.sendImplicitTLS(address, auth, from, to, message)
+	}
 	return smtp.SendMail(address, auth, from, []string{to}, message)
+}
+
+func (m Mailer) sendImplicitTLS(address string, auth smtp.Auth, from, to string, message []byte) error {
+	conn, err := tls.Dial("tcp", address, &tls.Config{ServerName: m.cfg.SMTPHost})
+	if err != nil {
+		return err
+	}
+	client, err := smtp.NewClient(conn, m.cfg.SMTPHost)
+	if err != nil {
+		return err
+	}
+	defer client.Close()
+	if auth != nil {
+		if err := client.Auth(tlsAuth{auth}); err != nil {
+			return err
+		}
+	}
+	if err := client.Mail(from); err != nil {
+		return err
+	}
+	if err := client.Rcpt(to); err != nil {
+		return err
+	}
+	writer, err := client.Data()
+	if err != nil {
+		return err
+	}
+	if _, err := writer.Write(message); err != nil {
+		return err
+	}
+	if err := writer.Close(); err != nil {
+		return err
+	}
+	return client.Quit()
+}
+
+// tlsAuth lets PlainAuth proceed over an already-encrypted (implicit-TLS)
+// connection. Go's smtp.Client only marks TLS after STARTTLS, so without this
+// PlainAuth refuses to send credentials on a 465 socket ("unencrypted
+// connection") even though the socket is in fact TLS.
+type tlsAuth struct{ smtp.Auth }
+
+func (a tlsAuth) Start(server *smtp.ServerInfo) (string, []byte, error) {
+	forced := *server
+	forced.TLS = true
+	return a.Auth.Start(&forced)
 }
 
 func emailAddress(value string) string {
