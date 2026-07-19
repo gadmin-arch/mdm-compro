@@ -2,6 +2,20 @@ import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+
+// Allow next/image to load absolute URLs that point at our own site (e.g. an
+// editor pastes "https://v2.multidayamitra.co.id/uploads/..."). Relative paths
+// are always fine; this covers the absolute case without hard-coding a domain.
+const siteImagePattern = (() => {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL
+  if (!raw) return null
+  try {
+    const { protocol, hostname } = new URL(raw)
+    return { protocol: protocol.replace(':', ''), hostname }
+  } catch {
+    return null
+  }
+})()
 const adminSecurityHeaders = [
   { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate' },
   { key: 'Referrer-Policy', value: 'no-referrer' },
@@ -59,6 +73,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**.amazonaws.com',
       },
+      ...(siteImagePattern ? [siteImagePattern] : []),
     ],
   },
 }

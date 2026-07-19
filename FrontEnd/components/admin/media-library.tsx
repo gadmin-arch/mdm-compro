@@ -88,7 +88,19 @@ export function MediaLibrary({
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
   async function copyUrl(item: AdminMediaUpload) {
-    const url = item.url.startsWith("http") ? item.url : `${window.location.origin}${item.url}`
+    // Copy the relative path — next/image treats a same-origin relative URL as
+    // a local image (no remotePatterns/domain whitelist needed), and it stays
+    // valid across environments (v2, production, preview). An absolute URL with
+    // the site domain would be rejected by next/image and render as broken.
+    let url = item.url
+    if (url.startsWith("http")) {
+      try {
+        const parsed = new URL(url)
+        url = parsed.pathname + parsed.search
+      } catch {
+        /* leave as-is if it somehow isn't a valid URL */
+      }
+    }
     try {
       await navigator.clipboard.writeText(url)
       setCopiedId(item.id)
