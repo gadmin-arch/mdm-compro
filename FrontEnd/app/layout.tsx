@@ -54,7 +54,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jakarta.variable} bg-background`}>
+    // suppressHydrationWarning: the admin theme script may add the `dark`
+    // class to <html> pre-hydration; attribute-level only, scoped to this element.
+    <html
+      lang="en"
+      className={`${inter.variable} ${jakarta.variable} bg-background`}
+      suppressHydrationWarning
+    >
       <body className="font-sans antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

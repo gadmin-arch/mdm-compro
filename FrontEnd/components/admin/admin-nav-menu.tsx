@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { BarChart3, ExternalLink, FileText, Globe2, Home, Image as ImageIcon, Link2, Menu, Newspaper, Package, Settings, Users, Archive, type LucideIcon } from "lucide-react"
 import { AdminSignOutDialog } from "@/components/admin/admin-sign-out-dialog"
+import { ThemeToggleRow } from "@/components/admin/theme-toggle"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -14,6 +15,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
+import { container } from "@/lib/layout"
 
 interface NavItem {
   label: string
@@ -114,6 +116,7 @@ export function AdminNavSidebar({ active }: { active: string }) {
         <AdminNavItems active={active} />
 
         <div className="mt-auto space-y-1 border-t border-border pt-3">
+          <ThemeToggleRow />
           <a
             href="/"
             target="_blank"
@@ -150,7 +153,7 @@ export function AdminNavMenu({ active }: { active: string }) {
           <SheetHeader className="border-b border-border px-4 pb-4 sm:px-6">
             <SheetTitle className="font-display">CMS Menu</SheetTitle>
           </SheetHeader>
-          <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+          <div className={container("w-full py-4")}>
             <nav className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               <AdminNavItems active={active} onNavigate={() => setOpen(false)} />
             </nav>
