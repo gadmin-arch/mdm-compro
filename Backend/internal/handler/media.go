@@ -128,6 +128,12 @@ func (h MediaHandler) Serve(w http.ResponseWriter, r *http.Request) {
 	if info.ContentType != "" {
 		w.Header().Set("Content-Type", info.ContentType)
 	}
+	// SVG can carry scripts; force download on direct navigation so it never
+	// executes on this origin. <img> embeds ignore the disposition and keep
+	// rendering.
+	if info.ContentType == "image/svg+xml" {
+		w.Header().Set("Content-Disposition", `attachment; filename="`+path.Base(objectKey)+`"`)
+	}
 	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 	http.ServeContent(w, r, path.Base(objectKey), info.LastModified, object)
 }

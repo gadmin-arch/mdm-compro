@@ -30,8 +30,8 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, colle
 		logger.Warn("media storage init failed", "error", err, "driver", cfg.StorageDriver)
 	}
 
-	publicHandler := handler.NewPublicHandler(service.NewPublicService(publicRepo))
 	mail := mailer.New(logger, cfg)
+	publicHandler := handler.NewPublicHandler(service.NewPublicService(publicRepo, mail))
 	authService := service.NewAuthService(cfg, authRepo, mail)
 	authHandler := handler.NewAuthHandler(authService)
 	adminHandler := handler.NewAdminHandler(service.NewAdminService(adminRepo))
@@ -90,6 +90,7 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, colle
 		})
 
 		r.Route("/public", func(r chi.Router) {
+			r.Use(publicCache(cfg.PublicCacheSeconds))
 			r.Get("/navigation", publicHandler.Navigation)
 			r.Get("/settings", publicHandler.Settings)
 			r.Get("/pages", publicHandler.Pages)
@@ -112,6 +113,7 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, colle
 
 		r.Route("/admin", func(r chi.Router) {
 			r.Use(requireAuth(tokenManager, authRepo))
+			r.Use(requireWrite)
 			r.Get("/dashboard", adminHandler.Dashboard)
 			r.Get("/activity", adminHandler.Activity)
 			r.Get("/navigation", adminHandler.Navigation)
@@ -203,6 +205,31 @@ func apiTiming(collector *analytics.Collector) func(http.Handler) http.Handler {
 			collector.TrackAPI(r.Method+" "+route, ww.Status(), time.Since(start))
 		})
 	}
+}
+
+// requireWrite makes the "user" role read-only: reads pass through, but
+// mutations require the owner or admin role. The /admin/profile subtree is
+// exempt so every user keeps managing their own account (password, trusted
+// devices). Must run after requireAuth, which refreshes the role from the DB
+// on every request.
+func requireWrite(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet, http.MethodHead, http.MethodOptions:
+			next.ServeHTTP(w, r)
+			return
+		}
+		if strings.HasPrefix(r.URL.Path, "/api/v1/admin/profile") {
+			next.ServeHTTP(w, r)
+			return
+		}
+		claims := auth.ClaimsFromContext(r.Context())
+		if claims == nil || (claims.Role != "owner" && claims.Role != "admin") {
+			handler.Error(w, http.StatusForbidden, "forbidden", "Your account has read-only access.")
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func requireAuth(manager auth.Manager, repo repository.AuthRepository) func(http.Handler) http.Handler {

@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
+	"time"
 
+	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/mailer"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/model"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/repository"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/validator"
@@ -13,10 +15,11 @@ import (
 
 type PublicService struct {
 	repo repository.PublicRepository
+	mail mailer.Mailer
 }
 
-func NewPublicService(repo repository.PublicRepository) PublicService {
-	return PublicService{repo: repo}
+func NewPublicService(repo repository.PublicRepository, mail mailer.Mailer) PublicService {
+	return PublicService{repo: repo, mail: mail}
 }
 
 func (s PublicService) Navigation(ctx context.Context) (model.Navigation, error) {
@@ -149,5 +152,16 @@ func (s PublicService) CreateContact(ctx context.Context, input model.ContactInp
 	if v.HasErrors() {
 		return model.ContactInquiry{}, v
 	}
-	return s.repo.CreateContact(ctx, input)
+	inquiry, err := s.repo.CreateContact(ctx, input)
+	if err != nil {
+		return model.ContactInquiry{}, err
+	}
+	// Fire-and-forget: the inquiry is already persisted, so a notification
+	// failure must never fail the request (the mailer logs delivery errors).
+	go func() {
+		notifyCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+		defer cancel()
+		_ = s.mail.NotifyContact(notifyCtx, inquiry)
+	}()
+	return inquiry, nil
 }

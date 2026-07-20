@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/irfanzuhdiabdillah/mdm-compro/backend/internal/model"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -91,6 +92,13 @@ func (r AdminRepository) DashboardStatusCounts(ctx context.Context) (map[string]
 // a human-readable identifier (usually the record title) kept in `after` so
 // the activity feed can name what changed.
 func (r AdminRepository) RecordActivity(ctx context.Context, actorID, action, entityType, entityID, label string) error {
+	return r.RecordActivityDiff(ctx, actorID, action, entityType, entityID, nil, map[string]string{"label": label})
+}
+
+// RecordActivityDiff writes an audit row with minimal before/after snapshots
+// (label + status) so the trail shows what a mutation changed, not just that
+// it happened.
+func (r AdminRepository) RecordActivityDiff(ctx context.Context, actorID, action, entityType, entityID string, before, after map[string]string) error {
 	var actor any
 	if actorID != "" {
 		actor = actorID
@@ -99,14 +107,26 @@ func (r AdminRepository) RecordActivity(ctx context.Context, actorID, action, en
 	if entityID != "" {
 		entity = entityID
 	}
-	after, err := json.Marshal(map[string]string{"label": label})
-	if err != nil {
-		return err
+	var beforeJSON any
+	if len(before) > 0 {
+		encoded, err := json.Marshal(before)
+		if err != nil {
+			return err
+		}
+		beforeJSON = encoded
 	}
-	_, err = r.pool.Exec(ctx, `
-		INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, after)
-		VALUES ($1, $2, $3, $4, $5, $6)
-	`, uuid.NewString(), actor, action, entityType, entity, after)
+	var afterJSON any
+	if len(after) > 0 {
+		encoded, err := json.Marshal(after)
+		if err != nil {
+			return err
+		}
+		afterJSON = encoded
+	}
+	_, err := r.pool.Exec(ctx, `
+		INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, before, after)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`, uuid.NewString(), actor, action, entityType, entity, beforeJSON, afterJSON)
 	return err
 }
 
@@ -1138,7 +1158,8 @@ func nullableString(value *string) any {
 }
 
 func isUniqueViolation(err error) bool {
-	return err != nil && strings.Contains(err.Error(), "SQLSTATE 23505")
+	var pgErr *pgconn.PgError
+	return errors.As(err, &pgErr) && pgErr.Code == "23505"
 }
 
 func slugifyText(value string) string {

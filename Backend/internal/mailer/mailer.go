@@ -26,11 +26,24 @@ func New(logger *slog.Logger, cfg config.Config) Mailer {
 	return Mailer{logger: logger, cfg: cfg}
 }
 
+// NotifyContact emails the configured inbox about a new contact inquiry.
+// Callers fire this after the inquiry is persisted; delivery failures are
+// logged by send and must never surface to the visitor.
 func (m Mailer) NotifyContact(ctx context.Context, inquiry model.ContactInquiry) error {
-	// SMTP integration is intentionally isolated here so contact intake can commit
-	// before email delivery; production can swap this for a queue-backed sender.
-	m.logger.InfoContext(ctx, "contact inquiry notification queued", "contactId", inquiry.ID, "email", inquiry.Email)
-	return nil
+	to := strings.TrimSpace(m.cfg.ContactNotifyTo)
+	if to == "" {
+		return nil
+	}
+	var b strings.Builder
+	fmt.Fprintf(&b, "New contact inquiry received.\n\nName: %s\nEmail: %s\n", inquiry.Name, inquiry.Email)
+	if inquiry.Phone != "" {
+		fmt.Fprintf(&b, "Phone: %s\n", inquiry.Phone)
+	}
+	if inquiry.Company != "" {
+		fmt.Fprintf(&b, "Company: %s\n", inquiry.Company)
+	}
+	fmt.Fprintf(&b, "Subject: %s\n\n%s\n\nReview it at %s/admin.", inquiry.Subject, inquiry.Message, strings.TrimRight(m.cfg.SiteURL, "/"))
+	return m.send(ctx, to, "New contact inquiry: "+inquiry.Subject, b.String())
 }
 
 func (m Mailer) SendInviteCode(ctx context.Context, email, name, code string) error {
@@ -40,7 +53,7 @@ func (m Mailer) SendInviteCode(ctx context.Context, email, name, code string) er
 		code,
 		strings.TrimRight(m.cfg.SiteURL, "/"),
 	)
-	return m.send(ctx, email, "Your MDM CMS invitation code", body, code)
+	return m.send(ctx, email, "Your MDM CMS invitation code", body)
 }
 
 func (m Mailer) SendPasswordResetCode(ctx context.Context, email, name, code string) error {
@@ -50,17 +63,19 @@ func (m Mailer) SendPasswordResetCode(ctx context.Context, email, name, code str
 		code,
 		strings.TrimRight(m.cfg.SiteURL, "/"),
 	)
-	return m.send(ctx, email, "Reset your MDM CMS password", body, code)
+	return m.send(ctx, email, "Reset your MDM CMS password", body)
 }
 
 // SendRaw delivers a pre-rendered plain-text email (used by the 2FA flow,
 // whose subject/body come from admin-editable templates).
 func (m Mailer) SendRaw(ctx context.Context, to, subject, body string) error {
-	return m.send(ctx, to, subject, body, "")
+	return m.send(ctx, to, subject, body)
 }
 
-func (m Mailer) send(ctx context.Context, to, subject, body, code string) error {
-	m.logger.InfoContext(ctx, "authentication email queued", "to", to, "subject", subject, "code", code)
+// send never logs the message body: invite/reset bodies carry one-time codes
+// that must not end up in production logs.
+func (m Mailer) send(ctx context.Context, to, subject, body string) error {
+	m.logger.InfoContext(ctx, "email queued", "to", to, "subject", subject)
 	err := m.deliver(ctx, to, subject, body)
 	if err != nil {
 		// Callers intentionally swallow this (the reset endpoint always returns
