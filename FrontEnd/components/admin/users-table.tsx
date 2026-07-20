@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { ShieldCheck, Trash2, Users, ChevronLeft, ChevronRight } from "lucide-react"
 import { SortableHead } from "@/components/admin/sortable-head"
 import { TableEmpty } from "@/components/admin/table-empty"
@@ -54,8 +54,19 @@ function sortValue(user: UserRow, field: SortField) {
 export function UsersTable({ users, currentUserId, currentRole }: UsersTableProps) {
   const { field, direction, toggle, sorted: sortedUsers } = useClientSort(users, sortValue)
   const [rowToDelete, setRowToDelete] = useState<UserRow | null>(null)
+  const [deleting, startDelete] = useTransition()
   // GET /admin/users returns the full list — page it client-side.
   const [page, setPage] = useState(1)
+
+  // Dispatch via a transition, not a form submit: AlertDialogAction closes the
+  // dialog on click, unmounting a form-in-dialog before React can dispatch its
+  // action — so the delete silently never fired.
+  function confirmDelete() {
+    if (!rowToDelete) return
+    const formData = new FormData()
+    formData.set("id", rowToDelete.id)
+    startDelete(() => deleteUserAction(formData))
+  }
   const totalPages = Math.max(1, Math.ceil(sortedUsers.length / USERS_PER_PAGE))
   const currentPage = Math.min(page, totalPages)
   const pagedUsers = sortedUsers.slice((currentPage - 1) * USERS_PER_PAGE, currentPage * USERS_PER_PAGE)
@@ -195,18 +206,14 @@ export function UsersTable({ users, currentUserId, currentRole }: UsersTableProp
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            {rowToDelete && (
-              <form action={async (formData) => {
-                await deleteUserAction(formData);
-                setRowToDelete(null);
-              }}>
-                <input name="id" type="hidden" value={rowToDelete.id} />
-                <AlertDialogAction type="submit" className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                  Confirm Delete
-                </AlertDialogAction>
-              </form>
-            )}
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleting}
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Deleting…" : "Confirm Delete"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

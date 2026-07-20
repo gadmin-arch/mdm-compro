@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import Link from "next/link"
 import { Archive, Edit3, ExternalLink, Inbox } from "lucide-react"
 import { SortableHead } from "@/components/admin/sortable-head"
@@ -65,6 +65,20 @@ export function AdminResourceTable({
 }: AdminResourceTableProps) {
   const { field, direction, toggle, sorted: sortedRows } = useClientSort(rows, sortValue)
   const [rowToArchive, setRowToArchive] = useState<AdminResourceRow | null>(null)
+  const [archiving, startArchive] = useTransition()
+
+  // Dispatch via a transition, not a form submit: AlertDialogAction closes the
+  // dialog on click, unmounting a form-in-dialog before React can dispatch its
+  // action — so the archive silently never fired.
+  function confirmArchive() {
+    if (!rowToArchive) return
+    const formData = new FormData()
+    if (resource) formData.set("resource", resource)
+    formData.set("id", rowToArchive.id)
+    formData.set("version", String(rowToArchive.version ?? 0))
+    formData.set(resource ? "oldPath" : "oldSlug", rowToArchive.path || rowToArchive.slug)
+    startArchive(() => deleteAction(formData))
+  }
 
   return (
     <div className="mt-8 overflow-hidden rounded-lg border border-border bg-background">
@@ -168,21 +182,10 @@ export function AdminResourceTable({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            {rowToArchive && (
-              <form action={async (formData) => {
-                await deleteAction(formData);
-                setRowToArchive(null);
-              }}>
-                {resource && <input name="resource" type="hidden" value={resource} />}
-                <input name="id" type="hidden" value={rowToArchive.id} />
-                <input name="version" type="hidden" value={rowToArchive.version ?? 0} />
-                <input name={resource ? "oldPath" : "oldSlug"} type="hidden" value={rowToArchive.path || rowToArchive.slug} />
-                <AlertDialogAction type="submit">
-                  Confirm Archive
-                </AlertDialogAction>
-              </form>
-            )}
+            <AlertDialogCancel disabled={archiving}>Cancel</AlertDialogCancel>
+            <AlertDialogAction disabled={archiving} onClick={confirmArchive}>
+              {archiving ? "Archiving…" : "Confirm Archive"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

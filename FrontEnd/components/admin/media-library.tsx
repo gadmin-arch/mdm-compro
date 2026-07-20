@@ -86,6 +86,19 @@ export function MediaLibrary({
 }) {
   const [toDelete, setToDelete] = useState<AdminMediaUpload | null>(null)
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [deleting, startDelete] = useTransition()
+
+  // Dispatch the server action via a transition instead of a form submit:
+  // AlertDialogAction closes the dialog on click, which unmounts a
+  // conditionally-rendered <form> before React can dispatch its action — so
+  // the delete silently never fired. A transition call is independent of the
+  // dialog's DOM lifecycle and always runs.
+  function confirmDelete() {
+    if (!toDelete) return
+    const formData = new FormData()
+    formData.set("id", toDelete.id)
+    startDelete(() => deleteAction(formData))
+  }
 
   async function copyUrl(item: AdminMediaUpload) {
     // Copy the relative path — next/image treats a same-origin relative URL as
@@ -174,18 +187,10 @@ export function MediaLibrary({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            {toDelete && (
-              <form
-                action={async (formData) => {
-                  await deleteAction(formData)
-                  setToDelete(null)
-                }}
-              >
-                <input name="id" type="hidden" value={toDelete.id} />
-                <AlertDialogAction type="submit">Delete permanently</AlertDialogAction>
-              </form>
-            )}
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction disabled={deleting} onClick={confirmDelete}>
+              {deleting ? "Deleting…" : "Delete permanently"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

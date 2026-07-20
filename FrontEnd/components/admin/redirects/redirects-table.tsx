@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useTransition } from "react"
 import Link from "next/link"
 import { Archive, Check, Copy, CopyPlus, Edit3, ExternalLink, Link2, QrCode, Trash2 } from "lucide-react"
 import { TableEmpty } from "@/components/admin/table-empty"
@@ -46,9 +46,27 @@ export function RedirectsTable({ redirects }: { redirects: AdminRedirect[] }) {
   const [toArchive, setToArchive] = useState<AdminRedirect | null>(null)
   const [bulkOpen, setBulkOpen] = useState(false)
   const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [archiving, startArchive] = useTransition()
 
   const allSelected = redirects.length > 0 && selected.size === redirects.length
   const selectedIds = useMemo(() => JSON.stringify([...selected]), [selected])
+
+  // Dispatch via a transition, not a form submit: AlertDialogAction closes the
+  // dialog on click, unmounting a form-in-dialog before React can dispatch its
+  // action — so the archive silently never fired.
+  function confirmArchive() {
+    if (!toArchive) return
+    const formData = new FormData()
+    formData.set("id", toArchive.id)
+    formData.set("version", String(toArchive.version))
+    startArchive(() => archiveRedirectAction(formData))
+  }
+
+  function confirmBulkArchive() {
+    const formData = new FormData()
+    formData.set("ids", selectedIds)
+    startArchive(() => bulkDeleteRedirectsAction(formData))
+  }
 
   function toggleAll() {
     setSelected(allSelected ? new Set() : new Set(redirects.map((r) => r.id)))
@@ -215,14 +233,10 @@ export function RedirectsTable({ redirects }: { redirects: AdminRedirect[] }) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            {toArchive && (
-              <form action={archiveRedirectAction}>
-                <input type="hidden" name="id" value={toArchive.id} />
-                <input type="hidden" name="version" value={toArchive.version} />
-                <AlertDialogAction type="submit">Archive</AlertDialogAction>
-              </form>
-            )}
+            <AlertDialogCancel disabled={archiving}>Cancel</AlertDialogCancel>
+            <AlertDialogAction disabled={archiving} onClick={confirmArchive}>
+              {archiving ? "Archiving…" : "Archive"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -236,11 +250,10 @@ export function RedirectsTable({ redirects }: { redirects: AdminRedirect[] }) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <form action={bulkDeleteRedirectsAction}>
-              <input type="hidden" name="ids" value={selectedIds} />
-              <AlertDialogAction type="submit">Archive selected</AlertDialogAction>
-            </form>
+            <AlertDialogCancel disabled={archiving}>Cancel</AlertDialogCancel>
+            <AlertDialogAction disabled={archiving} onClick={confirmBulkArchive}>
+              {archiving ? "Archiving…" : "Archive selected"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

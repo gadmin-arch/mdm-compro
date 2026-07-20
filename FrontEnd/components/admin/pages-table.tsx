@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import Link from "next/link"
 import { Archive, Copy, Edit3, FileText, Lock } from "lucide-react"
 import { SortableHead } from "@/components/admin/sortable-head"
@@ -44,6 +44,19 @@ function sortValue(page: PageContent, field: SortField) {
 export function PagesTable({ pages }: PagesTableProps) {
   const { field, direction, toggle, sorted: sortedPages } = useClientSort(pages, sortValue)
   const [rowToArchive, setRowToArchive] = useState<PageContent | null>(null)
+  const [archiving, startArchive] = useTransition()
+
+  // Dispatch via a transition, not a form submit: AlertDialogAction closes the
+  // dialog on click, unmounting a form-in-dialog before React can dispatch its
+  // action — so the archive silently never fired.
+  function confirmArchive() {
+    if (!rowToArchive) return
+    const formData = new FormData()
+    formData.set("id", rowToArchive.id)
+    formData.set("version", String(rowToArchive.version))
+    formData.set("key", rowToArchive.key)
+    startArchive(() => deletePageAction(formData))
+  }
 
   return (
     <div className="mt-8 overflow-hidden rounded-lg border border-border bg-background">
@@ -158,20 +171,10 @@ export function PagesTable({ pages }: PagesTableProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            {rowToArchive && (
-              <form action={async (formData) => {
-                await deletePageAction(formData);
-                setRowToArchive(null);
-              }}>
-                <input name="id" type="hidden" value={rowToArchive.id} />
-                <input name="version" type="hidden" value={rowToArchive.version} />
-                <input name="key" type="hidden" value={rowToArchive.key} />
-                <AlertDialogAction type="submit">
-                  Confirm Archive
-                </AlertDialogAction>
-              </form>
-            )}
+            <AlertDialogCancel disabled={archiving}>Cancel</AlertDialogCancel>
+            <AlertDialogAction disabled={archiving} onClick={confirmArchive}>
+              {archiving ? "Archiving…" : "Confirm Archive"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

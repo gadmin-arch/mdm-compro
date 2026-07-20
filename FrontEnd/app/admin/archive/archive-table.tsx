@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useTransition } from "react"
 import { RotateCcw, Trash2, ChevronUp, ChevronDown, ArrowUpDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -36,6 +36,26 @@ export function ArchiveTable({ items }: ArchiveTableProps) {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
   const [itemToRestore, setItemToRestore] = useState<ArchivedItem | null>(null)
   const [itemToDelete, setItemToDelete] = useState<ArchivedItem | null>(null)
+  const [pending, startAction] = useTransition()
+
+  // Dispatch via a transition, not a form submit: AlertDialogAction closes the
+  // dialog on click, unmounting a form-in-dialog before React can dispatch its
+  // action — so restore/delete silently never fired.
+  function confirmRestore() {
+    if (!itemToRestore) return
+    const formData = new FormData()
+    formData.set("id", itemToRestore.id)
+    formData.set("type", itemToRestore.type)
+    startAction(() => restoreItemAction(formData))
+  }
+
+  function confirmHardDelete() {
+    if (!itemToDelete) return
+    const formData = new FormData()
+    formData.set("id", itemToDelete.id)
+    formData.set("type", itemToDelete.type)
+    startAction(() => hardDeleteItemAction(formData))
+  }
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -177,19 +197,10 @@ export function ArchiveTable({ items }: ArchiveTableProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            {itemToRestore && (
-              <form action={async (formData) => {
-                await restoreItemAction(formData)
-                setItemToRestore(null)
-              }}>
-                <input name="id" type="hidden" value={itemToRestore.id} />
-                <input name="type" type="hidden" value={itemToRestore.type} />
-                <AlertDialogAction type="submit">
-                  Confirm Restore
-                </AlertDialogAction>
-              </form>
-            )}
+            <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction disabled={pending} onClick={confirmRestore}>
+              {pending ? "Restoring…" : "Confirm Restore"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -204,19 +215,14 @@ export function ArchiveTable({ items }: ArchiveTableProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            {itemToDelete && (
-              <form action={async (formData) => {
-                await hardDeleteItemAction(formData)
-                setItemToDelete(null)
-              }}>
-                <input name="id" type="hidden" value={itemToDelete.id} />
-                <input name="type" type="hidden" value={itemToDelete.type} />
-                <AlertDialogAction type="submit" className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                  Delete Permanently
-                </AlertDialogAction>
-              </form>
-            )}
+            <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={pending}
+              onClick={confirmHardDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {pending ? "Deleting…" : "Delete Permanently"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
