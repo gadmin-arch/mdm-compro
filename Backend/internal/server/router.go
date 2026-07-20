@@ -43,6 +43,7 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, colle
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
+	r.Use(requestLog(logger))
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.CleanPath)
 	r.Use(middleware.Timeout(60 * time.Second))

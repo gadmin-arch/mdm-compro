@@ -49,6 +49,21 @@ func (h AdminHandler) audit(r *http.Request, action, entityType, entityID, label
 	_ = h.service.RecordActivity(r.Context(), actorID, action, entityType, entityID, label)
 }
 
+// auditDiff is audit with before/after snapshots for update/archive actions.
+func (h AdminHandler) auditDiff(r *http.Request, action, entityType, entityID string, before, after map[string]string) {
+	actorID := ""
+	if claims := auth.ClaimsFromContext(r.Context()); claims != nil {
+		actorID = claims.UserID
+	}
+	_ = h.service.RecordActivityDiff(r.Context(), actorID, action, entityType, entityID, before, after)
+}
+
+// snapshot is the minimal audited state of a record: what it was called and
+// which publish status it had.
+func snapshot(title, status string) map[string]string {
+	return map[string]string{"label": title, "status": status}
+}
+
 // contentEntity maps a chi module param ("services") to an entity type
 // ("service") for audit rows.
 func contentEntity(module string) string {
@@ -103,20 +118,23 @@ func (h AdminHandler) UpdatePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Best-effort pre-read so the audit row can show what changed.
+	existing, _ := h.service.Page(r.Context(), chi.URLParam(r, "id"))
 	page, err := h.service.UpdatePage(r.Context(), chi.URLParam(r, "id"), input)
 	if err == nil {
-		h.audit(r, "updated", "page", page.ID, page.Title)
+		h.auditDiff(r, "updated", "page", page.ID, snapshot(existing.Title, existing.Status), snapshot(page.Title, page.Status))
 	}
 	respondAdmin(w, page, err)
 }
 
 func (h AdminHandler) DeletePage(w http.ResponseWriter, r *http.Request) {
+	existing, _ := h.service.Page(r.Context(), chi.URLParam(r, "id"))
 	err := h.service.DeletePage(r.Context(), chi.URLParam(r, "id"), intQuery(r, "version", 0))
 	if err != nil {
 		respondAdmin(w, nil, err)
 		return
 	}
-	h.audit(r, "archived", "page", chi.URLParam(r, "id"), "")
+	h.auditDiff(r, "archived", "page", chi.URLParam(r, "id"), snapshot(existing.Title, existing.Status), snapshot(existing.Title, "archived"))
 	JSON(w, http.StatusNoContent, nil)
 }
 
@@ -158,20 +176,22 @@ func (h AdminHandler) UpdateContent(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusBadRequest, "invalid_json", "Request body must be valid JSON.")
 		return
 	}
+	existing, _ := h.service.ContentItem(r.Context(), chi.URLParam(r, "module"), chi.URLParam(r, "id"))
 	data, err := h.service.UpdateContent(r.Context(), chi.URLParam(r, "module"), chi.URLParam(r, "id"), input)
 	if err == nil {
-		h.audit(r, "updated", contentEntity(chi.URLParam(r, "module")), data.ID, data.Title)
+		h.auditDiff(r, "updated", contentEntity(chi.URLParam(r, "module")), data.ID, snapshot(existing.Title, existing.Status), snapshot(data.Title, data.Status))
 	}
 	respondAdmin(w, data, err)
 }
 
 func (h AdminHandler) DeleteContent(w http.ResponseWriter, r *http.Request) {
+	existing, _ := h.service.ContentItem(r.Context(), chi.URLParam(r, "module"), chi.URLParam(r, "id"))
 	err := h.service.DeleteContent(r.Context(), chi.URLParam(r, "module"), chi.URLParam(r, "id"), intQuery(r, "version", 0))
 	if err != nil {
 		respondAdmin(w, nil, err)
 		return
 	}
-	h.audit(r, "archived", contentEntity(chi.URLParam(r, "module")), chi.URLParam(r, "id"), "")
+	h.auditDiff(r, "archived", contentEntity(chi.URLParam(r, "module")), chi.URLParam(r, "id"), snapshot(existing.Title, existing.Status), snapshot(existing.Title, "archived"))
 	JSON(w, http.StatusNoContent, nil)
 }
 
@@ -212,20 +232,22 @@ func (h AdminHandler) UpdateNews(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusBadRequest, "invalid_json", "Request body must be valid JSON.")
 		return
 	}
+	existing, _ := h.service.NewsItem(r.Context(), chi.URLParam(r, "id"))
 	data, err := h.service.UpdateNews(r.Context(), chi.URLParam(r, "id"), input)
 	if err == nil {
-		h.audit(r, "updated", "news", data.ID, data.Title)
+		h.auditDiff(r, "updated", "news", data.ID, snapshot(existing.Title, existing.Status), snapshot(data.Title, data.Status))
 	}
 	respondAdmin(w, data, err)
 }
 
 func (h AdminHandler) DeleteNews(w http.ResponseWriter, r *http.Request) {
+	existing, _ := h.service.NewsItem(r.Context(), chi.URLParam(r, "id"))
 	err := h.service.DeleteNews(r.Context(), chi.URLParam(r, "id"), intQuery(r, "version", 0))
 	if err != nil {
 		respondAdmin(w, nil, err)
 		return
 	}
-	h.audit(r, "archived", "news", chi.URLParam(r, "id"), "")
+	h.auditDiff(r, "archived", "news", chi.URLParam(r, "id"), snapshot(existing.Title, existing.Status), snapshot(existing.Title, "archived"))
 	JSON(w, http.StatusNoContent, nil)
 }
 
@@ -266,20 +288,22 @@ func (h AdminHandler) UpdateCareer(w http.ResponseWriter, r *http.Request) {
 		Error(w, http.StatusBadRequest, "invalid_json", "Request body must be valid JSON.")
 		return
 	}
+	existing, _ := h.service.Career(r.Context(), chi.URLParam(r, "id"))
 	data, err := h.service.UpdateCareer(r.Context(), chi.URLParam(r, "id"), input)
 	if err == nil {
-		h.audit(r, "updated", "career", data.ID, data.Title)
+		h.auditDiff(r, "updated", "career", data.ID, snapshot(existing.Title, existing.Status), snapshot(data.Title, data.Status))
 	}
 	respondAdmin(w, data, err)
 }
 
 func (h AdminHandler) DeleteCareer(w http.ResponseWriter, r *http.Request) {
+	existing, _ := h.service.Career(r.Context(), chi.URLParam(r, "id"))
 	err := h.service.DeleteCareer(r.Context(), chi.URLParam(r, "id"), intQuery(r, "version", 0))
 	if err != nil {
 		respondAdmin(w, nil, err)
 		return
 	}
-	h.audit(r, "archived", "career", chi.URLParam(r, "id"), "")
+	h.auditDiff(r, "archived", "career", chi.URLParam(r, "id"), snapshot(existing.Title, existing.Status), snapshot(existing.Title, "archived"))
 	JSON(w, http.StatusNoContent, nil)
 }
 

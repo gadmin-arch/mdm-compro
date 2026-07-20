@@ -38,6 +38,10 @@ func (s AdminService) RecentContacts(ctx context.Context) ([]model.ContactInquir
 	return s.repo.ListContacts(ctx, 25)
 }
 
+func (s AdminService) RecordActivityDiff(ctx context.Context, actorID, action, entityType, entityID string, before, after map[string]string) error {
+	return s.repo.RecordActivityDiff(ctx, actorID, action, entityType, entityID, before, after)
+}
+
 func (s AdminService) RecordActivity(ctx context.Context, actorID, action, entityType, entityID, label string) error {
 	return s.repo.RecordActivity(ctx, actorID, action, entityType, entityID, label)
 }
