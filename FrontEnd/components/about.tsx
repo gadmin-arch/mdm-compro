@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { ArrowRight, Compass, Handshake, Mail, MapPin, Phone, Target } from "lucide-react"
 import type { PageContent } from "@/lib/cms"
+import { container } from "@/lib/layout"
 
 export function About({ page }: { page?: PageContent | null }) {
   const content = page?.content ?? {}
@@ -11,14 +12,14 @@ export function About({ page }: { page?: PageContent | null }) {
   return (
     <>
       <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className={container("py-20")}>
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-5">
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-secondary">
               <Image
                 src="/uploads/automation-project.jpg"
                 alt="Industrial automation control room with engineers monitoring SCADA systems"
-                fill
+                fill sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
               />
             </div>
@@ -94,7 +95,7 @@ export function About({ page }: { page?: PageContent | null }) {
 
       {/* Our Locations Section */}
       <section className="border-t border-border/60 bg-secondary/15 py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className={container()}>
           <div className="text-center md:text-left">
             <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               Our Offices

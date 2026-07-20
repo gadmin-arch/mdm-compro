@@ -13,6 +13,13 @@ import {
 import type { Career, ContentNode, NewsItem } from "@/lib/cms"
 import type { SaveResult } from "@/lib/save-result"
 import { blocksFromHtml, blocksFromText, slugify, specsFromText, toIsoDateTime } from "@/lib/admin-content"
+import {
+  careerSchema,
+  contentItemSchema,
+  FieldValidationError,
+  newsSchema,
+  zodFields,
+} from "@/lib/admin-schemas"
 
 type Resource = "services" | "products" | "news" | "careers"
 
@@ -180,7 +187,12 @@ export async function deleteNewsAction(formData: FormData) {
 }
 
 export async function createCareerAction(formData: FormData): Promise<SaveResult | void> {
-  const payload = careerPayload(formData)
+  let payload: CareerPayload
+  try {
+    payload = careerPayload(formData)
+  } catch (error) {
+    return payloadError(error)
+  }
   const result = await adminFetch<Career>(
     "/careers",
     { method: "POST", body: JSON.stringify(payload) },
@@ -200,10 +212,15 @@ export async function updateCareerAction(formData: FormData): Promise<SaveResult
   const version = Number(formData.get("version") ?? 0)
   if (!id) return { error: "save_failed" }
 
-  const payload = {
-    ...careerPayload(formData),
-    version,
-  } satisfies CareerPayload
+  let payload: CareerPayload
+  try {
+    payload = {
+      ...careerPayload(formData),
+      version,
+    }
+  } catch (error) {
+    return payloadError(error)
+  }
   const result = await adminFetch<Career>(
     `/careers/${id}`,
     { method: "PUT", body: JSON.stringify(payload) },
@@ -241,6 +258,16 @@ export async function deleteCareerAction(formData: FormData) {
 }
 
 async function contentPayload(formData: FormData, nextPath: string): Promise<ContentItemPayload> {
+  // Validate before uploading files so an invalid form never uploads media.
+  const check = contentItemSchema.safeParse({
+    title: String(formData.get("title") ?? ""),
+    slug: slugify(String(formData.get("slug") ?? "")),
+    status: String(formData.get("status") ?? "draft"),
+    sortOrder: String(formData.get("sortOrder") ?? "0"),
+  })
+  if (!check.success) {
+    throw new FieldValidationError(zodFields(check.error))
+  }
   const uploadedImageUrl = await uploadFileURL(formData, "imageUpload", nextPath)
   const uploadedDatasheetUrl = await uploadFileURL(formData, "datasheetUpload", nextPath)
   const parentID = String(formData.get("parentId") ?? "")
@@ -261,6 +288,14 @@ async function contentPayload(formData: FormData, nextPath: string): Promise<Con
 }
 
 async function newsPayload(formData: FormData, nextPath: string): Promise<NewsPayload> {
+  const check = newsSchema.safeParse({
+    title: String(formData.get("title") ?? ""),
+    slug: slugify(String(formData.get("slug") ?? "")),
+    status: String(formData.get("status") ?? "draft"),
+  })
+  if (!check.success) {
+    throw new FieldValidationError(zodFields(check.error))
+  }
   const uploadedImageUrl = await uploadFileURL(formData, "featuredImageUpload", nextPath)
   return {
     slug: slugify(String(formData.get("slug") ?? "")),
@@ -277,6 +312,18 @@ async function newsPayload(formData: FormData, nextPath: string): Promise<NewsPa
 }
 
 function careerPayload(formData: FormData): CareerPayload {
+  const check = careerSchema.safeParse({
+    title: String(formData.get("title") ?? ""),
+    slug: slugify(String(formData.get("slug") ?? "")),
+    department: String(formData.get("department") ?? ""),
+    location: String(formData.get("location") ?? ""),
+    employmentType: String(formData.get("employmentType") ?? "full_time"),
+    applyUrl: String(formData.get("applyUrl") ?? ""),
+    status: String(formData.get("status") ?? "draft"),
+  })
+  if (!check.success) {
+    throw new FieldValidationError(zodFields(check.error))
+  }
   return {
     slug: slugify(String(formData.get("slug") ?? "")),
     title: String(formData.get("title") ?? ""),
@@ -347,16 +394,21 @@ function errorCode(error: AdminApiError) {
   return "save_failed"
 }
 
-// Upload failures while building the payload (image/datasheet fields).
+// Failures while building the payload: schema violations surface inline,
+// upload errors (image/datasheet fields) as a banner.
 function payloadError(error: unknown): SaveResult {
+  if (error instanceof FieldValidationError) return { error: "validation", fields: error.fields }
   if (error instanceof AdminApiError) return { error: "upload_failed" }
   throw error
 }
 
+const duplicateSlugFields = { slug: "This slug is already in use." }
+
 // On create, a version_conflict can only mean the slug is already taken.
 function createError(error: AdminApiError): SaveResult {
-  if (error.code === "version_conflict") return { error: "duplicate" }
-  if (error.code === "validation_error") return { error: "validation" }
+  if (error.code === "version_conflict") return { error: "duplicate", fields: duplicateSlugFields }
+  if (error.code === "validation_error") return { error: "validation", fields: error.fields }
+  if (error.status === 403) return { error: "forbidden" }
   return { error: "save_failed" }
 }
 
@@ -372,8 +424,9 @@ async function updateError(
     if (current?.version && current.version !== sentVersion) {
       return { error: "conflict", serverVersion: current.version }
     }
-    return { error: "duplicate" }
+    return { error: "duplicate", fields: duplicateSlugFields }
   }
-  if (error.code === "validation_error") return { error: "validation" }
+  if (error.code === "validation_error") return { error: "validation", fields: error.fields }
+  if (error.status === 403) return { error: "forbidden" }
   return { error: "save_failed" }
 }

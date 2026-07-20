@@ -1,8 +1,8 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { AdminShell } from "@/components/admin-shell"
+import { FlashToast } from "@/components/admin/flash-toast"
 import { NewsForm } from "@/components/admin/resource-forms"
-import { resourceMessage } from "@/components/admin/resource-toolbar"
 import { Button } from "@/components/ui/button"
 import { AdminApiError, adminFetch } from "@/lib/admin-api"
 import type { NewsItem } from "@/lib/cms"
@@ -10,12 +10,10 @@ import { updateNewsAction } from "../../content-actions"
 
 export default async function AdminEditNewsPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ created?: string; saved?: string; error?: string }>
 }) {
-  const [{ id }, query] = await Promise.all([params, searchParams])
+  const { id } = await params
   let item: NewsItem | null = null
   let apiError = false
   try {
@@ -28,6 +26,7 @@ export default async function AdminEditNewsPage({
   return (
     <AdminShell
       active="news"
+      breadcrumbs={[{ label: "News", href: "/admin/news" }, { label: "Edit" }]}
       eyebrow="Editorial"
       title={item?.title ?? "Edit News"}
       actions={
@@ -39,7 +38,7 @@ export default async function AdminEditNewsPage({
         </Button>
       }
     >
-      <Message text={resourceMessage(query)} />
+      <FlashToast resource="news post" />
       {apiError || !item ? (
         <Message destructive text="News could not be loaded from the admin API." />
       ) : (

@@ -1,8 +1,8 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { AdminShell } from "@/components/admin-shell"
+import { FlashToast } from "@/components/admin/flash-toast"
 import { ContentItemForm } from "@/components/admin/resource-forms"
-import { resourceMessage } from "@/components/admin/resource-toolbar"
 import { Button } from "@/components/ui/button"
 import { AdminApiError, adminFetch, type AdminContentResponse } from "@/lib/admin-api"
 import type { ContentNode } from "@/lib/cms"
@@ -10,12 +10,10 @@ import { updateContentItemAction } from "../../content-actions"
 
 export default async function AdminEditProductPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ created?: string; saved?: string; error?: string }>
 }) {
-  const [{ id }, query] = await Promise.all([params, searchParams])
+  const { id } = await params
   let item: ContentNode | null = null
   let parents: ContentNode[] = []
   let apiError = false
@@ -34,6 +32,7 @@ export default async function AdminEditProductPage({
   return (
     <AdminShell
       active="products"
+      breadcrumbs={[{ label: "Products", href: "/admin/products" }, { label: "Edit" }]}
       eyebrow="Catalog"
       title={item?.title ?? "Edit Product"}
       actions={
@@ -45,7 +44,7 @@ export default async function AdminEditProductPage({
         </Button>
       }
     >
-      <Message text={resourceMessage(query)} />
+      <FlashToast resource="product" />
       {apiError || !item ? (
         <Message destructive text="Product could not be loaded from the admin API." />
       ) : (

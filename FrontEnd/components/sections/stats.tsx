@@ -1,4 +1,5 @@
 import { str, records } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 export function StatsSection({ props }: { props: Record<string, unknown> }) {
   const eyebrow = str(props, "eyebrow")
@@ -8,7 +9,7 @@ export function StatsSection({ props }: { props: Record<string, unknown> }) {
 
   return (
     <section className="border-b border-border/60 bg-secondary/40">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className={container("py-16")}>
         {(eyebrow || title) && (
           <div className="mb-10 max-w-2xl">
             {eyebrow && (

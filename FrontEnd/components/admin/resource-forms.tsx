@@ -12,9 +12,10 @@ import {
   textFromBlocks,
   toDateTimeLocal,
 } from "@/lib/admin-content"
-import { RichTextField } from "@/components/admin/rich-text-editor"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { Save } from "lucide-react"
 import { MediaUpload } from "@/components/admin/media-upload"
@@ -29,6 +30,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+
+// TipTap is the heaviest admin dependency; load it only when a form that
+// actually renders the editor mounts.
+const RichTextField = dynamic(
+  () => import("@/components/admin/rich-text-editor").then((mod) => mod.RichTextField),
+  { ssr: false, loading: () => <Skeleton className="h-56 w-full" /> },
+)
 
 type ContentItemFormProps = {
   action: SaveAction
@@ -75,6 +83,7 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
   const formRef = useRef<HTMLFormElement>(null)
   const [showConfirm, setShowConfirm] = useState(false)
   const { pending, result, submit } = useSaveAction(action)
+  const fields = result?.fields
 
   const handleSaveClick = () => {
     if (formRef.current) {
@@ -115,8 +124,8 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
 
       <div className="space-y-6 rounded-lg border border-border bg-background p-5">
         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_240px]">
-          <Field label="Name" name="title" required defaultValue={item?.title} />
-          <Field label="Slug" name="slug" required defaultValue={item?.slug} />
+          <Field label="Name" name="title" required defaultValue={item?.title} error={fields?.title} />
+          <Field label="Slug" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
         </div>
         <SelectField
           label="Parent"
@@ -170,9 +179,9 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
         pending={pending}
         onClickSubmit={handleSaveClick}
       >
-        <StatusField defaultValue={item?.status} />
+        <StatusField defaultValue={item?.status} error={fields?.status} />
         <Field label="Publish date" name="publishedAt" type="datetime-local" defaultValue={toDateTimeLocal(item?.publishedAt)} />
-        <Field label="Sort order" name="sortOrder" type="number" defaultValue={String(item?.sortOrder ?? 0)} />
+        <Field label="Sort order" name="sortOrder" type="number" defaultValue={String(item?.sortOrder ?? 0)} error={fields?.sortOrder} />
         <SeoFields seo={item?.seo} />
       </Sidebar>
 
@@ -205,6 +214,7 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
   const formRef = useRef<HTMLFormElement>(null)
   const [showConfirm, setShowConfirm] = useState(false)
   const { pending, result, submit } = useSaveAction(action)
+  const fields = result?.fields
 
   const handleSaveClick = () => {
     if (formRef.current) {
@@ -244,12 +254,12 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
 
       <div className="space-y-6 rounded-lg border border-border bg-background p-5">
         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_240px]">
-          <Field label="Title" name="title" required defaultValue={item?.title} />
-          <Field label="Slug" name="slug" required defaultValue={item?.slug} />
+          <Field label="Title" name="title" required defaultValue={item?.title} error={fields?.title} />
+          <Field label="Slug" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
         </div>
         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px]">
-          <Field label="Excerpt" name="excerpt" defaultValue={item?.excerpt} />
-          <Field label="Category" name="category" defaultValue={item?.category} />
+          <Field label="Excerpt" name="excerpt" defaultValue={item?.excerpt} error={fields?.excerpt} />
+          <Field label="Category" name="category" defaultValue={item?.category} error={fields?.category} />
         </div>
         <RichTextField label="Body" name="bodyHtml" defaultValue={htmlFromBlocks(item?.body)} />
         <MediaUpload
@@ -262,7 +272,7 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
       </div>
 
       <Sidebar buttonLabel={mode === "create" ? "Create News" : "Save News"} itemVersion={item?.version} pending={pending} onClickSubmit={handleSaveClick}>
-        <StatusField defaultValue={item?.status} />
+        <StatusField defaultValue={item?.status} error={fields?.status} />
         <Field label="Publish date" name="publishedAt" type="datetime-local" defaultValue={toDateTimeLocal(item?.publishedAt)} />
         <label className="flex items-center gap-3 rounded-md border border-border px-3 py-2 text-sm">
           <input defaultChecked={Boolean(item?.featured)} name="featured" type="checkbox" />
@@ -300,6 +310,7 @@ export function CareerForm({ action, item, mode }: CareerFormProps) {
   const formRef = useRef<HTMLFormElement>(null)
   const [showConfirm, setShowConfirm] = useState(false)
   const { pending, result, submit } = useSaveAction(action)
+  const fields = result?.fields
 
   const handleSaveClick = () => {
     if (formRef.current) {
@@ -339,29 +350,30 @@ export function CareerForm({ action, item, mode }: CareerFormProps) {
 
       <div className="space-y-6 rounded-lg border border-border bg-background p-5">
         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_240px]">
-          <Field label="Role title" name="title" required defaultValue={item?.title} />
-          <Field label="Slug" name="slug" required defaultValue={item?.slug} />
+          <Field label="Role title" name="title" required defaultValue={item?.title} error={fields?.title} />
+          <Field label="Slug" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
         </div>
-        <TextAreaField label="Summary" name="summary" rows={4} defaultValue={item?.summary} />
+        <TextAreaField label="Summary" name="summary" rows={4} defaultValue={item?.summary} error={fields?.summary} />
         <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Department" name="department" required defaultValue={item?.department} />
-          <Field label="Location" name="location" required defaultValue={item?.location} />
+          <Field label="Department" name="department" required defaultValue={item?.department} error={fields?.department} />
+          <Field label="Location" name="location" required defaultValue={item?.location} error={fields?.location} />
         </div>
         <RichTextField
           label="Job description"
           name="descriptionHtml"
           defaultValue={htmlFromBlocks(item?.description)}
         />
-        <Field label="Apply URL" name="applyUrl" placeholder="https://docs.google.com/forms/..." defaultValue={item?.applyUrl} />
+        <Field label="Apply URL" name="applyUrl" placeholder="https://docs.google.com/forms/..." defaultValue={item?.applyUrl} error={fields?.applyUrl} />
       </div>
 
       <Sidebar buttonLabel={mode === "create" ? "Create Career" : "Save Career"} itemVersion={item?.version} pending={pending} onClickSubmit={handleSaveClick}>
-        <StatusField defaultValue={item?.status} />
+        <StatusField defaultValue={item?.status} error={fields?.status} />
         <SelectField
           label="Employment"
           name="employmentType"
           defaultValue={item?.employmentType ?? "full_time"}
           options={employmentTypeOptions}
+          error={fields?.employmentType}
         />
         <Field label="Deadline" name="deadline" type="datetime-local" defaultValue={toDateTimeLocal(item?.deadline)} />
         <Field label="Publish date" name="publishedAt" type="datetime-local" defaultValue={toDateTimeLocal(item?.publishedAt)} />
@@ -422,13 +434,14 @@ function Sidebar({
   )
 }
 
-function StatusField({ defaultValue }: { defaultValue?: string }) {
+function StatusField({ defaultValue, error }: { defaultValue?: string; error?: string }) {
   return (
     <SelectField
       label="Status"
       name="status"
       defaultValue={defaultValue ?? "draft"}
       options={adminStatusOptions.map((status) => ({ value: status, label: status }))}
+      error={error}
     />
   )
 }
@@ -448,10 +461,20 @@ function SeoFields({ seo }: { seo?: { title?: string; description?: string; cano
   )
 }
 
+function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null
+  return (
+    <p className="mt-1.5 text-sm text-destructive" id={id}>
+      {message}
+    </p>
+  )
+}
+
 function Field({
   label,
   name,
   defaultValue,
+  error,
   placeholder,
   required,
   type = "text",
@@ -459,6 +482,7 @@ function Field({
   label: string
   name: string
   defaultValue?: string
+  error?: string
   placeholder?: string
   required?: boolean
   type?: string
@@ -469,6 +493,8 @@ function Field({
         {label}
       </label>
       <Input
+        aria-describedby={error ? `${name}-error` : undefined}
+        aria-invalid={error ? true : undefined}
         className="mt-2"
         defaultValue={defaultValue ?? ""}
         id={name}
@@ -477,6 +503,7 @@ function Field({
         required={required}
         type={type}
       />
+      <FieldError id={`${name}-error`} message={error} />
     </div>
   )
 }
@@ -485,12 +512,14 @@ function TextAreaField({
   label,
   name,
   defaultValue,
+  error,
   placeholder,
   rows,
 }: {
   label: string
   name: string
   defaultValue?: string
+  error?: string
   placeholder?: string
   rows: number
 }) {
@@ -500,6 +529,8 @@ function TextAreaField({
         {label}
       </label>
       <Textarea
+        aria-describedby={error ? `${name}-error` : undefined}
+        aria-invalid={error ? true : undefined}
         className="mt-2"
         defaultValue={defaultValue ?? ""}
         id={name}
@@ -507,25 +538,7 @@ function TextAreaField({
         placeholder={placeholder}
         rows={rows}
       />
-    </div>
-  )
-}
-
-function FileField({
-  accept,
-  label,
-  name,
-}: {
-  accept: string
-  label: string
-  name: string
-}) {
-  return (
-    <div>
-      <label className="text-sm font-medium text-foreground" htmlFor={name}>
-        {label}
-      </label>
-      <Input accept={accept} className="mt-2" id={name} name={name} type="file" />
+      <FieldError id={`${name}-error`} message={error} />
     </div>
   )
 }
@@ -534,11 +547,13 @@ function SelectField({
   label,
   name,
   defaultValue,
+  error,
   options,
 }: {
   label: string
   name: string
   defaultValue: string
+  error?: string
   options: Array<{ value: string; label: string }>
 }) {
   return (
@@ -547,6 +562,8 @@ function SelectField({
         {label}
       </label>
       <select
+        aria-describedby={error ? `${name}-error` : undefined}
+        aria-invalid={error ? true : undefined}
         className="mt-2 h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         defaultValue={defaultValue}
         id={name}
@@ -558,6 +575,7 @@ function SelectField({
           </option>
         ))}
       </select>
+      <FieldError id={`${name}-error`} message={error} />
     </div>
   )
 }

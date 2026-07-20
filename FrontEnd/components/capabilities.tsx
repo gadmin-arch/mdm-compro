@@ -1,5 +1,6 @@
 import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons"
 import { sectionDefsByType, str, records } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 export type CapabilitiesProps = {
   props?: Record<string, unknown>
@@ -16,7 +17,7 @@ export function Capabilities({ props = {} }: CapabilitiesProps) {
 
   return (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className={container("py-20")}>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
             {eyebrow && (

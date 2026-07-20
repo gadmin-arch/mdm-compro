@@ -2,10 +2,12 @@
 // success and RETURN an error descriptor on failure (instead of redirecting)
 // so client forms keep the user's edits alive.
 export type SaveResult = {
-  error: "conflict" | "duplicate" | "validation" | "upload_failed" | "save_failed"
+  error: "conflict" | "duplicate" | "validation" | "upload_failed" | "save_failed" | "forbidden"
   // Present on "conflict": the version currently stored on the server, used
   // to resubmit when the user chooses to overwrite.
   serverVersion?: number
+  // Per-field messages (keyed by input name) rendered inline under fields.
+  fields?: Record<string, string>
 }
 
 export type SaveAction = (formData: FormData) => Promise<SaveResult | void>

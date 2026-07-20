@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { CtaBanner } from "@/components/cta-banner"
 import { Hero } from "@/components/hero"
 import { Industries } from "@/components/industries"
@@ -6,6 +7,16 @@ import { Services } from "@/components/services"
 import { WhyUs } from "@/components/why-us"
 import { getPage, getServices, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent } from "@/lib/sections"
+
+// CMS-managed SEO for the home page; falls back to the root layout defaults.
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getPage("home")
+  if (!page?.seo?.title && !page?.seo?.description) return {}
+  return {
+    title: page.seo.title || undefined,
+    description: page.seo.description || undefined,
+  }
+}
 
 export default async function HomePage() {
   // A published "home" page built with the section builder replaces the

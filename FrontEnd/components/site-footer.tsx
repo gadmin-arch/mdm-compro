@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Mail, MapPin, Phone } from "lucide-react"
 import { getSiteSettings } from "@/lib/cms"
+import { container } from "@/lib/layout"
 
 const footerNav = [
   {
@@ -37,7 +38,7 @@ export async function SiteFooter() {
 
   return (
     <footer className="border-t border-border bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div className={container("py-14")}>
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Link href="/" className="flex items-center gap-2.5">

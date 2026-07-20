@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import type { ListResponse, NewsItem } from "@/lib/cms"
 import { fallbackNews, formatDate } from "@/lib/cms"
 import { fetchNewsAction } from "@/app/(site)/news/actions"
+import { container } from "@/lib/layout"
 
 type NewsListProps = {
   initialNews?: ListResponse<NewsItem>
@@ -48,7 +49,7 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
   if (!featured) {
     return (
       <section className="border-b border-border/60 bg-background">
-        <div className="mx-auto max-w-7xl px-4 py-20 text-muted-foreground sm:px-6 lg:px-8 text-center">
+        <div className={container("py-20 text-muted-foreground text-center")}>
           <p className="font-display text-lg font-semibold text-foreground mb-1">No matching articles found</p>
           <p className="text-sm text-muted-foreground">Try adjusting your filters or search keywords.</p>
         </div>
@@ -58,7 +59,7 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
 
   return (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className={container("py-20")}>
         {/* Featured */}
         <Link
           href={`/news/${featured.slug}`}
@@ -68,7 +69,7 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
             <Image
               src={featured.featuredImageUrl || "/placeholder.jpg"}
               alt={featured.title}
-              fill
+              fill sizes="(min-width: 1024px) 60vw, 100vw"
               className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
               priority
             />
@@ -125,7 +126,7 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
                   <Image
                     src={item.featuredImageUrl || "/placeholder.jpg"}
                     alt={item.title}
-                    fill
+                    fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                   />
                 </div>

@@ -44,7 +44,7 @@ export function SaveErrorBanner({
 
   if (result.error === "conflict") {
     return (
-      <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-4 text-sm">
+      <div role="alert" className="rounded-md border border-amber-500/40 bg-amber-500/10 p-4 text-sm">
         <p className="flex items-start gap-2 font-medium text-foreground">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
           This {entity} was changed by someone else while you were editing
@@ -71,7 +71,10 @@ export function SaveErrorBanner({
   }
 
   return (
-    <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+    <div
+      role="alert"
+      className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+    >
       {errorMessage(result.error, entity)}
     </div>
   )
@@ -82,9 +85,11 @@ function errorMessage(code: SaveResult["error"], entity: string) {
     case "duplicate":
       return `A ${entity} with this slug already exists. Choose a different slug and save again.`
     case "validation":
-      return "Please check the required fields."
+      return "Please check the highlighted fields below."
     case "upload_failed":
       return "Upload failed. Use JPG, PNG, WebP, GIF, or PDF under 25MB."
+    case "forbidden":
+      return "Your account has read-only access — ask an owner or admin to make this change."
     default:
       return `The ${entity} could not be saved. Please try again.`
   }

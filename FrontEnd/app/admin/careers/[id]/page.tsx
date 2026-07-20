@@ -1,8 +1,8 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { AdminShell } from "@/components/admin-shell"
+import { FlashToast } from "@/components/admin/flash-toast"
 import { CareerForm } from "@/components/admin/resource-forms"
-import { resourceMessage } from "@/components/admin/resource-toolbar"
 import { Button } from "@/components/ui/button"
 import { AdminApiError, adminFetch } from "@/lib/admin-api"
 import type { Career } from "@/lib/cms"
@@ -10,12 +10,10 @@ import { updateCareerAction } from "../../content-actions"
 
 export default async function AdminEditCareerPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ created?: string; saved?: string; error?: string }>
 }) {
-  const [{ id }, query] = await Promise.all([params, searchParams])
+  const { id } = await params
   let item: Career | null = null
   let apiError = false
   try {
@@ -28,6 +26,7 @@ export default async function AdminEditCareerPage({
   return (
     <AdminShell
       active="careers"
+      breadcrumbs={[{ label: "Careers", href: "/admin/careers" }, { label: "Edit" }]}
       eyebrow="Hiring"
       title={item?.title ?? "Edit Career"}
       actions={
@@ -39,7 +38,7 @@ export default async function AdminEditCareerPage({
         </Button>
       }
     >
-      <Message text={resourceMessage(query)} />
+      <FlashToast resource="career" />
       {apiError || !item ? (
         <Message destructive text="Career could not be loaded from the admin API." />
       ) : (

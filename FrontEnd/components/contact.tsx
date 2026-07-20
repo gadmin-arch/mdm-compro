@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import type { PageContent } from "@/lib/cms"
+import { container } from "@/lib/layout"
 
 interface Office {
   name: string
@@ -112,7 +113,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
 
   return (
     <section className="bg-secondary/40">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className={container("py-20")}>
         <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
           <div className="grid gap-0 lg:grid-cols-12">
             <div className="relative bg-primary p-8 text-primary-foreground sm:p-10 lg:col-span-5 flex flex-col justify-between">

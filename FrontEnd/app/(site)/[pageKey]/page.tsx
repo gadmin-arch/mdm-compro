@@ -5,6 +5,7 @@ import { RichText } from "@/components/cms/rich-text"
 import { SectionRenderer } from "@/components/cms/section-renderer"
 import { getPage, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 type PageProps = {
   params: Promise<{ pageKey: string }>
@@ -54,7 +55,7 @@ export default async function DynamicCmsPage({ params }: PageProps) {
         description={description}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: page.title }]}
       />
-      <section className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8">
+      <section className={container("grid gap-8 py-16 lg:grid-cols-[minmax(0,1fr)_320px]")}>
         <article className="min-w-0">
           <RichText content={page.content} />
         </article>

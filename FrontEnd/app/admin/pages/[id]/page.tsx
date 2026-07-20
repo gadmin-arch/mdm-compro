@@ -1,7 +1,12 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { AdminShell } from "@/components/admin-shell"
-import { PageEditor } from "@/components/admin/page-editor"
+import dynamic from "next/dynamic"
+
+// Splits the section-builder/dnd-kit editor bundle out of the shared chunk.
+const PageEditor = dynamic(() =>
+  import("@/components/admin/page-editor").then((mod) => mod.PageEditor),
+)
 import { Button } from "@/components/ui/button"
 import { AdminApiError, adminFetch } from "@/lib/admin-api"
 import { resolveAllSectionData, type PageContent } from "@/lib/cms"
@@ -45,6 +50,7 @@ export default async function AdminEditPage({
   return (
     <AdminShell
       active="pages"
+      breadcrumbs={[{ label: "Pages", href: "/admin/pages" }, { label: "Edit" }]}
       eyebrow="CMS Pages"
       title={page?.title ?? "Page editor"}
       actions={

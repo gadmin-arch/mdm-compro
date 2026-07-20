@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/sheet"
 import { defaultMenuItems, type ContentNode, type MenuItem, type Navigation } from "@/lib/cms"
 import { cn } from "@/lib/utils"
+import { container } from "@/lib/layout"
 
 type NavNode = {
   id: string
@@ -307,7 +308,7 @@ export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className={container("flex h-16 items-center justify-between")}>
         <Link href="/" className="flex items-center gap-2.5">
           <Image
             src="/Logo PT MDM.png"

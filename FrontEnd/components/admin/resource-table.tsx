@@ -1,8 +1,11 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
-import { Archive, Edit3, ExternalLink, ChevronUp, ChevronDown, ArrowUpDown } from "lucide-react"
+import { Archive, Edit3, ExternalLink, Inbox } from "lucide-react"
+import { SortableHead } from "@/components/admin/sortable-head"
+import { TableEmpty } from "@/components/admin/table-empty"
+import { useClientSort } from "@/components/admin/use-client-sort"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -47,6 +50,11 @@ type AdminResourceTableProps = {
 
 type SortField = "title" | "slug" | "status" | "meta"
 
+function sortValue(row: AdminResourceRow, field: SortField) {
+  if (field === "slug") return row.path || row.slug || ""
+  return row[field] || ""
+}
+
 export function AdminResourceTable({
   basePath,
   deleteAction,
@@ -55,83 +63,46 @@ export function AdminResourceTable({
   resource,
   rows,
 }: AdminResourceTableProps) {
-  const [sortField, setSortField] = useState<SortField | null>(null)
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
+  const { field, direction, toggle, sorted: sortedRows } = useClientSort(rows, sortValue)
   const [rowToArchive, setRowToArchive] = useState<AdminResourceRow | null>(null)
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
-    } else {
-      setSortField(field)
-      setSortDirection("asc")
-    }
-  }
-
-  const sortedRows = useMemo(() => {
-    if (!sortField) return rows
-
-    return [...rows].sort((a, b) => {
-      let aVal = ""
-      let bVal = ""
-
-      if (sortField === "slug") {
-        aVal = a.path || a.slug || ""
-        bVal = b.path || b.slug || ""
-      } else {
-        aVal = a[sortField] || ""
-        bVal = b[sortField] || ""
-      }
-
-      aVal = aVal.toLowerCase()
-      bVal = bVal.toLowerCase()
-
-      if (aVal < bVal) return sortDirection === "asc" ? -1 : 1
-      if (aVal > bVal) return sortDirection === "asc" ? 1 : -1
-      return 0
-    })
-  }, [rows, sortField, sortDirection])
-
-  const renderSortIcon = (field: SortField) => {
-    if (sortField !== field) {
-      return <ArrowUpDown className="ml-1 h-3.5 w-3.5 inline-block text-muted-foreground/45" />
-    }
-    return sortDirection === "asc" ? (
-      <ChevronUp className="ml-1 h-3.5 w-3.5 inline-block text-primary" />
-    ) : (
-      <ChevronDown className="ml-1 h-3.5 w-3.5 inline-block text-primary" />
-    )
-  }
 
   return (
     <div className="mt-8 overflow-hidden rounded-lg border border-border bg-background">
       <Table className="table-fixed w-full">
         <TableHeader>
           <TableRow>
-            <TableHead 
-              onClick={() => handleSort("title")}
-              className="cursor-pointer select-none w-1/3 min-w-[160px] hover:bg-secondary/40 transition-colors"
+            <SortableHead
+              active={field === "title"}
+              direction={direction}
+              onSort={() => toggle("title")}
+              className="w-1/3 min-w-[160px]"
             >
-              Title {renderSortIcon("title")}
-            </TableHead>
-            <TableHead 
-              onClick={() => handleSort("slug")}
-              className="cursor-pointer select-none w-1/4 min-w-[120px] hover:bg-secondary/40 transition-colors"
+              Title
+            </SortableHead>
+            <SortableHead
+              active={field === "slug"}
+              direction={direction}
+              onSort={() => toggle("slug")}
+              className="w-1/4 min-w-[120px]"
             >
-              Slug {renderSortIcon("slug")}
-            </TableHead>
-            <TableHead 
-              onClick={() => handleSort("status")}
-              className="cursor-pointer select-none w-28 hover:bg-secondary/40 transition-colors"
+              Slug
+            </SortableHead>
+            <SortableHead
+              active={field === "status"}
+              direction={direction}
+              onSort={() => toggle("status")}
+              className="w-28"
             >
-              Status {renderSortIcon("status")}
-            </TableHead>
-            <TableHead 
-              onClick={() => handleSort("meta")}
-              className="cursor-pointer select-none w-[15%] min-w-[80px] hover:bg-secondary/40 transition-colors"
+              Status
+            </SortableHead>
+            <SortableHead
+              active={field === "meta"}
+              direction={direction}
+              onSort={() => toggle("meta")}
+              className="w-[15%] min-w-[80px]"
             >
-              Info {renderSortIcon("meta")}
-            </TableHead>
+              Info
+            </SortableHead>
             <TableHead className="w-[280px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -177,11 +148,12 @@ export function AdminResourceTable({
             )
           })}
           {sortedRows.length === 0 && (
-            <TableRow>
-              <TableCell className="py-8 text-center text-muted-foreground" colSpan={5}>
-                {empty}
-              </TableCell>
-            </TableRow>
+            <TableEmpty
+              colSpan={5}
+              icon={<Inbox className="h-5 w-5" aria-hidden="true" />}
+              title={empty}
+              description="Adjust the search or status filter, or add a new item."
+            />
           )}
         </TableBody>
       </Table>

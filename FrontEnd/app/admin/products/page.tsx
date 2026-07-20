@@ -1,6 +1,7 @@
 import { AdminShell } from "@/components/admin-shell"
+import { FlashToast } from "@/components/admin/flash-toast"
 import { AdminPagination } from "@/components/admin/admin-pagination"
-import { ResourceToolbar, resourceMessage } from "@/components/admin/resource-toolbar"
+import { ResourceToolbar } from "@/components/admin/resource-toolbar"
 import { AdminResourceTable } from "@/components/admin/resource-table"
 import { AdminApiError, adminFetch, type AdminContentResponse } from "@/lib/admin-api"
 import { deleteContentItemAction } from "../content-actions"
@@ -29,7 +30,7 @@ export default async function AdminProductsPage({
 
   return (
     <AdminShell active="products" eyebrow="Catalog" title="Products">
-      <Message text={resourceMessage(query)} />
+      <FlashToast resource="product" />
       {apiError && <Message destructive text="Products could not be loaded from the admin API." />}
       <ResourceToolbar addHref="/admin/products/new" addLabel="Add Product" q={q} status={status} />
       <AdminResourceTable

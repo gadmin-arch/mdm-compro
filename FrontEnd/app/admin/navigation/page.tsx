@@ -1,5 +1,11 @@
+import dynamic from "next/dynamic"
 import { AdminShell } from "@/components/admin-shell"
-import { NavigationEditor, type AutoChildren, type PageOption } from "@/components/admin/navigation-editor"
+import type { AutoChildren, PageOption } from "@/components/admin/navigation-editor"
+
+// Splits the dnd-kit editor bundle out of the shared admin chunk.
+const NavigationEditor = dynamic(() =>
+  import("@/components/admin/navigation-editor").then((mod) => mod.NavigationEditor),
+)
 import { AdminApiError, adminFetch, type AdminPagesResponse } from "@/lib/admin-api"
 import { getProducts, getServices, type MenuItem } from "@/lib/cms"
 import { saveNavigationAction } from "./actions"

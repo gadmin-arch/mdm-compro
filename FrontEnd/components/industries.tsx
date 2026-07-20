@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons"
 import { sectionDefsByType, str, records } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 export type IndustriesProps = {
   props?: Record<string, unknown>
@@ -19,11 +20,11 @@ export function Industries({ props = {} }: IndustriesProps) {
   return (
     <section className="relative border-b border-border/60 bg-primary text-primary-foreground">
       <div className="absolute inset-0 -z-0 opacity-15">
-        <Image src={imageUrl || "/placeholder.jpg"} alt="" fill className="object-cover" />
+        <Image src={imageUrl || "/placeholder.jpg"} alt="" fill sizes="100vw" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/95 to-primary" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className={container("relative py-20")}>
         <div className="max-w-2xl">
           {eyebrow && (
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">{eyebrow}</p>

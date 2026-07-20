@@ -3,6 +3,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { sectionDefsByType, str, records } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 export type HeroProps = {
   props?: Record<string, unknown>
@@ -35,7 +36,7 @@ export function Hero({ props = {} }: HeroProps) {
         className="pointer-events-none absolute inset-0 -z-10 [background-image:linear-gradient(to_right,oklch(0.92_0.01_250)_1px,transparent_1px),linear-gradient(to_bottom,oklch(0.92_0.01_250)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]"
       />
 
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:px-8 lg:py-24">
+      <div className={container("grid gap-12 py-16 lg:grid-cols-12 lg:gap-10 lg:py-24")}>
         <div className="lg:col-span-7">
           {eyebrow && (
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs font-medium tracking-wide text-secondary-foreground">
@@ -91,7 +92,7 @@ export function Hero({ props = {} }: HeroProps) {
             <Image
               src={imageUrl || "/placeholder.jpg"}
               alt={imageAlt}
-              fill
+              fill sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover"
               priority
             />

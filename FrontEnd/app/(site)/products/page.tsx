@@ -7,6 +7,7 @@ import { FilterControls } from "@/components/filter-controls"
 import { Pagination } from "@/components/cms/pagination"
 import { getPage, getProducts, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("products")
@@ -58,7 +59,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   // at the `listing` marker, they can never remove it.
   const listingBlock = (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className={container("py-12")}>
         <FilterControls
           moduleType="products"
           categories={categories}

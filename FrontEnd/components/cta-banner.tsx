@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { container } from "@/lib/layout"
 
 interface CtaBannerProps {
   title: string
@@ -21,7 +22,7 @@ export function CtaBanner({
 }: CtaBannerProps) {
   return (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className={container("py-16")}>
         <div className="flex flex-col items-start justify-between gap-8 rounded-2xl border border-border bg-secondary/50 p-8 sm:p-10 lg:flex-row lg:items-center">
           <div className="max-w-2xl">
             <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground text-balance sm:text-3xl">

@@ -319,6 +319,8 @@ export class AdminApiError extends Error {
     readonly status: number,
     message: string,
     readonly code?: string,
+    // Per-field validation messages from the API (keyed by field name).
+    readonly fields?: Record<string, string>,
   ) {
     super(message)
   }
@@ -400,11 +402,16 @@ export async function adminUpload(formData: FormData, nextPath = "/admin"): Prom
 
 async function toAdminApiError(response: Response) {
   try {
-    const payload = (await response.json()) as { error?: string; message?: string }
+    const payload = (await response.json()) as {
+      error?: string
+      message?: string
+      fields?: Record<string, string>
+    }
     return new AdminApiError(
       response.status,
       payload.message ?? "Admin API request failed.",
       payload.error,
+      payload.fields,
     )
   } catch {
     return new AdminApiError(response.status, "Admin API request failed.")

@@ -6,6 +6,7 @@ import { CtaBanner } from "@/components/cta-banner"
 import { PageHero } from "@/components/page-hero"
 import { ContentList } from "@/components/cms/content-list"
 import { flattenContent, getService, getServices } from "@/lib/cms"
+import { container } from "@/lib/layout"
 
 type Props = {
   params: Promise<{ path: string[] }>
@@ -49,10 +50,10 @@ export default async function ServiceDetailPage({ params, searchParams }: Props)
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Services", href: "/services" }, { label: service.title }]}
       />
       <section className="border-b border-border/60 bg-background">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-12 lg:px-8">
+        <div className={container("grid gap-10 py-20 lg:grid-cols-12")}>
           <div className="lg:col-span-5">
             <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-secondary">
-              <Image src={service.imageUrl || "/placeholder.jpg"} alt={service.title} fill className="object-cover" />
+              <Image src={service.imageUrl || "/placeholder.jpg"} alt={service.title} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
             </div>
           </div>
           <div className="lg:col-span-7">
@@ -63,7 +64,7 @@ export default async function ServiceDetailPage({ params, searchParams }: Props)
 
       {actualChildren.length > 0 && (
         <section className="border-b border-border/60 bg-background">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className={container("py-16")}>
             <div className="mb-10 max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 Sub-Services

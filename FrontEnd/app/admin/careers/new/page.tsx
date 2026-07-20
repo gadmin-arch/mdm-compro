@@ -1,20 +1,16 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { AdminShell } from "@/components/admin-shell"
+import { FlashToast } from "@/components/admin/flash-toast"
 import { CareerForm } from "@/components/admin/resource-forms"
-import { resourceMessage } from "@/components/admin/resource-toolbar"
 import { Button } from "@/components/ui/button"
 import { createCareerAction } from "../../content-actions"
 
-export default async function AdminNewCareerPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string }>
-}) {
-  const query = await searchParams
+export default async function AdminNewCareerPage() {
   return (
     <AdminShell
       active="careers"
+      breadcrumbs={[{ label: "Careers", href: "/admin/careers" }, { label: "New Career" }]}
       eyebrow="Hiring"
       title="New Career"
       actions={
@@ -26,13 +22,8 @@ export default async function AdminNewCareerPage({
         </Button>
       }
     >
-      <Message text={resourceMessage(query)} />
+      <FlashToast resource="career" />
       <CareerForm action={createCareerAction} mode="create" />
     </AdminShell>
   )
-}
-
-function Message({ text }: { text: string }) {
-  if (!text) return null
-  return <p className="mt-6 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground">{text}</p>
 }

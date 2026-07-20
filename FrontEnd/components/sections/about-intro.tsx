@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { Compass, Handshake, Target } from "lucide-react"
 import { sectionDefsByType, str } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 // Mirrors the intro block of the original About component so the CMS-built
 // about page looks identical to the hardcoded one.
@@ -20,11 +21,11 @@ export function AboutIntroSection({ props }: { props: Record<string, unknown> })
 
   return (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className={container("py-20")}>
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-5">
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-secondary">
-              <Image src={imageUrl || "/placeholder.jpg"} alt={imageAlt} fill className="object-cover" />
+              <Image src={imageUrl || "/placeholder.jpg"} alt={imageAlt} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
             </div>
           </div>
 

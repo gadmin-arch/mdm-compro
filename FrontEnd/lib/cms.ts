@@ -362,12 +362,24 @@ export async function getAnalyticsConfig(): Promise<AnalyticsPublicConfig> {
 
 // Everything fetched here carries the "cms" tag so admin mutations can
 // purge the cache instantly via revalidateTag("cms").
+// A SLOW (not down) API must not hang server rendering: after this window the
+// page renders from fallback data while the fetch finishes in the background
+// (and still populates the data cache for the next request).
+const CMS_FETCH_TIMEOUT_MS = 3000
+
 export async function cmsFetch<T>(path: string, fallback: T, revalidate = 300): Promise<T> {
   try {
-    const res = await fetch(`${API_BASE}${path}`, {
-      next: { revalidate, tags: ["cms"] },
-      headers: { Accept: "application/json" },
-    })
+    // Promise.race instead of AbortSignal so the fetch options stay untouched
+    // and ISR caching (next.revalidate + tags) keeps working as-is.
+    const res = await Promise.race([
+      fetch(`${API_BASE}${path}`, {
+        next: { revalidate, tags: ["cms"] },
+        headers: { Accept: "application/json" },
+      }),
+      new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error("cms fetch timeout")), CMS_FETCH_TIMEOUT_MS)
+      }),
+    ])
     if (!res.ok) return fallback
     return (await res.json()) as T
   } catch {

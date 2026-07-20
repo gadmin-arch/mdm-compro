@@ -7,6 +7,7 @@ import { PageHero } from "@/components/page-hero"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { employmentTypeLabel, fallbackCareers, formatDate, getCareer } from "@/lib/cms"
+import { container } from "@/lib/layout"
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -38,7 +39,7 @@ export default async function CareerDetailPage({ params }: Props) {
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Careers", href: "/career" }, { label: career.title }]}
       />
       <section className="border-b border-border/60 bg-background">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-12 lg:px-8">
+        <div className={container("grid gap-10 py-20 lg:grid-cols-12")}>
           <aside className="lg:col-span-4">
             <div className="rounded-xl border border-border bg-card p-5">
               <Badge variant="outline">{career.department}</Badge>

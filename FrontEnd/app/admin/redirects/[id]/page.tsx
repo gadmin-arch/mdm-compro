@@ -27,7 +27,7 @@ export default async function EditRedirectPage({
   }
   if (!data) {
     return (
-      <AdminShell active="redirects" eyebrow="Marketing" title="Short Link">
+      <AdminShell active="redirects" breadcrumbs={[{ label: "Short Links", href: "/admin/redirects" }, { label: "Edit" }]} eyebrow="Marketing" title="Short Link">
         <p className="mt-6 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           The short link could not be loaded from the admin API.
         </p>
@@ -38,7 +38,7 @@ export default async function EditRedirectPage({
   const { redirect, stats } = data
 
   return (
-    <AdminShell active="redirects" eyebrow="Marketing" title={redirect.name}>
+    <AdminShell active="redirects" breadcrumbs={[{ label: "Short Links", href: "/admin/redirects" }, { label: "Edit" }]} eyebrow="Marketing" title={redirect.name}>
       {query.duplicated && (
         <p className="mt-6 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground">
           Duplicated as an inactive draft — adjust the slug and activate when ready.

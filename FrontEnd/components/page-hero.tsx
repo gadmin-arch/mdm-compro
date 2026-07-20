@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
+import { container } from "@/lib/layout"
 
 type Crumb = { label: string; href?: string }
 
@@ -22,7 +23,7 @@ export function PageHero({ eyebrow, title, description, breadcrumbs }: PageHeroP
         className="pointer-events-none absolute -right-24 -top-24 -z-0 h-72 w-72 rounded-full bg-accent/15 blur-3xl"
       />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+      <div className={container("relative py-16 sm:py-20 lg:py-24")}>
         {breadcrumbs && breadcrumbs.length > 0 && (
           <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1 text-xs text-primary-foreground/70">
             {breadcrumbs.map((crumb, i) => {

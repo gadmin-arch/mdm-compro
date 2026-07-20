@@ -119,7 +119,7 @@ export function MediaUpload({ label, name, defaultValue = "", accept, isImage = 
           const res = JSON.parse(xhr.responseText)
           setValue(res.url)
           setStatus("success")
-        } catch (err) {
+        } catch {
           setStatus("error")
           setErrorMsg("Failed to parse server response.")
         }
@@ -193,6 +193,7 @@ export function MediaUpload({ label, name, defaultValue = "", accept, isImage = 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             {isImage && (value.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i) || value.includes("media/uploads")) ? (
               <div className="relative aspect-video w-full overflow-hidden rounded-md border border-border bg-secondary/50 sm:w-32">
+                {/* eslint-disable-next-line @next/next/no-img-element -- admin-only preview of an arbitrary uploaded URL; no LCP/SEO impact */}
                 <img
                   src={value}
                   alt={fileName || "Preview"}

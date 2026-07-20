@@ -9,6 +9,7 @@ import { FilterControls } from "@/components/filter-controls"
 import { Services } from "@/components/services"
 import { getPage, getServices, resolveSectionData, type ContentNode } from "@/lib/cms"
 import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 // The service hierarchy is maintained in the CMS and must not be baked from
 // fallback data when the production image is built without the API available.
@@ -59,7 +60,7 @@ export default async function ServicesPage({ searchParams }: Props) {
   // at the `listing` marker, they can never remove it.
   const listingBlock = (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className={container("py-12")}>
         <FilterControls moduleType="services" categories={categories} />
         <div className="mt-8">
           <ContentList

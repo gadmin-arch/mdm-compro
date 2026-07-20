@@ -6,9 +6,16 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import dynamic from "next/dynamic"
 import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons"
-import { RichTextEditor } from "@/components/admin/rich-text-editor"
+import { Skeleton } from "@/components/ui/skeleton"
 import { SECTION_ICON_NAMES, type FieldDef } from "@/lib/sections"
+
+// TipTap loads only when a section actually renders a rich-text field.
+const RichTextEditor = dynamic(
+  () => import("@/components/admin/rich-text-editor").then((mod) => mod.RichTextEditor),
+  { ssr: false, loading: () => <Skeleton className="h-40 w-full" /> },
+)
 
 const selectClass =
   "h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"

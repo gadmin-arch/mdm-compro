@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { globalSearch } from "@/lib/cms"
+import { container } from "@/lib/layout"
 
 export const metadata: Metadata = {
   title: "Search Results — PT Multi Daya Mitra",
@@ -39,7 +40,7 @@ export default async function SearchPage({ searchParams }: Props) {
       />
 
       <section className="border-b border-border/60 bg-background min-h-[50vh]">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className={container("py-16")}>
           {/* Search Box on Search Page */}
           <form action="/search" method="GET" className="max-w-2xl mx-auto mb-12">
             <div className="relative flex items-center">

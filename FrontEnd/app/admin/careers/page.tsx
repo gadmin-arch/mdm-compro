@@ -1,6 +1,7 @@
 import { AdminShell } from "@/components/admin-shell"
+import { FlashToast } from "@/components/admin/flash-toast"
 import { AdminPagination } from "@/components/admin/admin-pagination"
-import { ResourceToolbar, resourceMessage } from "@/components/admin/resource-toolbar"
+import { ResourceToolbar } from "@/components/admin/resource-toolbar"
 import { AdminResourceTable } from "@/components/admin/resource-table"
 import { AdminApiError, adminFetch, type AdminCareersResponse } from "@/lib/admin-api"
 import { deleteCareerAction } from "../content-actions"
@@ -29,7 +30,7 @@ export default async function AdminCareersPage({
 
   return (
     <AdminShell active="careers" eyebrow="Hiring" title="Careers">
-      <Message text={resourceMessage(query)} />
+      <FlashToast resource="career" />
       {apiError && <Message destructive text="Careers could not be loaded from the admin API." />}
       <ResourceToolbar addHref="/admin/careers/new" addLabel="Add Career" q={q} status={status} />
       <AdminResourceTable

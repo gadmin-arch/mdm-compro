@@ -5,6 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { str, records } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 export function FaqSection({ props }: { props: Record<string, unknown> }) {
   const eyebrow = str(props, "eyebrow")
@@ -14,7 +15,7 @@ export function FaqSection({ props }: { props: Record<string, unknown> }) {
 
   return (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:px-8">
+      <div className={container("grid gap-10 py-16 lg:grid-cols-12")}>
         <div className="lg:col-span-4">
           {eyebrow && (
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">

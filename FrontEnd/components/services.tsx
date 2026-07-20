@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card"
 import type { ContentNode } from "@/lib/cms"
 import { fallbackServices } from "@/lib/cms"
+import { container } from "@/lib/layout"
 
 const serviceDetails = {
   "electrical-services": {
@@ -69,7 +70,7 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
 
   return (
     <section className="border-b border-border/60 bg-secondary/40">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className={container("py-20")}>
         <div className="max-w-2xl">
           {eyebrow && (
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">

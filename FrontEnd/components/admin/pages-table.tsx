@@ -1,8 +1,11 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
-import { Archive, Copy, Edit3, ChevronUp, ChevronDown, ArrowUpDown, Lock } from "lucide-react"
+import { Archive, Copy, Edit3, FileText, Lock } from "lucide-react"
+import { SortableHead } from "@/components/admin/sortable-head"
+import { TableEmpty } from "@/components/admin/table-empty"
+import { useClientSort } from "@/components/admin/use-client-sort"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -32,82 +35,53 @@ type PagesTableProps = {
 
 type SortField = "title" | "key" | "status" | "version"
 
+function sortValue(page: PageContent, field: SortField) {
+  // Zero-padding keeps numeric versions ordered under string comparison.
+  if (field === "version") return String(page.version ?? 0).padStart(10, "0")
+  return page[field] || ""
+}
+
 export function PagesTable({ pages }: PagesTableProps) {
-  const [sortField, setSortField] = useState<SortField | null>(null)
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
+  const { field, direction, toggle, sorted: sortedPages } = useClientSort(pages, sortValue)
   const [rowToArchive, setRowToArchive] = useState<PageContent | null>(null)
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
-    } else {
-      setSortField(field)
-      setSortDirection("asc")
-    }
-  }
-
-  const sortedPages = useMemo(() => {
-    if (!sortField) return pages
-
-    return [...pages].sort((a, b) => {
-      let aVal = ""
-      let bVal = ""
-
-      if (sortField === "version") {
-        const aNum = a.version ?? 0
-        const bNum = b.version ?? 0
-        return sortDirection === "asc" ? aNum - bNum : bNum - aNum
-      }
-
-      aVal = (a[sortField] || "").toLowerCase()
-      bVal = (b[sortField] || "").toLowerCase()
-
-      if (aVal < bVal) return sortDirection === "asc" ? -1 : 1
-      if (aVal > bVal) return sortDirection === "asc" ? 1 : -1
-      return 0
-    })
-  }, [pages, sortField, sortDirection])
-
-  const renderSortIcon = (field: SortField) => {
-    if (sortField !== field) {
-      return <ArrowUpDown className="ml-1 h-3.5 w-3.5 inline-block text-muted-foreground/45" />
-    }
-    return sortDirection === "asc" ? (
-      <ChevronUp className="ml-1 h-3.5 w-3.5 inline-block text-primary" />
-    ) : (
-      <ChevronDown className="ml-1 h-3.5 w-3.5 inline-block text-primary" />
-    )
-  }
 
   return (
     <div className="mt-8 overflow-hidden rounded-lg border border-border bg-background">
       <Table className="table-fixed w-full">
         <TableHeader>
           <TableRow>
-            <TableHead 
-              onClick={() => handleSort("title")}
-              className="cursor-pointer select-none w-1/3 min-w-[160px] hover:bg-secondary/40 transition-colors"
+            <SortableHead
+              active={field === "title"}
+              direction={direction}
+              onSort={() => toggle("title")}
+              className="w-1/3 min-w-[160px]"
             >
-              Title {renderSortIcon("title")}
-            </TableHead>
-            <TableHead 
-              onClick={() => handleSort("key")}
-              className="cursor-pointer select-none w-1/4 min-w-[120px] hover:bg-secondary/40 transition-colors"
+              Title
+            </SortableHead>
+            <SortableHead
+              active={field === "key"}
+              direction={direction}
+              onSort={() => toggle("key")}
+              className="w-1/4 min-w-[120px]"
             >
-              Key {renderSortIcon("key")}
-            </TableHead>
-            <TableHead 
-              onClick={() => handleSort("status")}
-              className="cursor-pointer select-none w-28 hover:bg-secondary/40 transition-colors"
+              Key
+            </SortableHead>
+            <SortableHead
+              active={field === "status"}
+              direction={direction}
+              onSort={() => toggle("status")}
+              className="w-28"
             >
-              Status {renderSortIcon("status")}
-            </TableHead>
-            <TableHead 
-              onClick={() => handleSort("version")}
-              className="cursor-pointer select-none w-24 hover:bg-secondary/40 transition-colors"
+              Status
+            </SortableHead>
+            <SortableHead
+              active={field === "version"}
+              direction={direction}
+              onSort={() => toggle("version")}
+              className="w-24"
             >
-              Version {renderSortIcon("version")}
-            </TableHead>
+              Version
+            </SortableHead>
             <TableHead className="w-[280px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -164,11 +138,12 @@ export function PagesTable({ pages }: PagesTableProps) {
             </TableRow>
           ))}
           {sortedPages.length === 0 && (
-            <TableRow>
-              <TableCell className="py-8 text-center text-muted-foreground" colSpan={5}>
-                No pages found.
-              </TableCell>
-            </TableRow>
+            <TableEmpty
+              colSpan={5}
+              icon={<FileText className="h-5 w-5" aria-hidden="true" />}
+              title="No pages found."
+              description="Create a page to manage its content here."
+            />
           )}
         </TableBody>
       </Table>

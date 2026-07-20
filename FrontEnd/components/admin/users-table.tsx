@@ -1,7 +1,10 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import { ShieldCheck, Trash2, ChevronUp, ChevronDown, ArrowUpDown } from "lucide-react"
+import { useState } from "react"
+import { ShieldCheck, Trash2, Users, ChevronLeft, ChevronRight } from "lucide-react"
+import { SortableHead } from "@/components/admin/sortable-head"
+import { TableEmpty } from "@/components/admin/table-empty"
+import { useClientSort } from "@/components/admin/use-client-sort"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -40,86 +43,57 @@ type UsersTableProps = {
 
 type SortField = "name" | "role" | "status"
 
+const USERS_PER_PAGE = 20
+
+function sortValue(user: UserRow, field: SortField) {
+  if (field === "name") return user.name || user.email || ""
+  if (field === "status") return user.isActive ? "active" : "pending"
+  return user[field] || ""
+}
+
 export function UsersTable({ users, currentUserId, currentRole }: UsersTableProps) {
-  const [sortField, setSortField] = useState<SortField | null>(null)
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
+  const { field, direction, toggle, sorted: sortedUsers } = useClientSort(users, sortValue)
   const [rowToDelete, setRowToDelete] = useState<UserRow | null>(null)
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
-    } else {
-      setSortField(field)
-      setSortDirection("asc")
-    }
-  }
-
-  const sortedUsers = useMemo(() => {
-    if (!sortField) return users
-
-    return [...users].sort((a, b) => {
-      let aVal = ""
-      let bVal = ""
-
-      if (sortField === "name") {
-        aVal = a.name || a.email || ""
-        bVal = b.name || b.email || ""
-      } else if (sortField === "status") {
-        aVal = a.isActive ? "active" : "pending"
-        bVal = b.isActive ? "active" : "pending"
-      } else {
-        aVal = a[sortField] || ""
-        bVal = b[sortField] || ""
-      }
-
-      aVal = aVal.toLowerCase()
-      bVal = bVal.toLowerCase()
-
-      if (aVal < bVal) return sortDirection === "asc" ? -1 : 1
-      if (aVal > bVal) return sortDirection === "asc" ? 1 : -1
-      return 0
-    })
-  }, [users, sortField, sortDirection])
-
-  const renderSortIcon = (field: SortField) => {
-    if (sortField !== field) {
-      return <ArrowUpDown className="ml-1 h-3.5 w-3.5 inline-block text-muted-foreground/45" />
-    }
-    return sortDirection === "asc" ? (
-      <ChevronUp className="ml-1 h-3.5 w-3.5 inline-block text-primary" />
-    ) : (
-      <ChevronDown className="ml-1 h-3.5 w-3.5 inline-block text-primary" />
-    )
-  }
+  // GET /admin/users returns the full list — page it client-side.
+  const [page, setPage] = useState(1)
+  const totalPages = Math.max(1, Math.ceil(sortedUsers.length / USERS_PER_PAGE))
+  const currentPage = Math.min(page, totalPages)
+  const pagedUsers = sortedUsers.slice((currentPage - 1) * USERS_PER_PAGE, currentPage * USERS_PER_PAGE)
 
   return (
     <div className="mt-8 overflow-hidden rounded-lg border border-border bg-background">
       <Table className="table-fixed w-full">
         <TableHeader>
           <TableRow>
-            <TableHead 
-              onClick={() => handleSort("name")}
-              className="cursor-pointer select-none w-1/3 min-w-[160px] hover:bg-secondary/40 transition-colors"
+            <SortableHead
+              active={field === "name"}
+              direction={direction}
+              onSort={() => toggle("name")}
+              className="w-1/3 min-w-[160px]"
             >
-              User {renderSortIcon("name")}
-            </TableHead>
-            <TableHead 
-              onClick={() => handleSort("role")}
-              className="cursor-pointer select-none w-1/4 min-w-[100px] hover:bg-secondary/40 transition-colors"
+              User
+            </SortableHead>
+            <SortableHead
+              active={field === "role"}
+              direction={direction}
+              onSort={() => toggle("role")}
+              className="w-1/4 min-w-[100px]"
             >
-              Role {renderSortIcon("role")}
-            </TableHead>
-            <TableHead 
-              onClick={() => handleSort("status")}
-              className="cursor-pointer select-none w-44 hover:bg-secondary/40 transition-colors"
+              Role
+            </SortableHead>
+            <SortableHead
+              active={field === "status"}
+              direction={direction}
+              onSort={() => toggle("status")}
+              className="w-44"
             >
-              Status {renderSortIcon("status")}
-            </TableHead>
+              Status
+            </SortableHead>
             <TableHead className="w-[280px] text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedUsers.map((user) => {
+          {pagedUsers.map((user) => {
             const isSelf = currentUserId === user.id
             const canManageRole = currentRole === "owner" && user.role !== "owner" && !isSelf
             const canDelete = !isSelf && user.role !== "owner" && currentRole === "owner"
@@ -171,14 +145,45 @@ export function UsersTable({ users, currentUserId, currentRole }: UsersTableProp
             )
           })}
           {sortedUsers.length === 0 && (
-            <TableRow>
-              <TableCell className="py-8 text-center text-muted-foreground" colSpan={4}>
-                No users found.
-              </TableCell>
-            </TableRow>
+            <TableEmpty
+              colSpan={4}
+              icon={<Users className="h-5 w-5" aria-hidden="true" />}
+              title="No users found."
+              description="Invite a teammate to give them CMS access."
+            />
           )}
         </TableBody>
       </Table>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between border-t border-border px-4 py-3 text-sm text-muted-foreground">
+          <span>
+            Page {currentPage} of {totalPages} · {sortedUsers.length} users
+          </span>
+          <div className="flex gap-2">
+            <Button
+              disabled={currentPage <= 1}
+              size="sm"
+              type="button"
+              variant="outline"
+              onClick={() => setPage(currentPage - 1)}
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+            <Button
+              disabled={currentPage >= totalPages}
+              size="sm"
+              type="button"
+              variant="outline"
+              onClick={() => setPage(currentPage + 1)}
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Delete User Confirmation Dialog */}
       <AlertDialog open={rowToDelete !== null} onOpenChange={(open) => { if (!open) setRowToDelete(null) }}>

@@ -1,18 +1,17 @@
 "use client"
 
-import { useMemo, useState } from "react"
 import Link from "next/link"
 import { ArrowUpRight, Briefcase, CalendarDays, MapPin } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Career } from "@/lib/cms"
 import { employmentTypeLabel, fallbackCareers, formatDate } from "@/lib/cms"
-import { cn } from "@/lib/utils"
+import { container } from "@/lib/layout"
 
 export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[] }) {
   return (
     <section className="border-b border-border/60 bg-secondary/40">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className={container("py-20")}>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">

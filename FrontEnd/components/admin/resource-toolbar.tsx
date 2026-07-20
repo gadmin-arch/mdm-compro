@@ -52,14 +52,3 @@ export function ResourceToolbar({ addHref, addLabel, q, status }: ResourceToolba
     </div>
   )
 }
-
-export function resourceMessage(query: { created?: string; saved?: string; deleted?: string; error?: string }) {
-  if (query.created) return "Item created."
-  if (query.saved) return "Item saved."
-  if (query.deleted) return "Item archived."
-  if (query.error === "conflict") return "This item changed elsewhere. Reload before trying again."
-  if (query.error === "validation") return "Please check the required fields."
-  if (query.error === "upload_failed") return "Upload failed. Use JPG, PNG, WebP, GIF, or PDF under 25MB."
-  if (query.error) return "Request failed."
-  return ""
-}

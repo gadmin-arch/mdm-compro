@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { Archive, Check, Copy, CopyPlus, Edit3, ExternalLink, QrCode, Trash2 } from "lucide-react"
+import { Archive, Check, Copy, CopyPlus, Edit3, ExternalLink, Link2, QrCode, Trash2 } from "lucide-react"
+import { TableEmpty } from "@/components/admin/table-empty"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -193,11 +194,12 @@ export function RedirectsTable({ redirects }: { redirects: AdminRedirect[] }) {
                 )
               })}
               {redirects.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
-                    No short links yet. Create one to get a branded URL and QR code.
-                  </TableCell>
-                </TableRow>
+                <TableEmpty
+                  colSpan={8}
+                  icon={<Link2 className="h-5 w-5" aria-hidden="true" />}
+                  title="No short links yet."
+                  description="Create one to get a branded URL and QR code."
+                />
               )}
             </TableBody>
           </Table>

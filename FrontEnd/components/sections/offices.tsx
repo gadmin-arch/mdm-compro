@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react"
 import { str, records } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 // Only render embeds that are really Google Maps iframes — the URL is
 // admin-provided free text.
@@ -24,7 +25,7 @@ export function OfficesSection({ props }: { props: Record<string, unknown> }) {
 
   return (
     <section className="border-t border-border/60 bg-secondary/15 py-16">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className={container()}>
         <div className="text-center md:text-left">
           {title && (
             <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">

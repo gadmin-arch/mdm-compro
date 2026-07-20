@@ -8,6 +8,7 @@ import { FilterControls } from "@/components/filter-controls"
 import { Pagination } from "@/components/cms/pagination"
 import { getCareers, getPage, employmentTypeLabel, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("career")
@@ -67,7 +68,7 @@ export default async function CareerPage({ searchParams }: Props) {
   const listingBlock = (
     <>
       <CareerBenefits />
-      <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8 bg-secondary/40">
+      <div className={container("pt-12 bg-secondary/40")}>
         <FilterControls
           moduleType="careers"
           departments={departments}
@@ -76,7 +77,7 @@ export default async function CareerPage({ searchParams }: Props) {
         />
       </div>
       <CareerOpenings jobs={response.data} />
-      <div className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8 bg-secondary/40">
+      <div className={container("pb-20 bg-secondary/40")}>
         <Pagination page={response.pagination.page} totalPages={response.pagination.totalPages} />
       </div>
     </>

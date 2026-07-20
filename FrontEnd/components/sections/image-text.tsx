@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { str, lines } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 export function ImageTextSection({ props }: { props: Record<string, unknown> }) {
   const eyebrow = str(props, "eyebrow")
@@ -22,11 +23,11 @@ export function ImageTextSection({ props }: { props: Record<string, unknown> }) 
 
   return (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className={container("py-20")}>
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           <div className={cn("lg:col-span-5", imageRight && "lg:order-last")}>
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-border bg-secondary">
-              <Image src={imageUrl || "/placeholder.jpg"} alt={imageAlt} fill className="object-cover" />
+              <Image src={imageUrl || "/placeholder.jpg"} alt={imageAlt} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
             </div>
           </div>
 

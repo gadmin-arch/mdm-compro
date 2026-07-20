@@ -5,6 +5,7 @@ import type { ContentNode, NewsItem } from "@/lib/cms"
 import { formatDate } from "@/lib/cms"
 import { str, num } from "@/lib/sections"
 import type { SectionData } from "@/components/cms/section-renderer"
+import { container } from "@/lib/layout"
 
 export function ContentGridSection({
   props,
@@ -21,7 +22,7 @@ export function ContentGridSection({
 
   return (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className={container("py-20")}>
         {(eyebrow || title || description) && (
           <div className="max-w-2xl">
             {eyebrow && (
@@ -71,7 +72,7 @@ function NodeCards({ items, basePath }: { items: ContentNode[]; basePath: string
               <Image
                 src={item.imageUrl || "/placeholder.jpg"}
                 alt={item.title}
-                fill
+                fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
               />
             </div>
@@ -112,7 +113,7 @@ function NewsCards({ items }: { items: NewsItem[] }) {
               <Image
                 src={item.featuredImageUrl || "/placeholder.jpg"}
                 alt={item.title}
-                fill
+                fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
               />
             </div>

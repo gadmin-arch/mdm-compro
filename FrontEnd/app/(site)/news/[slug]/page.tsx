@@ -43,7 +43,7 @@ export default async function NewsDetailPage({ params }: Props) {
             <span className="text-sm text-muted-foreground">{formatDate(news.publishedAt)}</span>
           </div>
           <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-xl border border-border bg-secondary">
-            <Image src={news.featuredImageUrl || "/placeholder.jpg"} alt={news.title} fill className="object-cover" priority />
+            <Image src={news.featuredImageUrl || "/placeholder.jpg"} alt={news.title} fill sizes="100vw" className="object-cover" priority />
           </div>
           <RichText content={news.body} />
         </div>

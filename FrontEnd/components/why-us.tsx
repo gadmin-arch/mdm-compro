@@ -1,5 +1,6 @@
 import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons"
 import { sectionDefsByType, str, records } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 export type WhyUsProps = {
   props?: Record<string, unknown>
@@ -16,7 +17,7 @@ export function WhyUs({ props = {} }: WhyUsProps) {
 
   return (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <div className={container("py-20")}>
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
             {eyebrow && (

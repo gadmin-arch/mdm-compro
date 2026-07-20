@@ -4,9 +4,9 @@ import { NewsList } from "@/components/news-list"
 import { PageHero } from "@/components/page-hero"
 import { SectionRenderer } from "@/components/cms/section-renderer"
 import { FilterControls } from "@/components/filter-controls"
-import { Pagination } from "@/components/cms/pagination"
 import { getNews, getPage, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
+import { container } from "@/lib/layout"
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("news")
@@ -79,7 +79,7 @@ export default async function NewsPage({ searchParams }: Props) {
   // the `listing` marker, they can never remove it.
   const listingBlock = (
     <>
-      <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8 bg-background animate-fade-in">
+      <div className={container("pt-12 bg-background animate-fade-in")}>
         <FilterControls
           moduleType="news"
           categories={categories}
