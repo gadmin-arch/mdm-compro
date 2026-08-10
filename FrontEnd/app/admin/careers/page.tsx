@@ -1,3 +1,6 @@
+import Link from "next/link"
+import { Plus } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { AdminShell } from "@/components/admin-shell"
 import { FlashToast } from "@/components/admin/flash-toast"
 import { AdminPagination } from "@/components/admin/admin-pagination"
@@ -29,10 +32,22 @@ export default async function AdminCareersPage({
   }
 
   return (
-    <AdminShell active="careers" eyebrow="Hiring" title="Careers">
+    <AdminShell
+      active="careers"
+      eyebrow="Hiring"
+      title="Careers"
+      actions={
+        <Button asChild>
+          <Link href="/admin/careers/new">
+            <Plus className="h-4 w-4" />
+            Add Career
+          </Link>
+        </Button>
+      }
+    >
       <FlashToast resource="career" />
       {apiError && <Message destructive text="Careers could not be loaded from the admin API." />}
-      <ResourceToolbar addHref="/admin/careers/new" addLabel="Add Career" q={q} status={status} />
+      <ResourceToolbar action="/admin/careers" q={q} status={status} />
       <AdminResourceTable
         basePath="/admin/careers"
         deleteAction={deleteCareerAction}

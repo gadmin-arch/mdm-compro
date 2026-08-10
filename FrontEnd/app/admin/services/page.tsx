@@ -1,3 +1,6 @@
+import Link from "next/link"
+import { Plus } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { AdminShell } from "@/components/admin-shell"
 import { FlashToast } from "@/components/admin/flash-toast"
 import { AdminPagination } from "@/components/admin/admin-pagination"
@@ -29,10 +32,22 @@ export default async function AdminServicesPage({
   }
 
   return (
-    <AdminShell active="services" eyebrow="Catalog" title="Services">
+    <AdminShell
+      active="services"
+      eyebrow="Catalog"
+      title="Services"
+      actions={
+        <Button asChild>
+          <Link href="/admin/services/new">
+            <Plus className="h-4 w-4" />
+            Add Service
+          </Link>
+        </Button>
+      }
+    >
       <FlashToast resource="service" />
       {apiError && <Message destructive text="Services could not be loaded from the admin API." />}
-      <ResourceToolbar addHref="/admin/services/new" addLabel="Add Service" q={q} status={status} />
+      <ResourceToolbar action="/admin/services" q={q} status={status} />
       <AdminResourceTable
         basePath="/admin/services"
         deleteAction={deleteContentItemAction}

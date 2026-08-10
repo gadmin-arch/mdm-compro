@@ -14,9 +14,9 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { AdminShell } from "@/components/admin-shell"
+import { KpiCard } from "@/components/admin/kpi-card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   AdminApiError,
   adminFetch,
@@ -91,30 +91,24 @@ export default async function AdminPage() {
         </Button>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
         {moduleCards.map((module) => {
           const Icon = module.icon
           return (
-            <Link key={module.key} href={module.href} className="block">
-              <Card className="h-full rounded-lg transition-shadow hover:shadow-sm">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                  <CardTitle className="font-display text-base">{module.label}</CardTitle>
-                  <Icon className="h-5 w-5 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <p className="font-display text-3xl font-semibold text-foreground">
-                    {counts[module.key] ?? 0}
-                  </p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {module.content
-                      ? statusBreakdown(statuses[module.key]) || "No records yet"
-                      : module.key === "archive"
-                        ? "Archived items"
-                        : "Manage records"}
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
+            <KpiCard
+              key={module.key}
+              title={module.label}
+              value={counts[module.key] ?? 0}
+              href={module.href}
+              icon={<Icon className="h-4 w-4" aria-hidden="true" />}
+              footer={
+                module.content
+                  ? statusBreakdown(statuses[module.key]) || "No records yet"
+                  : module.key === "archive"
+                    ? "Archived items"
+                    : "Manage records"
+              }
+            />
           )
         })}
       </div>

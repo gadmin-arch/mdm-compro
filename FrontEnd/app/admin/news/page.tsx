@@ -1,3 +1,6 @@
+import Link from "next/link"
+import { Plus } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { AdminShell } from "@/components/admin-shell"
 import { FlashToast } from "@/components/admin/flash-toast"
 import { AdminPagination } from "@/components/admin/admin-pagination"
@@ -29,10 +32,22 @@ export default async function AdminNewsPage({
   }
 
   return (
-    <AdminShell active="news" eyebrow="Editorial" title="News">
+    <AdminShell
+      active="news"
+      eyebrow="Editorial"
+      title="News"
+      actions={
+        <Button asChild>
+          <Link href="/admin/news/new">
+            <Plus className="h-4 w-4" />
+            Add News
+          </Link>
+        </Button>
+      }
+    >
       <FlashToast resource="news post" />
       {apiError && <Message destructive text="News could not be loaded from the admin API." />}
-      <ResourceToolbar addHref="/admin/news/new" addLabel="Add News" q={q} status={status} />
+      <ResourceToolbar action="/admin/news" q={q} status={status} />
       <AdminResourceTable
         basePath="/admin/news"
         deleteAction={deleteNewsAction}

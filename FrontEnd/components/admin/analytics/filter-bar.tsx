@@ -1,12 +1,11 @@
 "use client"
 
 import { useRef } from "react"
-import { Filter } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ActiveFilter, FilterCard, FilterField } from "@/components/admin/filter-card"
 import { Input } from "@/components/ui/input"
 
 const selectClass =
-  "h-9 rounded-md border border-input bg-background px-2.5 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+  "h-9 w-full rounded-md border border-input bg-background px-2.5 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
 
 type FilterBarProps = {
   from: string
@@ -24,10 +23,9 @@ function isoDay(date: Date): string {
   return date.toISOString().slice(0, 10)
 }
 
-// One row of GET-form filters; submitting navigates with searchParams so the
-// whole dashboard re-renders server-side (and stays shareable as a URL).
+// GET-form filters; submitting navigates with searchParams so the whole
+// dashboard re-renders server-side (and stays shareable as a URL).
 export function AnalyticsFilterBar(props: FilterBarProps) {
-  const formRef = useRef<HTMLFormElement>(null)
   const fromRef = useRef<HTMLInputElement>(null)
   const toRef = useRef<HTMLInputElement>(null)
 
@@ -42,18 +40,31 @@ export function AnalyticsFilterBar(props: FilterBarProps) {
     if (value === "year") from = `${now.getUTCFullYear()}-01-01`
     if (fromRef.current) fromRef.current.value = from
     if (toRef.current) toRef.current.value = today
-    formRef.current?.requestSubmit()
+    fromRef.current?.form?.requestSubmit()
   }
 
+  // Date range is always set, so only the optional dimensions become chips.
+  const active: ActiveFilter[] = []
+  const dropParam = (name: string) => {
+    const params = new URLSearchParams({ from: props.from, to: props.to, interval: props.interval })
+    for (const [key, value] of Object.entries({
+      device: props.device,
+      source: props.source,
+      country: props.country,
+      page: props.page,
+    })) {
+      if (value && key !== name) params.set(key, value)
+    }
+    return `/admin/analytics?${params}`
+  }
+  if (props.device) active.push({ label: "Device", value: props.device, clearHref: dropParam("device") })
+  if (props.source) active.push({ label: "Source", value: props.source, clearHref: dropParam("source") })
+  if (props.country) active.push({ label: "Country", value: props.country, clearHref: dropParam("country") })
+  if (props.page) active.push({ label: "Page", value: props.page, clearHref: dropParam("page") })
+
   return (
-    <form
-      ref={formRef}
-      method="GET"
-      action="/admin/analytics"
-      className="mt-6 flex flex-wrap items-end gap-2 rounded-lg border border-border bg-background p-3 print:hidden"
-    >
-      <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-        Preset
+    <FilterCard action="/admin/analytics" active={active} clearHref="/admin/analytics">
+      <FilterField label="Preset">
         <select className={selectClass} defaultValue="" onChange={(event) => applyPreset(event.target.value)}>
           <option value="">Custom</option>
           <option value="today">Today</option>
@@ -62,47 +73,41 @@ export function AnalyticsFilterBar(props: FilterBarProps) {
           <option value="90d">Last 90 days</option>
           <option value="year">This year</option>
         </select>
-      </label>
-      <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-        From (UTC)
-        <Input ref={fromRef} className="h-9 w-36" type="date" name="from" defaultValue={props.from} />
-      </label>
-      <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-        To
-        <Input ref={toRef} className="h-9 w-36" type="date" name="to" defaultValue={props.to} />
-      </label>
-      <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-        Group by
-        <select className={selectClass} name="interval" defaultValue={props.interval}>
+      </FilterField>
+      <FilterField label="From (UTC)" htmlFor="from">
+        <Input ref={fromRef} className="h-9" id="from" type="date" name="from" defaultValue={props.from} />
+      </FilterField>
+      <FilterField label="To" htmlFor="to">
+        <Input ref={toRef} className="h-9" id="to" type="date" name="to" defaultValue={props.to} />
+      </FilterField>
+      <FilterField label="Group by" htmlFor="interval">
+        <select className={selectClass} id="interval" name="interval" defaultValue={props.interval}>
           <option value="hour">Hourly</option>
           <option value="day">Daily</option>
           <option value="week">Weekly</option>
           <option value="month">Monthly</option>
           <option value="year">Yearly</option>
         </select>
-      </label>
-      <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-        Device
-        <select className={selectClass} name="device" defaultValue={props.device}>
+      </FilterField>
+      <FilterField label="Device" htmlFor="device">
+        <select className={selectClass} id="device" name="device" defaultValue={props.device}>
           <option value="">All devices</option>
           <option value="desktop">Desktop</option>
           <option value="mobile">Mobile</option>
           <option value="tablet">Tablet</option>
         </select>
-      </label>
-      <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-        Source
-        <select className={selectClass} name="source" defaultValue={props.source}>
+      </FilterField>
+      <FilterField label="Source" htmlFor="source">
+        <select className={selectClass} id="source" name="source" defaultValue={props.source}>
           <option value="">All sources</option>
           <option value="direct">Direct</option>
           <option value="organic">Organic</option>
           <option value="referral">Referral</option>
           <option value="social">Social</option>
         </select>
-      </label>
-      <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-        Country
-        <select className={selectClass} name="country" defaultValue={props.country}>
+      </FilterField>
+      <FilterField label="Country" htmlFor="country">
+        <select className={selectClass} id="country" name="country" defaultValue={props.country}>
           <option value="">All countries</option>
           {props.countries.map((country) => (
             <option key={country} value={country}>
@@ -110,10 +115,9 @@ export function AnalyticsFilterBar(props: FilterBarProps) {
             </option>
           ))}
         </select>
-      </label>
-      <label className="grid gap-1 text-xs font-medium text-muted-foreground">
-        Page
-        <select className={`${selectClass} max-w-52`} name="page" defaultValue={props.page}>
+      </FilterField>
+      <FilterField label="Page" htmlFor="page">
+        <select className={selectClass} id="page" name="page" defaultValue={props.page}>
           <option value="">All pages</option>
           {props.paths.map((path) => (
             <option key={path} value={path}>
@@ -121,11 +125,7 @@ export function AnalyticsFilterBar(props: FilterBarProps) {
             </option>
           ))}
         </select>
-      </label>
-      <Button type="submit" size="sm" className="h-9">
-        <Filter className="h-4 w-4" />
-        Apply
-      </Button>
-    </form>
+      </FilterField>
+    </FilterCard>
   )
 }
