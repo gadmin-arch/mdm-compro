@@ -2,22 +2,12 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
 import { BarChart3, ExternalLink, FileText, Globe2, Home, Image as ImageIcon, Link2, Menu, Newspaper, Package, Settings, Users, Archive, type LucideIcon } from "lucide-react"
 import { AdminSignOutDialog } from "@/components/admin/admin-sign-out-dialog"
 import { ThemeToggleRow } from "@/components/admin/theme-toggle"
-import { Button } from "@/components/ui/button"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
-import { container } from "@/lib/layout"
 
-interface NavItem {
+export interface NavItem {
   label: string
   href: string
   key: string
@@ -25,7 +15,7 @@ interface NavItem {
   disabled?: boolean
 }
 
-const navItems: NavItem[] = [
+export const navItems: NavItem[] = [
   { label: "Dashboard", href: "/admin", key: "dashboard", icon: Home },
   { label: "Analytics", href: "/admin/analytics", key: "analytics", icon: BarChart3 },
   { label: "Pages", href: "/admin/pages", key: "pages", icon: FileText },
@@ -42,7 +32,7 @@ const navItems: NavItem[] = [
   { label: "Account", href: "/admin/settings", key: "settings", icon: Settings },
 ]
 
-function AdminNavItems({ active, onNavigate }: { active: string; onNavigate?: () => void }) {
+export function AdminNavItems({ active, onNavigate }: { active: string; onNavigate?: () => void }) {
   return (
     <>
       {navItems.map((item) => {
@@ -130,39 +120,5 @@ export function AdminNavSidebar({ active }: { active: string }) {
         </div>
       </nav>
     </aside>
-  )
-}
-
-export function AdminNavMenu({ active }: { active: string }) {
-  const [open, setOpen] = useState(false)
-  const activeItem = navItems.find((item) => item.key === active)
-
-  return (
-    <div className="flex items-center gap-2 lg:hidden">
-      <span className="hidden rounded-md border border-border bg-secondary/60 px-2.5 py-1.5 text-xs font-medium text-muted-foreground sm:inline-flex">
-        {activeItem?.label ?? "Admin"}
-      </span>
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>
-          <Button variant="outline">
-            <Menu className="h-4 w-4" />
-            Menu
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="top" className="max-h-[92dvh] overflow-y-auto px-0 pb-0">
-          <SheetHeader className="border-b border-border px-4 pb-4 sm:px-6">
-            <SheetTitle className="font-display">CMS Menu</SheetTitle>
-          </SheetHeader>
-          <div className={container("w-full py-4")}>
-            <nav className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              <AdminNavItems active={active} onNavigate={() => setOpen(false)} />
-            </nav>
-            <div className="mt-4 border-t border-border pt-4">
-              <AdminSignOutDialog className="sm:w-auto" />
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
-    </div>
   )
 }

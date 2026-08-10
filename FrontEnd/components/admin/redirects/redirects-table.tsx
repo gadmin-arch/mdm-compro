@@ -2,19 +2,13 @@
 
 import { useMemo, useState, useTransition } from "react"
 import Link from "next/link"
+import type { ColumnDef } from "@tanstack/react-table"
 import { Archive, Check, Copy, CopyPlus, Edit3, ExternalLink, Link2, QrCode, Trash2 } from "lucide-react"
-import { TableEmpty } from "@/components/admin/table-empty"
+import { AdminCard, AdminDataView } from "@/components/admin/data-view"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,6 +35,17 @@ function isExpired(item: AdminRedirect) {
   return Boolean(item.expiresAt && new Date(item.expiresAt).getTime() <= Date.now())
 }
 
+function StatusBadge({ item }: { item: AdminRedirect }) {
+  if (isExpired(item)) {
+    return (
+      <Badge variant="outline" className="text-destructive">
+        Expired
+      </Badge>
+    )
+  }
+  return item.isActive ? <Badge>Active</Badge> : <Badge variant="outline">Inactive</Badge>
+}
+
 export function RedirectsTable({ redirects }: { redirects: AdminRedirect[] }) {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [toArchive, setToArchive] = useState<AdminRedirect | null>(null)
@@ -51,25 +56,8 @@ export function RedirectsTable({ redirects }: { redirects: AdminRedirect[] }) {
   const allSelected = redirects.length > 0 && selected.size === redirects.length
   const selectedIds = useMemo(() => JSON.stringify([...selected]), [selected])
 
-  // Dispatch via a transition, not a form submit: AlertDialogAction closes the
-  // dialog on click, unmounting a form-in-dialog before React can dispatch its
-  // action — so the archive silently never fired.
-  function confirmArchive() {
-    if (!toArchive) return
-    const formData = new FormData()
-    formData.set("id", toArchive.id)
-    formData.set("version", String(toArchive.version))
-    startArchive(() => archiveRedirectAction(formData))
-  }
-
-  function confirmBulkArchive() {
-    const formData = new FormData()
-    formData.set("ids", selectedIds)
-    startArchive(() => bulkDeleteRedirectsAction(formData))
-  }
-
   function toggleAll() {
-    setSelected(allSelected ? new Set() : new Set(redirects.map((r) => r.id)))
+    setSelected(allSelected ? new Set() : new Set(redirects.map((item) => item.id)))
   }
 
   function toggleOne(id: string) {
@@ -91,140 +79,240 @@ export function RedirectsTable({ redirects }: { redirects: AdminRedirect[] }) {
     }
   }
 
+  // Dispatch via a transition, not a form submit: AlertDialogAction closes the
+  // dialog on click, unmounting a form-in-dialog before React can dispatch its
+  // action — so the archive silently never fired.
+  function confirmArchive() {
+    if (!toArchive) return
+    const formData = new FormData()
+    formData.set("id", toArchive.id)
+    formData.set("version", String(toArchive.version))
+    startArchive(() => archiveRedirectAction(formData))
+  }
+
+  function confirmBulkArchive() {
+    const formData = new FormData()
+    formData.set("ids", selectedIds)
+    startArchive(() => bulkDeleteRedirectsAction(formData))
+  }
+
+  const columns = useMemo<ColumnDef<AdminRedirect>[]>(
+    () => [
+      {
+        id: "select",
+        size: 44,
+        enableSorting: false,
+        enableHiding: false,
+        header: () => (
+          <Checkbox checked={allSelected} onCheckedChange={toggleAll} aria-label="Select all" />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            checked={selected.has(row.original.id)}
+            onCheckedChange={() => toggleOne(row.original.id)}
+            aria-label={`Select ${row.original.name}`}
+          />
+        ),
+      },
+      {
+        accessorKey: "name",
+        size: 220,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+        cell: ({ row }) => (
+          <div className="min-w-0">
+            <p className="font-medium text-foreground">{row.original.name}</p>
+            {row.original.description && (
+              <p className="line-clamp-1 text-xs text-muted-foreground">{row.original.description}</p>
+            )}
+          </div>
+        ),
+      },
+      {
+        accessorKey: "slug",
+        size: 160,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Short link" />,
+        cell: ({ row }) => (
+          <button
+            type="button"
+            onClick={() => copyLink(row.original)}
+            className="inline-flex items-center gap-1.5 rounded bg-secondary px-2 py-1 font-mono text-xs text-foreground hover:bg-secondary/70"
+            title="Copy short link"
+          >
+            /{row.original.slug}
+            {copiedId === row.original.id ? (
+              <Check className="h-3 w-3 text-green-600" aria-hidden="true" />
+            ) : (
+              <Copy className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
+            )}
+          </button>
+        ),
+      },
+      {
+        accessorKey: "destination",
+        size: 240,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Destination" />,
+        cell: ({ row }) => (
+          <a
+            href={row.original.destination}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex max-w-full items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <span className="line-clamp-1 break-all">{row.original.destination}</span>
+            <ExternalLink className="h-3 w-3 shrink-0" aria-hidden="true" />
+          </a>
+        ),
+      },
+      {
+        accessorKey: "redirectType",
+        size: 90,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Type" />,
+        cell: ({ row }) => <Badge variant="outline">{row.original.redirectType}</Badge>,
+      },
+      {
+        id: "status",
+        size: 110,
+        accessorFn: (row) => (isExpired(row) ? "expired" : row.isActive ? "active" : "inactive"),
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+        cell: ({ row }) => <StatusBadge item={row.original} />,
+      },
+      {
+        accessorKey: "totalScans",
+        size: 90,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Scans" />,
+        cell: ({ row }) => (
+          <span className="tabular-nums">{row.original.totalScans.toLocaleString()}</span>
+        ),
+      },
+      {
+        id: "actions",
+        size: 220,
+        enableHiding: false,
+        header: () => <span className="sr-only">Actions</span>,
+        cell: ({ row }) => (
+          <div className="flex justify-end gap-1">
+            <Button asChild size="sm" variant="outline">
+              <Link href={`/admin/redirects/${row.original.id}`}>
+                <Edit3 className="h-4 w-4" aria-hidden="true" />
+                Edit
+              </Link>
+            </Button>
+            <Button asChild size="icon" variant="ghost" className="h-8 w-8" title="QR code">
+              <Link href={`/admin/redirects/${row.original.id}#qr`}>
+                <QrCode className="h-4 w-4" aria-hidden="true" />
+                <span className="sr-only">QR code</span>
+              </Link>
+            </Button>
+            <form action={duplicateRedirectAction}>
+              <input type="hidden" name="id" value={row.original.id} />
+              <Button size="icon" variant="ghost" className="h-8 w-8" type="submit" title="Duplicate">
+                <CopyPlus className="h-4 w-4" aria-hidden="true" />
+                <span className="sr-only">Duplicate</span>
+              </Button>
+            </form>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 text-destructive"
+              type="button"
+              title="Archive"
+              onClick={() => setToArchive(row.original)}
+            >
+              <Archive className="h-4 w-4" aria-hidden="true" />
+              <span className="sr-only">Archive</span>
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    // Selection and copy feedback are the only reactive inputs here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [allSelected, selected, copiedId],
+  )
+
   return (
     <div className="mt-4">
       {selected.size > 0 && (
         <div className="mb-3 flex items-center justify-between rounded-md border border-border bg-secondary/40 px-3 py-2 text-sm">
           <span className="text-foreground">{selected.size} selected</span>
-          <Button size="sm" variant="outline" className="text-destructive" onClick={() => setBulkOpen(true)}>
-            <Trash2 className="h-4 w-4" />
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-destructive"
+            onClick={() => setBulkOpen(true)}
+          >
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
             Archive selected
           </Button>
         </div>
       )}
 
-      <div className="overflow-hidden rounded-lg border border-border bg-background">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-10">
-                  <Checkbox checked={allSelected} onCheckedChange={toggleAll} aria-label="Select all" />
-                </TableHead>
-                <TableHead className="min-w-[160px]">Name</TableHead>
-                <TableHead className="min-w-[140px]">Short link</TableHead>
-                <TableHead className="min-w-[200px]">Destination</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Scans</TableHead>
-                <TableHead className="w-[210px] text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {redirects.map((item) => {
-                const expired = isExpired(item)
-                return (
-                  <TableRow key={item.id} className={!item.isActive || expired ? "opacity-60" : undefined}>
-                    <TableCell>
-                      <Checkbox
-                        checked={selected.has(item.id)}
-                        onCheckedChange={() => toggleOne(item.id)}
-                        aria-label={`Select ${item.name}`}
-                      />
-                    </TableCell>
-                    <TableCell className="max-w-[220px]">
-                      <p className="truncate font-medium text-foreground">{item.name}</p>
-                      {item.description && (
-                        <p className="truncate text-xs text-muted-foreground">{item.description}</p>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <button
-                        type="button"
-                        onClick={() => copyLink(item)}
-                        className="inline-flex items-center gap-1.5 rounded bg-secondary px-2 py-1 font-mono text-xs text-foreground hover:bg-secondary/70"
-                        title="Copy short link"
-                      >
-                        /{item.slug}
-                        {copiedId === item.id ? (
-                          <Check className="h-3 w-3 text-green-600" />
-                        ) : (
-                          <Copy className="h-3 w-3 text-muted-foreground" />
-                        )}
-                      </button>
-                    </TableCell>
-                    <TableCell className="max-w-[260px]">
-                      <a
-                        href={item.destination}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex max-w-full items-center gap-1 truncate text-sm text-muted-foreground hover:text-foreground"
-                      >
-                        <span className="truncate">{item.destination}</span>
-                        <ExternalLink className="h-3 w-3 shrink-0" />
-                      </a>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{item.redirectType}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {expired ? (
-                        <Badge variant="outline" className="text-destructive">Expired</Badge>
-                      ) : item.isActive ? (
-                        <Badge>Active</Badge>
-                      ) : (
-                        <Badge variant="outline">Inactive</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">{item.totalScans.toLocaleString()}</TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-1">
-                        <Button asChild size="sm" variant="outline">
-                          <Link href={`/admin/redirects/${item.id}`}>
-                            <Edit3 className="h-4 w-4" />
-                            Edit
-                          </Link>
-                        </Button>
-                        <Button asChild size="icon" variant="ghost" className="h-8 w-8" title="QR code">
-                          <Link href={`/admin/redirects/${item.id}#qr`}>
-                            <QrCode className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        <form action={duplicateRedirectAction}>
-                          <input type="hidden" name="id" value={item.id} />
-                          <Button size="icon" variant="ghost" className="h-8 w-8" type="submit" title="Duplicate">
-                            <CopyPlus className="h-4 w-4" />
-                          </Button>
-                        </form>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8 text-destructive"
-                          type="button"
-                          title="Archive"
-                          onClick={() => setToArchive(item)}
-                        >
-                          <Archive className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-              {redirects.length === 0 && (
-                <TableEmpty
-                  colSpan={8}
-                  icon={<Link2 className="h-5 w-5" aria-hidden="true" />}
-                  title="No short links yet."
-                  description="Create one to get a branded URL and QR code."
-                />
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
+      <AdminDataView
+        columns={columns}
+        data={redirects}
+        empty={{
+          title: "No short links yet.",
+          description: "Create one to get a branded URL and QR code.",
+          icon: <Link2 className="h-5 w-5" aria-hidden="true" />,
+        }}
+        renderCard={(item) => (
+          <AdminCard
+            key={item.id}
+            title={item.name}
+            href={`/admin/redirects/${item.id}`}
+            subtitle={`/${item.slug} → ${item.destination}`}
+            badges={
+              <>
+                <StatusBadge item={item} />
+                <Badge variant="outline">{item.redirectType}</Badge>
+                <span className="text-xs tabular-nums text-muted-foreground">
+                  {item.totalScans.toLocaleString()} scans
+                </span>
+              </>
+            }
+            meta={item.description}
+            actions={
+              <>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="min-h-11 flex-1"
+                  onClick={() => copyLink(item)}
+                >
+                  {copiedId === item.id ? (
+                    <Check className="h-4 w-4 text-green-600" aria-hidden="true" />
+                  ) : (
+                    <Copy className="h-4 w-4" aria-hidden="true" />
+                  )}
+                  {copiedId === item.id ? "Copied" : "Copy"}
+                </Button>
+                <Button asChild size="sm" variant="outline" className="min-h-11 flex-1">
+                  <Link href={`/admin/redirects/${item.id}#qr`}>
+                    <QrCode className="h-4 w-4" aria-hidden="true" />
+                    QR
+                  </Link>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="min-h-11 flex-1 text-destructive"
+                  onClick={() => setToArchive(item)}
+                >
+                  <Archive className="h-4 w-4" aria-hidden="true" />
+                  Archive
+                </Button>
+              </>
+            }
+          />
+        )}
+      />
 
-      <AlertDialog open={toArchive !== null} onOpenChange={(open) => { if (!open) setToArchive(null) }}>
+      <AlertDialog
+        open={toArchive !== null}
+        onOpenChange={(open) => {
+          if (!open) setToArchive(null)
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Archive short link?</AlertDialogTitle>

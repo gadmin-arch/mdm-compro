@@ -102,7 +102,7 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
         event.preventDefault()
         submit(event.currentTarget)
       }}
-      className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]"
+      className="mt-8 grid gap-6 pb-24 lg:pb-0 xl:grid-cols-[minmax(0,1fr)_320px]"
     >
       <FormBanner
         result={result}
@@ -185,6 +185,12 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
         <SeoFields seo={item?.seo} />
       </Sidebar>
 
+      <MobileActionBar
+        buttonLabel={mode === "create" ? `Create ${isProduct ? "Product" : "Service"}` : "Save Changes"}
+        pending={pending}
+        onClickSubmit={handleSaveClick}
+      />
+
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -233,7 +239,7 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
         event.preventDefault()
         submit(event.currentTarget)
       }}
-      className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]"
+      className="mt-8 grid gap-6 pb-24 lg:pb-0 xl:grid-cols-[minmax(0,1fr)_320px]"
     >
       <FormBanner
         result={result}
@@ -280,6 +286,12 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
         </label>
         <SeoFields seo={item?.seo} />
       </Sidebar>
+
+      <MobileActionBar
+        buttonLabel={mode === "create" ? "Create News" : "Save News"}
+        pending={pending}
+        onClickSubmit={handleSaveClick}
+      />
 
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
         <AlertDialogContent>
@@ -329,7 +341,7 @@ export function CareerForm({ action, item, mode }: CareerFormProps) {
         event.preventDefault()
         submit(event.currentTarget)
       }}
-      className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]"
+      className="mt-8 grid gap-6 pb-24 lg:pb-0 xl:grid-cols-[minmax(0,1fr)_320px]"
     >
       <FormBanner
         result={result}
@@ -379,6 +391,12 @@ export function CareerForm({ action, item, mode }: CareerFormProps) {
         <Field label="Publish date" name="publishedAt" type="datetime-local" defaultValue={toDateTimeLocal(item?.publishedAt)} />
       </Sidebar>
 
+      <MobileActionBar
+        buttonLabel={mode === "create" ? "Create Career" : "Save Career"}
+        pending={pending}
+        onClickSubmit={handleSaveClick}
+      />
+
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -426,11 +444,44 @@ function Sidebar({
           Version: {itemVersion}
         </div>
       )}
-      <Button className="w-full" disabled={pending} type="button" onClick={onClickSubmit}>
+      {/* On phones and tablets the primary action lives in the floating bar
+          instead, so it is reachable without scrolling past every field. */}
+      <Button
+        className="hidden w-full lg:flex"
+        disabled={pending}
+        type="button"
+        onClick={onClickSubmit}
+      >
         <Save className="h-4 w-4" />
         {pending ? "Saving..." : buttonLabel}
       </Button>
     </aside>
+  )
+}
+
+// Floating save bar for small screens, docked just above the bottom nav so
+// both stay reachable. Mirrors the nav's pill styling.
+function MobileActionBar({
+  buttonLabel,
+  pending,
+  onClickSubmit,
+}: {
+  buttonLabel: string
+  pending: boolean
+  onClickSubmit?: () => void
+}) {
+  return (
+    <div className="fixed inset-x-3 bottom-[76px] z-30 flex items-center gap-2 rounded-2xl border border-border/80 bg-background/95 p-2 shadow-2xl backdrop-blur-xl lg:hidden print:hidden">
+      <Button
+        className="min-h-11 flex-1"
+        disabled={pending}
+        type="button"
+        onClick={onClickSubmit}
+      >
+        <Save className="h-4 w-4" />
+        {pending ? "Saving..." : buttonLabel}
+      </Button>
+    </div>
   )
 }
 

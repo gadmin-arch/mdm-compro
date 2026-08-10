@@ -204,17 +204,22 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
     })
   }
 
+  function handleSaveClick() {
+    if (!formRef.current) return
+    if (formRef.current.checkValidity()) {
+      setShowConfirm(true)
+    } else {
+      formRef.current.reportValidity()
+    }
+  }
+
   // Enter in a text input triggers the browser's implicit form submission,
   // which would save without the confirmation dialog — route it through the
   // same confirm flow as the Save button instead.
   function handleFormKeyDown(event: React.KeyboardEvent<HTMLFormElement>) {
     if (event.key !== "Enter" || !(event.target instanceof HTMLInputElement)) return
     event.preventDefault()
-    if (formRef.current?.checkValidity()) {
-      setShowConfirm(true)
-    } else {
-      formRef.current?.reportValidity()
-    }
+    handleSaveClick()
   }
 
   return (
@@ -227,8 +232,9 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
         submit(event.currentTarget)
       }}
       onKeyDown={handleFormKeyDown}
-      className="mt-2 grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]"
+      className="mt-2 grid gap-6 pb-24 lg:pb-0 xl:grid-cols-[minmax(0,1fr)_340px]"
     >
+      <MobileActionBar mode={mode} pending={pending} onClick={handleSaveClick} />
       {saveResult && (
         <div className="xl:col-span-2">
           <SaveErrorBanner
@@ -776,15 +782,7 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
             <SubmitButton
               mode={mode}
               pending={pending}
-              onClick={() => {
-                if (formRef.current) {
-                  if (formRef.current.checkValidity()) {
-                    setShowConfirm(true)
-                  } else {
-                    formRef.current.reportValidity()
-                  }
-                }
-              }}
+              onClick={handleSaveClick}
             />
           </div>
         </section>
@@ -874,6 +872,11 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
   )
 }
 
+function submitLabel(mode: "create" | "edit", pending: boolean) {
+  if (pending) return "Saving..."
+  return mode === "create" ? "Create Page" : "Save Page"
+}
+
 function SubmitButton({
   mode,
   pending,
@@ -884,10 +887,32 @@ function SubmitButton({
   onClick?: () => void
 }) {
   return (
-    <Button className="w-full" disabled={pending} type="button" onClick={onClick}>
+    // Hidden on small screens: MobileActionBar carries the action there so it
+    // is reachable without scrolling past every section.
+    <Button className="hidden w-full lg:flex" disabled={pending} type="button" onClick={onClick}>
       <Save className="h-4 w-4" />
-      {pending ? "Saving..." : mode === "create" ? "Create Page" : "Save Page"}
+      {submitLabel(mode, pending)}
     </Button>
+  )
+}
+
+// Floating save bar for small screens, docked just above the bottom nav.
+function MobileActionBar({
+  mode,
+  pending,
+  onClick,
+}: {
+  mode: "create" | "edit"
+  pending: boolean
+  onClick?: () => void
+}) {
+  return (
+    <div className="fixed inset-x-3 bottom-[76px] z-30 flex items-center gap-2 rounded-2xl border border-border/80 bg-background/95 p-2 shadow-2xl backdrop-blur-xl lg:hidden print:hidden">
+      <Button className="min-h-11 flex-1" disabled={pending} type="button" onClick={onClick}>
+        <Save className="h-4 w-4" />
+        {submitLabel(mode, pending)}
+      </Button>
+    </div>
   )
 }
 

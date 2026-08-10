@@ -1,21 +1,13 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useMemo, useState, useTransition } from "react"
 import Link from "next/link"
+import type { ColumnDef } from "@tanstack/react-table"
 import { Archive, Copy, Edit3, FileText, Lock } from "lucide-react"
-import { SortableHead } from "@/components/admin/sortable-head"
-import { TableEmpty } from "@/components/admin/table-empty"
-import { useClientSort } from "@/components/admin/use-client-sort"
+import { AdminCard, AdminDataView } from "@/components/admin/data-view"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,20 +21,7 @@ import {
 import { isSystemPageKey, type PageContent } from "@/lib/cms"
 import { deletePageAction, duplicatePageAction } from "@/app/admin/pages/actions"
 
-type PagesTableProps = {
-  pages: PageContent[]
-}
-
-type SortField = "title" | "key" | "status" | "version"
-
-function sortValue(page: PageContent, field: SortField) {
-  // Zero-padding keeps numeric versions ordered under string comparison.
-  if (field === "version") return String(page.version ?? 0).padStart(10, "0")
-  return page[field] || ""
-}
-
-export function PagesTable({ pages }: PagesTableProps) {
-  const { field, direction, toggle, sorted: sortedPages } = useClientSort(pages, sortValue)
+export function PagesTable({ pages }: { pages: PageContent[] }) {
   const [rowToArchive, setRowToArchive] = useState<PageContent | null>(null)
   const [archiving, startArchive] = useTransition()
 
@@ -58,116 +37,151 @@ export function PagesTable({ pages }: PagesTableProps) {
     startArchive(() => deletePageAction(formData))
   }
 
+  const columns = useMemo<ColumnDef<PageContent>[]>(
+    () => [
+      {
+        accessorKey: "title",
+        size: 260,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
+        cell: ({ row }) => <span className="font-medium">{row.original.title}</span>,
+      },
+      {
+        accessorKey: "key",
+        size: 240,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Key" />,
+        cell: ({ row }) => (
+          <span className="block break-all text-muted-foreground">{row.original.key}</span>
+        ),
+      },
+      {
+        accessorKey: "status",
+        size: 120,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+        cell: ({ row }) => (
+          <Badge variant={row.original.status === "published" ? "default" : "outline"}>
+            {row.original.status}
+          </Badge>
+        ),
+      },
+      {
+        accessorKey: "version",
+        size: 100,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Version" />,
+        cell: ({ row }) => <span className="text-muted-foreground">{row.original.version}</span>,
+      },
+      {
+        id: "actions",
+        size: 280,
+        enableHiding: false,
+        header: () => <span className="sr-only">Actions</span>,
+        cell: ({ row }) => (
+          <div className="flex justify-end gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link href={`/admin/pages/${row.original.id}`}>
+                <Edit3 className="h-4 w-4" aria-hidden="true" />
+                Edit
+              </Link>
+            </Button>
+            <form action={duplicatePageAction}>
+              <input name="id" type="hidden" value={row.original.id} />
+              <Button size="sm" type="submit" variant="outline">
+                <Copy className="h-4 w-4" aria-hidden="true" />
+                Copy
+              </Button>
+            </form>
+            {isSystemPageKey(row.original.key) ? (
+              <Button
+                size="sm"
+                type="button"
+                variant="ghost"
+                disabled
+                title="System page — the website routes here, so it cannot be archived."
+              >
+                <Lock className="h-4 w-4" aria-hidden="true" />
+                System
+              </Button>
+            ) : (
+              <Button size="sm" type="button" variant="ghost" onClick={() => setRowToArchive(row.original)}>
+                <Archive className="h-4 w-4" aria-hidden="true" />
+                Archive
+              </Button>
+            )}
+          </div>
+        ),
+      },
+    ],
+    [],
+  )
+
   return (
-    <div className="mt-8 overflow-hidden rounded-lg border border-border bg-background">
-      <Table className="table-fixed w-full">
-        <TableHeader>
-          <TableRow>
-            <SortableHead
-              active={field === "title"}
-              direction={direction}
-              onSort={() => toggle("title")}
-              className="w-1/3 min-w-[160px]"
-            >
-              Title
-            </SortableHead>
-            <SortableHead
-              active={field === "key"}
-              direction={direction}
-              onSort={() => toggle("key")}
-              className="w-1/4 min-w-[120px]"
-            >
-              Key
-            </SortableHead>
-            <SortableHead
-              active={field === "status"}
-              direction={direction}
-              onSort={() => toggle("status")}
-              className="w-28"
-            >
-              Status
-            </SortableHead>
-            <SortableHead
-              active={field === "version"}
-              direction={direction}
-              onSort={() => toggle("version")}
-              className="w-24"
-            >
-              Version
-            </SortableHead>
-            <TableHead className="w-[280px] text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {sortedPages.map((page) => (
-            <TableRow key={page.id}>
-              <TableCell className="font-medium whitespace-normal break-words">{page.title}</TableCell>
-              <TableCell className="text-muted-foreground whitespace-normal break-all">{page.key}</TableCell>
-              <TableCell className="whitespace-nowrap">
+    <>
+      <AdminDataView
+        columns={columns}
+        data={pages}
+        empty={{
+          title: "No pages found.",
+          description: "Create a page to manage its content here.",
+          icon: <FileText className="h-5 w-5" aria-hidden="true" />,
+        }}
+        renderCard={(page) => (
+          <AdminCard
+            key={page.id}
+            title={page.title}
+            href={`/admin/pages/${page.id}`}
+            subtitle={page.key}
+            badges={
+              <>
                 <Badge variant={page.status === "published" ? "default" : "outline"}>
                   {page.status}
                 </Badge>
-              </TableCell>
-              <TableCell className="text-muted-foreground whitespace-nowrap">{page.version}</TableCell>
-              <TableCell className="whitespace-nowrap">
-                <div className="flex justify-end gap-2">
-                  <Button asChild size="sm" variant="outline">
-                    <Link href={`/admin/pages/${page.id}`}>
-                      <Edit3 className="h-4 w-4" />
-                      Edit
-                    </Link>
+                <span className="text-xs text-muted-foreground">v{page.version}</span>
+                {isSystemPageKey(page.key) && (
+                  <Badge variant="secondary" className="gap-1">
+                    <Lock className="h-3 w-3" aria-hidden="true" />
+                    System
+                  </Badge>
+                )}
+              </>
+            }
+            actions={
+              <>
+                <form action={duplicatePageAction} className="flex-1">
+                  <input name="id" type="hidden" value={page.id} />
+                  <Button size="sm" type="submit" variant="outline" className="min-h-11 w-full">
+                    <Copy className="h-4 w-4" aria-hidden="true" />
+                    Duplicate
                   </Button>
-                  <form action={duplicatePageAction}>
-                    <input name="id" type="hidden" value={page.id} />
-                    <Button size="sm" type="submit" variant="outline">
-                      <Copy className="h-4 w-4" />
-                      Copy
-                    </Button>
-                  </form>
-                  {isSystemPageKey(page.key) ? (
-                    <Button
-                      size="sm"
-                      type="button"
-                      variant="ghost"
-                      disabled
-                      title="System page — the website routes here, so it cannot be archived."
-                    >
-                      <Lock className="h-4 w-4" />
-                      System
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      type="button"
-                      variant="ghost"
-                      onClick={() => setRowToArchive(page)}
-                    >
-                      <Archive className="h-4 w-4" />
-                      Archive
-                    </Button>
-                  )}
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-          {sortedPages.length === 0 && (
-            <TableEmpty
-              colSpan={5}
-              icon={<FileText className="h-5 w-5" aria-hidden="true" />}
-              title="No pages found."
-              description="Create a page to manage its content here."
-            />
-          )}
-        </TableBody>
-      </Table>
+                </form>
+                {!isSystemPageKey(page.key) && (
+                  <Button
+                    size="sm"
+                    type="button"
+                    variant="ghost"
+                    className="min-h-11 flex-1 text-destructive"
+                    onClick={() => setRowToArchive(page)}
+                  >
+                    <Archive className="h-4 w-4" aria-hidden="true" />
+                    Archive
+                  </Button>
+                )}
+              </>
+            }
+          />
+        )}
+      />
 
-      {/* Archive Page Confirmation Dialog */}
-      <AlertDialog open={rowToArchive !== null} onOpenChange={(open) => { if (!open) setRowToArchive(null) }}>
+      <AlertDialog
+        open={rowToArchive !== null}
+        onOpenChange={(open) => {
+          if (!open) setRowToArchive(null)
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Archive Page?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to archive page &ldquo;{rowToArchive?.title}&rdquo;? You can restore it later from the Archive folder.
+              Are you sure you want to archive page &ldquo;{rowToArchive?.title}&rdquo;? You can
+              restore it later from the Archive folder.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -178,6 +192,6 @@ export function PagesTable({ pages }: PagesTableProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </>
   )
 }

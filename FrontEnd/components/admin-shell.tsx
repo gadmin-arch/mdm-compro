@@ -1,7 +1,8 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Fragment, type ReactNode } from "react"
-import { AdminNavMenu, AdminNavSidebar } from "@/components/admin/admin-nav-menu"
+import { AdminNavSidebar } from "@/components/admin/admin-nav-menu"
+import { AdminBottomNav } from "@/components/admin/admin-bottom-nav"
 import { ThemeToggle } from "@/components/admin/theme-toggle"
 import {
   Breadcrumb,
@@ -46,17 +47,16 @@ export function AdminShell({ active, eyebrow, title, actions, breadcrumbs, child
             <span className="block truncate text-xs text-muted-foreground">Content operations</span>
           </span>
         </Link>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <AdminNavMenu active={active} />
-        </div>
+        {/* Navigation lives in the bottom bar on this breakpoint. */}
+        <ThemeToggle />
       </header>
 
       <div className="lg:flex">
         <AdminNavSidebar active={active} />
 
         <div className="min-w-0 flex-1">
-          <div id="admin-content" className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8 xl:px-10">
+          {/* pb-24 keeps content clear of the floating bottom nav on mobile. */}
+          <div id="admin-content" className="px-4 pb-24 pt-6 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8 xl:px-10">
             {breadcrumbs && breadcrumbs.length > 0 && (
               <Breadcrumb className="pb-4">
                 <BreadcrumbList>
@@ -93,6 +93,8 @@ export function AdminShell({ active, eyebrow, title, actions, breadcrumbs, child
           </div>
         </div>
       </div>
+
+      <AdminBottomNav active={active} />
     </main>
   )
 }
