@@ -45,6 +45,12 @@ export type AdminContactInquiry = {
   message: string
   status: string
   createdAt: string
+  version: number
+}
+
+export type AdminContactsResponse = {
+  data: AdminContactInquiry[] | null
+  pagination: { page: number; perPage: number; total: number; totalPages: number }
 }
 
 export type AdminActivityEntry = {

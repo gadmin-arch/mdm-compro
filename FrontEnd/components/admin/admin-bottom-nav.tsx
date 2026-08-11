@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { usePathname } from "next/navigation"
 import { FileText, Home, Menu, Newspaper, Package, Wrench } from "lucide-react"
-import { AdminNavItems } from "@/components/admin/admin-nav-menu"
+import { AdminNavItems, useActiveNavKey } from "@/components/admin/admin-nav-menu"
 import { AdminSignOutDialog } from "@/components/admin/admin-sign-out-dialog"
 import {
   Sheet,
@@ -26,9 +26,10 @@ const quickLinks = [
   { label: "News", href: "/admin/news", key: "news", icon: Newspaper },
 ]
 
-export function AdminBottomNav({ active }: { active: string }) {
+export function AdminBottomNav() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const active = useActiveNavKey()
 
   return (
     <nav
@@ -79,7 +80,7 @@ export function AdminBottomNav({ active }: { active: string }) {
           </SheetHeader>
           <div className="px-4 py-4 sm:px-6">
             <nav className="grid gap-1.5 sm:grid-cols-2">
-              <AdminNavItems active={active} onNavigate={() => setOpen(false)} />
+              <AdminNavItems onNavigate={() => setOpen(false)} />
             </nav>
             <div className="mt-4 border-t border-border pt-4">
               <AdminSignOutDialog className="w-full justify-start" />

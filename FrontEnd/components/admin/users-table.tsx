@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { deleteUserAction, updateUserRoleAction } from "@/app/admin/users/actions"
+import { deleteUserAction, updateUserRoleAction } from "@/app/admin/(workspace)/users/actions"
 
 type UserRow = {
   id: string

@@ -71,12 +71,48 @@ func contentEntity(module string) string {
 }
 
 func (h AdminHandler) Contacts(w http.ResponseWriter, r *http.Request) {
-	contacts, err := h.service.RecentContacts(r.Context())
-	if err != nil {
-		HandleError(w, err)
+	// The dashboard panel asks for the plain recent list; the contacts screen
+	// passes paging/filter params and gets a paginated envelope.
+	query := r.URL.Query()
+	if !query.Has("page") && !query.Has("perPage") && !query.Has("q") && !query.Has("status") {
+		contacts, err := h.service.RecentContacts(r.Context())
+		if err != nil {
+			HandleError(w, err)
+			return
+		}
+		JSON(w, http.StatusOK, map[string]any{"data": contacts})
 		return
 	}
-	JSON(w, http.StatusOK, map[string]any{"data": contacts})
+
+	data, err := h.service.Contacts(
+		r.Context(),
+		intQuery(r, "page", 1),
+		intQuery(r, "perPage", 20),
+		query.Get("q"),
+		query.Get("status"),
+	)
+	respondAdmin(w, data, err)
+}
+
+func (h AdminHandler) UpdateContactStatus(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Status  string `json:"status"`
+		Version int    `json:"version"`
+	}
+	if err := DecodeJSON(r, &input); err != nil {
+		Error(w, http.StatusBadRequest, "invalid_json", "Request body must be valid JSON.")
+		return
+	}
+
+	actorID := ""
+	if claims := auth.ClaimsFromContext(r.Context()); claims != nil {
+		actorID = claims.UserID
+	}
+	data, err := h.service.UpdateContactStatus(r.Context(), chi.URLParam(r, "id"), input.Status, actorID, input.Version)
+	if err == nil {
+		h.audit(r, "updated", "contact", data.ID, data.Subject+" → "+data.Status)
+	}
+	respondAdmin(w, data, err)
 }
 
 func (h AdminHandler) Pages(w http.ResponseWriter, r *http.Request) {

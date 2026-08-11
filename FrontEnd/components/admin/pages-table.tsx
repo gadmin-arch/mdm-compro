@@ -19,7 +19,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { isSystemPageKey, type PageContent } from "@/lib/cms"
-import { deletePageAction, duplicatePageAction } from "@/app/admin/pages/actions"
+import { deletePageAction, duplicatePageAction } from "@/app/admin/(workspace)/pages/actions"
 
 export function PagesTable({ pages }: { pages: PageContent[] }) {
   const [rowToArchive, setRowToArchive] = useState<PageContent | null>(null)

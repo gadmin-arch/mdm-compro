@@ -24,7 +24,7 @@ import {
   archiveRedirectAction,
   bulkDeleteRedirectsAction,
   duplicateRedirectAction,
-} from "@/app/admin/redirects/actions"
+} from "@/app/admin/(workspace)/redirects/actions"
 
 function shortUrl(slug: string) {
   if (typeof window === "undefined") return `/${slug}`

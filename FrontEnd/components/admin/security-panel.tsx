@@ -2,7 +2,7 @@ import { CheckCircle2, History, MonitorSmartphone, ShieldX, Trash2, XCircle } fr
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { AdminLoginHistoryEntry, AdminTrustedDevice } from "@/lib/admin-api"
-import { revokeAllDevicesAction, revokeDeviceAction } from "@/app/admin/settings/actions"
+import { revokeAllDevicesAction, revokeDeviceAction } from "@/app/admin/(workspace)/settings/actions"
 
 function formatWhen(value: string) {
   const date = new Date(value)

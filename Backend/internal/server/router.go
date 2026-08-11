@@ -131,6 +131,7 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, colle
 			r.Post("/profile/devices/revoke-all", authHandler.RevokeAllTrustedDevices)
 			r.Get("/profile/login-history", authHandler.LoginHistory)
 			r.Get("/contacts", adminHandler.Contacts)
+			r.Put("/contacts/{id}/status", adminHandler.UpdateContactStatus)
 			r.Get("/archive", adminHandler.ArchivedItems)
 			r.Post("/archive/{type}/{id}/restore", adminHandler.RestoreItem)
 			r.Delete("/archive/{type}/{id}", adminHandler.HardDeleteItem)

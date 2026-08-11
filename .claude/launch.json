@@ -13,6 +13,13 @@
       "runtimeArgs": ["-c", "cd FrontEnd && npx -y corepack pnpm dev"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "frontend-prod",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "cd FrontEnd && npx -y corepack pnpm build && npx -y corepack pnpm start -p 3005"],
+      "port": 3005,
+      "autoPort": true
     }
   ]
 }

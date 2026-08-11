@@ -193,6 +193,7 @@ type ContactInquiry struct {
 	Message   string    `json:"message"`
 	Status    string    `json:"status"`
 	CreatedAt time.Time `json:"createdAt"`
+	Version   int       `json:"version"`
 }
 
 // ActivityEntry is one row of the dashboard activity feed, sourced from

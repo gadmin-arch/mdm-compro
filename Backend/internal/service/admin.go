@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
@@ -36,6 +37,30 @@ func (s AdminService) Dashboard(ctx context.Context) (map[string]int, map[string
 
 func (s AdminService) RecentContacts(ctx context.Context) ([]model.ContactInquiry, error) {
 	return s.repo.ListContacts(ctx, 25)
+}
+
+// contactStatuses mirrors the contacts_status_check constraint in the schema.
+var contactStatuses = []string{"new", "in_progress", "resolved", "spam"}
+
+func (s AdminService) Contacts(ctx context.Context, page, perPage int, search, status string) (model.ListResponse[model.ContactInquiry], error) {
+	if status != "" && !slices.Contains(contactStatuses, status) {
+		return model.ListResponse[model.ContactInquiry]{}, validator.New().Add("status", "Unknown status filter.")
+	}
+	return s.repo.PageContacts(ctx, page, perPage, strings.TrimSpace(search), status)
+}
+
+func (s AdminService) UpdateContactStatus(ctx context.Context, id, status, actorID string, version int) (model.ContactInquiry, error) {
+	v := validator.New()
+	if !slices.Contains(contactStatuses, status) {
+		v = v.Add("status", "Status must be new, in_progress, resolved, or spam.")
+	}
+	if version < 1 {
+		v = v.Add("version", "A current version is required.")
+	}
+	if v.HasErrors() {
+		return model.ContactInquiry{}, v
+	}
+	return s.repo.UpdateContactStatus(ctx, id, status, actorID, version)
 }
 
 func (s AdminService) RecordActivityDiff(ctx context.Context, actorID, action, entityType, entityID string, before, after map[string]string) error {

@@ -228,6 +228,82 @@ func (r AdminRepository) DeleteMedia(ctx context.Context, id string) (model.Medi
 	return media, nil
 }
 
+// PageContacts lists inquiries for the contacts screen: newest first, with
+// optional status and free-text filtering.
+func (r AdminRepository) PageContacts(ctx context.Context, page, perPage int, search, status string) (model.ListResponse[model.ContactInquiry], error) {
+	page, perPage, offset := normalizePagination(page, perPage)
+	rows, err := r.pool.Query(ctx, `
+		SELECT id::text, name, email, COALESCE(phone, ''), COALESCE(company, ''), subject, message,
+		       status, created_at, version, COUNT(*) OVER()
+		FROM contacts
+		WHERE deleted_at IS NULL
+		  AND ($3 = '' OR status = $3)
+		  AND ($4 = '' OR name ILIKE '%' || $4 || '%' OR email ILIKE '%' || $4 || '%'
+		       OR subject ILIKE '%' || $4 || '%' OR COALESCE(company, '') ILIKE '%' || $4 || '%')
+		ORDER BY created_at DESC
+		LIMIT $1 OFFSET $2
+	`, perPage, offset, status, search)
+	if err != nil {
+		return model.ListResponse[model.ContactInquiry]{}, err
+	}
+	defer rows.Close()
+
+	var total int
+	var data []model.ContactInquiry
+	for rows.Next() {
+		var item model.ContactInquiry
+		if err := rows.Scan(&item.ID, &item.Name, &item.Email, &item.Phone, &item.Company,
+			&item.Subject, &item.Message, &item.Status, &item.CreatedAt, &item.Version, &total); err != nil {
+			return model.ListResponse[model.ContactInquiry]{}, err
+		}
+		data = append(data, item)
+	}
+	if err := rows.Err(); err != nil {
+		return model.ListResponse[model.ContactInquiry]{}, err
+	}
+
+	return model.ListResponse[model.ContactInquiry]{
+		Data:       data,
+		Pagination: model.Pagination{
+			Page:       page,
+			PerPage:    perPage,
+			Total:      total,
+			TotalPages: totalPages(total, perPage),
+		},
+	}, nil
+}
+
+// UpdateContactStatus moves an inquiry along the workflow, recording who did
+// it. Optimistic locking mirrors the content tables.
+func (r AdminRepository) UpdateContactStatus(ctx context.Context, id, status, actorID string, version int) (model.ContactInquiry, error) {
+	var actor any
+	if actorID != "" {
+		actor = actorID
+	}
+	row := r.pool.QueryRow(ctx, `
+		UPDATE contacts
+		SET status = $2, updated_at = now(), updated_by = $3, version = version + 1
+		WHERE id = $1 AND deleted_at IS NULL AND version = $4
+		RETURNING id::text, name, email, COALESCE(phone, ''), COALESCE(company, ''), subject, message,
+		          status, created_at, version
+	`, id, status, actor, version)
+
+	var item model.ContactInquiry
+	if err := row.Scan(&item.ID, &item.Name, &item.Email, &item.Phone, &item.Company,
+		&item.Subject, &item.Message, &item.Status, &item.CreatedAt, &item.Version); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			// Either the row is gone or someone else changed it first.
+			var exists bool
+			if probe := r.pool.QueryRow(ctx, `SELECT true FROM contacts WHERE id = $1 AND deleted_at IS NULL`, id).Scan(&exists); probe != nil {
+				return model.ContactInquiry{}, ErrNotFound
+			}
+			return model.ContactInquiry{}, ErrConflict
+		}
+		return model.ContactInquiry{}, err
+	}
+	return item, nil
+}
+
 func (r AdminRepository) ListContacts(ctx context.Context, limit int) ([]model.ContactInquiry, error) {
 	rows, err := r.pool.Query(ctx, `
 		SELECT id::text, name, email, COALESCE(phone, ''), COALESCE(company, ''), subject, message, status, created_at

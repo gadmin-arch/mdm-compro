@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { BarChart3, ExternalLink, FileText, Globe2, Home, Image as ImageIcon, Link2, Menu, Newspaper, Package, Settings, Users, Archive, type LucideIcon } from "lucide-react"
+import { usePathname } from "next/navigation"
+import { BarChart3, ExternalLink, FileText, Globe2, Home, Image as ImageIcon, Inbox, Link2, Menu, Newspaper, Package, Settings, Users, Archive, type LucideIcon } from "lucide-react"
 import { AdminSignOutDialog } from "@/components/admin/admin-sign-out-dialog"
 import { ThemeToggleRow } from "@/components/admin/theme-toggle"
 import { cn } from "@/lib/utils"
@@ -18,6 +19,7 @@ export interface NavItem {
 export const navItems: NavItem[] = [
   { label: "Dashboard", href: "/admin", key: "dashboard", icon: Home },
   { label: "Analytics", href: "/admin/analytics", key: "analytics", icon: BarChart3 },
+  { label: "Inquiries", href: "/admin/contacts", key: "contacts", icon: Inbox },
   { label: "Pages", href: "/admin/pages", key: "pages", icon: FileText },
   { label: "Navigation", href: "/admin/navigation", key: "navigation", icon: Menu },
   { label: "Services", href: "/admin/services", key: "services", icon: FileText },
@@ -32,7 +34,22 @@ export const navItems: NavItem[] = [
   { label: "Account", href: "/admin/settings", key: "settings", icon: Settings },
 ]
 
-export function AdminNavItems({ active, onNavigate }: { active: string; onNavigate?: () => void }) {
+// Which nav entry the current URL belongs to. Longest matching href wins so
+// /admin/services/123 highlights Services while /admin stays on Dashboard.
+export function useActiveNavKey(): string {
+  const pathname = usePathname()
+  let match: NavItem | null = null
+  for (const item of navItems) {
+    const isMatch = pathname === item.href || pathname.startsWith(item.href + "/")
+    if (isMatch && (!match || item.href.length > match.href.length)) {
+      match = item
+    }
+  }
+  return match?.key ?? ""
+}
+
+export function AdminNavItems({ onNavigate }: { onNavigate?: () => void }) {
+  const active = useActiveNavKey()
   return (
     <>
       {navItems.map((item) => {
@@ -80,7 +97,7 @@ export function AdminNavItems({ active, onNavigate }: { active: string; onNaviga
   )
 }
 
-export function AdminNavSidebar({ active }: { active: string }) {
+export function AdminNavSidebar() {
   return (
     <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-border bg-background lg:flex print:hidden">
       <Link href="/admin" className="flex h-16 shrink-0 items-center gap-3 border-b border-border px-5">
@@ -103,7 +120,7 @@ export function AdminNavSidebar({ active }: { active: string }) {
         <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Main Menu
         </p>
-        <AdminNavItems active={active} />
+        <AdminNavItems />
 
         <div className="mt-auto space-y-1 border-t border-border pt-3">
           <ThemeToggleRow />
