@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { ArrowRight, Globe, Mail, MapPin, Phone } from "lucide-react"
 import type { FormEvent } from "react"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -21,6 +21,13 @@ interface Office {
 
 export function Contact({ page }: { page?: PageContent | null }) {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
+  // When the form became interactive, used to measure how long the visitor had
+  // it open. Scripts that fill and post instantly fail that check. Stamped in
+  // an effect because reading the clock during render is impure.
+  const openedAt = useRef(0)
+  useEffect(() => {
+    openedAt.current = Date.now()
+  }, [])
 
   const content = page?.content ?? {}
   const generalEmail = String(content.email ?? "info@multidayamitra.co.id")
@@ -99,6 +106,11 @@ export function Contact({ page }: { page?: PageContent | null }) {
         company: form.get("company"),
         subject: form.get("subject"),
         message: form.get("message"),
+        // Spam traps — the honeypot stays empty for real visitors, and the
+        // server drops anything submitted implausibly fast.
+        website: form.get("website"),
+        // 0 means "unknown"; the server only enforces the floor above zero.
+        formMs: openedAt.current ? Date.now() - openedAt.current : 0,
       }),
     }).catch(() => null)
 
@@ -311,6 +323,20 @@ export function Contact({ page }: { page?: PageContent | null }) {
             onSubmit={submitContact}
             className="grid gap-4 rounded-xl border border-border bg-card p-5 shadow-sm md:grid-cols-2"
           >
+            {/* Honeypot: off-screen rather than display:none so scripted
+                fillers still see it, and hidden from people and screen
+                readers. Any value here marks the submission as a bot. */}
+            <div aria-hidden="true" className="pointer-events-none absolute -left-[9999px] h-0 w-0 overflow-hidden">
+              <label htmlFor="website">Website (leave blank)</label>
+              <input
+                id="website"
+                name="website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                defaultValue=""
+              />
+            </div>
             <div>
               <label className="text-sm font-medium text-foreground" htmlFor="name">
                 Name

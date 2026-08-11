@@ -48,7 +48,9 @@ services:
     environment:
       APP_ENV: development
       HTTP_ADDR: :8080
-      FRONTEND_ORIGINS: http://localhost:3001,http://localhost:3010
+      # 3000 is what `pnpm dev` (and .claude/launch.json) uses, 3001 the
+      # frontend container, 3010 nginx. Override for other setups.
+      FRONTEND_ORIGINS: ${FRONTEND_ORIGINS:-http://localhost:3000,http://localhost:3001,http://localhost:3010}
       DATABASE_URL: postgres://mdm:mdm@postgres:5432/mdm_compro?sslmode=disable
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
       ACCESS_TOKEN_TTL: 1h

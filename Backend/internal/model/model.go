@@ -175,6 +175,12 @@ type ContactInput struct {
 	Company string `json:"company,omitempty"`
 	Subject string `json:"subject"`
 	Message string `json:"message"`
+
+	// Spam traps, both filled by the public form. Website is a honeypot the
+	// form hides from people, so any value means an automated submitter.
+	// FormMs is how long the visitor had the form open before submitting.
+	Website string `json:"website,omitempty"`
+	FormMs  int64  `json:"formMs,omitempty"`
 }
 
 type ContactInquiry struct {

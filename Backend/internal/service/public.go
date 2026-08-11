@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -14,12 +15,13 @@ import (
 )
 
 type PublicService struct {
-	repo repository.PublicRepository
-	mail mailer.Mailer
+	repo   repository.PublicRepository
+	mail   mailer.Mailer
+	logger *slog.Logger
 }
 
-func NewPublicService(repo repository.PublicRepository, mail mailer.Mailer) PublicService {
-	return PublicService{repo: repo, mail: mail}
+func NewPublicService(repo repository.PublicRepository, mail mailer.Mailer, logger *slog.Logger) PublicService {
+	return PublicService{repo: repo, mail: mail, logger: logger}
 }
 
 func (s PublicService) Navigation(ctx context.Context) (model.Navigation, error) {
@@ -131,7 +133,40 @@ func (s PublicService) Search(ctx context.Context, query string) (map[string]any
 	}, nil
 }
 
+// Minimum time a genuine visitor needs to read the form and type a message.
+// Anything faster is a script that filled every field at once.
+const minContactFormMs = 3000
+
+// spamReason names the trap a submission tripped, or "" when it looks human.
+// The public form hides `website` from people, so any value there means an
+// automated submitter; formMs is how long the form was open before submit.
+func spamReason(input model.ContactInput) string {
+	if strings.TrimSpace(input.Website) != "" {
+		return "honeypot"
+	}
+	if input.FormMs > 0 && input.FormMs < minContactFormMs {
+		return "too_fast"
+	}
+	return ""
+}
+
 func (s PublicService) CreateContact(ctx context.Context, input model.ContactInput) (model.ContactInquiry, error) {
+	// Bot submissions get a normal-looking success without being stored or
+	// emailed: telling the sender it failed only helps it retune and retry.
+	if reason := spamReason(input); reason != "" {
+		if s.logger != nil {
+			s.logger.InfoContext(ctx, "contact submission dropped", "reason", reason, "email", input.Email)
+		}
+		return model.ContactInquiry{
+			Name:      strings.TrimSpace(input.Name),
+			Email:     strings.TrimSpace(input.Email),
+			Subject:   strings.TrimSpace(input.Subject),
+			Message:   strings.TrimSpace(input.Message),
+			Status:    "new",
+			CreatedAt: time.Now().UTC(),
+		}, nil
+	}
+
 	v := validator.New()
 	input.Name = strings.TrimSpace(input.Name)
 	input.Email = strings.TrimSpace(input.Email)

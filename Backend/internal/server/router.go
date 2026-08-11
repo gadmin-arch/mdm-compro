@@ -31,7 +31,7 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, colle
 	}
 
 	mail := mailer.New(logger, cfg)
-	publicHandler := handler.NewPublicHandler(service.NewPublicService(publicRepo, mail))
+	publicHandler := handler.NewPublicHandler(service.NewPublicService(publicRepo, mail, logger))
 	authService := service.NewAuthService(cfg, authRepo, mail)
 	authHandler := handler.NewAuthHandler(authService)
 	adminHandler := handler.NewAdminHandler(service.NewAdminService(adminRepo))
