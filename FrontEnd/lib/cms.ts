@@ -1229,7 +1229,24 @@ export function flattenContent(items: ContentNode[]): ContentNode[] {
 
 export function formatDate(value?: string) {
   if (!value) return "Unscheduled"
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(new Date(value))
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return "Unscheduled"
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeZone: "Asia/Jakarta",
+  }).format(date)
+}
+
+export function isCareerClosed(career?: Career | null): boolean {
+  if (!career) return false
+  if (career.status === "archived" || career.status === "closed") return true
+  if (career.deadline) {
+    const deadlineTime = new Date(career.deadline).getTime()
+    if (!Number.isNaN(deadlineTime) && deadlineTime < Date.now()) {
+      return true
+    }
+  }
+  return false
 }
 
 export function employmentTypeLabel(value: string) {

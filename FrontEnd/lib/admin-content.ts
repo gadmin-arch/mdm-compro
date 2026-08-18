@@ -101,18 +101,36 @@ export function specsToText(value?: Record<string, string>) {
     .join("\n")
 }
 
-export function toDateTimeLocal(value?: string) {
+export function toDateTimeLocal(value?: string | null) {
   if (!value) return ""
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return ""
-  const offset = date.getTimezoneOffset()
-  const local = new Date(date.getTime() - offset * 60_000)
-  return local.toISOString().slice(0, 16)
+  try {
+    const parts = new Intl.DateTimeFormat("sv-SE", {
+      timeZone: "Asia/Jakarta",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+      .format(date)
+      .replace(" ", "T")
+    return parts
+  } catch {
+    const offset = date.getTimezoneOffset()
+    const local = new Date(date.getTime() - offset * 60_000)
+    return local.toISOString().slice(0, 16)
+  }
 }
 
 export function toIsoDateTime(value: FormDataEntryValue | null) {
-  const text = String(value ?? "")
+  const text = String(value ?? "").trim()
   if (!text) return null
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(text)) {
+    return new Date(`${text}:00+07:00`).toISOString()
+  }
   const date = new Date(text)
   if (Number.isNaN(date.getTime())) return null
   return date.toISOString()

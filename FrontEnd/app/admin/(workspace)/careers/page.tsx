@@ -53,14 +53,20 @@ export default async function AdminCareersPage({
         deleteAction={deleteCareerAction}
         empty="No careers found."
         publicBasePath="/career"
-        rows={(response?.data ?? []).map((item) => ({
-          id: item.id,
-          title: item.title,
-          slug: item.slug,
-          status: item.status,
-          version: item.version,
-          meta: [item.department, item.location].filter(Boolean).join(" · "),
-        }))}
+        rows={(response?.data ?? []).map((item) => {
+          const isExpired = item.deadline && new Date(item.deadline).getTime() < Date.now()
+          const deadlineText = item.deadline
+            ? `Deadline: ${new Date(item.deadline).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })}`
+            : null
+          return {
+            id: item.id,
+            title: item.title,
+            slug: item.slug,
+            status: isExpired && item.status === "published" ? "closed (expired)" : item.status,
+            version: item.version,
+            meta: [item.department, item.location, deadlineText].filter(Boolean).join(" · "),
+          }
+        })}
       />
       {response && (
         <AdminPagination
