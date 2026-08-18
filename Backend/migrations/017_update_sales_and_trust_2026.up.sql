@@ -118,7 +118,7 @@ SET content = jsonb_build_object(
         'Schneider Electric (Authorized Partner)',
         'Rittal (Authorized Partner)',
         'xArrow (Authorized Partner)',
-        'Mundung (Authorized Partner)',
+        'Bosch (Authorized Partner)',
         'ABB', 'Siemens', 'Fluke', 'Megger', 'FLIR', 'Danfoss', 'Omron'
     )
 ),

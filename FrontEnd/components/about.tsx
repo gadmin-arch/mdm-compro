@@ -181,7 +181,7 @@ const authorizedPartners = [
   { name: "Schneider Electric", role: "Certified System Integrator", country: "France / Global" },
   { name: "Rittal", role: "Authorized Distributor", country: "Germany" },
   { name: "xArrow", role: "Authorized Solutions Partner", country: "Global" },
-  { name: "Mundung", role: "Authorized Industrial Partner", country: "Germany / Global" },
+  { name: "Bosch", role: "Fire Alarm & Security Systems Partner", country: "Germany / Global" },
 ]
 
 export function About({ page }: { page?: PageContent | null }) {

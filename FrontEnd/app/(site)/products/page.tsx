@@ -134,7 +134,7 @@ const authorizedPartners = [
   { name: "Rittal", role: "Authorized Distributor", country: "Germany" },
   { name: "Schneider Electric", role: "Certified System Integrator", country: "France / Global" },
   { name: "xArrow", role: "Authorized SCADA Solutions Partner", country: "Global" },
-  { name: "Mundung", role: "Authorized Industrial Partner", country: "Germany / Global" },
+  { name: "Bosch", role: "Fire Alarm & Security Systems Partner", country: "Germany / Global" },
 ]
 
 const brandExperience = [
@@ -146,10 +146,10 @@ const brandExperience = [
   "Danfoss",
   "Omron",
   "Yokogawa",
-  "Bosch Security",
   "Notifier / Honeywell",
   "Raychem",
   "3M",
+  "Eaton",
 ]
 
 export default async function ProductsPage({ searchParams }: Props) {
