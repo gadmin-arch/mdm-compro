@@ -341,13 +341,13 @@ UPDATE products SET
 WHERE slug = 'engineering-commissioning';
 
 -- 3. UPDATE PRODUCT CATEGORIES & PARTNERS ROOT
-UPDATE products SET image_url = '/uploads/products-rittal.jpg' WHERE slug = 'rittal-distributor';
-UPDATE products SET image_url = '/uploads/products-schneider-automation.jpg' WHERE slug = 'schneider-integrator';
+UPDATE products SET image_url = '/uploads/brand-rittal.jpg' WHERE slug = 'rittal-distributor';
+UPDATE products SET image_url = '/uploads/brand-schneider.jpg' WHERE slug = 'schneider-integrator';
 UPDATE products SET image_url = '/uploads/mdm/circuit-breaker.jpg' WHERE slug = 'electrical-distribution';
 UPDATE products SET image_url = '/uploads/products-schneider-automation.jpg' WHERE slug = 'automation-control';
 UPDATE products SET image_url = '/uploads/products-rittal-enclosures.jpg' WHERE slug = 'enclosure-climate-control';
 UPDATE products SET image_url = '/uploads/mdm/power-quality.jpg' WHERE slug = 'power-quality';
-UPDATE products SET image_url = '/uploads/PM-Fire-Alarm-1.jpg' WHERE slug = 'fire-alarm-products';
+UPDATE products SET image_url = '/uploads/brand-bosch.png' WHERE slug = 'fire-alarm-products';
 UPDATE products SET image_url = '/uploads/mdm/active-harmonic-filter.jpg' WHERE slug = 'active-harmonic-filters';
 UPDATE products SET image_url = '/uploads/PM-Fire-Alarm-1.jpg' WHERE slug = 'addressable-fire-alarm-systems';
 UPDATE products SET image_url = '/uploads/mdm/circuit-breaker.jpg' WHERE slug = 'low-voltage-distribution-panels';
