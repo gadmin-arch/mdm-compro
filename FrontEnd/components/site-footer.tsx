@@ -47,7 +47,7 @@ export async function SiteFooter() {
     <footer className="border-t border-border bg-background">
       <div className={container("py-14")}>
         <div className="grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-4">
             <Link href="/" className="flex items-center gap-2.5">
               <Image
                 src="/Logo PT MDM.png"
@@ -118,9 +118,9 @@ export async function SiteFooter() {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-7">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-3 lg:col-span-8 xl:gap-12">
             {footerNav.map((column) => (
-              <div key={column.title}>
+              <div key={column.title} className="min-w-0">
                 <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-foreground">
                   {column.title}
                 </h3>
@@ -129,7 +129,7 @@ export async function SiteFooter() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        className="text-sm text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap"
                       >
                         {link.label}
                       </Link>
