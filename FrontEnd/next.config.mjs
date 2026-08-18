@@ -39,6 +39,20 @@ const nextConfig = {
       },
     ]
   },
+  async redirects() {
+    return [
+      {
+        source: '/cpanel',
+        destination: 'https://cpanel.multidayamitra.co.id:2083',
+        permanent: false,
+      },
+      {
+        source: '/webmail',
+        destination: 'https://webmail.multidayamitra.co.id:2096',
+        permanent: false,
+      },
+    ]
+  },
   async rewrites() {
     return [
       {
