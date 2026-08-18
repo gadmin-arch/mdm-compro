@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { PageHero } from "@/components/page-hero"
 import { RichText } from "@/components/cms/rich-text"
 import { SectionRenderer } from "@/components/cms/section-renderer"
@@ -13,6 +13,7 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { pageKey } = await params
+  if (pageKey === "cpanel" || pageKey === "webmail" || pageKey === "home") return {}
   const page = await getPage(pageKey)
   if (!page) return {}
 
@@ -26,6 +27,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DynamicCmsPage({ params }: PageProps) {
   const { pageKey } = await params
+  if (pageKey === "cpanel") {
+    redirect("https://cpanel.multidayamitra.co.id:2083")
+  }
+  if (pageKey === "webmail") {
+    redirect("https://webmail.multidayamitra.co.id:2096")
+  }
   // The home page renders at "/" — serving it here too would publish the
   // same content twice under /home.
   if (pageKey === "home") {
