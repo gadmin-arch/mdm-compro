@@ -666,17 +666,18 @@ SET value = jsonb_build_object(
     'fax',      '+62 31 591 7845',
     'address',  'Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, East Java, Indonesia',
     'tagline',  'Electrical · Automation · Fire System',
-    'footerDescription', 'Indonesian electrical, industrial automation, and fire alarm services company — delivering reliable engineering across power, oil & gas, manufacturing, and infrastructure since 2013.',
+    'footerDescription', 'Indonesian electrical, industrial automation, and fire alarm services company — delivering reliable engineering across power, oil & gas, manufacturing, and infrastructure since 2012.',
     'socials', jsonb_build_array(
         jsonb_build_object('platform', 'facebook',  'url', 'https://www.facebook.com/multidayamitra/',        'label', 'Facebook'),
         jsonb_build_object('platform', 'instagram', 'url', 'https://www.instagram.com/multidayamitra/',       'label', 'Instagram'),
         jsonb_build_object('platform', 'linkedin',  'url', 'https://id.linkedin.com/company/pt-multi-daya-mitra', 'label', 'LinkedIn'),
-        jsonb_build_object('platform', 'whatsapp',  'url', 'https://wa.me/628113461666',                      'label', 'WhatsApp Sales'),
+        jsonb_build_object('platform', 'whatsapp',  'url', 'https://wa.me/6282140074122',                      'label', 'WhatsApp Sales'),
         jsonb_build_object('platform', 'whatsapp',  'url', 'https://wa.me/628118303250',                      'label', 'WhatsApp Technical Support')
     ),
     'salesEmail',   'sales@multidayamitra.co.id',
-    'salesPhone',   '+62 81332415692',
-    'hotlinePhone', '+62 8118303250'
+    'salesPhone',   '+62 821-4007-4122',
+    'whatsappPhone','+62 821-4007-4122',
+    'hotlinePhone', '+62 821-4007-4122'
 ),
     updated_at = now()
 WHERE key = 'site';
@@ -688,30 +689,28 @@ UPDATE pages
 SET content = jsonb_build_object(
     'offices', jsonb_build_array(
         jsonb_build_object(
-            'name',        'Head Office',
+            'name',        'Head Office (Surabaya)',
             'address',     'Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, East Java, Indonesia',
             'phone',       '+62 31 592 1256',
             'fax',         '+62 31 591 7845',
             'email',       'info@multidayamitra.co.id',
-            'mapEmbedUrl', ''
+            'mapEmbedUrl', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.6974775466453!2d112.77587847427672!3d-7.275217492731802!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fa6ab5480eb1%3A0xe54df63b8274305c!2sRuko%20Klampis%20Megah%20Surabaya!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid'
         ),
         jsonb_build_object(
-            'name',        'Project & Engineering Office',
-            'address',     'Ruko Jati Kepuh Indah F-26, Sidoarjo 61271, East Java, Indonesia',
-            'mapEmbedUrl', ''
-        ),
-        jsonb_build_object(
-            'name',        'Workshop',
-            'address',     'Ruko Jati Kepuh Indah E-21, Sidoarjo 61271, East Java, Indonesia',
-            'mapEmbedUrl', ''
+            'name',        'Engineering Office & Workshop',
+            'address',     'Ruko Jati Kepuh Indah F-26 & E-21, Sidoarjo 61271, East Java, Indonesia',
+            'phone',       '+62 821-4007-4122',
+            'email',       'sales@multidayamitra.co.id',
+            'mapEmbedUrl', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.4005934522964!2d112.72146907427909!3d-7.420845992589574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e42d7cd58117%3A0xc3fec86c4293f0b4!2sRuko%20Jati%20Kepuh%20Indah!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid'
         )
     ),
     'email',       'info@multidayamitra.co.id',
     'phone',       '+62 31 592 1256',
     'fax',         '+62 31 591 7845',
     'salesEmail',  'sales@multidayamitra.co.id',
-    'salesPhone',  '+62 81332415692',
-    'hotlinePhone','+62 8118303250'
+    'salesPhone',  '+62 821-4007-4122',
+    'whatsappPhone','+62 821-4007-4122',
+    'hotlinePhone','+62 821-4007-4122'
 ),
     updated_at = now()
 WHERE id = '00000000-0000-0000-0000-000000000402';
@@ -721,14 +720,16 @@ WHERE id = '00000000-0000-0000-0000-000000000402';
 -- ============================================================================
 UPDATE pages
 SET content = jsonb_build_object(
-    'overview', 'PT Multi Daya Mitra was established in 2013 as a multidisciplinary engineering company specializing in electrical systems, industrial automation, and fire alarm solutions. Founded by professionals with extensive industry experience, the company serves clients across power generation, oil and gas, petrochemicals, manufacturing, food and beverage, pharmaceuticals, cement, infrastructure, and commercial building sectors. From its base in East Java, PT Multi Daya Mitra has grown into one of the region''s leading electrical services partners, delivering projects throughout Indonesia and undertaking select international engagements.',
-    'vision',  'To become a global electrical, automation, and fire alarm services company.',
-    'mission', 'To build mutual partnerships and deliver every engagement with professional excellence.',
-    'values',  jsonb_build_array('Safety', 'Reliability', 'Professionalism', 'Partnership', 'Quality'),
+    'overview', 'PT Multi Daya Mitra was established in 2012 as a multidisciplinary engineering company specializing in electrical systems, industrial automation, fire alarm solutions, and mechanical works. With over 14 years of business experience, 400+ clients across multi-segments, and a dedicated team of over 200 engineers and professionals, we deliver reliable, safe, and integrated engineering solutions across Indonesia and international assignments.',
+    'vision',  'Global Electrical, Automation and Fire Alarm Services Company.',
+    'mission', 'Mutual Partnership and Professionalism in delivering every engineering engagement.',
+    'tagline', 'Always Make an IMPACT - Powering Solution, Creating Impact',
+    'established', '2012',
+    'values',  jsonb_build_array('Integrity & Innovation', 'Mastery & Intelligent Problem-Solving', 'Professional & Trusted Partnership', 'Agile & Adaptable Execution', 'Commitment to Safety & Customer First', 'Total Engineering Solutions'),
     'leadership', '[]'::jsonb,
     'timeline', '[]'::jsonb,
-    'certifications', jsonb_build_array('ISO 9001:2015'),
-    'culture', 'A culture of professional discipline drives the company forward at every step toward its vision. PT Multi Daya Mitra has earned ISO 9001:2015 certification for its quality management system, reflecting the team''s commitment to consistent, high-standard delivery.',
+    'certifications', jsonb_build_array('ISO 9001:2015', 'ISO 14001:2015', 'ISO 45001:2018', 'Ecovadis Silver', 'Avetta Member', 'SBUJTL & IUJPTL ESDM', 'SMK3 Kemenaker'),
+    'culture', 'The company culture in a professional manner brings the company to move fast in achieving every step of its vision.',
     'industries', jsonb_build_array(
         'Industrial Plants', 'Buildings', 'Petrochemical', 'Oil & Gas',
         'Power Plants', 'Infrastructure', 'Food & Beverage', 'Manufacturing',
@@ -1977,5 +1978,688 @@ SET parent_id = (SELECT id FROM services WHERE slug = 'engineering-solution'),
     depth = 2,
     updated_at = now()
 WHERE slug IN ('lightning-protection-system', 'power-monitoring-system', 'active-harmonic-filter');
+
+COMMIT;
+
+-- ============================================================================
+-- 018_products_and_partners_hierarchy.up.sql
+-- Products & Strategic Partnerships (Rittal, Schneider, 5 Core Categories)
+-- ============================================================================
+BEGIN;
+
+DELETE FROM products WHERE id IS NOT NULL;
+
+INSERT INTO products (id, slug, full_path, title, summary, content, specs, image_url, status, published_at, sort_order, depth) VALUES
+(
+    '00000000-0000-0000-0000-000000000701',
+    'rittal-distributor',
+    'rittal-distributor',
+    'Rittal Authorized Distributor',
+    'Official Authorized Distributor for Rittal industrial enclosures, climate control & cooling, and power distribution systems.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"PT Multi Daya Mitra is the official Authorized Distributor for Rittal in Indonesia. We provide genuine Rittal enclosure systems, climate control units, and low-voltage power distribution equipment with certified engineering support, stock availability, and manufacturer warranty."}}]}',
+    '{"partnerType":"Authorized Distributor","brand":"Rittal","origin":"Germany","warranty":"Official Manufacturer Warranty"}',
+    '/uploads/products-rittal.jpg',
+    'published',
+    now(),
+    1,
+    0
+),
+(
+    '00000000-0000-0000-0000-000000000702',
+    'schneider-integrator',
+    'schneider-integrator',
+    'Schneider Electric System Integrator',
+    'Certified System Integrator & Solutions Partner delivering industrial automation, energy monitoring, and electrical distribution.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"As a certified Schneider Electric System Integrator, PT Multi Daya Mitra delivers integrated automation, power monitoring (PME), and electrical distribution architectures. We combine world-class hardware with custom engineering, programming, FAT/SAT, and plant commissioning."}}]}',
+    '{"partnerType":"Certified System Integrator","brand":"Schneider Electric","origin":"France / Global","ecosystem":"EcoStruxure Partner"}',
+    '/uploads/automation-project.jpg',
+    'published',
+    now(),
+    2,
+    0
+),
+(
+    '00000000-0000-0000-0000-000000000703',
+    'electrical-distribution',
+    'electrical-distribution',
+    'Electrical Distribution',
+    'Medium & Low Voltage electrical distribution equipment, switchboards, transformers, and protection systems.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Comprehensive electrical distribution solutions for industrial plants, power stations, and commercial infrastructure. Covering MV/LV switchgear, distribution transformers, motor control centers, and protection relays."}}]}',
+    '{"category":"Electrical Distribution","voltageLevels":"MV up to 36kV, LV up to 1000V"}',
+    '/uploads/hero-project.jpg',
+    'published',
+    now(),
+    3,
+    0
+),
+(
+    '00000000-0000-0000-0000-000000000704',
+    'automation-control',
+    'automation-control',
+    'Automation & Control',
+    'Industrial automation, PLC systems, SCADA / HMI process visualization, and motor drives.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"State-of-the-art automation and control solutions designed to optimize production throughput, energy efficiency, and operational safety. From individual machine control to plant-wide centralized SCADA."}}]}',
+    '{"category":"Automation & Control","platforms":"EcoStruxure, xArrow, Siemens, Rockwell"}',
+    '/uploads/M2.jpeg',
+    'published',
+    now(),
+    4,
+    0
+),
+(
+    '00000000-0000-0000-0000-000000000705',
+    'enclosure-climate-control',
+    'enclosure-climate-control',
+    'Enclosure & Climate Control',
+    'Industrial enclosures, server racks, climate control, and cooling systems for harsh manufacturing environments.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Heavy-duty industrial enclosure and climate control products engineered to protect sensitive electrical and automation equipment against heat, dust, corrosive chemicals, and outdoor elements."}}]}',
+    '{"category":"Enclosure & Climate Control","protection":"IP55 - IP66 / NEMA 4X"}',
+    '/uploads/products-rittal.jpg',
+    'published',
+    now(),
+    5,
+    0
+),
+(
+    '00000000-0000-0000-0000-000000000706',
+    'power-quality',
+    'power-quality',
+    'Power Quality',
+    'Active harmonic filters, power factor correction, capacitor banks, and power quality analyzers.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Advanced power quality management products that eliminate harmonics, correct power factor to near-unity, suppress voltage fluctuations, and prevent costly equipment tripping."}}]}',
+    '{"category":"Power Quality","mitigation":"THDi < 3%, Stepless Cos Phi 1.0"}',
+    '/uploads/news-1.jpg',
+    'published',
+    now(),
+    6,
+    0
+),
+(
+    '00000000-0000-0000-0000-000000000707',
+    'fire-alarm-products',
+    'fire-alarm-products',
+    'Fire Alarm Products',
+    'Industrial addressable fire alarm panels, detectors, notification appliances, and suppression solutions.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Certified fire detection and suppression products designed for industrial facilities, power plants, control rooms, and commercial high-rises in accordance with NFPA standards."}}]}',
+    '{"category":"Fire Alarm Products","standards":"NFPA 72, NFPA 2001, EN54, UL/FM"}',
+    '/uploads/testing-commissioning-project.jpg',
+    'published',
+    now(),
+    7,
+    0
+);
+
+INSERT INTO products (id, parent_id, slug, full_path, title, summary, content, specs, image_url, status, published_at, sort_order, depth) VALUES
+(
+    '00000000-0000-0000-0000-000000000711',
+    '00000000-0000-0000-0000-000000000701',
+    'enclosures',
+    'rittal-distributor/enclosures',
+    'Rittal Enclosure Systems (VX25, AX, KX)',
+    'Modular baying enclosure systems (VX25), compact enclosures (AX), small enclosures (KX), and outdoor IT racks.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Rittal enclosure systems provide unmatched modularity, IP66 protection, and mechanical strength. Suitable for control panels, switchgear, automation assemblies, and outdoor cabinets in industrial environments."}}]}',
+    '{"Series":"VX25, AX, KX, CS Toptec","Protection Rating":"IP55 / IP66 / NEMA 4X","Material":"Sheet steel / Stainless steel AISI 304 & 316L","Approvals":"IEC 62208, UL 508A, DNV-GL"}',
+    '/uploads/products-rittal.jpg',
+    'published',
+    now(),
+    1,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000712',
+    '00000000-0000-0000-0000-000000000701',
+    'climate-control-cooling',
+    'rittal-distributor/climate-control-cooling',
+    'Rittal Climate Control & Cooling (Blue e+)',
+    'Energy-efficient Blue e+ cooling units, industrial chillers, and air-to-water heat exchangers providing up to 75% energy savings.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Rittal Blue e+ cooling technology utilizes hybrid heat pipe and inverter-driven compressor systems, significantly reducing carbon footprint and energy consumption while ensuring stable temperatures for sensitive electronics."}}]}',
+    '{"Technology":"Hybrid Heat Pipe + Inverter Compressor","Energy Saving":"Up to 75% vs standard cooling","Cooling Output":"300 W to 6000 W","Connectivity":"IoT Interface / Modbus / SNMP"}',
+    '/uploads/automation-project.jpg',
+    'published',
+    now(),
+    2,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000713',
+    '00000000-0000-0000-0000-000000000701',
+    'power-distribution',
+    'rittal-distributor/power-distribution',
+    'Rittal Power Distribution (Ri4Power & RiLine)',
+    'Type-tested low-voltage switchgear system up to 6300A with modular RiLine compact busbar power distribution.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"The Ri4Power modular power distribution system allows type-tested assembly according to IEC 61439-1/-2 up to 6300A, featuring Form 1 to Form 4b internal separation and compact RiLine busbar technology."}}]}',
+    '{"System":"Ri4Power & RiLine60","Rated Current":"Up to 6300 A","Form of Separation":"Form 1 to 4b","Standard":"IEC 61439-1/-2, IEC 60947"}',
+    '/uploads/hero-project.jpg',
+    'published',
+    now(),
+    3,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000721',
+    '00000000-0000-0000-0000-000000000702',
+    'industrial-automation',
+    'schneider-integrator/industrial-automation',
+    'Schneider Industrial Automation (Modicon & EcoStruxure)',
+    'Next-generation universal automation, Modicon M221/M241/M251/M580 PLCs, Altivar VSD drives, and Magelis HMI.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Complete industrial automation integration using Schneider Electric EcoStruxure™ architecture, Modicon PLCs, and Altivar variable speed drives for precise motion, pump, fan, and manufacturing process control."}}]}',
+    '{"PLC Family":"Modicon M221, M241, M251, M580 ePAC","Drives":"Altivar Process ATV600 / ATV900 / ATV320","Software":"EcoStruxure Control Expert, Machine Expert","Protocols":"Modbus TCP, Ethernet/IP, Profinet, OPC UA"}',
+    '/uploads/M2.jpeg',
+    'published',
+    now(),
+    1,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000722',
+    '00000000-0000-0000-0000-000000000702',
+    'power-energy-monitoring',
+    'schneider-integrator/power-energy-monitoring',
+    'Power & Energy Monitoring (PME & PowerLogic)',
+    'Real-time power monitoring with EcoStruxure Power Monitoring Expert (PME) and PowerLogic PM5000/PM8000 smart power meters.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Turnkey energy management and electrical network monitoring. Delivers real-time telemetry, power quality event capture, energy baseline auditing, and automated ESG carbon accounting reports."}}]}',
+    '{"Software Platform":"EcoStruxure Power Monitoring Expert (PME)","Hardware":"PowerLogic PM5000, PM8000, ION9000","Capabilities":"Harmonics, Sag/Swell, Transient Logging, ESG Reporting","Compliance":"ISO 50001, IEC 61000-4-30 Class A"}',
+    '/uploads/news-1.jpg',
+    'published',
+    now(),
+    2,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000723',
+    '00000000-0000-0000-0000-000000000702',
+    'electrical-distribution-integration',
+    'schneider-integrator/electrical-distribution-integration',
+    'Electrical Distribution Integration (MasterPact & Prisma)',
+    'Integrated low and medium voltage electrical distribution with MasterPact MTZ/NT/NW ACBs, Compact NSX, and Prisma switchboards.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Engineered switchboard solutions combining Schneider Electric Prisma iPM structures with smart MasterPact MTZ circuit breakers featuring embedded Class 1 power metering and remote diagnostics."}}]}',
+    '{"Air Circuit Breakers":"MasterPact MTZ1 / MTZ2 / MTZ3 (up to 6300A)","MCCB":"Compact NSX & NSXm with MicroLogic","Switchboard System":"Prisma iPM / PrismaSeT G & P","Intelligence":"Embedded Power Metering & Health Analytics"}',
+    '/uploads/hero-project.jpg',
+    'published',
+    now(),
+    3,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000724',
+    '00000000-0000-0000-0000-000000000702',
+    'engineering-commissioning',
+    'schneider-integrator/engineering-commissioning',
+    'Schneider Engineering, FAT/SAT & Commissioning Support',
+    'Full lifecycle engineering support from CAD panel schematics and PLC logic to Factory Acceptance Testing (FAT) and site commissioning.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Certified engineering teams provide end-to-end support including electrical design, control panel fabrication, software engineering, Factory Acceptance Testing (FAT), Site Acceptance Testing (SAT), and 24/7 service contracts."}}]}',
+    '{"Services":"Panel Design, PLC/SCADA Programming, FAT & SAT, On-Site Testing","Testing Gear":"Secondary Injection Sets, Omicron Relay Test, Cable Analyzers","Response":"24/7 Emergency Support SLA Available"}',
+    '/uploads/testing-commissioning-project.jpg',
+    'published',
+    now(),
+    4,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000731',
+    '00000000-0000-0000-0000-000000000703',
+    'medium-voltage-substation',
+    'electrical-distribution/medium-voltage-substation',
+    'Medium Voltage Substation & Transformers',
+    'MV Metal-Clad Switchgear up to 24kV/36kV, Oil-Immersed & Cast Resin Dry-Type Transformers, and Vacuum Circuit Breakers.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Turnkey medium voltage substation equipment engineered for utility substations, heavy industrial plants, and captive power plants."}}]}',
+    '{"Voltage Level":"Up to 36 kV","Transformer Capacity":"Up to 20 MVA","Insulation":"Oil-Immersed / Cast Resin Dry Type","Standard":"IEC 62271-200, SPLN"}',
+    '/uploads/hero-project.jpg',
+    'published',
+    now(),
+    1,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000732',
+    '00000000-0000-0000-0000-000000000703',
+    'low-voltage-distribution-panels',
+    'electrical-distribution/low-voltage-distribution-panels',
+    'Low Voltage Panels (MDP, SDP, ATS & Sync)',
+    'Main Distribution Panels (MDP), Sub-Distribution Panels (SDP), ATS/AMF Generator Sync Panels, and Motor Control Centers (MCC).',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Custom assembled low voltage distribution boards built with premium copper busbars, type-tested enclosures, and intelligent circuit breakers for seamless power routing."}}]}',
+    '{"Rated Voltage":"380V / 400V / 690V","Busbar Rating":"Up to 6300A (99.9% Cu-ETP)","Enclosure IP":"IP42 to IP65","Operation":"Manual / Auto Sync ATS"}',
+    '/uploads/testing-commissioning-project.jpg',
+    'published',
+    now(),
+    2,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000741',
+    '00000000-0000-0000-0000-000000000704',
+    'scada-xarrow-telemetry',
+    'automation-control/scada-xarrow-telemetry',
+    'SCADA Systems & Process Monitoring (xArrow)',
+    'High-performance SCADA software, real-time telemetry, alarm management, historical trending, and industrial IoT dashboards.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"xArrow SCADA and centralized process monitoring solutions allow plant managers to visualize machinery status, record production metrics, and receive instant alert dispatches."}}]}',
+    '{"Software":"xArrow SCADA Industrial Edition","Tags":"Unlimited I/O Tag Packages","Protocols":"OPC UA, Modbus TCP/RTU, MQTT, REST API","Architecture":"Client-Server / Web-Based"}',
+    '/uploads/M2.jpeg',
+    'published',
+    now(),
+    1,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000742',
+    '00000000-0000-0000-0000-000000000704',
+    'vsd-inverter-panels',
+    'automation-control/vsd-inverter-panels',
+    'Variable Speed Drive (VSD) & Inverter Panels',
+    'Custom engineered VSD and soft starter panels for pumps, compressors, blowers, extruders, and conveying machinery.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Enclosed drive panels engineered with proper thermal dissipation, line reactors, harmonic mitigation, and bypass contactors for reliable speed and torque regulation."}}]}',
+    '{"Power Range":"0.75 kW to 1200 kW","Control Modes":"V/f, Vector Control, Torque Control","Brands":"Schneider, Danfoss, ABB, Siemens","Enclosure":"Rittal Industrial IP55"}',
+    '/uploads/automation-project.jpg',
+    'published',
+    now(),
+    2,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000751',
+    '00000000-0000-0000-0000-000000000706',
+    'active-harmonic-filters',
+    'power-quality/active-harmonic-filters',
+    'Active Harmonic Filters (AHF) & SVG',
+    'Dynamic active harmonic compensation up to the 50th harmonic order with stepless reactive power factor correction.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Active Harmonic Filters dynamically inject counter-phase currents to cancel harmonic distortions generated by non-linear loads such as VFDs, rectifiers, and UPS systems."}}]}',
+    '{"Harmonic Range":"2nd to 50th Order","Target THDi":"< 3% at rated capacity","Response Time":"< 5 milliseconds","Modular Capacity":"50A to 600A modular"}',
+    '/uploads/news-1.jpg',
+    'published',
+    now(),
+    1,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000761',
+    '00000000-0000-0000-0000-000000000707',
+    'addressable-fire-alarm-systems',
+    'fire-alarm-products/addressable-fire-alarm-systems',
+    'Addressable Fire Alarm Panels & Detectors',
+    'Intelligent addressable fire alarm control panels, multi-criteria optical smoke & heat detectors, and suppression triggers.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Fully addressable fire detection networks providing precise point-by-point device identification, automatic sensitivity drift compensation, and BMS system integration."}}]}',
+    '{"Standards":"NFPA 72, EN54, UL Listed, FM Approved","Capacity":"1 to 8 Loops (up to 2000+ points)","Detectors":"Optical Smoke, Thermal, Multi-Criteria, Flame"}',
+    '/uploads/testing-commissioning-project.jpg',
+    'published',
+    now(),
+    1,
+    1
+);
+
+COMMIT;
+
+-- ============================================================================
+-- 019_services_and_solutions_2026.up.sql
+-- 5 Core Business Units (Electrical Construction, Maintenance, Automation, Testing, Mechanical)
+-- ============================================================================
+BEGIN;
+
+DELETE FROM services WHERE id IS NOT NULL;
+
+INSERT INTO services (id, slug, full_path, title, summary, content, image_url, gallery, status, published_at, sort_order, depth) VALUES
+(
+    '00000000-0000-0000-0000-000000000801',
+    'electrical-construction-installation',
+    'electrical-construction-installation',
+    'Electrical Construction & Installation',
+    'Turnkey medium & low voltage substation installation, switchgear, distribution panels, transformer erection, and cable terminations.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"End-to-end electrical construction and installation services for manufacturing plants, substations, and industrial infrastructure. Our certified engineers deliver precision panel assembly, busbar erection, MV/LV cabling, and transformer installation adhering to SPLN and IEC standards."}}]}',
+    '/uploads/hero-project.jpg',
+    '[]',
+    'published',
+    now(),
+    1,
+    0
+),
+(
+    '00000000-0000-0000-0000-000000000802',
+    'electrical-maintenance-service',
+    'electrical-maintenance-service',
+    'Electrical Maintenance & Servicing',
+    'Comprehensive preventive, predictive, and corrective maintenance for transformers, MV cubicles, switchboards, and circuit breakers.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Proactive lifecycle maintenance programs designed to prevent unexpected plant downtime. Scope includes transformer oil treatment (BDV & DGA), MV cubicle servicing, ACB trip testing, contact resistance, and thermal imaging diagnostics."}}]}',
+    '/uploads/testing-commissioning-project.jpg',
+    '[]',
+    'published',
+    now(),
+    2,
+    0
+),
+(
+    '00000000-0000-0000-0000-000000000803',
+    'automation-solutions-services',
+    'automation-solutions-services',
+    'Automation Solutions & Services',
+    'Industrial automation, SCADA systems (xArrow & EcoStruxure), PLC programming, Energy Monitoring (PME), and process optimization.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Turnkey industrial automation engineering combining PLC programming, SCADA telemetry, centralized process monitoring, Building Automation Systems (BAS), and ISO 50001 energy management architectures."}}]}',
+    '/uploads/M2.jpeg',
+    '[]',
+    'published',
+    now(),
+    3,
+    0
+),
+(
+    '00000000-0000-0000-0000-000000000804',
+    'inspection-testing-commissioning',
+    'inspection-testing-commissioning',
+    'Inspection, Testing & Commissioning',
+    'Specialized testing with calibrated instruments: power quality, partial discharge (PD scan), secondary injection, and relay coordination.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Advanced testing and commissioning backed by calibrated Omicron, Megger, and Fluke test sets. We conduct Power System Studies, Arc Flash analysis, Partial Discharge scanning, relay injection testing, and formal FAT/SAT."}}]}',
+    '/uploads/automation-project.jpg',
+    '[]',
+    'published',
+    now(),
+    4,
+    0
+),
+(
+    '00000000-0000-0000-0000-000000000805',
+    'mechanical-services-supplies',
+    'mechanical-services-supplies',
+    'Mechanical Services & General Supplies',
+    'Industrial mechanical maintenance, conveyor systems, magnetic separators, high-speed doors, vacuum lifters, and motor/generator servicing.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Total mechanical engineering support covering conveyor systems, magnetic separators, gearbox & mixer overhauls, boiler HTO maintenance, pneumatic supplies, motor winding insulation recoating, and rotor dynamic balancing."}}]}',
+    '/uploads/news-1.jpg',
+    '[]',
+    'published',
+    now(),
+    5,
+    0
+);
+
+INSERT INTO services (id, parent_id, slug, full_path, title, summary, content, image_url, gallery, status, published_at, sort_order, depth) VALUES
+(
+    '00000000-0000-0000-0000-000000000811',
+    '00000000-0000-0000-0000-000000000801',
+    'substation-mv-switchgear-installation',
+    'electrical-construction-installation/substation-mv-switchgear-installation',
+    'Substation & MV Switchgear Installation',
+    'Medium voltage metal-clad switchgear, power transformers, oil containment, and civil-electrical integration up to 36kV.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Complete engineering, procurement, and construction for medium voltage substations, including vacuum circuit breakers, protection panels, and transformer placement."}}]}',
+    '/uploads/hero-project.jpg',
+    '[]',
+    'published',
+    now(),
+    1,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000812',
+    '00000000-0000-0000-0000-000000000801',
+    'lv-distribution-panels-assembly',
+    'electrical-construction-installation/lv-distribution-panels-assembly',
+    'LV Panels Assembly (MDP, SDP, ATS & Sync)',
+    'Main Distribution Panels (MDP), Sub-Distribution Panels, ATS/AMF sync boards, and Motor Control Centers (MCC).',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Custom panel design and fabrication using high-purity copper busbars, type-tested enclosure structures, and intelligent circuit breakers."}}]}',
+    '/uploads/testing-commissioning-project.jpg',
+    '[]',
+    'published',
+    now(),
+    2,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000813',
+    '00000000-0000-0000-0000-000000000801',
+    'mv-lv-cable-installation-termination',
+    'electrical-construction-installation/mv-lv-cable-installation-termination',
+    'MV & LV Cable Installation & Termination',
+    'Certified cable pulling, tray erection, heat-shrink/cold-shrink terminations, and high-potential (Hi-Pot) insulation testing.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Certified cable jointing and termination specialists using 3M and Raychem kits, followed by VLF / DC Hi-Pot and sheath integrity testing."}}]}',
+    '/uploads/products-rittal.jpg',
+    '[]',
+    'published',
+    now(),
+    3,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000814',
+    '00000000-0000-0000-0000-000000000801',
+    'fire-alarm-system-installation',
+    'electrical-construction-installation/fire-alarm-system-installation',
+    'Fire Alarm System Engineering & Installation',
+    'Turnkey addressable fire alarm networks, multi-sensor detectors, aspirating smoke detection, and clean agent suppression.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Complete fire safety engineering compliant with NFPA 72 & NFPA 2001 standards, including smoke control, audible/visual alarms, and BMS integration."}}]}',
+    '/uploads/testing-commissioning-project.jpg',
+    '[]',
+    'published',
+    now(),
+    4,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000821',
+    '00000000-0000-0000-0000-000000000802',
+    'transformer-oil-treatment-dga',
+    'electrical-maintenance-service/transformer-oil-treatment-dga',
+    'Transformer Oil Treatment, BDV & DGA',
+    'On-site oil purification, vacuum degassing, breakdown voltage (BDV) dielectric testing, and Dissolved Gas Analysis (DGA).',
+    '{"blocks":[{"type":"paragraph","data":{"text":"High-vacuum oil filtration and regeneration restoring insulation properties, removing moisture, gas, and particulate contamination to extend transformer life."}}]}',
+    '/uploads/news-1.jpg',
+    '[]',
+    'published',
+    now(),
+    1,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000822',
+    '00000000-0000-0000-0000-000000000802',
+    'mv-cubicle-acb-maintenance',
+    'electrical-maintenance-service/mv-cubicle-acb-maintenance',
+    'MV Cubicle & ACB Maintenance (Trip Testing)',
+    'Preventive servicing for medium voltage switchgear, contact resistance (Ductor), insulation testing, and ACB secondary injection.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Systematic overhaul including contact alignment, lubrication, vacuum bottle integrity tests, breaker timing analysis, and secondary injection testing on Micrologic and digital trip units."}}]}',
+    '/uploads/hero-project.jpg',
+    '[]',
+    'published',
+    now(),
+    2,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000823',
+    '00000000-0000-0000-0000-000000000802',
+    'thermography-predictive-maintenance',
+    'electrical-maintenance-service/thermography-predictive-maintenance',
+    'Infrared Thermography & Predictive Maintenance',
+    'Non-contact FLIR thermal imaging to detect hot spots, loose busbar joints, overloaded phases, and deteriorating contacts under full load.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Certified Level II thermographers inspect live electrical distribution boards to detect thermal anomalies before insulation breakdown or catastrophic flashovers occur."}}]}',
+    '/uploads/automation-project.jpg',
+    '[]',
+    'published',
+    now(),
+    3,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000824',
+    '00000000-0000-0000-0000-000000000802',
+    'annual-maintenance-contracts',
+    'electrical-maintenance-service/annual-maintenance-contracts',
+    'Annual Maintenance Contracts (AMC) & 24/7 SLA',
+    'Customized long-term service level agreements providing scheduled plant shutdowns, emergency call-outs, and spare parts management.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Comprehensive maintenance contracts tailored to manufacturing plants and critical facilities, guaranteeing rapid SLA response times and dedicated engineering support."}}]}',
+    '/uploads/testing-commissioning-project.jpg',
+    '[]',
+    'published',
+    now(),
+    4,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000831',
+    '00000000-0000-0000-0000-000000000803',
+    'scada-hmi-process-monitoring',
+    'automation-solutions-services/scada-hmi-process-monitoring',
+    'SCADA Systems, HMI & Centralized Telemetry',
+    'Plant-wide supervisory control, dynamic mimic screens, alarm logging, historical trending, and multi-protocol industrial telemetry.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"End-to-end SCADA development using xArrow, EcoStruxure, Wonderware, and WinCC platforms for real-time visualization and supervisory control of manufacturing plants."}}]}',
+    '/uploads/M2.jpeg',
+    '[]',
+    'published',
+    now(),
+    1,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000832',
+    '00000000-0000-0000-0000-000000000803',
+    'energy-management-iso50001',
+    'automation-solutions-services/energy-management-iso50001',
+    'Energy Management Systems (EMS & ISO 50001)',
+    'Real-time power monitoring, automated energy baselines, peak demand tracking, and ESG sustainability compliance reporting.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Power Monitoring Expert (PME) implementation delivering actionable energy insights, cost-center allocation, harmonic tracking, and automated ISO 50001 reporting."}}]}',
+    '/uploads/news-1.jpg',
+    '[]',
+    'published',
+    now(),
+    2,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000833',
+    '00000000-0000-0000-0000-000000000803',
+    'plc-vsd-system-integration',
+    'automation-solutions-services/plc-vsd-system-integration',
+    'PLC Programming & Variable Speed Drive (VSD) Integration',
+    'Custom PLC logic engineering, control panel assembly, Altivar/Danfoss/ABB inverter tuning, and motion control.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Comprehensive automation integration covering Modicon, Siemens S7, and Allen-Bradley PLCs paired with variable speed drives for pumps, fans, conveyors, and extruders."}}]}',
+    '/uploads/automation-project.jpg',
+    '[]',
+    'published',
+    now(),
+    3,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000841',
+    '00000000-0000-0000-0000-000000000804',
+    'power-quality-analysis-study',
+    'inspection-testing-commissioning/power-quality-analysis-study',
+    'Power Quality Analysis & Harmonics Study',
+    'Class A power quality logging, harmonic distortion (THD) auditing, voltage sags/swells, transient detection, and mitigation design.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Detailed electrical audits using Fluke 435-II Class A analyzers to measure IEEE 519 compliance, identify resonance risks, and engineer Active Harmonic Filter solutions."}}]}',
+    '/uploads/news-1.jpg',
+    '[]',
+    'published',
+    now(),
+    1,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000842',
+    '00000000-0000-0000-0000-000000000804',
+    'partial-discharge-pd-scan',
+    'inspection-testing-commissioning/partial-discharge-pd-scan',
+    'Partial Discharge (PD) Scan & Insulation Diagnostics',
+    'Non-invasive TEV (Transient Earth Voltage), acoustic ultrasonic, and HFCT sensors for live switchgear and cable PD scanning.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Early detection of electrical insulation breakdown in MV switchgear, cables, and transformers without requiring system shutdown."}}]}',
+    '/uploads/hero-project.jpg',
+    '[]',
+    'published',
+    now(),
+    2,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000843',
+    '00000000-0000-0000-0000-000000000804',
+    'relay-protection-testing-commissioning',
+    'inspection-testing-commissioning/relay-protection-testing-commissioning',
+    'Protection Relay Testing (Secondary Injection)',
+    '3-phase & 6-phase secondary injection testing using Omicron CMC 356/256 sets for overcurrent, earth fault, differential, and distance relays.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Comprehensive protection coordination verification, timing curves check, and scheme testing compliant with IEC 60255 and IEEE standards."}}]}',
+    '/uploads/testing-commissioning-project.jpg',
+    '[]',
+    'published',
+    now(),
+    3,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000851',
+    '00000000-0000-0000-0000-000000000805',
+    'industrial-mechanical-supplies-services',
+    'mechanical-services-supplies/industrial-mechanical-supplies-services',
+    'Conveyor Systems, Magnetic Separators & Industrial Supplies',
+    'Supply, installation, and servicing of conveyor lines, magnetic metal separators, sectional doors, vacuum lifters, and pneumatic parts.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Industrial mechanical equipment supplies and maintenance services ensuring seamless plant material handling and operational throughput."}}]}',
+    '/uploads/products-rittal.jpg',
+    '[]',
+    'published',
+    now(),
+    1,
+    1
+),
+(
+    '00000000-0000-0000-0000-000000000852',
+    '00000000-0000-0000-0000-000000000805',
+    'motor-generator-servicing-overhaul',
+    'mechanical-services-supplies/motor-generator-servicing-overhaul',
+    'Motor & Generator Overhaul (Insulation Recoating & Dynamic Balancing)',
+    'Electro-motor, MV motor, generator servicing, winding insulation recoating, vibration analysis, and rotor reconditioning.',
+    '{"blocks":[{"type":"paragraph","data":{"text":"Comprehensive motor and generator maintenance including visual inspection, vibration baseline, winding recoating, and dynamic rotor balancing."}}]}',
+    '/uploads/automation-project.jpg',
+    '[]',
+    'published',
+    now(),
+    2,
+    1
+);
+
+-- 020_rich_product_and_service_descriptions.up.sql
+UPDATE products SET
+  image_url = '/uploads/products-rittal-enclosures.jpg',
+  summary = 'Official Rittal bayed large enclosure system (VX25), compact enclosures (AX), small terminal boxes (KX), and outdoor IT server racks.',
+  specs = '{"Series":"VX25, AX, KX, CS Toptec, IT Network Racks","Frame Pitch":"25 mm DIN standard symmetrical grid","Protection Rating":"IP55 / IP66 / NEMA 4X / NEMA 12","Material & Finish":"Sheet steel dipcoat-primed RAL 7035 / Stainless steel AISI 304 & 316L","Certifications":"IEC 62208, UL 508A, DNV-GL, CE, RoHS","Target Applications":"LV Switchboards, MCC Panels, Automation Control, IT Server Racks"}'::jsonb
+WHERE slug = 'enclosures';
+
+UPDATE products SET
+  image_url = '/uploads/products-rittal-cooling.jpg',
+  summary = 'Innovative hybrid cooling units, thermoelectric coolers, and air-to-water heat exchangers providing up to 75% energy savings and digital IoT monitoring.',
+  specs = '{"Cooling Capacity":"300 W to 5,500 W (Blue e+ & Blue e+ S)","Energy Savings":"Up to 75% via patented hybrid heat pipe technology","Refrigerant":"Eco-friendly R-513A / R-134a (GWP compliant)","Operating Temp":"-20°C to +60°C ambient","IoT Protocols":"Modbus TCP, SNMP, OPC-UA, Profinet, Ethernet/IP","Mounting Options":"Wall-mounted, roof-mounted, partial or full internal"}'::jsonb
+WHERE slug = 'climate-control-cooling';
+
+UPDATE products SET
+  image_url = '/uploads/products-rittal-power.jpg',
+  summary = 'Type-tested low-voltage busbar and switchgear power distribution systems up to 6300A compliant with IEC 61439-1/-2.',
+  specs = '{"Rated Current (In)":"Up to 6,300 A (Ri4Power) / 2,100 A (RiLine)","Short-Circuit Rating (Icw)":"Up to 120 kA (1s withstand)","Internal Separation":"Form 1, Form 2b, Form 3b, Form 4a, Form 4b","Busbar Centers":"60 mm & 185 mm drill-free mounting systems","Standards":"IEC 61439-1, IEC 61439-2, DIN EN 61439"}'::jsonb
+WHERE slug = 'power-distribution';
+
+UPDATE products SET image_url = '/uploads/products-schneider-automation.jpg' WHERE slug = 'industrial-automation';
+UPDATE products SET image_url = '/uploads/products-schneider-pme.jpg' WHERE slug = 'power-energy-monitoring';
+UPDATE products SET image_url = '/uploads/products-schneider-distribution.jpg' WHERE slug = 'electrical-distribution-integration';
+UPDATE products SET image_url = '/uploads/products-schneider-commissioning.jpg' WHERE slug = 'engineering-commissioning';
+UPDATE products SET image_url = '/uploads/mdm/active-harmonic-filter.jpg' WHERE slug = 'active-harmonic-filters';
+UPDATE products SET image_url = '/uploads/PM-Fire-Alarm-1.jpg' WHERE slug = 'addressable-fire-alarm-systems';
+UPDATE products SET image_url = '/uploads/mdm/circuit-breaker.jpg' WHERE slug = 'low-voltage-distribution-panels';
+UPDATE products SET image_url = '/uploads/mdm/medium-voltage-equipment.jpg' WHERE slug = 'medium-voltage-substation';
+UPDATE products SET image_url = '/uploads/xarrow.jpg' WHERE slug = 'scada-xarrow-telemetry';
+UPDATE products SET image_url = '/uploads/products-schneider-distribution.jpg' WHERE slug = 'vsd-inverter-panels';
+
+UPDATE services SET image_url = '/uploads/mdm/construction-installation.jpg' WHERE slug = 'electrical-construction-installation';
+UPDATE services SET image_url = '/uploads/mdm/medium-voltage-equipment.jpg' WHERE slug = 'substation-mv-switchgear-installation';
+UPDATE services SET image_url = '/uploads/mdm/circuit-breaker.jpg' WHERE slug = 'lv-distribution-panels-assembly';
+UPDATE services SET image_url = '/uploads/mdm/electrical-equipment.jpg' WHERE slug = 'mv-lv-cable-installation-termination';
+UPDATE services SET image_url = '/uploads/PM-Fire-Alarm-1.jpg' WHERE slug = 'fire-alarm-system-installation';
+UPDATE services SET image_url = '/uploads/mdm/maintenance-contract.jpg' WHERE slug = 'electrical-maintenance-service';
+UPDATE services SET image_url = '/uploads/mdm/micrologic-test.jpg' WHERE slug = 'transformer-oil-treatment-dga';
+UPDATE services SET image_url = '/uploads/mdm/preventive-maintenance.jpg' WHERE slug = 'mv-cubicle-acb-maintenance';
+UPDATE services SET image_url = '/uploads/mdm/infrared-thermograph.jpg' WHERE slug = 'thermography-predictive-maintenance';
+UPDATE services SET image_url = '/uploads/mdm/maintenance-contract.jpg' WHERE slug = 'annual-maintenance-contracts';
+UPDATE services SET image_url = '/uploads/mdm/industrial-automation.jpg' WHERE slug = 'automation-solutions-services';
+UPDATE services SET image_url = '/uploads/xarrow.jpg' WHERE slug = 'scada-hmi-process-monitoring';
+UPDATE services SET image_url = '/uploads/PMS-Network_001.jpg' WHERE slug = 'energy-management-iso50001';
+UPDATE services SET image_url = '/uploads/products-schneider-automation.jpg' WHERE slug = 'plc-vsd-system-integration';
+UPDATE services SET image_url = '/uploads/mdm/testing-measurement.jpg' WHERE slug = 'inspection-testing-commissioning';
+UPDATE services SET image_url = '/uploads/mdm/power-quality.jpg' WHERE slug = 'power-quality-analysis-study';
+UPDATE services SET image_url = '/uploads/mdm/partial-discharge.jpg' WHERE slug = 'partial-discharge-pd-scan';
+UPDATE services SET image_url = '/uploads/mdm/secondary-injector.jpg' WHERE slug = 'relay-protection-testing-commissioning';
+UPDATE services SET image_url = '/uploads/mdm/electrical-services.jpg' WHERE slug = 'mechanical-services-supplies';
+UPDATE services SET image_url = '/uploads/products-rittal-cooling.jpg' WHERE slug = 'industrial-mechanical-supplies-services';
+UPDATE services SET image_url = '/uploads/mdm/electrical-services.jpg' WHERE slug = 'motor-generator-servicing-overhaul';
 
 COMMIT;

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: '%s',
   },
   description:
-    'PT Multi Daya Mitra is an Indonesian electrical, industrial automation, and fire alarm services company serving power, oil & gas, manufacturing, and infrastructure since 2013.',
+    'PT Multi Daya Mitra is an Indonesian electrical, industrial automation, and fire alarm services company serving power, oil & gas, manufacturing, and infrastructure since 2012.',
   openGraph: {
     type: 'website',
     siteName: 'PT Multi Daya Mitra',

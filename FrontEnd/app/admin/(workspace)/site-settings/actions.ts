@@ -26,6 +26,9 @@ export async function saveSiteSettingsAction(formData: FormData): Promise<SaveRe
     return { error: "validation" }
   }
 
+  const salesPhone = String(formData.get("salesPhone") ?? "").trim()
+  const salesEmail = String(formData.get("salesEmail") ?? "").trim()
+
   const value = {
     tagline: String(formData.get("tagline") ?? "").trim(),
     footerDescription: String(formData.get("footerDescription") ?? "").trim(),
@@ -33,6 +36,10 @@ export async function saveSiteSettingsAction(formData: FormData): Promise<SaveRe
     phone: String(formData.get("phone") ?? "").trim(),
     fax: String(formData.get("fax") ?? "").trim(),
     address: String(formData.get("address") ?? "").trim(),
+    salesPhone,
+    whatsappPhone: salesPhone,
+    hotlinePhone: salesPhone,
+    salesEmail,
     socials,
   }
 

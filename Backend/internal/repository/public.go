@@ -679,9 +679,9 @@ func (r PublicRepository) CreateContact(ctx context.Context, input model.Contact
 	err := r.pool.QueryRow(ctx, `
 		INSERT INTO contacts (id, name, email, phone, company, subject, message, status)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, 'new')
-		RETURNING id::text, name, email, COALESCE(phone, ''), COALESCE(company, ''), subject, message, status, created_at
+		RETURNING id::text, name, email, COALESCE(phone, ''), COALESCE(company, ''), subject, message, status, created_at, version
 	`, uuid.NewString(), input.Name, input.Email, input.Phone, input.Company, input.Subject, input.Message).
-		Scan(&inquiry.ID, &inquiry.Name, &inquiry.Email, &inquiry.Phone, &inquiry.Company, &inquiry.Subject, &inquiry.Message, &inquiry.Status, &inquiry.CreatedAt)
+		Scan(&inquiry.ID, &inquiry.Name, &inquiry.Email, &inquiry.Phone, &inquiry.Company, &inquiry.Subject, &inquiry.Message, &inquiry.Status, &inquiry.CreatedAt, &inquiry.Version)
 	return inquiry, err
 }
 

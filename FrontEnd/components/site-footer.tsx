@@ -8,27 +8,34 @@ const footerNav = [
   {
     title: "Company",
     links: [
-      { label: "About", href: "/about" },
-      { label: "Products", href: "/products" },
-      { label: "News", href: "/news" },
-      { label: "Career", href: "/career" },
-      { label: "Contact", href: "/contact" },
+      { label: "About PT MDM", href: "/about" },
+      { label: "Services & Solutions", href: "/services" },
+      { label: "Products & Partners", href: "/products" },
+      { label: "News & Insights", href: "/news" },
+      { label: "Careers", href: "/career" },
+      { label: "Contact Us", href: "/contact" },
     ],
   },
   {
-    title: "Services",
+    title: "Services & Solutions",
     links: [
-      { label: "Electrical Services", href: "/services" },
-      { label: "Industrial Automation", href: "/services" },
-      { label: "Fire Alarm Systems", href: "/services" },
+      { label: "Electrical Construction & Installation", href: "/services/electrical-construction-installation" },
+      { label: "Electrical Maintenance & Servicing", href: "/services/electrical-maintenance-service" },
+      { label: "Automation Solutions & Services", href: "/services/automation-solutions-services" },
+      { label: "Inspection, Testing & Commissioning", href: "/services/inspection-testing-commissioning" },
+      { label: "Mechanical Services & Supplies", href: "/services/mechanical-services-supplies" },
     ],
   },
   {
-    title: "Products",
+    title: "Products & Partners",
     links: [
-      { label: "Testing Equipment", href: "/products/testing-equipment" },
-      { label: "Protection Relay", href: "/products/protection-relay" },
-      { label: "Instrumentation", href: "/products/instrumentation" },
+      { label: "Rittal Authorized Distributor", href: "/products/rittal-distributor" },
+      { label: "Schneider Electric Integrator", href: "/products/schneider-integrator" },
+      { label: "Electrical Distribution", href: "/products/electrical-distribution" },
+      { label: "Automation & Control", href: "/products/automation-control" },
+      { label: "Enclosure & Climate Control", href: "/products/enclosure-climate-control" },
+      { label: "Power Quality Systems", href: "/products/power-quality" },
+      { label: "Fire Alarm Products", href: "/products/fire-alarm-products" },
     ],
   },
 ]
@@ -63,11 +70,24 @@ export async function SiteFooter() {
                   <span className="max-w-sm">{settings.address}</span>
                 </li>
               )}
+              {settings.salesPhone && (
+                <li className="flex items-center gap-2">
+                  <Phone className="h-4 w-4 shrink-0 text-emerald-500" />
+                  <a
+                    href={`https://wa.me/${settings.salesPhone.replace(/[^0-9]/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-foreground hover:underline"
+                  >
+                    WhatsApp / Sales: {settings.salesPhone}
+                  </a>
+                </li>
+              )}
               {settings.phone && (
                 <li className="flex items-center gap-2">
                   <Phone className="h-4 w-4 shrink-0 text-primary" />
                   <a href={`tel:${settings.phone.replace(/\s+/g, "")}`} className="transition-colors hover:text-foreground">
-                    {settings.phone}
+                    Office: {settings.phone}
                   </a>
                 </li>
               )}

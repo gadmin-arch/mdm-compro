@@ -7,21 +7,19 @@ import { Pagination } from "@/components/cms/pagination"
 import { SectionRenderer } from "@/components/cms/section-renderer"
 import { FilterControls } from "@/components/filter-controls"
 import { Services } from "@/components/services"
-import { getPage, getServices, resolveSectionData, type ContentNode } from "@/lib/cms"
+import { getPage, getServices, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 import { container } from "@/lib/layout"
 
-// The service hierarchy is maintained in the CMS and must not be baked from
-// fallback data when the production image is built without the API available.
 export const dynamic = "force-dynamic"
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("services")
   return {
-    title: page?.seo?.title || "Services — PT Multi Daya Mitra",
+    title: page?.seo?.title || "Services & Solutions — PT Multi Daya Mitra",
     description:
       page?.seo?.description ||
-      "Electrical services, industrial automation, and fire alarm system solutions delivered by certified engineers across Indonesia.",
+      "Integrated electrical construction, maintenance, automation, testing & commissioning, and mechanical services by certified engineers across Indonesia.",
     alternates: page?.seo?.canonical ? { canonical: page.seo.canonical } : undefined,
     robots: page?.seo?.noIndex ? { index: false, follow: false } : undefined,
   }
@@ -47,20 +45,23 @@ export default async function ServicesPage({ searchParams }: Props) {
   const allServicesTree = await getServices()
   const categories = allServicesTree.map((item) => ({ label: item.title, value: item.slug }))
 
-  const primaryServiceSlugs = ["electrical-services", "fire-alarm", "industrial-automation"]
-  const primaryServices = primaryServiceSlugs
-    .map((slug) => allServicesTree.find((service) => service.slug === slug))
-    .filter((service): service is ContentNode => Boolean(service))
-
   // Paginated, filtered catalog of every service.
   const response = await getServices({ search, category, sort, page, limit: 9 })
   const services = response.data
 
-  // The automatic catalog block always renders — CMS sections wrap around it
-  // at the `listing` marker, they can never remove it.
   const listingBlock = (
-    <section className="border-b border-border/60 bg-background">
-      <div className={container("py-12")}>
+    <section id="catalog" className="border-b border-border/60 bg-background">
+      <div className={container("py-16")}>
+        <div className="mb-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+            <span className="rounded-md bg-primary/10 px-2.5 py-1">Service Catalog</span>
+          </p>
+          <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            {category
+              ? `Services in ${categories.find((c) => c.value === category)?.label ?? category}`
+              : "Explore All Engineering & Maintenance Services"}
+          </h2>
+        </div>
         <FilterControls moduleType="services" categories={categories} />
         <div className="mt-8">
           <ContentList
@@ -74,8 +75,6 @@ export default async function ServicesPage({ searchParams }: Props) {
     </section>
   )
 
-  // When the CMS "services" page has builder sections, they control everything
-  // around the catalog block. Otherwise keep the built-in layout.
   const cmsPage = await getPage("services")
   const sections = cmsPage?.status === "published" ? sectionsFromContent(cmsPage.content) : []
   if (sections.length > 0) {
@@ -93,21 +92,21 @@ export default async function ServicesPage({ searchParams }: Props) {
   return (
     <>
       <PageHero
-        eyebrow="Our Services"
-        title="Three core services. One trusted engineering partner."
-        description="From greenfield installation to long-term operation and maintenance, we deliver high-quality solutions tailored to each plant and facility."
+        eyebrow="Our Business Units"
+        title="Integrated Electrical, Automation & Mechanical Services"
+        description="From turnkey substation construction and automation integration to predictive maintenance, testing & commissioning, and mechanical supplies across Indonesia."
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Services" }]}
       />
-      <Services services={primaryServices} />
+      <Services services={allServicesTree} />
       {listingBlock}
       <Capabilities />
       <CtaBanner
-        title="Have a specific scope in mind?"
-        description="Share your facility details and we'll respond with engineering scope, timeline, and a tailored quotation."
+        title="Need an engineering assessment or service quotation?"
+        description="Share your plant or facility requirements and our engineering team will respond with scope, timeline, and execution plan."
         primaryHref="/contact"
-        primaryLabel="Request a Quote"
-        secondaryHref="/products"
-        secondaryLabel="See Products"
+        primaryLabel="Consult with Engineers"
+        secondaryHref="https://wa.me/6282140074122?text=Halo%20PT%20Multi%20Daya%20Mitra,%20saya%20ingin%20konsultasi%20mengenai%20layanan%20engineering/maintenance..."
+        secondaryLabel="WhatsApp Hotline"
       />
     </>
   )

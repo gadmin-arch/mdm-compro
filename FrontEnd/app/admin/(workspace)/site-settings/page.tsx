@@ -62,6 +62,10 @@ export default async function AdminSiteSettingsPage({
     phone: stored.phone ?? fallbackSiteSettings.phone,
     fax: stored.fax ?? fallbackSiteSettings.fax,
     address: stored.address ?? fallbackSiteSettings.address,
+    salesEmail: stored.salesEmail ?? fallbackSiteSettings.salesEmail,
+    salesPhone: stored.salesPhone ?? fallbackSiteSettings.salesPhone,
+    whatsappPhone: stored.whatsappPhone ?? stored.salesPhone ?? fallbackSiteSettings.whatsappPhone,
+    hotlinePhone: stored.hotlinePhone ?? fallbackSiteSettings.hotlinePhone,
     socials: Array.isArray(stored.socials) ? stored.socials : fallbackSiteSettings.socials,
   }
 

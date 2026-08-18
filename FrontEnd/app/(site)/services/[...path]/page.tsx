@@ -5,7 +5,7 @@ import { RichText } from "@/components/cms/rich-text"
 import { CtaBanner } from "@/components/cta-banner"
 import { PageHero } from "@/components/page-hero"
 import { ContentList } from "@/components/cms/content-list"
-import { flattenContent, getService, getServices } from "@/lib/cms"
+import { findNodeInTree, flattenContent, getService, getServices } from "@/lib/cms"
 import { container } from "@/lib/layout"
 
 type Props = {
@@ -28,18 +28,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ServiceDetailPage({ params, searchParams }: Props) {
+export default async function ServiceDetailPage({ params }: Props) {
   const path = (await params).path.join("/")
-  const service = await getService(path)
+  const allServices = await getServices()
+  const treeNode = findNodeInTree(allServices, path)
+  const service = treeNode ?? (await getService(path))
   if (!service) notFound()
 
-  // Fetch children if this service acts as a category
-  const query = await searchParams
-  const page = parseInt(query.page || "1", 10)
-  const childServices = await getServices({ category: service.slug, page, limit: 6 })
-  
-  // Filter out the current service itself, only keep its true children
-  const actualChildren = childServices.data.filter(s => s.id !== service.id)
+  const subServices = treeNode?.children ?? service.children ?? []
 
   return (
     <>
@@ -52,8 +48,14 @@ export default async function ServiceDetailPage({ params, searchParams }: Props)
       <section className="border-b border-border/60 bg-background">
         <div className={container("grid gap-10 py-20 lg:grid-cols-12")}>
           <div className="lg:col-span-5">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-secondary">
-              <Image src={service.imageUrl || "/placeholder.jpg"} alt={service.title} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
+            <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-secondary shadow-xs">
+              <Image
+                src={service.imageUrl || "/uploads/hero-project.jpg"}
+                alt={service.title}
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover"
+              />
             </div>
           </div>
           <div className="lg:col-span-7">
@@ -62,12 +64,12 @@ export default async function ServiceDetailPage({ params, searchParams }: Props)
         </div>
       </section>
 
-      {actualChildren.length > 0 && (
-        <section className="border-b border-border/60 bg-background">
-          <div className={container("py-16")}>
+      {subServices.length > 0 && (
+        <section className="border-b border-border/60 bg-secondary/20 py-16">
+          <div className={container()}>
             <div className="mb-10 max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Sub-Services
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+                <span className="rounded-md bg-primary/10 px-2.5 py-1">Sub-Services</span>
               </p>
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
                 {service.title} Services
@@ -75,7 +77,7 @@ export default async function ServiceDetailPage({ params, searchParams }: Props)
             </div>
             
             <div className="mt-8">
-              <ContentList items={actualChildren} basePath="/services" empty="No sub-services found." />
+              <ContentList items={subServices} basePath="/services" empty="No sub-services found." />
             </div>
           </div>
         </section>
@@ -83,9 +85,11 @@ export default async function ServiceDetailPage({ params, searchParams }: Props)
 
       <CtaBanner
         title="Discuss this service with our engineers"
-        description="Share your project scope and our team will respond with a tailored approach."
+        description="Share your project scope and our team will respond with a tailored approach and quotation."
         primaryHref="/contact"
         primaryLabel="Request a Quote"
+        secondaryHref={`https://wa.me/6282140074122?text=Halo%20PT%20Multi%20Daya%20Mitra,%20saya%20tertarik%20dengan%20layanan%20${encodeURIComponent(service.title)}`}
+        secondaryLabel="WhatsApp Hotline"
       />
     </>
   )

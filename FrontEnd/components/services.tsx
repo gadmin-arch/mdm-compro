@@ -1,4 +1,4 @@
-import { ArrowUpRight, BellRing, Cpu, Zap } from "lucide-react"
+import { Activity, ArrowUpRight, Cpu, Settings, Wrench, Zap } from "lucide-react"
 import Link from "next/link"
 import {
   Card,
@@ -11,40 +11,58 @@ import type { ContentNode } from "@/lib/cms"
 import { fallbackServices } from "@/lib/cms"
 import { container } from "@/lib/layout"
 
-const serviceDetails = {
-  "electrical-services": {
+const serviceDetails: Record<string, { icon: React.ElementType; items: string[] }> = {
+  "electrical-construction-installation": {
     icon: Zap,
     items: [
-      "Build & assembly",
-      "Installation & construction",
-      "Testing & commissioning",
-      "Predictive & preventive maintenance",
-      "Operation & maintenance",
-      "Electrical study, design & engineering",
+      "Substation & MV switchgear up to 36kV",
+      "LV Panels assembly (MDP, SDP, ATS & Sync)",
+      "MV & LV cable installation & termination",
+      "Star Delta, DOL & VSD control panels",
+      "Fire alarm system engineering & erection",
     ],
   },
-  "industrial-automation": {
+  "electrical-maintenance-service": {
+    icon: Wrench,
+    items: [
+      "Transformer oil treatment, BDV & DGA",
+      "MV cubicle & ACB secondary injection test",
+      "FLIR infrared thermography predictive audits",
+      "Capacitor bank & VSD maintenance",
+      "Annual Maintenance Contracts (AMC) with 24/7 SLA",
+    ],
+  },
+  "automation-solutions-services": {
     icon: Cpu,
     items: [
-      "HMI, SCADA & remote monitoring",
-      "PLC programming & integration",
-      "Design & engineering of control systems",
-      "Implementation & application",
-      "Reporting & data analytics",
-      "Process improvement & optimization",
+      "SCADA systems & centralized telemetry (xArrow)",
+      "Energy management systems (PME & ISO 50001)",
+      "PLC programming (Schneider, Siemens, Rockwell)",
+      "Variable speed drive (VSD) system tuning",
+      "Building Automation Systems (BAS)",
     ],
   },
-  "fire-alarm": {
-    icon: BellRing,
+  "inspection-testing-commissioning": {
+    icon: Activity,
     items: [
-      "Installation",
-      "Maintenance",
-      "Centralizing",
+      "Power quality analysis (Fluke 435-II Class A)",
+      "Partial discharge (PD scan) & ultrasonic inspection",
+      "Protection relay secondary injection (Omicron)",
+      "Power system study, arc flash & relay coordination",
+      "Earthing & grounding system audits",
+    ],
+  },
+  "mechanical-services-supplies": {
+    icon: Settings,
+    items: [
+      "Conveyor systems & magnetic metal separators",
+      "Sectional & high-speed industrial doors",
+      "Motor & generator winding insulation recoating",
+      "Dynamic rotor balancing & vibration analysis",
+      "Boiler HTO maintenance & pneumatic supplies",
     ],
   },
 }
-
-const primaryServiceSlugs = ["electrical-services", "fire-alarm", "industrial-automation"]
 
 type ServicesProps = {
   services?: ContentNode[]
@@ -52,10 +70,10 @@ type ServicesProps = {
 }
 
 const headingDefaults = {
-  eyebrow: "What we do",
-  title: "Three core services. One trusted partner.",
+  eyebrow: "Our Business Units",
+  title: "Integrated Electrical, Automation & Mechanical Solutions",
   description:
-    "From greenfield installation to long-term operation and maintenance, our certified engineers deliver high-quality solutions tailored to each plant and facility.",
+    "Delivering end-to-end engineering, testing, commissioning, maintenance, and lifecycle support for critical industrial assets across Indonesia.",
 }
 
 export function Services({ services = fallbackServices, props = {} }: ServicesProps) {
@@ -63,64 +81,64 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
   const eyebrow = typeof merged.eyebrow === "string" ? merged.eyebrow : ""
   const title = typeof merged.title === "string" ? merged.title : ""
   const description = typeof merged.description === "string" ? merged.description : ""
-  const sourceServices = primaryServiceSlugs
-    .map((slug) => services.find((service) => service.slug === slug))
-    .filter((service): service is ContentNode => Boolean(service))
-  const displayServices = sourceServices.length === primaryServiceSlugs.length ? sourceServices : services.slice(0, 3)
+
+  const displayServices = services && services.length > 0 ? services : fallbackServices
 
   return (
-    <section className="border-b border-border/60 bg-secondary/40">
-      <div className={container("py-20")}>
-        <div className="max-w-2xl">
+    <section className="border-b border-border/60 bg-secondary/30 py-20">
+      <div className={container()}>
+        <div className="max-w-3xl">
           {eyebrow && (
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              {eyebrow}
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+              <span className="rounded-md bg-primary/10 px-2.5 py-1">{eyebrow}</span>
             </p>
           )}
           {title && (
-            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
+            <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
               {title}
             </h2>
           )}
           {description && (
-            <p className="mt-4 text-base leading-relaxed text-muted-foreground">{description}</p>
+            <p className="mt-3 text-base leading-relaxed text-muted-foreground">{description}</p>
           )}
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {displayServices.map((service) => {
-            const detail = serviceDetails[service.slug as keyof typeof serviceDetails] ?? serviceDetails["electrical-services"]
+            const detail =
+              serviceDetails[service.slug] ??
+              serviceDetails["electrical-construction-installation"]
             const Icon = detail.icon
             return (
               <Card
                 key={service.id}
-                className="group relative overflow-hidden border-border/70 bg-card transition-shadow hover:shadow-md"
+                className="group relative flex flex-col justify-between overflow-hidden border-border/70 bg-card transition-all hover:border-primary/50 hover:shadow-md"
               >
                 <div
                   aria-hidden="true"
-                  className="absolute inset-x-0 top-0 h-1 bg-accent opacity-0 transition-opacity group-hover:opacity-100"
+                  className="absolute inset-x-0 top-0 h-1 bg-primary opacity-0 transition-opacity group-hover:opacity-100"
                 />
                 <CardHeader>
-                  <span className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <span className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <Icon className="h-5 w-5" />
                   </span>
-                  <CardTitle className="font-display text-xl">
+                  <CardTitle className="font-display text-xl leading-snug">
                     {service.title}
                   </CardTitle>
-                  <CardDescription className="text-sm leading-relaxed">
+                  <CardDescription className="text-sm leading-relaxed line-clamp-2">
                     {service.summary}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2.5 border-t border-border/70 pt-5">
+                <CardContent className="flex flex-col justify-between flex-1">
+                  <ul className="space-y-2 border-t border-border/70 pt-4">
                     {detail.items.map((item) => (
                       <li
                         key={item}
-                        className="flex items-start gap-2.5 text-sm leading-snug text-foreground"
+                        className="flex items-start gap-2 text-xs leading-relaxed text-foreground"
                       >
                         <span
                           aria-hidden="true"
-                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
+                          className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
                         />
                         <span>{item}</span>
                       </li>
@@ -128,10 +146,10 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
                   </ul>
                   <Link
                     href={`/services/${service.fullPath}`}
-                    className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors hover:text-primary"
+                    className="mt-6 inline-flex items-center gap-1.5 text-xs font-semibold text-primary transition-colors hover:underline"
                   >
-                    Read more
-                    <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                    Explore Service Details
+                    <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </Link>
                 </CardContent>
               </Card>

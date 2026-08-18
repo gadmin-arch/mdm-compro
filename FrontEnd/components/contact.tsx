@@ -33,6 +33,8 @@ export function Contact({ page }: { page?: PageContent | null }) {
   const generalEmail = String(content.email ?? "info@multidayamitra.co.id")
   const generalPhone = String(content.phone ?? "+62 31 592 1256")
   const generalFax = String(content.fax ?? "+62 31 591 7845")
+  const salesPhone = String(content.salesPhone ?? content.whatsappPhone ?? "+62 821-4007-4122")
+  const salesEmail = String(content.salesEmail ?? "sales@multidayamitra.co.id")
 
   const offices: Office[] = Array.isArray(content.offices)
     ? (content.offices as Office[])
@@ -46,40 +48,37 @@ export function Contact({ page }: { page?: PageContent | null }) {
           mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.6974775466453!2d112.77587847427672!3d-7.275217492731802!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fa6ab5480eb1%3A0xe54df63b8274305c!2sRuko%20Klampis%20Megah%20Surabaya!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
         },
         {
-          name: "Jakarta Branch Office",
-          address: "Gedung Buncit 36, Jl. Warung Jati Barat No. 36, Ragunan, Pasar Minggu, Jakarta Selatan 12550, Indonesia",
-          phone: "+62 21 3049 6101",
-          email: "info@multidayamitra.co.id",
-          mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.845345719391!2d106.82239457426868!3d-6.2840599937048745!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3d53fb7969f%3A0x6e9f16ef0e85d95e!2sGedung%20Buncit%2036!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
-        },
-        {
-          name: "Surabaya Operations Branch",
-          address: "Royal Park Residence Blok R No. 23, Gunung Anyar Tambak, Gunung Anyar, Surabaya 60294, Jawa Timur, Indonesia",
-          email: "info@multidayamitra.co.id"
+          name: "Engineering Office & Workshop",
+          address: "Ruko Jati Kepuh Indah F-26 & E-21, Sidoarjo 61271, East Java, Indonesia",
+          phone: "+62 821-4007-4122",
+          email: "sales@multidayamitra.co.id",
+          mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.4005934522964!2d112.72146907427909!3d-7.420845992589574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e42d7cd58117%3A0xc3fec86c4293f0b4!2sRuko%20Jati%20Kepuh%20Indah!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
         }
       ]
 
   const officesWithMap = offices.filter((o) => o.mapEmbedUrl)
   const [activeMapIndex, setActiveMapIndex] = useState(0)
 
+  const cleanSalesPhone = salesPhone.replace(/[^0-9]/g, "")
+
   const channels = [
     {
       icon: Phone,
-      title: "General Phone",
-      body: generalPhone,
-      href: `tel:${generalPhone.replace(/[^0-9+]/g, "")}`,
+      title: "WhatsApp / Sales Hotline",
+      body: salesPhone,
+      href: `https://wa.me/${cleanSalesPhone}?text=${encodeURIComponent("Halo PT Multi Daya Mitra, saya ingin konsultasi mengenai layanan/produk.")}`,
     },
     {
       icon: Mail,
-      title: "General Email",
+      title: "Sales & General Email",
       body: generalEmail,
       href: `mailto:${generalEmail}`,
     },
     {
       icon: Phone,
-      title: "General Fax",
-      body: generalFax,
-      href: null,
+      title: "Head Office Phone",
+      body: generalPhone,
+      href: `tel:${generalPhone.replace(/[^0-9+]/g, "")}`,
     },
     {
       icon: Globe,

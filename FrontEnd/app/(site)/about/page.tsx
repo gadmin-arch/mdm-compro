@@ -11,7 +11,7 @@ import { sectionsFromContent } from "@/lib/sections"
 export const metadata: Metadata = {
   title: "About — PT Multi Daya Mitra",
   description:
-    "Learn about PT Multi Daya Mitra — an Indonesian electrical, automation, and fire alarm services company founded in 2013 by experienced engineers.",
+    "Learn about PT Multi Daya Mitra — an Indonesian electrical, automation, and fire alarm services company founded in 2012 by experienced engineers.",
 }
 
 export default async function AboutPage() {
@@ -28,7 +28,7 @@ export default async function AboutPage() {
       <PageHero
         eyebrow="About Us"
         title="A team built for your most demanding electrical projects."
-        description="Founded in 2013 by seasoned engineers, PT Multi Daya Mitra has grown into one of East Java's largest electrical service partners — delivering across Indonesia and selected overseas assignments."
+        description="Founded in 2012 by seasoned engineers, PT Multi Daya Mitra has grown into one of East Java's largest electrical service partners — delivering across Indonesia and selected overseas assignments."
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "About" }]}
       />
       <About page={page} />

@@ -102,15 +102,39 @@ export function SiteSettingsForm({
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
               <label className="text-sm font-medium text-foreground" htmlFor="email">
-                Email
+                General Email
               </label>
               <Input className="mt-2" id="email" name="email" type="email" defaultValue={initial.email} />
             </div>
             <div>
               <label className="text-sm font-medium text-foreground" htmlFor="phone">
-                Phone
+                Office Phone
               </label>
               <Input className="mt-2" id="phone" name="phone" defaultValue={initial.phone} />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-foreground" htmlFor="salesPhone">
+                Sales Phone / WhatsApp (+62...)
+              </label>
+              <Input
+                className="mt-2"
+                id="salesPhone"
+                name="salesPhone"
+                defaultValue={initial.salesPhone ?? "+62 821-4007-4122"}
+                placeholder="+62 821-4007-4122"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-foreground" htmlFor="salesEmail">
+                Sales Email
+              </label>
+              <Input
+                className="mt-2"
+                id="salesEmail"
+                name="salesEmail"
+                type="email"
+                defaultValue={initial.salesEmail ?? "sales@multidayamitra.co.id"}
+              />
             </div>
             <div>
               <label className="text-sm font-medium text-foreground" htmlFor="fax">

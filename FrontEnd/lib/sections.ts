@@ -105,11 +105,11 @@ export const sectionDefs: SectionDef[] = [
       { kind: "textarea", name: "cardTitle", label: "Floating card text" },
     ],
     defaults: {
-      eyebrow: "Trusted partner since 2013",
+      eyebrow: "Trusted partner since 2012",
       title: "Powering industry with reliable electrical & automation services.",
       highlight: "reliable",
       description:
-        "PT Multi Daya Mitra delivers end-to-end electrical, industrial automation, and fire alarm solutions for power, oil & gas, manufacturing, and infrastructure projects across Indonesia and beyond.",
+        "PT Multi Daya Mitra delivers end-to-end electrical, industrial automation, and fire alarm solutions with 14+ years of engineering experience across Indonesia and beyond.",
       primaryLabel: "Start a Project",
       primaryHref: "/contact",
       secondaryLabel: "Explore Services",
@@ -117,9 +117,9 @@ export const sectionDefs: SectionDef[] = [
       imageUrl: "/uploads/hero-project.jpg",
       imageAlt: "Engineer inspecting medium voltage substation switchgear",
       stats: [
-        { label: "Established", value: "2013" },
-        { label: "Industries served", value: "10+" },
-        { label: "Certified team", value: "ISO" },
+        { label: "Established", value: "2012" },
+        { label: "Corporate Clients", value: "400+" },
+        { label: "Certified Team", value: "ISO & ESDM" },
       ],
       cardEyebrow: "Now offering",
       cardTitle: "Energy Monitoring System for Sustainability & ESG Reporting",
@@ -196,15 +196,15 @@ export const sectionDefs: SectionDef[] = [
       eyebrow: "About the company",
       title: "A team built for your most demanding electrical projects.",
       overview:
-        "Established in 2013, PT Multi Daya Mitra was founded by a group of seasoned engineers with deep expertise in electricity, industrial automation, fire alarm systems, and mechanical works.",
+        "Established in 2012, PT Multi Daya Mitra was founded by a group of seasoned engineers with deep expertise in electricity, industrial automation, fire alarm systems, and mechanical works.",
       body:
-        "We have grown into one of the largest electrical service partners in East Java — delivering projects across Indonesia and on selected overseas assignments. Our company culture of professional discipline drives every milestone, and we are certified to recognized quality management standards.",
+        "We have grown into one of the largest electrical service partners in East Java with over 400 clients and 200+ professionals — delivering projects across Indonesia and on selected overseas assignments. Our company culture of professional discipline drives every milestone, and we are certified to ISO 9001, ISO 14001, ISO 45001, Ecovadis Silver, and SMK3.",
       imageUrl: "/placeholder.jpg",
       imageAlt: "Industrial automation control room with engineers monitoring SCADA systems",
-      vision: "To become a global electrical, automation, and fire alarm services company.",
-      mission: "Build mutual partnerships and deliver every engagement with professional excellence.",
+      vision: "Global Electrical, Automation and Fire Alarm Services Company.",
+      mission: "Mutual Partnership and Professionalism in delivering every engineering engagement.",
       culture:
-        "A professional, fast-moving organization driven by certified engineers, structured processes, and a commitment to safety on every site we operate.",
+        "A professional, fast-moving organization driven by certified engineers (AK3 Listrik, AK3 Umum, AK3 Kebakaran), structured processes, and an uncompromising commitment to safety (Saya Pilih Selamat).",
     },
   },
   {
@@ -425,9 +425,9 @@ export const sectionDefs: SectionDef[] = [
       eyebrow: "",
       title: "",
       items: [
-        { value: "2013", label: "Established" },
-        { value: "120+", label: "Projects delivered" },
-        { value: "10+", label: "Industries served" },
+        { value: "2012", label: "Established" },
+        { value: "400+", label: "Corporate Clients" },
+        { value: "200+", label: "Engineers & Staff" },
       ],
     },
   },
@@ -731,7 +731,7 @@ export function aboutPresetSections(content: Record<string, unknown> = {}): Sect
     eyebrow: "About Us",
     title: "A team built for your most demanding electrical projects.",
     description:
-      "Founded in 2013 by seasoned engineers, PT Multi Daya Mitra has grown into one of East Java's largest electrical service partners — delivering across Indonesia and selected overseas assignments.",
+      "Founded in 2012 by seasoned engineers, PT Multi Daya Mitra has grown into one of East Java's largest electrical service partners — delivering across Indonesia and selected overseas assignments.",
   }
 
   // Carry over whatever the legacy about page already stored.
