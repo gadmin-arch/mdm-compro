@@ -839,9 +839,10 @@ export const fallbackSiteSettings: SiteSettings = {
   hotlinePhone: "+62 821-4007-4122",
   address: "Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, East Java, Indonesia",
   socials: [
-    { label: "WhatsApp Sales", url: "https://wa.me/6282140074122", platform: "whatsapp" },
+    { label: "Facebook", url: "https://www.facebook.com/multidayamitra/", platform: "facebook" },
+    { label: "Instagram", url: "https://www.instagram.com/multidayamitra/", platform: "instagram" },
     { label: "LinkedIn", url: "https://id.linkedin.com/company/pt-multi-daya-mitra", platform: "linkedin" },
-    { label: "Instagram", url: "https://www.instagram.com/multidayamitra/", platform: "instagram" }
+    { label: "WhatsApp Sales", url: "https://wa.me/6282140074122", platform: "whatsapp" },
   ],
 }
 

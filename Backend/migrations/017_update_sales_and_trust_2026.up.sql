@@ -17,8 +17,7 @@ SET value = jsonb_build_object(
         jsonb_build_object('platform', 'facebook',  'url', 'https://www.facebook.com/multidayamitra/', 'label', 'Facebook'),
         jsonb_build_object('platform', 'instagram', 'url', 'https://www.instagram.com/multidayamitra/', 'label', 'Instagram'),
         jsonb_build_object('platform', 'linkedin',  'url', 'https://id.linkedin.com/company/pt-multi-daya-mitra', 'label', 'LinkedIn'),
-        jsonb_build_object('platform', 'whatsapp',  'url', 'https://wa.me/6282140074122', 'label', 'WhatsApp Sales'),
-        jsonb_build_object('platform', 'whatsapp',  'url', 'https://wa.me/628118303250', 'label', 'WhatsApp Technical Support')
+        jsonb_build_object('platform', 'whatsapp',  'url', 'https://wa.me/6282140074122', 'label', 'WhatsApp Sales')
     ),
     'salesEmail', 'sales@multidayamitra.co.id',
     'salesPhone', '+62 821-4007-4122',
