@@ -352,7 +352,7 @@ export const fallbackServices: ContentNode[] = [
         fullPath: "mechanical-services-supplies/industrial-mechanical-supplies-services",
         title: "Conveyor Systems, Magnetic Separators & Industrial Supplies",
         summary: "Supply, installation, and servicing of conveyor lines, magnetic metal separators, sectional doors, and vacuum lifters.",
-        imageUrl: "/uploads/products-rittal-cooling.jpg",
+        imageUrl: "/uploads/mdm/construction-installation.jpg",
         status: "published",
         sortOrder: 1,
         depth: 1,

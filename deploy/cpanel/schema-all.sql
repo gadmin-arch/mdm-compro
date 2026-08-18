@@ -2666,7 +2666,7 @@ UPDATE services SET image_url = '/uploads/mdm/power-quality.jpg' WHERE slug = 'p
 UPDATE services SET image_url = '/uploads/mdm/partial-discharge.jpg' WHERE slug = 'partial-discharge-pd-scan';
 UPDATE services SET image_url = '/uploads/mdm/secondary-injector.jpg' WHERE slug = 'relay-protection-testing-commissioning';
 UPDATE services SET image_url = '/uploads/mdm/electrical-services.jpg' WHERE slug = 'mechanical-services-supplies';
-UPDATE services SET image_url = '/uploads/products-rittal-cooling.jpg' WHERE slug = 'industrial-mechanical-supplies-services';
+UPDATE services SET image_url = '/uploads/mdm/construction-installation.jpg' WHERE slug = 'industrial-mechanical-supplies-services';
 UPDATE services SET image_url = '/uploads/mdm/electrical-services.jpg' WHERE slug = 'motor-generator-servicing-overhaul';
 
 COMMIT;

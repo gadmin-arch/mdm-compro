@@ -433,7 +433,7 @@ UPDATE services SET
 WHERE slug = 'mechanical-services-supplies';
 
 UPDATE services SET
-  image_url = '/uploads/products-rittal-cooling.jpg'
+  image_url = '/uploads/mdm/construction-installation.jpg'
 WHERE slug = 'industrial-mechanical-supplies-services';
 
 UPDATE services SET
