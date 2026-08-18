@@ -382,7 +382,14 @@ function toActionError(error: unknown) {
   if (error instanceof AdminApiError) {
     return { ok: false as const, error }
   }
-  throw error
+  return {
+    ok: false as const,
+    error: new AdminApiError(
+      503,
+      error instanceof Error ? error.message : "The admin API is temporarily unreachable. Please try again in a few moments.",
+      "network_error",
+    ),
+  }
 }
 
 function errorCode(error: AdminApiError) {
@@ -399,7 +406,7 @@ function errorCode(error: AdminApiError) {
 function payloadError(error: unknown): SaveResult {
   if (error instanceof FieldValidationError) return { error: "validation", fields: error.fields }
   if (error instanceof AdminApiError) return { error: "upload_failed" }
-  throw error
+  return { error: "save_failed" }
 }
 
 const duplicateSlugFields = { slug: "This slug is already in use." }

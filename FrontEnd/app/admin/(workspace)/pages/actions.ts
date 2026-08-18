@@ -73,7 +73,14 @@ export async function createPageAction(formData: FormData): Promise<SaveResult |
       if (error instanceof AdminApiError) {
         return { ok: false as const, error }
       }
-      throw error
+      return {
+        ok: false as const,
+        error: new AdminApiError(
+          503,
+          error instanceof Error ? error.message : "The admin API is temporarily unreachable.",
+          "network_error",
+        ),
+      }
     })
 
   if (!result.ok) {
@@ -121,7 +128,14 @@ export async function updatePageAction(formData: FormData): Promise<SaveResult |
       if (error instanceof AdminApiError) {
         return { ok: false as const, error }
       }
-      throw error
+      return {
+        ok: false as const,
+        error: new AdminApiError(
+          503,
+          error instanceof Error ? error.message : "The admin API is temporarily unreachable.",
+          "network_error",
+        ),
+      }
     })
 
   if (!result.ok) {

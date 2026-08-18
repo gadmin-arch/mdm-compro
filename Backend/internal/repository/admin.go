@@ -334,13 +334,19 @@ func (r AdminRepository) ListPages(ctx context.Context, page, perPage int, searc
 	// page body, so skip shipping content — section-built pages can carry
 	// tens of KB each. PageByID still returns the full document.
 	rows, err := r.pool.Query(ctx, `
-		SELECT p.id::text, p.page_key, p.title, '{}'::jsonb AS content, p.status, p.published_at,
+		SELECT p.id::text, p.page_key, p.title, '{}'::jsonb AS content,
+		       CASE WHEN p.deleted_at IS NOT NULL THEN 'archived' ELSE p.status END AS status,
+		       p.published_at,
 		       COALESCE(s.title, ''), COALESCE(s.description, ''), COALESCE(s.canonical_url, ''), COALESCE(s.no_index, false),
 		       p.version, COUNT(*) OVER()
 		FROM pages p
 		LEFT JOIN seo_meta s ON s.entity_type = 'page' AND s.entity_id = p.id AND s.deleted_at IS NULL
-		WHERE p.deleted_at IS NULL
-		  AND ($3 = '' OR p.status = $3)
+		WHERE (
+		  CASE
+		    WHEN $3 = 'archived' THEN (p.status = 'archived' OR p.deleted_at IS NOT NULL)
+		    ELSE p.deleted_at IS NULL AND ($3 = '' OR p.status = $3)
+		  END
+		)
 		  AND ($4 = '' OR p.title ILIKE '%' || $4 || '%' OR p.page_key ILIKE '%' || $4 || '%')
 		ORDER BY p.updated_at DESC, p.title ASC
 		LIMIT $1 OFFSET $2
@@ -493,7 +499,9 @@ func (r AdminRepository) ListContent(ctx context.Context, table string, page, pe
 	page, perPage, offset := normalizePagination(page, perPage)
 	query := `
 		SELECT c.id::text, c.parent_id::text, c.slug, c.full_path, c.title, COALESCE(c.summary, ''), c.content,
-		       COALESCE(c.image_url, ''), c.gallery, c.status, c.published_at, c.sort_order, c.depth,
+		       COALESCE(c.image_url, ''), c.gallery,
+		       CASE WHEN c.deleted_at IS NOT NULL THEN 'archived' ELSE c.status END AS status,
+		       c.published_at, c.sort_order, c.depth,
 		       COALESCE(s.title, ''), COALESCE(s.description, ''), COALESCE(s.canonical_url, ''), COALESCE(s.no_index, false),
 		       c.version`
 	if cfg.hasProductFields {
@@ -504,8 +512,12 @@ func (r AdminRepository) ListContent(ctx context.Context, table string, page, pe
 	query += `, COUNT(*) OVER()
 		FROM ` + cfg.table + ` c
 		LEFT JOIN seo_meta s ON s.entity_type = $1 AND s.entity_id = c.id AND s.deleted_at IS NULL
-		WHERE c.deleted_at IS NULL
-		  AND ($4 = '' OR c.status = $4)
+		WHERE (
+		  CASE
+		    WHEN $4 = 'archived' THEN (c.status = 'archived' OR c.deleted_at IS NOT NULL)
+		    ELSE c.deleted_at IS NULL AND ($4 = '' OR c.status = $4)
+		  END
+		)
 		  AND ($5 = '' OR c.title ILIKE '%' || $5 || '%' OR c.slug ILIKE '%' || $5 || '%' OR c.full_path ILIKE '%' || $5 || '%')
 		ORDER BY c.sort_order ASC, c.updated_at DESC, c.title ASC
 		LIMIT $2 OFFSET $3`
@@ -760,14 +772,20 @@ func (r AdminRepository) ListNews(ctx context.Context, page, perPage int, search
 	page, perPage, offset := normalizePagination(page, perPage)
 	rows, err := r.pool.Query(ctx, `
 		SELECT n.id::text, n.slug, n.title, COALESCE(n.excerpt, ''), n.body, COALESCE(c.name, ''), COALESCE(n.featured_image_url, ''),
-		       n.featured, n.status, n.published_at, n.scheduled_at,
+		       n.featured,
+		       CASE WHEN n.deleted_at IS NOT NULL THEN 'archived' ELSE n.status END AS status,
+		       n.published_at, n.scheduled_at,
 		       COALESCE(s.title, ''), COALESCE(s.description, ''), COALESCE(s.canonical_url, ''), COALESCE(s.no_index, false),
 		       n.version, COUNT(*) OVER()
 		FROM news n
 		LEFT JOIN news_categories c ON c.id = n.category_id AND c.deleted_at IS NULL
 		LEFT JOIN seo_meta s ON s.entity_type = 'news' AND s.entity_id = n.id AND s.deleted_at IS NULL
-		WHERE n.deleted_at IS NULL
-		  AND ($3 = '' OR n.status = $3)
+		WHERE (
+		  CASE
+		    WHEN $3 = 'archived' THEN (n.status = 'archived' OR n.deleted_at IS NOT NULL)
+		    ELSE n.deleted_at IS NULL AND ($3 = '' OR n.status = $3)
+		  END
+		)
 		  AND ($4 = '' OR n.title ILIKE '%' || $4 || '%' OR n.slug ILIKE '%' || $4 || '%' OR n.excerpt ILIKE '%' || $4 || '%')
 		ORDER BY n.updated_at DESC, n.published_at DESC NULLS LAST, n.title ASC
 		LIMIT $1 OFFSET $2
@@ -920,10 +938,16 @@ func (r AdminRepository) ListCareers(ctx context.Context, page, perPage int, sea
 	page, perPage, offset := normalizePagination(page, perPage)
 	rows, err := r.pool.Query(ctx, `
 		SELECT id::text, slug, title, COALESCE(summary, ''), description, department, location, employment_type, COALESCE(apply_url, ''),
-		       deadline, status, published_at, version, COUNT(*) OVER()
+		       deadline,
+		       CASE WHEN deleted_at IS NOT NULL THEN 'archived' ELSE status END AS status,
+		       published_at, version, COUNT(*) OVER()
 		FROM careers
-		WHERE deleted_at IS NULL
-		  AND ($3 = '' OR status = $3)
+		WHERE (
+		  CASE
+		    WHEN $3 = 'archived' THEN (status = 'archived' OR deleted_at IS NOT NULL)
+		    ELSE deleted_at IS NULL AND ($3 = '' OR status = $3)
+		  END
+		)
 		  AND ($4 = '' OR title ILIKE '%' || $4 || '%' OR slug ILIKE '%' || $4 || '%' OR summary ILIKE '%' || $4 || '%' OR department ILIKE '%' || $4 || '%')
 		ORDER BY updated_at DESC, published_at DESC NULLS LAST, title ASC
 		LIMIT $1 OFFSET $2
