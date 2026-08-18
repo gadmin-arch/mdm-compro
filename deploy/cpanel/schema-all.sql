@@ -2629,7 +2629,7 @@ UPDATE products SET
   specs = '{"Rated Current (In)":"Up to 6,300 A (Ri4Power) / 2,100 A (RiLine)","Short-Circuit Rating (Icw)":"Up to 120 kA (1s withstand)","Internal Separation":"Form 1, Form 2b, Form 3b, Form 4a, Form 4b","Busbar Centers":"60 mm & 185 mm drill-free mounting systems","Standards":"IEC 61439-1, IEC 61439-2, DIN EN 61439"}'::jsonb
 WHERE slug = 'power-distribution';
 
-UPDATE products SET image_url = '/uploads/products-rittal-enclosures.jpg' WHERE slug = 'rittal-distributor';
+UPDATE products SET image_url = '/uploads/products-rittal.jpg' WHERE slug = 'rittal-distributor';
 UPDATE products SET image_url = '/uploads/products-schneider-automation.jpg' WHERE slug = 'schneider-integrator';
 UPDATE products SET image_url = '/uploads/mdm/circuit-breaker.jpg' WHERE slug = 'electrical-distribution';
 UPDATE products SET image_url = '/uploads/products-schneider-automation.jpg' WHERE slug = 'automation-control';

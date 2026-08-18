@@ -379,7 +379,7 @@ export const fallbackProducts: ContentNode[] = [
     fullPath: "rittal-distributor",
     title: "Rittal Authorized Distributor",
     summary: "Official Authorized Distributor for Rittal industrial enclosures, climate control & cooling, and power distribution systems.",
-    imageUrl: "/uploads/products-rittal-enclosures.jpg",
+    imageUrl: "/uploads/products-rittal.jpg",
     specs: { Partner: "Authorized Distributor", Brand: "Rittal", Origin: "Germany" },
     status: "published",
     sortOrder: 1,

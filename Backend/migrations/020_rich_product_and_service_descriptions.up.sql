@@ -341,7 +341,7 @@ UPDATE products SET
 WHERE slug = 'engineering-commissioning';
 
 -- 3. UPDATE PRODUCT CATEGORIES & PARTNERS ROOT
-UPDATE products SET image_url = '/uploads/products-rittal-enclosures.jpg' WHERE slug = 'rittal-distributor';
+UPDATE products SET image_url = '/uploads/products-rittal.jpg' WHERE slug = 'rittal-distributor';
 UPDATE products SET image_url = '/uploads/products-schneider-automation.jpg' WHERE slug = 'schneider-integrator';
 UPDATE products SET image_url = '/uploads/mdm/circuit-breaker.jpg' WHERE slug = 'electrical-distribution';
 UPDATE products SET image_url = '/uploads/products-schneider-automation.jpg' WHERE slug = 'automation-control';
