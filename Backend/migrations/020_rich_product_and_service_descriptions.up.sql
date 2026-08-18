@@ -340,30 +340,20 @@ UPDATE products SET
   }'::jsonb
 WHERE slug = 'engineering-commissioning';
 
--- 3. UPDATE PRODUCT CATEGORIES
-UPDATE products SET
-  image_url = '/uploads/mdm/active-harmonic-filter.jpg'
-WHERE slug = 'active-harmonic-filters';
-
-UPDATE products SET
-  image_url = '/uploads/PM-Fire-Alarm-1.jpg'
-WHERE slug = 'addressable-fire-alarm-systems';
-
-UPDATE products SET
-  image_url = '/uploads/mdm/circuit-breaker.jpg'
-WHERE slug = 'low-voltage-distribution-panels';
-
-UPDATE products SET
-  image_url = '/uploads/mdm/medium-voltage-equipment.jpg'
-WHERE slug = 'medium-voltage-substation';
-
-UPDATE products SET
-  image_url = '/uploads/xarrow.jpg'
-WHERE slug = 'scada-xarrow-telemetry';
-
-UPDATE products SET
-  image_url = '/uploads/products-schneider-distribution.jpg'
-WHERE slug = 'vsd-inverter-panels';
+-- 3. UPDATE PRODUCT CATEGORIES & PARTNERS ROOT
+UPDATE products SET image_url = '/uploads/products-rittal-enclosures.jpg' WHERE slug = 'rittal-distributor';
+UPDATE products SET image_url = '/uploads/products-schneider-automation.jpg' WHERE slug = 'schneider-integrator';
+UPDATE products SET image_url = '/uploads/mdm/circuit-breaker.jpg' WHERE slug = 'electrical-distribution';
+UPDATE products SET image_url = '/uploads/products-schneider-automation.jpg' WHERE slug = 'automation-control';
+UPDATE products SET image_url = '/uploads/products-rittal-enclosures.jpg' WHERE slug = 'enclosure-climate-control';
+UPDATE products SET image_url = '/uploads/mdm/power-quality.jpg' WHERE slug = 'power-quality';
+UPDATE products SET image_url = '/uploads/PM-Fire-Alarm-1.jpg' WHERE slug = 'fire-alarm-products';
+UPDATE products SET image_url = '/uploads/mdm/active-harmonic-filter.jpg' WHERE slug = 'active-harmonic-filters';
+UPDATE products SET image_url = '/uploads/PM-Fire-Alarm-1.jpg' WHERE slug = 'addressable-fire-alarm-systems';
+UPDATE products SET image_url = '/uploads/mdm/circuit-breaker.jpg' WHERE slug = 'low-voltage-distribution-panels';
+UPDATE products SET image_url = '/uploads/mdm/medium-voltage-equipment.jpg' WHERE slug = 'medium-voltage-substation';
+UPDATE products SET image_url = '/uploads/xarrow.jpg' WHERE slug = 'scada-xarrow-telemetry';
+UPDATE products SET image_url = '/uploads/products-schneider-distribution.jpg' WHERE slug = 'vsd-inverter-panels';
 
 -- 4. UPDATE SERVICES WITH AUTHENTIC MDM PHOTOS
 UPDATE services SET
