@@ -13,7 +13,7 @@ const emptySubscribe = () => () => {}
 
 export function FloatingWhatsApp({
   phoneNumber = "+62 821-4007-4122",
-  defaultMessage = "Halo PT Multi Daya Mitra, saya ingin konsultasi mengenai layanan / produk.",
+  defaultMessage = "Hello PT Multi Daya Mitra, I would like to inquire about your engineering solutions and services.",
 }: FloatingWhatsAppProps) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
   const [showBadge, setShowBadge] = useState(true)
@@ -38,7 +38,7 @@ export function FloatingWhatsApp({
             rel="noopener noreferrer"
             className="text-xs font-semibold text-foreground hover:text-emerald-600 transition-colors"
           >
-            Chat Sales MDM <span className="text-muted-foreground font-normal">Online</span>
+            Chat with Sales <span className="text-muted-foreground font-normal">Online</span>
           </a>
           <button
             type="button"
@@ -46,8 +46,8 @@ export function FloatingWhatsApp({
               e.preventDefault()
               setShowBadge(false)
             }}
-            className="ml-1 text-muted-foreground hover:text-foreground rounded-full p-0.5"
-            aria-label="Tutup notifikasi chat"
+            className="ml-1 text-muted-foreground hover:text-foreground rounded-full p-0.5 cursor-pointer"
+            aria-label="Close notification"
           >
             <X className="h-3 w-3" />
           </button>
@@ -58,7 +58,7 @@ export function FloatingWhatsApp({
         href={waUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Hubungi Sales PT Multi Daya Mitra via WhatsApp"
+        aria-label="Contact PT Multi Daya Mitra Sales via WhatsApp"
         className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-emerald-950/20 transition-all duration-300 hover:scale-105 hover:bg-[#20bd5a] hover:shadow-2xl focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400"
       >
         <span

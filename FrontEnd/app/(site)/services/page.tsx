@@ -105,7 +105,7 @@ export default async function ServicesPage({ searchParams }: Props) {
         description="Share your plant or facility requirements and our engineering team will respond with scope, timeline, and execution plan."
         primaryHref="/contact"
         primaryLabel="Consult with Engineers"
-        secondaryHref="https://wa.me/6282140074122?text=Halo%20PT%20Multi%20Daya%20Mitra,%20saya%20ingin%20konsultasi%20mengenai%20layanan%20engineering/maintenance..."
+        secondaryHref="https://wa.me/6282140074122?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20would%20like%20to%20inquire%20about%20your%20engineering%20and%20maintenance%20services."
         secondaryLabel="WhatsApp Hotline"
       />
     </>

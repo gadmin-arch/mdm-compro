@@ -97,25 +97,25 @@ const targetIndustries = [
 const hsePillars = [
   {
     title: "PROTECT Every Person",
-    subtitle: "Keselamatan dimulai dari diri sendiri",
+    subtitle: "Safety begins with individual awareness",
     desc: "Comprehensive safety briefings, mandatory PPE compliance, and risk assessments before any field task begins.",
     icon: HardHat,
   },
   {
     title: "CARE For Each Other",
-    subtitle: "Peduli hari ini, melindungi masa depan",
+    subtitle: "Caring today, protecting the future",
     desc: "Proactive mutual oversight among team members on high-voltage and critical manufacturing sites.",
     icon: Shield,
   },
   {
     title: "COMMIT To Excellence",
-    subtitle: "Kerja aman adalah kerja profesional",
+    subtitle: "Safe execution defines professionalism",
     desc: "Adherence to national and international safety regulations without compromising quality or timeline.",
     icon: Award,
   },
   {
     title: "SUSTAIN For The Future",
-    subtitle: "Keselamatan adalah investasi keberlanjutan",
+    subtitle: "Safety is an investment in sustainability",
     desc: "Continuous safety training, incident prevention reporting, and sustainable environmental practices.",
     icon: Scale,
   },
@@ -127,18 +127,18 @@ const legalCertifications = [
   { title: "ISO 45001:2018", desc: "Occupational Health & Safety (KAN Accredited)", badge: "Safety" },
   { title: "Ecovadis Silver", desc: "Top 15% Global Sustainability Rating (Nov 2024)", badge: "ESG" },
   { title: "Avetta Member", desc: "Global Contractor Safety & Compliance Network", badge: "Compliance" },
-  { title: "SBUJTL & IUJPTL ESDM", desc: "Izin Usaha Jasa Penunjang Tenaga Listrik Resmi ESDM", badge: "License" },
-  { title: "Kompetensi Level 6 ESDM", desc: "Sertifikat Kompetensi Tegangan Menengah ESDM", badge: "Technical" },
-  { title: "SMK3 Kemenaker", desc: "Sistem Manajemen K3 Standar Kementerian Tenaga Kerja", badge: "HSE" },
+  { title: "SBUJTL & IUJPTL ESDM", desc: "Official Electrical Power Support Services License (ESDM)", badge: "License" },
+  { title: "Kompetensi Level 6 ESDM", desc: "Certified Medium-Voltage Technical Competency (ESDM)", badge: "Technical" },
+  { title: "SMK3 Kemenaker", desc: "National Occupational Safety & Health Management System", badge: "HSE" },
   { title: "NFPA Member", desc: "National Fire Protection Association Member", badge: "Fire System" },
   { title: "D&B Rating", desc: "Dun & Bradstreet Verified Corporate Credential", badge: "Corporate" },
 ]
 
 const licensedExperts = [
-  "Ahli K3 Listrik Kemnaker RI",
-  "Ahli K3 Umum Kemenaker",
-  "Ahli K3 Kebakaran (Tingkat A, B, C, D)",
-  "Tenaga Ahli Kompetensi Level 6 Tegangan Menengah ESDM",
+  "Certified Electrical Safety Specialist (K3 Listrik - Ministry of Manpower)",
+  "Certified General Occupational Safety Specialist (K3 Umum)",
+  "Certified Fire Protection Specialist (Class A, B, C, D)",
+  "ESDM Level 6 Certified Medium-Voltage Engineering Specialist",
   "Certified SCADA & Automation Engineers (Siemens / Schneider / Rockwell)",
   "Licensed High-Voltage & Medium-Voltage Termination Specialists",
 ]
@@ -406,10 +406,10 @@ export function About({ page }: { page?: PageContent | null }) {
                   HSE & Safety Commitment
                 </div>
                 <h3 className="mt-4 font-display text-2xl font-bold text-foreground">
-                  &ldquo;Saya Pilih Selamat&rdquo;
+                  &ldquo;I Choose Safety&rdquo;
                 </h3>
                 <p className="mt-1 text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                  Aman Sehat Setiap Saat · Think Safe, Work Safe, Go Home Safe
+                  Safe & Healthy at All Times · Think Safe, Work Safe, Go Home Safe
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                   Safety is non-negotiable. At PT Multi Daya Mitra, every engineer, technician, and subcontractor is empowered
@@ -466,10 +466,10 @@ export function About({ page }: { page?: PageContent | null }) {
               <span className="rounded-md bg-primary/10 px-2.5 py-1">Trust & Credentials</span>
             </p>
             <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Legalitas, Sertifikasi ISO & Kredensial Resmi
+              Legal Compliance, ISO Certifications & Official Credentials
             </h2>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-              Bukti kepatuhan dan keandalan resmi untuk mendukung proses kualifikasi tender dan kepatuhan vendor industri.
+              Documented compliance, safety accreditations, and official licensing supporting industrial vendor qualification and tender audits.
             </p>
           </div>
 
@@ -503,13 +503,12 @@ export function About({ page }: { page?: PageContent | null }) {
                     <Users className="h-6 w-6" />
                   </span>
                   <div>
-                    <h3 className="font-display text-lg font-bold text-foreground">Tenaga Ahli Bersertifikat</h3>
+                    <h3 className="font-display text-lg font-bold text-foreground">Certified Engineering Team</h3>
                     <p className="text-xs text-muted-foreground">Competent & Licensed Workforce</p>
                   </div>
                 </div>
                 <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                  Seluruh pekerjaan lapangan dikomandoi oleh tenaga ahli tersertifikasi dengan lisensi resmi dari Kemenaker RI,
-                  Kementerian ESDM, dan principal otomasi global.
+                  All field operations and site assessments are led by licensed engineering specialists certified by the Ministry of Manpower, Ministry of Energy and Mineral Resources (ESDM), and global automation principals.
                 </p>
               </div>
 
@@ -540,11 +539,10 @@ export function About({ page }: { page?: PageContent | null }) {
                 <span className="rounded-md bg-primary/10 px-2.5 py-1">Equipment Fleet</span>
               </p>
               <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                Alat Uji Canggih & Testing Fleet Terkalibrasi
+                Advanced Testing Fleet & Calibrated Instrumentation
               </h2>
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                Kami berinvestasi pada instrumen uji mandiri berstandar internasional untuk memastikan diagnosa akurat, komisioning
-                presisi, dan keselamatan maksimal.
+                We invest in calibrated, international-grade diagnostic equipment to ensure accurate measurements, rigorous commissioning, and maximum operational safety.
               </p>
             </div>
           </div>
@@ -593,7 +591,7 @@ export function About({ page }: { page?: PageContent | null }) {
               Our Offices & Workshop
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Hubungi kantor pusat atau workshop kami untuk kebutuhan darurat, koordinasi proyek, dan assessment site.
+              Contact our headquarters or engineering workshop for project coordination, site assessments, and emergency support.
             </p>
           </div>
 

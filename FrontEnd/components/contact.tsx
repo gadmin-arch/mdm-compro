@@ -64,7 +64,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
       icon: Phone,
       title: "WhatsApp / Sales Hotline",
       body: salesPhone,
-      href: `https://wa.me/${cleanSalesPhone}?text=${encodeURIComponent("Halo PT Multi Daya Mitra, saya ingin konsultasi mengenai layanan/produk.")}`,
+      href: `https://wa.me/${cleanSalesPhone}?text=${encodeURIComponent("Hello PT Multi Daya Mitra, I would like to inquire about your engineering solutions and services.")}`,
     },
     {
       icon: Mail,
