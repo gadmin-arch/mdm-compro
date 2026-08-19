@@ -45,13 +45,17 @@ export default async function NewsPage({ searchParams }: Props) {
     new Map(
       allNews.data
         .filter((item) => item.category?.trim())
-        .map((item) => [
-          item.category!.trim().toLowerCase().replace(/\s+/g, "-"),
-          {
-            label: item.category!.trim(),
-            value: item.category!.trim().toLowerCase().replace(/\s+/g, "-"),
-          },
-        ]),
+        .map((item) => {
+          const cat = item.category!.trim()
+          const val = cat.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
+          return [
+            val,
+            {
+              label: cat,
+              value: val,
+            },
+          ]
+        }),
     ).values(),
   )
 
@@ -87,6 +91,7 @@ export default async function NewsPage({ searchParams }: Props) {
         />
       </div>
       <NewsList 
+        key={`${search}-${category}-${sort}-${featured ? "1" : "0"}-${publishedDate}-${page}`}
         initialNews={news} 
         searchParams={{ search, category, sort, featured, publishedDate }} 
       />

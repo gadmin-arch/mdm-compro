@@ -1007,15 +1007,23 @@ export async function getProduct(path: string) {
 }
 
 function normalizeFilterValue(value: string) {
-  return value.trim().toLowerCase().replace(/\s+/g, "-")
+  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
 }
 
 function newsMatchesCategory(item: NewsItem, category: string) {
   if (!item.category) return false
   const current = item.category.trim().toLowerCase()
-  const normalized = normalizeFilterValue(item.category)
+  const normalizedItem = normalizeFilterValue(item.category)
+  const normalizedCategory = normalizeFilterValue(category)
   const requested = category.trim().toLowerCase()
-  return current === requested || normalized === requested
+  return (
+    current === requested ||
+    normalizedItem === normalizedCategory ||
+    normalizedItem === requested ||
+    current === normalizedCategory ||
+    normalizedItem.includes(normalizedCategory) ||
+    normalizedCategory.includes(normalizedItem)
+  )
 }
 
 function createNewsFallback(filters?: NewsFilters): ListResponse<NewsItem> {

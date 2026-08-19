@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowUpRight, CalendarDays, Clock, Loader2 } from "lucide-react"
@@ -25,6 +25,10 @@ type NewsListProps = {
 export function NewsList({ initialNews = fallbackNews, searchParams = {} }: NewsListProps) {
   const [news, setNews] = useState<ListResponse<NewsItem>>(initialNews)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    setNews(initialNews)
+  }, [initialNews])
 
   const featured = news.data.find((n) => n.featured) ?? news.data[0]
   const rest = news.data.filter((n) => n.slug !== featured?.slug)
