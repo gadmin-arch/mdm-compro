@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowUpRight, CalendarDays, Clock, Loader2 } from "lucide-react"
@@ -23,26 +23,22 @@ type NewsListProps = {
 }
 
 export function NewsList({ initialNews = fallbackNews, searchParams = {} }: NewsListProps) {
-  const [news, setNews] = useState<ListResponse<NewsItem>>(initialNews)
+  const [extraNews, setExtraNews] = useState<NewsItem[]>([])
+  const [currentPage, setCurrentPage] = useState(initialNews.pagination.page)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    setNews(initialNews)
-  }, [initialNews])
-
-  const featured = news.data.find((n) => n.featured) ?? news.data[0]
-  const rest = news.data.filter((n) => n.slug !== featured?.slug)
-  const hasMore = news.pagination.page < news.pagination.totalPages
+  const allItems = [...initialNews.data, ...extraNews]
+  const featured = allItems.find((n) => n.featured) ?? allItems[0]
+  const rest = allItems.filter((n) => n.slug !== featured?.slug)
+  const hasMore = currentPage < initialNews.pagination.totalPages
 
   const handleLoadMore = async () => {
     if (loading || !hasMore) return
     setLoading(true)
     try {
-      const next = await fetchNewsAction({ ...searchParams, page: news.pagination.page + 1 })
-      setNews((prev) => ({
-        data: [...prev.data, ...next.data],
-        pagination: next.pagination,
-      }))
+      const next = await fetchNewsAction({ ...searchParams, page: currentPage + 1 })
+      setExtraNews((prev) => [...prev, ...next.data])
+      setCurrentPage(next.pagination.page)
     } catch (error) {
       console.error("Failed to load more news:", error)
     } finally {
@@ -115,7 +111,7 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
               Latest articles
             </h2>
             <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-              {news.pagination.total} posts
+              {initialNews.pagination.total} posts
             </p>
           </div>
 

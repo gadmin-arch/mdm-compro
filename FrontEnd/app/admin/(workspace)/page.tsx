@@ -15,7 +15,6 @@ import {
 } from "lucide-react"
 import { AdminPageHeader } from "@/components/admin/admin-page-header"
 import { KpiCard } from "@/components/admin/kpi-card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   AdminApiError,

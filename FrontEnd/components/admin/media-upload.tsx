@@ -5,7 +5,6 @@ import {
   AlertCircle,
   Check,
   Copy,
-  Download,
   ExternalLink,
   FileText,
   Image as ImageIcon,
@@ -14,7 +13,6 @@ import {
   RefreshCw,
   Trash2,
   Upload,
-  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

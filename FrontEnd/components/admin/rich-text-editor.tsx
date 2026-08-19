@@ -6,7 +6,6 @@ import StarterKit from "@tiptap/starter-kit"
 import Image from "@tiptap/extension-image"
 import {
   Bold,
-  Check,
   Heading2,
   Heading3,
   ImagePlus,

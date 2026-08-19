@@ -1,23 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { MessageCircle, X } from "lucide-react"
+import { useState, useSyncExternalStore } from "react"
+import { X } from "lucide-react"
 
 type FloatingWhatsAppProps = {
   phoneNumber?: string
   defaultMessage?: string
 }
 
+const emptySubscribe = () => () => {}
+
 export function FloatingWhatsApp({
   phoneNumber = "+62 821-4007-4122",
   defaultMessage = "Halo PT Multi Daya Mitra, saya ingin konsultasi mengenai layanan / produk.",
 }: FloatingWhatsAppProps) {
-  const [mounted, setMounted] = useState(false)
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
   const [showBadge, setShowBadge] = useState(true)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   if (!mounted) return null
 

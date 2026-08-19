@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState, useSyncExternalStore } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
@@ -279,31 +279,31 @@ function SidebarFooter({
   )
 }
 
+function getSidebarCollapsedSnapshot() {
+  try {
+    return localStorage.getItem("mdm_admin_sidebar_collapsed") === "true"
+  } catch {
+    return false
+  }
+}
+
+const emptySidebarSubscribe = () => () => {}
+
 export function AdminNavSidebar({ user }: { user?: AdminUser | null }) {
-  const [collapsed, setCollapsed] = useState(false)
+  const isClient = useSyncExternalStore(emptySidebarSubscribe, () => true, () => false)
+  const [collapsedState, setCollapsedState] = useState<boolean | null>(null)
   const role = user?.role || "user"
 
-  useEffect(() => {
+  const collapsed = collapsedState ?? (isClient ? getSidebarCollapsedSnapshot() : false)
+
+  const toggleCollapsed = () => {
+    const next = !collapsed
+    setCollapsedState(next)
     try {
-      const saved = localStorage.getItem("mdm_admin_sidebar_collapsed")
-      if (saved !== null) {
-        setCollapsed(saved === "true")
-      }
+      localStorage.setItem("mdm_admin_sidebar_collapsed", String(next))
     } catch {
       // Ignore localStorage errors
     }
-  }, [])
-
-  const toggleCollapsed = () => {
-    setCollapsed((prev) => {
-      const next = !prev
-      try {
-        localStorage.setItem("mdm_admin_sidebar_collapsed", String(next))
-      } catch {
-        // Ignore localStorage errors
-      }
-      return next
-    })
   }
 
   return (

@@ -8,6 +8,7 @@ import { ResourceToolbar } from "@/components/admin/resource-toolbar"
 import { AdminResourceTable } from "@/components/admin/resource-table"
 import { AdminApiError, adminFetch, type AdminCareersResponse } from "@/lib/admin-api"
 import { deleteCareerAction } from "../content-actions"
+import { isCareerClosed } from "@/lib/cms"
 
 export default async function AdminCareersPage({
   searchParams,
@@ -54,7 +55,7 @@ export default async function AdminCareersPage({
         empty="No careers found."
         publicBasePath="/career"
         rows={(response?.data ?? []).map((item) => {
-          const isExpired = item.deadline && new Date(item.deadline).getTime() < Date.now()
+          const isExpired = isCareerClosed(item)
           const deadlineText = item.deadline
             ? `Deadline: ${new Date(item.deadline).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" })}`
             : null

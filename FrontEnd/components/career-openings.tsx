@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowUpRight, Briefcase, CalendarDays, CheckCircle2, Clock, MapPin, XCircle } from "lucide-react"
+import { ArrowUpRight, Briefcase, CalendarDays, MapPin, XCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Career } from "@/lib/cms"

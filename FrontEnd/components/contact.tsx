@@ -32,9 +32,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
   const content = page?.content ?? {}
   const generalEmail = String(content.email ?? "info@multidayamitra.co.id")
   const generalPhone = String(content.phone ?? "+62 31 592 1256")
-  const generalFax = String(content.fax ?? "+62 31 591 7845")
   const salesPhone = String(content.salesPhone ?? content.whatsappPhone ?? "+62 821-4007-4122")
-  const salesEmail = String(content.salesEmail ?? "sales@multidayamitra.co.id")
 
   const offices: Office[] = Array.isArray(content.offices)
     ? (content.offices as Office[])

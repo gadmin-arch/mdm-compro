@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
-import { ChevronDown, Plus, Save } from "lucide-react"
+import { ChevronDown, Save } from "lucide-react"
 import { MediaUpload } from "@/components/admin/media-upload"
 import { SaveErrorBanner, useSaveAction } from "@/components/admin/save-state"
 import {

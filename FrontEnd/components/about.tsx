@@ -14,7 +14,6 @@ import {
   Lightbulb,
   Mail,
   MapPin,
-  Milk,
   Phone,
   Pill,
   Scale,
