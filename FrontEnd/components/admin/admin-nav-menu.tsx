@@ -142,10 +142,10 @@ export function AdminNavItems({
                   className={cn(
                     "group relative flex items-center transition-all duration-150",
                     collapsed
-                      ? "h-10 w-11 justify-center rounded-2xl mx-auto"
-                      : "gap-3 rounded-2xl px-3.5 py-2.5 text-xs font-bold",
+                      ? "h-10 w-11 justify-center rounded-xl mx-auto"
+                      : "gap-3 rounded-xl px-3.5 py-2.5 text-xs font-bold",
                     active
-                      ? "bg-[#0c1427] text-white shadow-xs dark:bg-[#0c1427] dark:text-white"
+                      ? "bg-sky-50 text-sky-950 border border-sky-200/70 shadow-2xs dark:bg-[#0c1427] dark:text-white dark:border-sky-900/40"
                       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-100",
                   )}
                 >
@@ -154,7 +154,7 @@ export function AdminNavItems({
                       "shrink-0 transition-colors",
                       collapsed ? "h-5 w-5" : "h-4.5 w-4.5",
                       active
-                        ? "text-[#00a8ff] stroke-[2.25]"
+                        ? "text-sky-600 dark:text-[#00a8ff] stroke-[2.25]"
                         : "text-slate-400 stroke-[1.75] group-hover:text-slate-700 dark:text-slate-500 dark:group-hover:text-slate-200",
                     )}
                   />
@@ -189,13 +189,13 @@ function SidebarBrand({ collapsed }: { collapsed: boolean }) {
         collapsed ? "justify-center py-3.5" : "gap-3 px-4 py-3.5",
       )}
     >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0c1427] text-white shadow-xs transition-transform group-hover:scale-105 dark:bg-[#0c1427]">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 bg-slate-100 shadow-2xs transition-all group-hover:scale-105 dark:border-slate-700/60 dark:bg-slate-800">
         <Image
           src="/Logo PT MDM.png"
           alt="PT Multi Daya Mitra"
-          width={30}
-          height={30}
-          className="h-6 w-auto object-contain"
+          width={28}
+          height={28}
+          className="h-5.5 w-auto object-contain"
         />
       </span>
       {!collapsed && (

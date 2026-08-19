@@ -60,8 +60,8 @@ export function AdminBottomNav({ user }: { user?: AdminUser | null }) {
           >
             <span
               className={cn(
-                "flex items-center justify-center rounded-2xl px-3.5 py-1 transition-all",
-                current && "bg-[#0c1427] text-[#00a8ff] shadow-xs",
+                "flex items-center justify-center rounded-xl px-3.5 py-1 transition-all",
+                current && "bg-sky-100/80 text-sky-700 dark:bg-[#0c1427] dark:text-[#00a8ff] shadow-2xs",
               )}
             >
               <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
