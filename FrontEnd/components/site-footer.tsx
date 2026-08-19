@@ -3,6 +3,7 @@ import Image from "next/image"
 import { Mail, MapPin, Phone } from "lucide-react"
 import { getSiteSettings } from "@/lib/cms"
 import { container } from "@/lib/layout"
+import { SocialButton } from "@/components/social-icons"
 
 const footerNav = [
   {
@@ -101,20 +102,14 @@ export async function SiteFooter() {
               )}
             </ul>
             {settings.socials.length > 0 && (
-              <ul className="mt-5 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap items-center gap-2.5">
                 {settings.socials.map((social) => (
-                  <li key={`${social.label}-${social.url}`}>
-                    <a
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
-                    >
-                      {social.label}
-                    </a>
-                  </li>
+                  <SocialButton
+                    key={`${social.label}-${social.url}`}
+                    social={social}
+                  />
                 ))}
-              </ul>
+              </div>
             )}
           </div>
 
