@@ -755,7 +755,7 @@ export async function getAnalyticsConfig(): Promise<AnalyticsPublicConfig> {
   return cmsFetch<AnalyticsPublicConfig>(
     "/analytics/config",
     { enabled: false, ignoreAdmins: true, respectDnt: true, trackVitals: false, trackEvents: false },
-    60,
+    86400,
   )
 }
 
@@ -766,7 +766,7 @@ export async function getAnalyticsConfig(): Promise<AnalyticsPublicConfig> {
 // (and still populates the data cache for the next request).
 const CMS_FETCH_TIMEOUT_MS = 3000
 
-export async function cmsFetch<T>(path: string, fallback: T, revalidate = 300): Promise<T> {
+export async function cmsFetch<T>(path: string, fallback: T, revalidate = 86400): Promise<T> {
   try {
     // Promise.race instead of AbortSignal so the fetch options stay untouched
     // and ISR caching (next.revalidate + tags) keeps working as-is.
@@ -786,7 +786,7 @@ export async function cmsFetch<T>(path: string, fallback: T, revalidate = 300): 
   }
 }
 
-async function cmsListFetch<T>(path: string, fallback: ListResponse<T>, revalidate = 300): Promise<ListResponse<T>> {
+async function cmsListFetch<T>(path: string, fallback: ListResponse<T>, revalidate = 86400): Promise<ListResponse<T>> {
   const response = await cmsFetch<ListResponse<T>>(path, fallback, revalidate)
   const data = Array.isArray(response?.data) ? response.data : []
   const pagination = response?.pagination ?? fallback.pagination

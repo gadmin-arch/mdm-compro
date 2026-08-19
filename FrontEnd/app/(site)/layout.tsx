@@ -5,6 +5,8 @@ import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { getAnalyticsConfig, getSiteSettings } from "@/lib/cms"
 
+export const revalidate = 86400
+
 export default async function SiteLayout({ children }: { children: ReactNode }) {
   // Feature-flagged server-side: when analytics is off, zero tracker code
   // reaches the browser.
