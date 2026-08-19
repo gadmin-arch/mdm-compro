@@ -110,15 +110,21 @@ export function AdminNavItems({
   const pathname = usePathname()
 
   return (
-    <nav className="flex flex-col gap-4 px-2.5">
-      {NAV_GROUPS.map((group) => {
+    <nav className="flex flex-col gap-3 px-2">
+      {NAV_GROUPS.map((group, groupIdx) => {
         const visibleItems = group.items.filter((item) => item.roles.includes(role))
         if (visibleItems.length === 0) return null
 
         return (
           <div key={group.label} className="flex flex-col gap-1">
-            {!collapsed && (
-              <p className="px-2.5 pb-1 pt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
+            {collapsed ? (
+              groupIdx > 0 && (
+                <div className="my-1.5 flex justify-center">
+                  <span className="h-px w-6 bg-slate-200/70 dark:bg-slate-800" />
+                </div>
+              )
+            ) : (
+              <p className="px-3 pb-1 pt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
                 {group.label}
               </p>
             )}
@@ -134,19 +140,22 @@ export function AdminNavItems({
                   onClick={onNavigate}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "group relative flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-bold transition-all duration-150",
-                    collapsed && "justify-center px-0",
+                    "group relative flex items-center transition-all duration-150",
+                    collapsed
+                      ? "h-10 w-11 justify-center rounded-2xl mx-auto"
+                      : "gap-3 rounded-2xl px-3.5 py-2.5 text-xs font-bold",
                     active
-                      ? "bg-slate-900 text-white shadow-xs dark:bg-slate-100 dark:text-slate-900"
+                      ? "bg-[#0c1427] text-white shadow-xs dark:bg-[#0c1427] dark:text-white"
                       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-100",
                   )}
                 >
                   <Icon
                     className={cn(
-                      "h-4 w-4 shrink-0 transition-colors",
+                      "shrink-0 transition-colors",
+                      collapsed ? "h-5 w-5" : "h-4.5 w-4.5",
                       active
-                        ? "text-sky-400 dark:text-sky-600"
-                        : "text-slate-400 group-hover:text-slate-700 dark:text-slate-500 dark:group-hover:text-slate-200",
+                        ? "text-[#00a8ff] stroke-[2.25]"
+                        : "text-slate-400 stroke-[1.75] group-hover:text-slate-700 dark:text-slate-500 dark:group-hover:text-slate-200",
                     )}
                   />
                   {!collapsed && <span className="truncate">{item.label}</span>}
@@ -173,14 +182,20 @@ export function AdminNavItems({
 
 function SidebarBrand({ collapsed }: { collapsed: boolean }) {
   return (
-    <Link href="/admin" className="flex items-center gap-2.5 px-4 py-4 group">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-xs transition-colors group-hover:bg-sky-600 dark:bg-slate-800 dark:group-hover:bg-sky-500">
+    <Link
+      href="/admin"
+      className={cn(
+        "flex items-center group transition-colors",
+        collapsed ? "justify-center py-3.5" : "gap-3 px-4 py-3.5",
+      )}
+    >
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0c1427] text-white shadow-xs transition-transform group-hover:scale-105 dark:bg-[#0c1427]">
         <Image
           src="/Logo PT MDM.png"
           alt="PT Multi Daya Mitra"
-          width={28}
-          height={28}
-          className="h-5.5 w-auto object-contain"
+          width={30}
+          height={30}
+          className="h-6 w-auto object-contain"
         />
       </span>
       {!collapsed && (
@@ -209,7 +224,7 @@ function SidebarFooter({
   const role = user?.role || "user"
 
   return (
-    <div className="mt-auto flex flex-col gap-2 px-3 pb-3">
+    <div className="mt-auto flex flex-col gap-2 px-2.5 pb-2.5">
       <Separator className="my-1" />
 
       {/* View Website Link */}
@@ -218,8 +233,8 @@ function SidebarFooter({
         target="_blank"
         rel="noreferrer"
         className={cn(
-          "flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-100",
-          collapsed && "justify-center px-0",
+          "flex items-center rounded-2xl text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-100",
+          collapsed ? "h-10 w-11 justify-center mx-auto" : "gap-2.5 px-3 py-2",
         )}
         title="View live website"
       >

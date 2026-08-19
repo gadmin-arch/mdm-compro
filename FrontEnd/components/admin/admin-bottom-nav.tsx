@@ -55,13 +55,13 @@ export function AdminBottomNav({ user }: { user?: AdminUser | null }) {
             aria-current={current ? "page" : undefined}
             className={cn(
               "flex min-h-11 flex-1 select-none flex-col items-center justify-center py-1 text-[10px] font-medium transition-colors",
-              current ? "font-semibold text-primary" : "text-muted-foreground hover:text-foreground",
+              current ? "font-bold text-slate-900 dark:text-slate-100" : "text-muted-foreground hover:text-foreground",
             )}
           >
             <span
               className={cn(
-                "flex items-center justify-center rounded-full px-3.5 py-1 transition-colors",
-                current && "bg-primary/10 text-primary",
+                "flex items-center justify-center rounded-2xl px-3.5 py-1 transition-all",
+                current && "bg-[#0c1427] text-[#00a8ff] shadow-xs",
               )}
             >
               <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />

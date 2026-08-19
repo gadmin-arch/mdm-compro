@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
-import { Save } from "lucide-react"
+import { ChevronDown, Plus, Save } from "lucide-react"
 import { MediaUpload } from "@/components/admin/media-upload"
 import { SaveErrorBanner, useSaveAction } from "@/components/admin/save-state"
 import {
@@ -263,9 +263,9 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
           <Field label="Title" name="title" required defaultValue={item?.title} error={fields?.title} />
           <Field label="Slug" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
         </div>
-        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px]">
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_260px]">
           <Field label="Excerpt" name="excerpt" defaultValue={item?.excerpt} error={fields?.excerpt} />
-          <Field label="Category" name="category" defaultValue={item?.category} error={fields?.category} />
+          <NewsCategoryField defaultValue={item?.category} error={fields?.category} />
         </div>
         <RichTextField label="Body Content" name="bodyHtml" defaultValue={htmlFromBlocks(item?.body)} />
         <MediaUpload
@@ -590,6 +590,96 @@ function TextAreaField({
   )
 }
 
+function NewsCategoryField({ defaultValue = "", error }: { defaultValue?: string; error?: string }) {
+  const isDefaultInList = defaultNewsCategories.includes(defaultValue)
+  const [isCustom, setIsCustom] = useState(!isDefaultInList && Boolean(defaultValue))
+  const [selected, setSelected] = useState(isDefaultInList ? defaultValue : defaultValue ? "__custom__" : defaultNewsCategories[0])
+  const [customValue, setCustomValue] = useState(isDefaultInList ? "" : defaultValue)
+
+  const handleSelectChange = (val: string) => {
+    if (val === "__custom__") {
+      setIsCustom(true)
+      setSelected("__custom__")
+    } else {
+      setIsCustom(false)
+      setSelected(val)
+      setCustomValue("")
+    }
+  }
+
+  const finalValue = isCustom ? customValue : selected
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor="category_select">
+          Category
+        </label>
+        <button
+          type="button"
+          onClick={() => {
+            if (isCustom) {
+              setIsCustom(false)
+              setSelected(defaultNewsCategories[0])
+            } else {
+              setIsCustom(true)
+              setSelected("__custom__")
+            }
+          }}
+          className="text-[11px] font-semibold text-sky-600 hover:text-sky-700 dark:text-sky-400 cursor-pointer"
+        >
+          {isCustom ? "Pilih dari daftar" : "+ Kustom"}
+        </button>
+      </div>
+
+      <input type="hidden" name="category" value={finalValue} />
+
+      {isCustom ? (
+        <Input
+          placeholder="Ketik nama kategori..."
+          value={customValue}
+          onChange={(e) => setCustomValue(e.target.value)}
+          className="bg-background text-xs"
+          autoFocus
+        />
+      ) : (
+        <div className="relative flex items-center">
+          <select
+            id="category_select"
+            value={selected}
+            onChange={(e) => handleSelectChange(e.target.value)}
+            className="h-9 w-full appearance-none rounded-lg border border-slate-200/80 bg-white dark:bg-[#0f172a] dark:border-slate-800 px-3 pr-8 text-xs font-medium text-slate-900 dark:text-slate-100 shadow-2xs outline-none transition-colors hover:border-slate-300 dark:hover:border-slate-700 focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/20 cursor-pointer"
+          >
+            {defaultNewsCategories.map((cat) => (
+              <option key={cat} value={cat} className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">
+                {cat}
+              </option>
+            ))}
+            <option value="__custom__" className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">
+              + Kustom (Ketik Sendiri)...
+            </option>
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+        </div>
+      )}
+
+      <FieldError id="category-error" message={error} />
+    </div>
+  )
+}
+
+const defaultNewsCategories = [
+  "Company News",
+  "Projects & Commissioning",
+  "Product & Technology",
+  "Press Release",
+  "CSR & Sustainability",
+  "Events & Exhibitions",
+  "Awards & Achievements",
+  "Industry Insights",
+  "General",
+]
+
 function SelectField({
   label,
   name,
@@ -608,20 +698,27 @@ function SelectField({
       <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={name}>
         {label}
       </label>
-      <select
-        aria-describedby={error ? `${name}-error` : undefined}
-        aria-invalid={error ? true : undefined}
-        className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs shadow-2xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        defaultValue={defaultValue}
-        id={name}
-        name={name}
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <div className="relative flex items-center">
+        <select
+          aria-describedby={error ? `${name}-error` : undefined}
+          aria-invalid={error ? true : undefined}
+          className="h-9 w-full appearance-none rounded-lg border border-slate-200/80 bg-white dark:bg-[#0f172a] dark:border-slate-800 px-3 pr-8 text-xs font-medium text-slate-900 dark:text-slate-100 shadow-2xs outline-none transition-colors hover:border-slate-300 dark:hover:border-slate-700 focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/20 cursor-pointer"
+          defaultValue={defaultValue}
+          id={name}
+          name={name}
+        >
+          {options.map((option) => (
+            <option
+              key={option.value}
+              value={option.value}
+              className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1"
+            >
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+      </div>
       <FieldError id={`${name}-error`} message={error} />
     </div>
   )

@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react"
 import type { ColumnDef } from "@tanstack/react-table"
-import { ShieldCheck, Trash2, Users } from "lucide-react"
+import { ChevronDown, ShieldCheck, Trash2, Users } from "lucide-react"
 import { AdminCard, AdminDataView } from "@/components/admin/data-view"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -35,18 +35,21 @@ type UsersTableProps = {
 
 function RoleForm({ user }: { user: UserRow }) {
   return (
-    <form action={updateUserRoleAction} className="flex gap-2">
+    <form action={updateUserRoleAction} className="flex items-center gap-2">
       <input name="id" type="hidden" value={user.id} />
-      <select
-        aria-label={`Role for ${user.name || user.email}`}
-        className="h-9 rounded-md border border-input bg-background px-2 text-sm"
-        defaultValue={user.role}
-        name="role"
-      >
-        <option value="user">User</option>
-        <option value="admin">Admin</option>
-      </select>
-      <Button size="sm" type="submit" variant="outline">
+      <div className="relative flex items-center">
+        <select
+          aria-label={`Role for ${user.name || user.email}`}
+          className="h-8 appearance-none rounded-lg border border-slate-200/80 bg-white dark:bg-[#0f172a] dark:border-slate-800 pl-2.5 pr-7 text-xs font-medium text-slate-900 dark:text-slate-100 shadow-2xs outline-none transition-colors hover:border-slate-300 dark:hover:border-slate-700 focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/20 cursor-pointer"
+          defaultValue={user.role}
+          name="role"
+        >
+          <option value="user" className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">User</option>
+          <option value="admin" className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">Admin</option>
+        </select>
+        <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+      </div>
+      <Button size="sm" type="submit" variant="outline" className="h-8 text-xs font-semibold">
         Update
       </Button>
     </form>

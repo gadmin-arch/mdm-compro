@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { ArrowDown, ArrowUp, ImagePlus, Loader2, Plus, Trash2 } from "lucide-react"
+import { ArrowDown, ArrowUp, ChevronDown, ImagePlus, Loader2, Plus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
@@ -18,7 +18,7 @@ const RichTextEditor = dynamic(
 )
 
 const selectClass =
-  "h-9 w-full rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+  "h-9 w-full appearance-none rounded-lg border border-slate-200/80 bg-white dark:bg-[#0f172a] dark:border-slate-800 px-3 pr-8 text-xs font-medium text-slate-900 dark:text-slate-100 shadow-2xs outline-none transition-colors hover:border-slate-300 dark:hover:border-slate-700 focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/20 cursor-pointer"
 
 type EditorProps = {
   fields: FieldDef[]
@@ -115,17 +115,20 @@ function FieldControl({
     case "select":
       return (
         <LabeledField label={def.label}>
-          <select
-            className={selectClass}
-            value={asString(value) || def.options[0]?.value}
-            onChange={(event) => onChange(event.target.value)}
-          >
-            {def.options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <div className="relative flex items-center">
+            <select
+              className={selectClass}
+              value={asString(value) || def.options[0]?.value}
+              onChange={(event) => onChange(event.target.value)}
+            >
+              {def.options.map((option) => (
+                <option key={option.value} value={option.value} className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+          </div>
         </LabeledField>
       )
     case "icon":
@@ -169,17 +172,20 @@ function IconField({
   return (
     <LabeledField label={label}>
       <div className="flex items-center gap-2">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-secondary/50">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200/80 dark:border-slate-800 bg-secondary/50">
           <Icon className="h-4 w-4" />
         </span>
-        <select className={selectClass} value={value} onChange={(event) => onChange(event.target.value)}>
-          <option value="">(default)</option>
-          {SECTION_ICON_NAMES.map((name) => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
-        </select>
+        <div className="relative flex flex-1 items-center">
+          <select className={selectClass} value={value} onChange={(event) => onChange(event.target.value)}>
+            <option value="" className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">(default)</option>
+            {SECTION_ICON_NAMES.map((name) => (
+              <option key={name} value={name} className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">
+                {name}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+        </div>
       </div>
     </LabeledField>
   )

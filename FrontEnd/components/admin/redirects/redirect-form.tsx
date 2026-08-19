@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useRef, useState } from "react"
-import { Check, Copy, Download, Link2, QrCode, Save } from "lucide-react"
+import { Check, ChevronDown, Copy, Download, Link2, QrCode, Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils"
 const QR_SIZES = [256, 512, 1024, 2048, 4096]
 
 const selectClass =
-  "h-9 rounded-md border border-input bg-background px-2.5 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+  "h-9 w-full appearance-none rounded-lg border border-slate-200/80 bg-white dark:bg-[#0f172a] dark:border-slate-800 px-3 pr-8 text-xs font-medium text-slate-900 dark:text-slate-100 shadow-2xs outline-none transition-colors hover:border-slate-300 dark:hover:border-slate-700 focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/20 cursor-pointer"
 
 export function RedirectForm({
   action,
@@ -254,21 +254,27 @@ function QrPanel({ redirect }: { redirect: AdminRedirect }) {
         <div className="space-y-3">
           <label className="grid gap-1 text-xs font-medium text-muted-foreground">
             Size (pixels)
-            <select className={selectClass} value={size} onChange={(event) => setSize(Number(event.target.value))}>
-              {QR_SIZES.map((option) => (
-                <option key={option} value={option}>
-                  {option} × {option}
-                  {option >= 2048 ? " (print)" : ""}
-                </option>
-              ))}
-            </select>
+            <div className="relative flex items-center">
+              <select className={selectClass} value={size} onChange={(event) => setSize(Number(event.target.value))}>
+                {QR_SIZES.map((option) => (
+                  <option key={option} value={option} className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">
+                    {option} × {option}
+                    {option >= 2048 ? " (print)" : ""}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+            </div>
           </label>
           <label className="grid gap-1 text-xs font-medium text-muted-foreground">
             Background
-            <select className={selectClass} value={bg} onChange={(event) => setBg(event.target.value as "white" | "transparent")}>
-              <option value="white">White</option>
-              <option value="transparent">Transparent (PNG/SVG)</option>
-            </select>
+            <div className="relative flex items-center">
+              <select className={selectClass} value={bg} onChange={(event) => setBg(event.target.value as "white" | "transparent")}>
+                <option value="white" className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">White</option>
+                <option value="transparent" className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">Transparent (PNG/SVG)</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+            </div>
           </label>
           <label className="flex items-center gap-2.5 rounded-md border border-border px-3 py-2 text-sm">
             <Switch checked={logo} onCheckedChange={setLogo} />
