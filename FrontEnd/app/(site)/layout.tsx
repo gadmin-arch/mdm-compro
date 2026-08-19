@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { AnalyticsTracker } from "@/components/analytics/analytics-tracker"
+import { CookieConsent } from "@/components/cookie-consent"
 import { FloatingWhatsApp } from "@/components/floating-whatsapp"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
@@ -27,6 +28,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       <main id="site-content" className="flex-1">{children}</main>
       <SiteFooter />
       <FloatingWhatsApp phoneNumber={salesPhone} />
+      <CookieConsent />
       {analytics.enabled && (
         <AnalyticsTracker
           config={{
