@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { getServices, getProducts, getNews, getCareers, type ContentNode } from '@/lib/cms'
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://multidayamitra.co.id'
+const rawUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://multidayamitra.co.id'
+const baseUrl = (rawUrl.includes('localhost') ? rawUrl : 'https://multidayamitra.co.id').replace(/\/$/, '')
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
