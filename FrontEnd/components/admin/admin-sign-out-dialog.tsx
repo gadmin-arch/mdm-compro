@@ -18,15 +18,28 @@ import { cn } from "@/lib/utils"
 type AdminSignOutDialogProps = {
   className?: string
   compact?: boolean
+  iconOnly?: boolean
 }
 
-export function AdminSignOutDialog({ className, compact = false }: AdminSignOutDialogProps) {
+export function AdminSignOutDialog({ className, compact = false, iconOnly = false }: AdminSignOutDialogProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline" className={cn(compact ? "px-3" : "w-full", className)}>
+        <Button
+          variant="ghost"
+          size={iconOnly ? "icon" : "default"}
+          className={cn(
+            iconOnly
+              ? "h-8 w-8 text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/40"
+              : compact
+                ? "px-3"
+                : "w-full justify-start gap-2",
+            className,
+          )}
+          title="Sign Out"
+        >
           <LogOut className="h-4 w-4" />
-          <span>{compact ? "Sign Out" : "Sign Out"}</span>
+          {!iconOnly && <span>Sign Out</span>}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

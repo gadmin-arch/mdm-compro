@@ -114,7 +114,7 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, colle
 
 		r.Route("/admin", func(r chi.Router) {
 			r.Use(requireAuth(tokenManager, authRepo))
-			r.Use(requireWrite)
+			r.Use(requireRoleAccess)
 			r.Get("/dashboard", adminHandler.Dashboard)
 			r.Get("/activity", adminHandler.Activity)
 			r.Get("/navigation", adminHandler.Navigation)
@@ -209,28 +209,60 @@ func apiTiming(collector *analytics.Collector) func(http.Handler) http.Handler {
 	}
 }
 
-// requireWrite makes the "user" role read-only: reads pass through, but
-// mutations require the owner or admin role. The /admin/profile subtree is
-// exempt so every user keeps managing their own account (password, trusted
-// devices). Must run after requireAuth, which refreshes the role from the DB
-// on every request.
-func requireWrite(next http.Handler) http.Handler {
+// requireRoleAccess enforces RBAC permissions:
+// - "owner" and "admin": Full unrestricted access to all endpoints.
+// - "user":
+//     Allowed endpoints:
+//       - /api/v1/admin/news (GET, POST, PUT, DELETE)
+//       - /api/v1/admin/careers (GET, POST, PUT, DELETE)
+//       - /api/v1/admin/products (GET, POST, PUT, DELETE)
+//       - /api/v1/admin/services (GET, POST, PUT, DELETE)
+//       - /api/v1/admin/media (GET, POST, DELETE)
+//       - /api/v1/admin/profile (GET, PUT, POST, DELETE)
+//       - /api/v1/admin/dashboard (GET)
+//       - /api/v1/admin/activity (GET)
+//       - /api/v1/admin/pages (GET only)
+//     Forbidden endpoints:
+//       - /api/v1/admin/users
+//       - /api/v1/admin/settings & /api/v1/admin/site-settings
+//       - /api/v1/admin/navigation
+//       - /api/v1/admin/redirects
+//       - /api/v1/admin/archive
+//       - /api/v1/admin/contacts
+//       - /api/v1/admin/analytics
+//       - /api/v1/admin/pages (mutations)
+func requireRoleAccess(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet, http.MethodHead, http.MethodOptions:
-			next.ServeHTTP(w, r)
-			return
-		}
-		if strings.HasPrefix(r.URL.Path, "/api/v1/admin/profile") {
-			next.ServeHTTP(w, r)
-			return
-		}
 		claims := auth.ClaimsFromContext(r.Context())
-		if claims == nil || (claims.Role != "owner" && claims.Role != "admin") {
-			handler.Error(w, http.StatusForbidden, "forbidden", "Your account has read-only access.")
+		if claims == nil {
+			handler.Error(w, http.StatusUnauthorized, "unauthorized", "Authentication is required.")
 			return
 		}
-		next.ServeHTTP(w, r)
+		if claims.Role == "owner" || claims.Role == "admin" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		path := r.URL.Path
+		switch {
+		case strings.HasPrefix(path, "/api/v1/admin/news"),
+			strings.HasPrefix(path, "/api/v1/admin/careers"),
+			strings.HasPrefix(path, "/api/v1/admin/products"),
+			strings.HasPrefix(path, "/api/v1/admin/services"),
+			strings.HasPrefix(path, "/api/v1/admin/media"),
+			strings.HasPrefix(path, "/api/v1/admin/profile"):
+			next.ServeHTTP(w, r)
+			return
+		case (path == "/api/v1/admin/dashboard" || path == "/api/v1/admin/activity") && r.Method == http.MethodGet:
+			next.ServeHTTP(w, r)
+			return
+		case strings.HasPrefix(path, "/api/v1/admin/pages") && (r.Method == http.MethodGet || r.Method == http.MethodHead):
+			next.ServeHTTP(w, r)
+			return
+		default:
+			handler.Error(w, http.StatusForbidden, "forbidden", "You do not have permission to access this resource.")
+			return
+		}
 	})
 }
 

@@ -1,46 +1,92 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { BarChart3, ExternalLink, FileText, Globe2, Home, Image as ImageIcon, Inbox, Link2, Menu, Newspaper, Package, Settings, Users, Archive, type LucideIcon } from "lucide-react"
+import {
+  Archive,
+  BarChart3,
+  Briefcase,
+  ExternalLink,
+  FileText,
+  Globe2,
+  Home,
+  Image as ImageIcon,
+  Inbox,
+  Layers,
+  Link2,
+  Menu,
+  Newspaper,
+  Package,
+  PanelLeft,
+  PanelLeftClose,
+  Settings,
+  Users,
+  type LucideIcon,
+} from "lucide-react"
 import { AdminSignOutDialog } from "@/components/admin/admin-sign-out-dialog"
-import { ThemeToggleRow } from "@/components/admin/theme-toggle"
+import { ThemeToggle } from "@/components/admin/theme-toggle"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import type { AdminUser } from "@/lib/admin-api"
 import { cn } from "@/lib/utils"
+
+export type UserRole = "owner" | "admin" | "user"
 
 export interface NavItem {
   label: string
   href: string
   key: string
   icon: LucideIcon
-  disabled?: boolean
+  roles: UserRole[]
 }
 
-export const navItems: NavItem[] = [
-  { label: "Dashboard", href: "/admin", key: "dashboard", icon: Home },
-  { label: "Analytics", href: "/admin/analytics", key: "analytics", icon: BarChart3 },
-  { label: "Inquiries", href: "/admin/contacts", key: "contacts", icon: Inbox },
-  { label: "Pages", href: "/admin/pages", key: "pages", icon: FileText },
-  { label: "Navigation", href: "/admin/navigation", key: "navigation", icon: Menu },
-  { label: "Services", href: "/admin/services", key: "services", icon: FileText },
-  { label: "Products", href: "/admin/products", key: "products", icon: Package },
-  { label: "News", href: "/admin/news", key: "news", icon: Newspaper },
-  { label: "Careers", href: "/admin/careers", key: "careers", icon: Users },
-  { label: "Short Links", href: "/admin/redirects", key: "redirects", icon: Link2 },
-  { label: "Media", href: "/admin/media", key: "media", icon: ImageIcon },
-  { label: "Users", href: "/admin/users", key: "users", icon: Users },
-  { label: "Archive", href: "/admin/archive", key: "archive", icon: Archive },
-  { label: "Site Settings", href: "/admin/site-settings", key: "site-settings", icon: Globe2 },
-  { label: "Account", href: "/admin/settings", key: "settings", icon: Settings },
+export interface NavGroup {
+  label: string
+  items: NavItem[]
+}
+
+export const NAV_GROUPS: NavGroup[] = [
+  {
+    label: "Utama",
+    items: [
+      { label: "Dashboard", href: "/admin", key: "dashboard", icon: Home, roles: ["owner", "admin", "user"] },
+      { label: "Analytics", href: "/admin/analytics", key: "analytics", icon: BarChart3, roles: ["owner", "admin"] },
+      { label: "Inquiries", href: "/admin/contacts", key: "contacts", icon: Inbox, roles: ["owner", "admin"] },
+    ],
+  },
+  {
+    label: "Kelola Konten",
+    items: [
+      { label: "News & Articles", href: "/admin/news", key: "news", icon: Newspaper, roles: ["owner", "admin", "user"] },
+      { label: "Career Openings", href: "/admin/careers", key: "careers", icon: Briefcase, roles: ["owner", "admin", "user"] },
+      { label: "Products", href: "/admin/products", key: "products", icon: Package, roles: ["owner", "admin", "user"] },
+      { label: "Services", href: "/admin/services", key: "services", icon: Layers, roles: ["owner", "admin", "user"] },
+      { label: "Pages Builder", href: "/admin/pages", key: "pages", icon: FileText, roles: ["owner", "admin"] },
+      { label: "Media Library", href: "/admin/media", key: "media", icon: ImageIcon, roles: ["owner", "admin", "user"] },
+    ],
+  },
+  {
+    label: "Sistem & Pengaturan",
+    items: [
+      { label: "Users & Roles", href: "/admin/users", key: "users", icon: Users, roles: ["owner", "admin"] },
+      { label: "Short Links & QR", href: "/admin/redirects", key: "redirects", icon: Link2, roles: ["owner", "admin"] },
+      { label: "Navigation Menu", href: "/admin/navigation", key: "navigation", icon: Menu, roles: ["owner", "admin"] },
+      { label: "System Archive", href: "/admin/archive", key: "archive", icon: Archive, roles: ["owner", "admin"] },
+      { label: "Site Settings", href: "/admin/site-settings", key: "site-settings", icon: Globe2, roles: ["owner", "admin"] },
+      { label: "Account Profile", href: "/admin/settings", key: "settings", icon: Settings, roles: ["owner", "admin", "user"] },
+    ],
+  },
 ]
 
-// Which nav entry the current URL belongs to. Longest matching href wins so
-// /admin/services/123 highlights Services while /admin stays on Dashboard.
 export function useActiveNavKey(): string {
   const pathname = usePathname()
+  const allItems = NAV_GROUPS.flatMap((g) => g.items)
   let match: NavItem | null = null
-  for (const item of navItems) {
-    const isMatch = pathname === item.href || pathname.startsWith(item.href + "/")
+  for (const item of allItems) {
+    const isMatch = item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href)
     if (isMatch && (!match || item.href.length > match.href.length)) {
       match = item
     }
@@ -48,94 +94,235 @@ export function useActiveNavKey(): string {
   return match?.key ?? ""
 }
 
-export function AdminNavItems({ onNavigate }: { onNavigate?: () => void }) {
-  const active = useActiveNavKey()
-  return (
-    <>
-      {navItems.map((item) => {
-        const Icon = item.icon
-        const current = active === item.key
-        const itemClass = cn(
-          "relative flex min-h-11 items-center gap-3 rounded-lg border border-transparent px-3 py-2.5 text-sm font-medium transition-colors",
-          current && "bg-primary/10 font-semibold text-foreground",
-          item.disabled
-            ? "cursor-not-allowed opacity-45"
-            : "text-muted-foreground hover:bg-secondary hover:text-foreground",
-        )
-        const indicator = current && (
-          <span
-            aria-hidden="true"
-            className="absolute -left-3 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-primary"
-          />
-        )
+function isActivePath(pathname: string, href: string) {
+  return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href)
+}
 
-        if (item.disabled) {
-          return (
-            <div key={item.key} aria-disabled="true" className={itemClass}>
-              {indicator}
-              <Icon className="h-4 w-4" />
-              <span>{item.label}</span>
-            </div>
-          )
-        }
+export function AdminNavItems({
+  role = "user",
+  collapsed = false,
+  onNavigate,
+}: {
+  role?: UserRole
+  collapsed?: boolean
+  onNavigate?: () => void
+}) {
+  const pathname = usePathname()
+
+  return (
+    <nav className="flex flex-col gap-4 px-2.5">
+      {NAV_GROUPS.map((group) => {
+        const visibleItems = group.items.filter((item) => item.roles.includes(role))
+        if (visibleItems.length === 0) return null
 
         return (
-          <Link
-            key={item.key}
-            href={item.href}
-            aria-current={current ? "page" : undefined}
-            className={itemClass}
-            onClick={onNavigate}
-          >
-            {indicator}
-            <Icon className={cn("h-4 w-4", current && "text-primary")} />
-            <span>{item.label}</span>
-          </Link>
+          <div key={group.label} className="flex flex-col gap-1">
+            {!collapsed && (
+              <p className="px-2.5 pb-1 pt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 dark:text-slate-500">
+                {group.label}
+              </p>
+            )}
+            {visibleItems.map((item) => {
+              const Icon = item.icon
+              const active = isActivePath(pathname, item.href)
+
+              const linkContent = (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  prefetch={true}
+                  onClick={onNavigate}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "group relative flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-bold transition-all duration-150",
+                    collapsed && "justify-center px-0",
+                    active
+                      ? "bg-slate-900 text-white shadow-xs dark:bg-slate-100 dark:text-slate-900"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-100",
+                  )}
+                >
+                  <Icon
+                    className={cn(
+                      "h-4 w-4 shrink-0 transition-colors",
+                      active
+                        ? "text-sky-400 dark:text-sky-600"
+                        : "text-slate-400 group-hover:text-slate-700 dark:text-slate-500 dark:group-hover:text-slate-200",
+                    )}
+                  />
+                  {!collapsed && <span className="truncate">{item.label}</span>}
+                </Link>
+              )
+
+              return collapsed ? (
+                <Tooltip key={item.href}>
+                  <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
+                  <TooltipContent side="right" className="font-semibold">
+                    {item.label}
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                linkContent
+              )
+            })}
+          </div>
         )
       })}
-    </>
+    </nav>
   )
 }
 
-export function AdminNavSidebar() {
+function SidebarBrand({ collapsed }: { collapsed: boolean }) {
   return (
-    <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-border bg-background lg:flex print:hidden">
-      <Link href="/admin" className="flex h-16 shrink-0 items-center gap-3 border-b border-border px-5">
+    <Link href="/admin" className="flex items-center gap-2.5 px-4 py-4 group">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-xs transition-colors group-hover:bg-sky-600 dark:bg-slate-800 dark:group-hover:bg-sky-500">
         <Image
           src="/Logo PT MDM.png"
-          alt="PT Multi Daya Mitra Logo"
-          width={34}
-          height={34}
-          className="h-8 w-auto object-contain"
+          alt="PT Multi Daya Mitra"
+          width={28}
+          height={28}
+          className="h-5.5 w-auto object-contain"
         />
+      </span>
+      {!collapsed && (
         <span className="min-w-0">
-          <span className="block font-display text-sm font-semibold leading-tight text-foreground">
-            MDM CMS
+          <span className="block truncate text-sm font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+            MDM Admin
           </span>
-          <span className="block truncate text-[11px] text-muted-foreground">Content operations</span>
+          <span className="block truncate text-[10px] font-semibold text-slate-400 dark:text-slate-500">
+            PT Multi Daya Mitra
+          </span>
         </span>
-      </Link>
+      )}
+    </Link>
+  )
+}
 
-      <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4">
-        <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          Main Menu
-        </p>
-        <AdminNavItems />
+function SidebarFooter({
+  user,
+  collapsed,
+}: {
+  user?: AdminUser | null
+  collapsed: boolean
+}) {
+  const name = user?.name || "MDM User"
+  const initials = (name.replace(/[^a-zA-Z ]/g, "").trim().split(/\s+/).map((n) => n[0]).join("") || "MD").substring(0, 2).toUpperCase()
+  const role = user?.role || "user"
 
-        <div className="mt-auto space-y-1 border-t border-border pt-3">
-          <ThemeToggleRow />
-          <a
-            href="/"
-            target="_blank"
-            rel="noreferrer"
-            className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+  return (
+    <div className="mt-auto flex flex-col gap-2 px-3 pb-3">
+      <Separator className="my-1" />
+
+      {/* View Website Link */}
+      <a
+        href="/"
+        target="_blank"
+        rel="noreferrer"
+        className={cn(
+          "flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/70 dark:hover:text-slate-100",
+          collapsed && "justify-center px-0",
+        )}
+        title="View live website"
+      >
+        <ExternalLink className="h-4 w-4 shrink-0 text-slate-400" />
+        {!collapsed && <span>View Website</span>}
+      </a>
+
+      {/* User Profile Card */}
+      <div
+        className={cn(
+          "flex items-center justify-between gap-2 rounded-2xl border border-slate-200/80 bg-slate-50 p-2 dark:border-slate-800 dark:bg-slate-900/80",
+          collapsed && "justify-center p-1.5",
+        )}
+      >
+        <div className="flex min-w-0 items-center gap-2">
+          <span
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-600 text-[11px] font-black text-white shadow-xs"
+            title={user?.email || user?.name || "Active Session"}
           >
-            <ExternalLink className="h-4 w-4" />
-            View Website
-          </a>
-          <AdminSignOutDialog className="w-full justify-start" />
+            {initials}
+          </span>
+          {!collapsed && (
+            <div className="min-w-0 text-left">
+              <span className="block truncate text-xs font-black text-slate-900 dark:text-slate-100" title={name}>
+                {name}
+              </span>
+              <span className="inline-block rounded bg-sky-500/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400">
+                {role}
+              </span>
+            </div>
+          )}
         </div>
-      </nav>
-    </aside>
+
+        {!collapsed && (
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <AdminSignOutDialog iconOnly />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export function AdminNavSidebar({ user }: { user?: AdminUser | null }) {
+  const [collapsed, setCollapsed] = useState(false)
+  const role = user?.role || "user"
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("mdm_admin_sidebar_collapsed")
+      if (saved !== null) {
+        setCollapsed(saved === "true")
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, [])
+
+  const toggleCollapsed = () => {
+    setCollapsed((prev) => {
+      const next = !prev
+      try {
+        localStorage.setItem("mdm_admin_sidebar_collapsed", String(next))
+      } catch {
+        // Ignore localStorage errors
+      }
+      return next
+    })
+  }
+
+  return (
+    <TooltipProvider delayDuration={0}>
+      <aside
+        className={cn(
+          "sticky top-0 hidden h-screen shrink-0 flex-col border-r border-slate-200 bg-white transition-[width] duration-200 ease-in-out dark:border-slate-800/80 dark:bg-[#0b0f17] z-30 lg:flex print:hidden",
+          collapsed ? "w-[68px]" : "w-64",
+        )}
+      >
+        <SidebarBrand collapsed={collapsed} />
+        <Separator />
+        <div className="flex-1 overflow-y-auto py-4">
+          <AdminNavItems role={role} collapsed={collapsed} />
+        </div>
+        <SidebarFooter user={user} collapsed={collapsed} />
+        <Separator />
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleCollapsed}
+          className="m-2 justify-center text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+          aria-label={collapsed ? "Lebarkan menu" : "Ciutkan menu"}
+        >
+          {collapsed ? (
+            <PanelLeft className="h-4 w-4" />
+          ) : (
+            <>
+              <PanelLeftClose className="mr-2 h-4 w-4" />
+              <span className="text-xs font-semibold">Ciutkan</span>
+            </>
+          )}
+        </Button>
+      </aside>
+    </TooltipProvider>
   )
 }
