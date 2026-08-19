@@ -122,7 +122,7 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
         </>
       )}
 
-      <div className="space-y-6 rounded-lg border border-border bg-background p-5">
+      <div className="space-y-6 rounded-xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0b0f17]">
         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_240px]">
           <Field label="Name" name="title" required defaultValue={item?.title} error={fields?.title} />
           <Field label="Slug" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
@@ -143,7 +143,7 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
         <TextAreaField
           label="Description"
           name="contentText"
-          rows={12}
+          rows={10}
           defaultValue={textFromBlocks(item?.content)}
         />
         <MediaUpload
@@ -156,7 +156,7 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
         {isProduct && (
           <>
             <MediaUpload
-              label="Datasheet"
+              label="Datasheet Document"
               name="datasheetUrl"
               defaultValue={item?.datasheetUrl}
               accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/zip"
@@ -258,7 +258,7 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
         </>
       )}
 
-      <div className="space-y-6 rounded-lg border border-border bg-background p-5">
+      <div className="space-y-6 rounded-xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0b0f17]">
         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_240px]">
           <Field label="Title" name="title" required defaultValue={item?.title} error={fields?.title} />
           <Field label="Slug" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
@@ -267,7 +267,7 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
           <Field label="Excerpt" name="excerpt" defaultValue={item?.excerpt} error={fields?.excerpt} />
           <Field label="Category" name="category" defaultValue={item?.category} error={fields?.category} />
         </div>
-        <RichTextField label="Body" name="bodyHtml" defaultValue={htmlFromBlocks(item?.body)} />
+        <RichTextField label="Body Content" name="bodyHtml" defaultValue={htmlFromBlocks(item?.body)} />
         <MediaUpload
           label="Featured Image"
           name="featuredImageUrl"
@@ -280,9 +280,9 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
       <Sidebar buttonLabel={mode === "create" ? "Create News" : "Save News"} itemVersion={item?.version} pending={pending} onClickSubmit={handleSaveClick}>
         <StatusField defaultValue={item?.status} error={fields?.status} />
         <Field label="Publish date" name="publishedAt" type="datetime-local" defaultValue={toDateTimeLocal(item?.publishedAt)} />
-        <label className="flex items-center gap-3 rounded-md border border-border px-3 py-2 text-sm">
+        <label className="flex items-center gap-3 rounded-lg border border-border px-3 py-2 text-xs font-medium cursor-pointer">
           <input defaultChecked={Boolean(item?.featured)} name="featured" type="checkbox" />
-          Featured
+          Featured Article
         </label>
         <SeoFields seo={item?.seo} />
       </Sidebar>
@@ -360,12 +360,12 @@ export function CareerForm({ action, item, mode }: CareerFormProps) {
         </>
       )}
 
-      <div className="space-y-6 rounded-lg border border-border bg-background p-5">
+      <div className="space-y-6 rounded-xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0b0f17]">
         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_240px]">
           <Field label="Role title" name="title" required defaultValue={item?.title} error={fields?.title} />
           <Field label="Slug" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
         </div>
-        <TextAreaField label="Summary" name="summary" rows={4} defaultValue={item?.summary} error={fields?.summary} />
+        <TextAreaField label="Summary" name="summary" rows={3} defaultValue={item?.summary} error={fields?.summary} />
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="Department" name="department" required defaultValue={item?.department} error={fields?.department} />
           <Field label="Location" name="location" required defaultValue={item?.location} error={fields?.location} />
@@ -436,18 +436,16 @@ function Sidebar({
   onClickSubmit?: () => void
 }) {
   return (
-    <aside className="space-y-4 rounded-lg border border-border bg-background p-5 xl:sticky xl:top-6 xl:self-start">
-      <h2 className="font-display text-lg font-semibold text-foreground">Publish</h2>
+    <aside className="space-y-4 rounded-xl border border-slate-200/80 bg-white p-5 shadow-xs dark:border-slate-800 dark:bg-[#0b0f17] xl:sticky xl:top-6 xl:self-start">
+      <h2 className="font-display text-base font-bold text-foreground">Publish Settings</h2>
       {children}
       {itemVersion && (
-        <div className="rounded-md bg-secondary px-3 py-2 text-sm text-muted-foreground">
+        <div className="rounded-lg bg-secondary/50 px-3 py-1.5 text-xs text-muted-foreground font-mono">
           Version: {itemVersion}
         </div>
       )}
-      {/* On phones and tablets the primary action lives in the floating bar
-          instead, so it is reachable without scrolling past every field. */}
       <Button
-        className="hidden w-full lg:flex"
+        className="hidden w-full lg:flex font-semibold shadow-xs"
         disabled={pending}
         type="button"
         onClick={onClickSubmit}
@@ -459,8 +457,6 @@ function Sidebar({
   )
 }
 
-// Floating save bar for small screens, docked just above the bottom nav so
-// both stay reachable. Mirrors the nav's pill styling.
 function MobileActionBar({
   buttonLabel,
   pending,
@@ -473,7 +469,7 @@ function MobileActionBar({
   return (
     <div className="fixed inset-x-3 bottom-[76px] z-30 flex items-center gap-2 rounded-2xl border border-border/80 bg-background/95 p-2 shadow-2xl backdrop-blur-xl lg:hidden print:hidden">
       <Button
-        className="min-h-11 flex-1"
+        className="min-h-11 flex-1 font-semibold"
         disabled={pending}
         type="button"
         onClick={onClickSubmit}
@@ -500,11 +496,11 @@ function StatusField({ defaultValue, error }: { defaultValue?: string; error?: s
 function SeoFields({ seo }: { seo?: { title?: string; description?: string; canonical?: string; noIndex?: boolean } }) {
   return (
     <div className="space-y-3 border-t border-border pt-4">
-      <h3 className="text-sm font-semibold text-foreground">SEO</h3>
+      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">SEO Settings</h3>
       <Field label="SEO title" name="seoTitle" defaultValue={seo?.title} />
       <TextAreaField label="SEO description" name="seoDescription" rows={3} defaultValue={seo?.description} />
       <Field label="Canonical URL" name="seoCanonical" defaultValue={seo?.canonical} />
-      <label className="flex items-center gap-3 rounded-md border border-border px-3 py-2 text-sm">
+      <label className="flex items-center gap-3 rounded-lg border border-border px-3 py-2 text-xs font-medium cursor-pointer">
         <input defaultChecked={Boolean(seo?.noIndex)} name="seoNoIndex" type="checkbox" />
         Hide from search engines
       </label>
@@ -515,7 +511,7 @@ function SeoFields({ seo }: { seo?: { title?: string; description?: string; cano
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null
   return (
-    <p className="mt-1.5 text-sm text-destructive" id={id}>
+    <p className="mt-1.5 text-xs text-destructive font-medium" id={id}>
       {message}
     </p>
   )
@@ -539,14 +535,14 @@ function Field({
   type?: string
 }) {
   return (
-    <div>
-      <label className="text-sm font-medium text-foreground" htmlFor={name}>
+    <div className="space-y-1.5">
+      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={name}>
         {label}
       </label>
       <Input
         aria-describedby={error ? `${name}-error` : undefined}
         aria-invalid={error ? true : undefined}
-        className="mt-2"
+        className="bg-background text-xs"
         defaultValue={defaultValue ?? ""}
         id={name}
         name={name}
@@ -575,14 +571,14 @@ function TextAreaField({
   rows: number
 }) {
   return (
-    <div>
-      <label className="text-sm font-medium text-foreground" htmlFor={name}>
+    <div className="space-y-1.5">
+      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={name}>
         {label}
       </label>
       <Textarea
         aria-describedby={error ? `${name}-error` : undefined}
         aria-invalid={error ? true : undefined}
-        className="mt-2"
+        className="bg-background text-xs"
         defaultValue={defaultValue ?? ""}
         id={name}
         name={name}
@@ -608,14 +604,14 @@ function SelectField({
   options: Array<{ value: string; label: string }>
 }) {
   return (
-    <div>
-      <label className="text-sm font-medium text-foreground" htmlFor={name}>
+    <div className="space-y-1.5">
+      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={name}>
         {label}
       </label>
       <select
         aria-describedby={error ? `${name}-error` : undefined}
         aria-invalid={error ? true : undefined}
-        className="mt-2 h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        className="h-9 w-full rounded-lg border border-input bg-background px-3 text-xs shadow-2xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
         defaultValue={defaultValue}
         id={name}
         name={name}

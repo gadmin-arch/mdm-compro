@@ -223,16 +223,18 @@ function ImageField({
     <LabeledField label={label}>
       <div className="flex items-center gap-2">
         {value && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={value}
-            alt=""
-            className="h-9 w-14 shrink-0 rounded-md border border-border object-cover"
-          />
+          <div className="relative h-9 w-14 shrink-0 overflow-hidden rounded-md border border-border bg-secondary/30">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={value}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+          </div>
         )}
         <Input
-          className="bg-background"
-          placeholder="/placeholder.jpg or upload"
+          className="bg-background text-xs"
+          placeholder="https://... atau /uploads/..."
           value={value}
           onChange={(event) => onChange(event.target.value)}
         />
@@ -249,14 +251,32 @@ function ImageField({
         <Button
           type="button"
           variant="outline"
-          size="icon"
-          className="shrink-0"
+          size="sm"
+          className="shrink-0 text-xs font-semibold"
           disabled={uploading}
           onClick={() => fileRef.current?.click()}
           aria-label="Upload image"
         >
-          {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
+          {uploading ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <>
+              <ImagePlus className="mr-1.5 h-3.5 w-3.5" /> Upload
+            </>
+          )}
         </Button>
+        {value && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 shrink-0 text-destructive hover:bg-destructive/10 cursor-pointer"
+            onClick={() => onChange("")}
+            title="Hapus gambar"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        )}
       </div>
       {error && <p className="mt-1.5 text-xs text-destructive">{error}</p>}
     </LabeledField>
