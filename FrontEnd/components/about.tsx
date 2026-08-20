@@ -178,10 +178,48 @@ const testingToolsFleet = [
 ]
 
 const authorizedPartners = [
-  { name: "Schneider Electric", role: "Certified System Integrator", country: "France / Global" },
   { name: "Rittal", role: "Authorized Distributor", country: "Germany" },
+  { name: "Schneider Electric", role: "Certified System Integrator", country: "France / Global" },
   { name: "xArrow", role: "Authorized Solutions Partner", country: "Global" },
-  { name: "Bosch", role: "Fire Alarm & Security Systems Partner", country: "Germany / Global" },
+  { name: "Mundung", role: "Authorized Connecting Futures Partner", country: "Global" },
+]
+
+const experiencedBrands = [
+  "ABB",
+  "Siemens",
+  "Hitachi",
+  "TRAFINDO",
+  "B&D Transformer",
+  "Raychem",
+  "3M",
+  "Legrand",
+  "Socomec",
+  "Autonics",
+  "Omron",
+  "CHINT",
+  "MSA",
+  "Honeywell",
+  "Bosch",
+  "Asenware",
+  "Hooseki",
+  "Simplex",
+  "Hikvision",
+  "Advantech",
+  "Pepperl+Fuchs",
+  "Moxa",
+  "Phoenix Contact",
+  "Weidmüller",
+  "Supreme",
+  "KMI Wire and Cable",
+  "Kabelmetal Indonesia",
+  "GE",
+  "Danfoss",
+  "GAE",
+  "LS Electric",
+  "Megger",
+  "Fluke",
+  "FLIR",
+  "Huazheng",
 ]
 
 export function About({ page }: { page?: PageContent | null }) {
@@ -568,23 +606,46 @@ export function About({ page }: { page?: PageContent | null }) {
           </div>
 
           {/* Authorized Partnerships */}
-          <div className="mt-12 rounded-xl border border-border/80 bg-secondary/30 p-6">
+          <div className="mt-12 rounded-2xl border border-primary/25 bg-card p-6 lg:p-8">
             <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-              Official Authorized Partnerships & Principal Ecosystem
+              Authorized Partnership
             </h3>
             <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {authorizedPartners.map((p) => (
                 <div
                   key={p.name}
-                  className="group rounded-xl border border-border bg-card p-4 text-center transition-all hover:border-primary/40 hover:shadow-xs"
+                  className="group rounded-xl border border-border bg-secondary/20 p-4 text-center transition-all hover:border-primary/40 hover:bg-card hover:shadow-xs"
                 >
-                  <div className="flex items-center justify-center h-10 w-full">
+                  <div className="flex items-center justify-center h-12 w-full">
                     <BrandLogo
                       brand={p.name}
                       className="transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
                   <p className="text-xs font-semibold text-primary mt-2">{p.role}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Experienced Work With Brand */}
+          <div className="mt-8 rounded-2xl border border-border bg-card p-6 lg:p-8">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-4">
+              Experienced Work With Brand
+            </h3>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
+              {experiencedBrands.map((brand) => (
+                <div
+                  key={brand}
+                  className="group flex flex-col items-center justify-center rounded-xl border border-border/80 bg-secondary/20 p-3.5 text-center transition-all hover:border-primary/50 hover:bg-card hover:shadow-xs min-h-[72px]"
+                  title={brand}
+                >
+                  <div className="flex items-center justify-center h-9 w-full">
+                    <BrandLogo
+                      brand={brand}
+                      className="w-auto max-w-[120px] transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
                 </div>
               ))}
             </div>

@@ -129,22 +129,45 @@ const authorizedPartners = [
   { name: "Rittal", role: "Authorized Distributor", country: "Germany" },
   { name: "Schneider Electric", role: "Certified System Integrator", country: "France / Global" },
   { name: "xArrow", role: "Authorized SCADA Solutions Partner", country: "Global" },
-  { name: "Bosch", role: "Fire Alarm & Security Systems Partner", country: "Germany / Global" },
+  { name: "Mundung", role: "Authorized Connecting Futures Partner", country: "Global" },
 ]
 
 const brandExperience = [
   "ABB",
   "Siemens",
-  "Fluke",
-  "Megger",
-  "FLIR",
-  "Danfoss",
-  "Omron",
-  "Yokogawa",
-  "Notifier / Honeywell",
+  "Hitachi",
+  "TRAFINDO",
+  "B&D Transformer",
   "Raychem",
   "3M",
-  "Eaton",
+  "Legrand",
+  "Socomec",
+  "Autonics",
+  "Omron",
+  "CHINT",
+  "MSA",
+  "Honeywell",
+  "Bosch",
+  "Asenware",
+  "Hooseki",
+  "Simplex",
+  "Hikvision",
+  "Advantech",
+  "Pepperl+Fuchs",
+  "Moxa",
+  "Phoenix Contact",
+  "Weidmüller",
+  "Supreme",
+  "KMI Wire and Cable",
+  "Kabelmetal Indonesia",
+  "GE",
+  "Danfoss",
+  "GAE",
+  "LS Electric",
+  "Megger",
+  "Fluke",
+  "FLIR",
+  "Huazheng",
 ]
 
 export default async function ProductsPage({ searchParams }: Props) {
@@ -412,7 +435,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           {/* Authorized Partners Cards */}
           <div className="mt-12">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-4">
-              Official Authorized Partnerships
+              Authorized Partnership
             </p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {authorizedPartners.map((p) => (
@@ -421,7 +444,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                   className="group rounded-xl border border-primary/25 bg-card p-5 text-left shadow-xs transition-all hover:border-primary/60 hover:shadow-md flex flex-col justify-between"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center h-10 w-full">
+                    <div className="flex items-center h-12 w-full">
                       <BrandLogo
                         brand={p.name}
                         className="transition-transform duration-300 group-hover:scale-105"
@@ -440,19 +463,19 @@ export default async function ProductsPage({ searchParams }: Props) {
           {/* Experienced Work-With Brands */}
           <div className="mt-10 rounded-2xl border border-border bg-card p-6 lg:p-8">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-5">
-              Experienced Working-With Brands & Components
+              Experienced Work With Brand
             </p>
-            <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
               {brandExperience.map((brand) => (
                 <div
                   key={brand}
-                  className="group flex flex-col items-center justify-center rounded-xl border border-border/80 bg-secondary/20 p-4 text-center transition-all hover:border-primary/50 hover:bg-card hover:shadow-xs min-h-[84px]"
+                  className="group flex flex-col items-center justify-center rounded-xl border border-border/80 bg-secondary/20 p-3.5 text-center transition-all hover:border-primary/50 hover:bg-card hover:shadow-xs min-h-[72px]"
                   title={brand}
                 >
-                  <div className="flex items-center justify-center h-10 w-full">
+                  <div className="flex items-center justify-center h-9 w-full">
                     <BrandLogo
                       brand={brand}
-                      className="w-auto max-w-[130px] transition-transform duration-300 group-hover:scale-105"
+                      className="w-auto max-w-[120px] transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
                 </div>
