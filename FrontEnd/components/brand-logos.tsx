@@ -1,4 +1,5 @@
 import React from "react"
+import Image from "next/image"
 import { cn } from "@/lib/utils"
 
 interface BrandLogoProps {
@@ -6,379 +7,55 @@ interface BrandLogoProps {
   className?: string
 }
 
+const BRAND_ASSETS: Record<string, { src: string; width: number; height: number; alt: string }> = {
+  rittal: { src: "/brands/rittal.png", width: 189, height: 72, alt: "Rittal" },
+  schneider: { src: "/brands/schneider.png", width: 243, height: 72, alt: "Schneider Electric" },
+  schneiderelectric: { src: "/brands/schneider.png", width: 243, height: 72, alt: "Schneider Electric" },
+  xarrow: { src: "/brands/xarrow.png", width: 195, height: 72, alt: "xArrow SCADA" },
+  bosch: { src: "/brands/bosch.png", width: 323, height: 72, alt: "Bosch" },
+  abb: { src: "/brands/abb.png", width: 188, height: 72, alt: "ABB" },
+  siemens: { src: "/brands/siemens.png", width: 453, height: 72, alt: "Siemens" },
+  fluke: { src: "/brands/fluke.png", width: 492, height: 72, alt: "Fluke" },
+  megger: { src: "/brands/megger.png", width: 337, height: 72, alt: "Megger" },
+  flir: { src: "/brands/flir.png", width: 209, height: 72, alt: "Teledyne FLIR" },
+  danfoss: { src: "/brands/danfoss.png", width: 185, height: 72, alt: "Danfoss" },
+  omron: { src: "/brands/omron.png", width: 356, height: 72, alt: "Omron" },
+  yokogawa: { src: "/brands/yokogawa.png", width: 487, height: 72, alt: "Yokogawa" },
+  honeywell: { src: "/brands/honeywell.png", width: 405, height: 72, alt: "Honeywell" },
+  notifier: { src: "/brands/honeywell.png", width: 405, height: 72, alt: "Honeywell Notifier" },
+  notifierhoneywell: { src: "/brands/honeywell.png", width: 405, height: 72, alt: "Honeywell Notifier" },
+  raychem: { src: "/brands/raychem.png", width: 191, height: 72, alt: "TE Connectivity / Raychem" },
+  teconnectivity: { src: "/brands/raychem.png", width: 191, height: 72, alt: "TE Connectivity" },
+  teraychem: { src: "/brands/raychem.png", width: 191, height: 72, alt: "TE Connectivity / Raychem" },
+  "3m": { src: "/brands/3m.png", width: 137, height: 72, alt: "3M" },
+  threem: { src: "/brands/3m.png", width: 137, height: 72, alt: "3M" },
+  eaton: { src: "/brands/eaton.png", width: 268, height: 72, alt: "Eaton" },
+}
+
 export function BrandLogo({ brand, className }: BrandLogoProps) {
   const key = brand.toLowerCase().replace(/[^a-z0-9]/g, "")
+  const asset = BRAND_ASSETS[key]
 
-  switch (key) {
-    case "rittal":
-      return (
-        <svg
-          viewBox="0 0 160 44"
-          className={cn("h-8 sm:h-9 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* Official Rittal Emblem */}
-          <g transform="translate(2, 2)">
-            <rect width="36" height="40" rx="3" fill="#FFFFFF" />
-            <rect x="1" y="16" width="15" height="8" fill="#009453" />
-            <rect x="1" y="32" width="15" height="7" fill="#009453" />
-            <path d="M19 18H24V5H3V10H19V18Z" fill="#008BD2" />
-            <rect x="17" y="32" width="5" height="7" fill="#008BD2" />
-            <path d="M25 14H30V2H3V7H25V14Z" fill="#005CA9" />
-            <rect x="23" y="32" width="5" height="7" fill="#005CA9" />
-            <path d="M31 10H36V-1H3V4H31V10Z" fill="#951B81" />
-            <rect x="29" y="32" width="5" height="7" fill="#951B81" />
-            <path d="M3 0V4H36V28H40V0H3Z" fill="#E50043" />
-            <rect x="35" y="32" width="5" height="7" fill="#E50043" />
-            <rect x="1" y="28" width="39" height="2.5" fill="#0F172A" />
-          </g>
-          {/* RITTAL Bold Vector Lettering */}
-          <g fill="#003B6D" transform="translate(48, 10)">
-            <path d="M0 24V0H9.5C13.5 0 16.5 2.2 16.5 6.2C16.5 9 14.8 11.2 12.2 12L17.5 24H12.5L7.8 13.2H4.5V24H0ZM4.5 4V9.5H9.2C11 9.5 12 8.5 12 6.8C12 5 11 4 9.2 4H4.5Z" />
-            <path d="M20 24V0H24.5V24H20Z" />
-            <path d="M27.5 4V0H41.5V4H36.8V24H32.2V4H27.5Z" />
-            <path d="M43.5 4V0H57.5V4H52.8V24H48.2V4H43.5Z" />
-            <path d="M64 0H69.5L76 24H71.2L69.8 18.5H63.8L62.4 24H57.5L64 0ZM68.8 14.5L66.8 6.5L64.8 14.5H68.8Z" />
-            <path d="M78 24V0H82.5V20H93V24H78Z" />
-          </g>
-        </svg>
-      )
-
-    case "schneider":
-    case "schneiderelectric":
-      return (
-        <svg
-          viewBox="0 0 190 44"
-          className={cn("h-8 sm:h-9 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* Schneider Electric Green Flash */}
-          <g fill="#3DCD58">
-            <path d="M21 4C15 4 8.5 7.8 4 13.5C2.8 15 1.8 16.5 1 18.2H5.6L13 4.5C15.3 4.2 18.2 4 21 4Z" />
-            <path d="M3.5 23C4.8 29.5 11.5 35 19 35C25 35 31.5 31.2 36 25.5C37.2 24 38.2 22.5 39 20.8H34.4L27 34.5C24.7 34.8 21.8 35 19 35C13.5 35 7.5 31.5 3.5 23Z" />
-            <path d="M14 10L7 24H17L14 33L29 19H19L23 10H14Z" />
-          </g>
-          {/* Schneider Electric Typo */}
-          <g fill="#00843D">
-            <text x="44" y="24" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="800" fontSize="16" letterSpacing="-0.02em">
-              Schneider
-            </text>
-            <text x="44" y="36" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="600" fontSize="11" letterSpacing="0.08em" opacity="0.9">
-              Electric
-            </text>
-          </g>
-        </svg>
-      )
-
-    case "xarrow":
-      return (
-        <svg
-          viewBox="0 0 170 40"
-          className={cn("h-7 sm:h-8 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g transform="translate(2, 4)">
-            <path d="M0 4L14 16L0 28H7L21 16L7 4H0Z" fill="#0284C7" />
-            <path d="M12 4L26 16L12 28H19L33 16L19 4H12Z" fill="#0EA5E9" />
-          </g>
-          <g fill="#0F172A">
-            {/* X */}
-            <path d="M42 28L47.5 19.5L42.5 12H46.5L49.5 16.8L52.5 12H56.5L51.5 19.5L57 28H53L49.5 22.3L46 28H42Z" />
-            {/* A */}
-            <path d="M62 12H66.5L71.5 28H67.5L66.3 24H62.2L61 28H57L62 12ZM65.5 20.8L64.2 16.2L63 20.8H65.5Z" />
-            {/* r */}
-            <path d="M74 16.5H77V18.2C77.8 17 79.2 16.3 80.8 16.3V19.8C80.2 19.6 79.6 19.6 79 19.6C77.6 19.6 77 20.5 77 22.2V28H74V16.5Z" />
-            {/* r */}
-            <path d="M83 16.5H86V18.2C86.8 17 88.2 16.3 89.8 16.3V19.8C89.2 19.6 88.6 19.6 88 19.6C86.6 19.6 86 20.5 86 22.2V28H83V16.5Z" />
-            {/* o */}
-            <path d="M98 16.3C101.5 16.3 104 18.8 104 22.3C104 25.8 101.5 28.3 98 28.3C94.5 28.3 92 25.8 92 22.3C92 18.8 94.5 16.3 98 16.3ZM98 19.3C96.2 19.3 95 20.5 95 22.3C95 24.1 96.2 25.3 98 25.3C99.8 25.3 101 24.1 101 22.3C101 20.5 99.8 19.3 98 19.3Z" />
-            {/* w */}
-            <path d="M106 16.5H109L111 24.5L113 16.5H115.5L117.5 24.5L119.5 16.5H122.5L119 28H116L114.2 20.5L112.5 28H109.5L106 16.5Z" />
-          </g>
-          {/* SCADA Badge */}
-          <rect x="127" y="14" width="40" height="15" rx="3" fill="#E0F2FE" />
-          <path d="M131 23C131 21.5 132 20.5 133.5 20.5C134.5 20.5 135.2 21 135.5 21.6L134.5 22.2C134.3 21.8 133.9 21.5 133.5 21.5C132.7 21.5 132.2 22.1 132.2 23C132.2 23.9 132.7 24.5 133.5 24.5C134 24.5 134.4 24.2 134.6 23.7L135.6 24.2C135.2 25 134.5 25.5 133.5 25.5C132 25.5 131 24.5 131 23Z" fill="#0284C7" />
-          <path d="M137 25.3V20.7H138.2L140 23.5L141.8 20.7H143V25.3H141.8V22.5L140.2 25H139.8L138.2 22.5V25.3H137Z" fill="#0284C7" />
-          <path d="M145 25.3L147.2 20.7H148.6L150.8 25.3H149.5L149 24.2H146.8L146.3 25.3H145ZM147.3 23.2H148.5L147.9 21.8L147.3 23.2Z" fill="#0284C7" />
-          <path d="M152 20.7H154C155.5 20.7 156.5 21.7 156.5 23C156.5 24.3 155.5 25.3 154 25.3H152V20.7ZM153.2 24.3H154C154.8 24.3 155.3 23.8 155.3 23C155.3 22.2 154.8 21.7 154 21.7H153.2V24.3Z" fill="#0284C7" />
-          <path d="M158 25.3L160.2 20.7H161.6L163.8 25.3H162.5L162 24.2H159.8L159.3 25.3H158ZM160.3 23.2H161.5L160.9 21.8L160.3 23.2Z" fill="#0284C7" />
-        </svg>
-      )
-
-    case "bosch":
-      return (
-        <svg
-          viewBox="0 0 160 38"
-          className={cn("h-8 sm:h-9 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* Bosch Armature */}
-          <g transform="translate(2, 2)">
-            <circle cx="17" cy="17" r="16" stroke="#EA1B24" strokeWidth="2.5" fill="none" />
-            <rect x="12" y="5" width="10" height="24" rx="2" stroke="#EA1B24" strokeWidth="2" fill="none" />
-            <line x1="7" y1="17" x2="27" y2="17" stroke="#EA1B24" strokeWidth="2.5" />
-          </g>
-          {/* BOSCH Bold Red Typo */}
-          <g fill="#EA1B24" transform="translate(42, 6)">
-            <path d="M0 26V0H10C14.5 0 17.5 2 17.5 5.8C17.5 8.2 16 10.2 13.5 11C16.5 11.8 18.5 14 18.5 17C18.5 21.5 15 26 9.5 26H0ZM4.5 4V10.5H9C11 10.5 12.5 9.5 12.5 7.5C12.5 5.5 11 4 9 4H4.5ZM4.5 14.5V22H9.5C11.8 22 13.5 20.8 13.5 18.2C13.5 15.8 11.8 14.5 9.5 14.5H4.5Z" />
-            <path d="M21 13C21 5.5 26.5 0 34 0C41.5 0 47 5.5 47 13C47 20.5 41.5 26 34 26C26.5 26 21 20.5 21 13ZM25.5 13C25.5 18 29 22 34 22C39 22 42.5 18 42.5 13C42.5 8 39 4 34 4C29 4 25.5 8 25.5 13Z" />
-            <path d="M50 21.5L53.5 18C55.5 20 58 21.5 61 21.5C63.5 21.5 65 20.5 65 19C65 17.5 63.5 16.8 60.5 15.8C56 14.2 52.5 12.5 52.5 8.2C52.5 3.5 56.5 0 61.5 0C65.5 0 68.5 1.5 71 3.8L67.5 7.5C65.5 5.8 63.5 4.5 61.5 4.5C59 4.5 57.5 5.5 57.5 7C57.5 8.5 59 9.2 62 10.2C66.5 11.8 70 13.5 70 18C70 23 66 26 61 26C56.5 26 53 24 50 21.5Z" />
-            <path d="M74 13C74 5.5 79.5 0 87 0C92 0 95.5 1.8 98 4.5L94.5 8.2C92.5 6.2 90 4.5 87 4.5C82 4.5 78.5 8.5 78.5 13C78.5 17.5 82 21.5 87 21.5C90 21.5 92.5 19.8 95 17.8L98 21.5C95.5 24.2 91.8 26 87 26C79.5 26 74 20.5 74 13Z" />
-            <path d="M102 26V0H106.5V10.5H117.5V0H122V26H117.5V14.8H106.5V26H102Z" />
-          </g>
-        </svg>
-      )
-
-    case "abb":
-      return (
-        <svg
-          viewBox="0 0 90 34"
-          className={cn("h-7 sm:h-8 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g fill="#FF000F">
-            <polygon points="5.7,17 0,33 8.3,33 10.7,26 16,26 16,17" />
-            <polygon points="16,0 11.7,0 6,16 16,16" />
-            <polygon points="17,26 22.3,26 24.7,33 33,33 27.3,17 17,17" />
-            <polygon points="27,16 21.3,0 17,0 17,16" />
-            <rect x="36" y="0" width="10" height="16" />
-            <rect x="36" y="17" width="10" height="16" />
-            <path d="M47 33h2c6-.3 10.2-5 10.2-10.6 0-1.9-.4-3.8-1.3-5.3H47V33z" />
-            <path d="M57.3 16c-1-1.4-2.4-2.5-3.9-3.3 1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7H47v16h10.3z" />
-            <rect x="63" y="0" width="10" height="16" />
-            <rect x="63" y="17" width="10" height="16" />
-            <path d="M74 33h2c6-.3 10.2-5 10.2-10.6 0-1.9-.4-3.8-1.3-5.3H74V33z" />
-            <path d="M84.3 16c-1-1.4-2.4-2.5-3.9-3.3 1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7H74v16h10.3z" />
-          </g>
-        </svg>
-      )
-
-    case "siemens":
-      return (
-        <svg
-          viewBox="0 0 210 50"
-          className={cn("h-6 sm:h-7 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g fill="#00646E">
-            <path d="M18.77 36.097v-2.493q2.13.67 3.77.67 2.262-.002 2.262-1.2c.005-.286-.116-.56-.33-.75q-.335-.32-1.726-.897-2.495-1.02-3.252-1.744-.98-.954-.98-2.41 0-1.875 1.428-2.862 1.428-.987 3.68-.968 1.25 0 3.617.46v2.4q-1.76-.703-3.266-.7c-1.32-.014-2.122.518-2.122 1.156-.002.266.11.52.307.7q.315.297 1.706.877 2.476 1.034 3.252 1.77.985.955.985 2.427 0 1.97-1.42 2.97-1.42.99-3.886.974-1.94 0-4.025-.43zm11.758 0V23.47h3.184v12.627zm10.748-2.502h7.32v2.502H38.09V23.47h10.224v2.503h-7.038v2.66h6.29v2.4h-6.29zm13.11 2.502V23.47h3.298l4.475 7.42 4.476-7.42h3.297v12.627h-3.183V27.56l-3.864 6.36h-1.47l-3.863-6.36v8.537zm20.89-2.502h7.32v2.502H71.49V23.47h10.225v2.503h-7.039v2.66h6.292v2.4h-6.292zm13.11 2.502V23.47h3.203l6.557 7.74v-7.74h3.183v12.627h-3.203l-6.557-7.74v7.74zm18.423 0v-2.493q2.13.67 3.77.67 2.263-.002 2.263-1.2c.005-.286-.117-.56-.33-.75q-.336-.32-1.727-.897-2.494-1.02-3.252-1.744-.98-.954-.98-2.41 0-1.875 1.428-2.862 1.428-.987 3.68-.968 1.25 0 3.616.46v2.4q-1.76-.703-3.266-.7c-1.32-.014-2.122.518-2.122 1.156-.002.266.11.52.308.7q.314.297 1.705.877 2.476 1.034 3.252 1.77.986.955.986 2.427 0 1.97-1.42 2.97-1.42.99-3.887.974-1.94 0-4.024-.43z" transform="scale(1.7) translate(-10, -10)" />
-          </g>
-        </svg>
-      )
-
-    case "fluke":
-      return (
-        <svg
-          viewBox="0 0 160 52"
-          className={cn("h-7 sm:h-8 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <rect width="160" height="52" rx="4" fill="#FFC20E" />
-          <g fill="#000000">
-            <polygon points="20.7,34.4 24.5,34.4 24.5,27.1 41.5,27.1 41.5,23.3 24.5,23.3 24.5,21 41.5,21 41.5,17.2 20.7,17.2" />
-            <polygon points="44.4,17.2 48.1,17.2 48.1,30 63.1,30 63.1,34.4 44.4,34.4" />
-            <path d="M85.2,34.4c2.1,0,3.8-1.7,3.8-3.8V17.2h-3.8V30H69V17.2h-3.8v13.4c0,2.1,1.7,3.8,3.8,3.8H85.2z" />
-            <polygon points="96.2,27.5 107.3,34.4 114.2,34.4 100.8,25.7 112.9,17.2 106.2,17.2 96.3,23.5 96.2,23.5 96.2,17.2 92.4,17.2 92.4,34.4 96.2,34.4 96.2,27.5" />
-            <polygon points="116.4,17.2 138.4,17.2 138.4,20.9 120.2,20.9 120.2,23.9 138.4,23.9 138.4,27.6 120.2,27.6 120.2,30.6 138.4,30.6 138.4,34.4 116.4,34.4" />
-          </g>
-        </svg>
-      )
-
-    case "megger":
-      return (
-        <svg
-          viewBox="0 0 612 127"
-          className={cn("h-6 sm:h-7 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g fill="#E30613">
-            <path d="M 124.97,126.96 H 86.82 V 48.71 H 86.43 L 64.91,126.96 H 37.94 L 16.42,48.71 H 16.03 V 126.96 H 0 V 0 H 26.6 L 51.42,88.4 H 51.81 L 76.64,0 H 124.97 Z" />
-            <path d="M 218.66,85.29 H 159.57 C 160.74,103.27 172.86,114.61 190.9,114.61 C 202.63,114.61 212.01,108.74 216.71,99.75 H 234.3 C 227.65,117.74 211.23,126.96 190.9,126.96 C 160.35,126.96 142.36,105.23 142.36,80.99 C 142.36,56.74 160.35,35 190.12,35 C 219.05,35 235.86,56.35 235.86,80.99 C 235.86,82.55 235.86,83.92 235.47,85.29 Z M 159.57,72.78 H 218.27 C 217.1,58.31 207.32,47.36 189.73,47.36 C 172.52,47.36 161.13,58.31 159.57,72.78 Z" />
-            <path d="M 334.84,37.35 V 126.96 H 318.81 V 114.61 C 313.34,122.82 303.17,126.96 290.66,126.96 C 263.29,126.96 244.13,105.23 244.13,80.99 C 244.13,56.74 263.29,35 290.66,35 C 303.17,35 313.34,39.14 318.81,47.35 V 37.35 Z M 289.88,114.61 C 307.87,114.61 319.2,100.92 319.2,80.99 C 319.2,61.05 307.87,47.36 289.88,47.36 C 271.89,47.36 260.55,61.05 260.55,80.99 C 260.55,100.92 271.89,114.61 289.88,114.61 Z" />
-            <path d="M 436.93,37.35 V 126.96 H 420.9 V 114.61 C 415.43,122.82 405.26,126.96 392.75,126.96 C 365.38,126.96 346.22,105.23 346.22,80.99 C 346.22,56.74 365.38,35 392.75,35 C 405.26,35 415.43,39.14 420.9,47.35 V 37.35 Z M 391.97,114.61 C 409.96,114.61 421.29,100.92 421.29,80.99 C 421.29,61.05 409.96,47.36 391.97,47.36 C 373.98,47.36 362.64,61.05 362.64,80.99 C 362.64,100.92 373.98,114.61 391.97,114.61 Z" />
-            <path d="M 520.73,85.29 H 461.64 C 462.81,103.27 474.93,114.61 492.97,114.61 C 504.7,114.61 514.08,108.74 518.78,99.75 H 536.37 C 529.72,117.74 513.3,126.96 492.97,126.96 C 462.42,126.96 444.43,105.23 444.43,80.99 C 444.43,56.74 462.42,35 492.19,35 C 521.12,35 537.93,56.35 537.93,80.99 C 537.93,82.55 537.93,83.92 537.54,85.29 Z M 461.64,72.78 H 520.34 C 519.17,58.31 509.39,47.36 491.8,47.36 C 474.59,47.36 463.2,58.31 461.64,72.78 Z" />
-            <path d="M 607.72,37.35 V 50.84 C 596.77,49.27 586.21,54.75 580.74,63.93 V 126.96 H 564.71 V 37.35 H 580.74 V 50.45 C 585.82,41.85 596.77,36.56 607.72,37.35 Z" />
-            <rect x="588" y="112" width="15" height="15" />
-          </g>
-        </svg>
-      )
-
-    case "flir":
-      return (
-        <svg
-          viewBox="0 0 150 50"
-          className={cn("h-6 sm:h-7 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* FLIR Blue Nav Glyph */}
-          <g fill="#003366">
-            <polygon points="17,5 29,17 17,29 5,17" />
-            <polygon points="17,0 21,4 17,8 13,4" fill="#005A9C" />
-            <polygon points="34,17 30,21 26,17 30,13" fill="#005A9C" />
-            <polygon points="17,34 13,30 17,26 21,30" fill="#005A9C" />
-            <polygon points="0,17 4,13 8,17 4,21" fill="#005A9C" />
-          </g>
-          {/* FLIR Letters */}
-          <g fill="#001833" transform="translate(42, 8)">
-            {/* F */}
-            <path d="M0 24V0H16V4.5H5V10H14V14.5H5V24H0Z" />
-            {/* L */}
-            <path d="M19 24V0H24V19.5H35V24H19Z" />
-            {/* I */}
-            <path d="M39 24V0H44V24H39Z" />
-            {/* R */}
-            <path d="M48 24V0H59C64 0 67 2.5 67 6.8C67 9.8 65 12 62 12.8L68 24H62.5L57 13.5H53V24H48ZM53 4.5V9.5H58.5C60.5 9.5 61.8 8.5 61.8 7C61.8 5.5 60.5 4.5 58.5 4.5H53Z" />
-          </g>
-        </svg>
-      )
-
-    case "danfoss":
-      return (
-        <svg
-          viewBox="0 0 800 336"
-          className={cn("h-7 sm:h-8 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M246.3 118.8c-1.3-4.6-3.8-9.1-7.5-13.4-3.7-4.3-8.8-7.9-15.3-10.9-6.5-3-14.7-4.5-24.5-4.5h-55.2l-37.1 190.8h46.3l12.7-65.4h11.9c14.6 0 26.6-2.5 35.8-7.5s16.2-12.1 20.9-21.3c4.7-9.2 7-20 7-32.4-.1-15.4-5-27.2-15-35.4zm-48.4 52.4c-2.3 4.6-5.8 8-10.5 10.3-4.7 2.3-11.2 3.4-19.4 3.4h-9.9l11.7-60.4h12.5c8 0 13.9 1.4 17.6 4.3 3.7 2.9 5.8 7.3 6.3 13.3.4 9.5-2.4 19.8-8.3 29.1z"
-            fill="#E2001A"
-          />
-          <path
-            d="M328.7 175.7c-7.9-4.8-17.7-7.2-29.4-7.2-11.7 0-21.8 2.4-30.3 7.2-8.5 4.8-15 11.6-19.5 20.4-4.5 8.8-6.7 19.3-6.7 31.4 0 12.1 2.3 22.3 6.8 30.6 4.5 8.3 10.9 14.6 19.2 18.9 8.3 4.3 18.1 6.4 29.4 6.4 11.3 0 21.2-2.1 29.6-6.4 8.4-4.3 14.9-10.6 19.5-18.9 4.6-8.3 6.9-18.5 6.9-30.6 0-12.1-2.2-22.6-6.6-31.4-4.4-8.8-10.7-15.6-18.9-20.4zm-22.3 67.2c-3.1 5.4-7.2 8.1-12.3 8.1-5.1 0-8.8-2.7-11.1-8.1-2.3-5.4-3.5-12.7-3.5-21.9 0-9.2 1.2-16.5 3.5-21.9 2.3-5.4 6-8.1 11.1-8.1s9.2 2.7 12.3 8.1c3.1 5.4 4.7 12.7 4.7 21.9 0 9.2-1.6 16.5-4.7 21.9z"
-            fill="#E2001A"
-          />
-          <path
-            d="M441.5 171.1h-40.3l-21.3 109.7h42.8l10.6-54.6c2.5-12.9 7.7-22.8 15.6-29.7 7.9-6.9 18.1-10.4 30.6-10.4h4.8l7.6-39.1c-12.1 0-22.5 3.1-31.2 9.3-8.7 6.2-15.1 14.5-19.2 24.8z"
-            fill="#E2001A"
-          />
-          <path
-            d="M573.1 171.1h-38.6l-21.3 109.7h42.8l11.4-58.7c2.5-12.9 7.9-22.7 16.2-29.4 8.3-6.7 18.7-10.1 31.2-10.1h5.8l7.6-39.1c-12.3 0-22.8 3.1-31.5 9.3-8.7 6.2-15 14.5-18.6 24.8l-5-6.5z"
-            fill="#E2001A"
-          />
-          <path
-            d="M666.3 175.7c-7.9-4.8-17.7-7.2-29.4-7.2-11.7 0-21.8 2.4-30.3 7.2-8.5 4.8-15 11.6-19.5 20.4-4.5 8.8-6.7 19.3-6.7 31.4 0 12.1 2.3 22.3 6.8 30.6 4.5 8.3 10.9 14.6 19.2 18.9 8.3 4.3 18.1 6.4 29.4 6.4 11.3 0 21.2-2.1 29.6-6.4 8.4-4.3 14.9-10.6 19.5-18.9 4.6-8.3 6.9-18.5 6.9-30.6 0-12.1-2.2-22.6-6.6-31.4-4.4-8.8-10.7-15.6-18.9-20.4zm-22.3 67.2c-3.1 5.4-7.2 8.1-12.3 8.1-5.1 0-8.8-2.7-11.1-8.1-2.3-5.4-3.5-12.7-3.5-21.9 0-9.2 1.2-16.5 3.5-21.9 2.3-5.4 6-8.1 11.1-8.1s9.2 2.7 12.3 8.1c3.1 5.4 4.7 12.7 4.7 21.9 0 9.2-1.6 16.5-4.7 21.9z"
-            fill="#E2001A"
-          />
-        </svg>
-      )
-
-    case "omron":
-      return (
-        <svg
-          viewBox="0 0 815 194"
-          className={cn("h-6 sm:h-7 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g fill="#005BAC">
-            <path d="M 88.3,193.5 C 114.7,194.8 142,178.9 153.8,162.8 165.9,147.1 168.4,136.7 170.5,116.7 171.9,106.7 169.5,95.7 165.7,87.6 157,69.7 136.6,55.7 111.7,54.7 86.5,53.9 58.2,69.7 46.1,86.1 33.7,102.6 30.8,115 29.7,133.6 28.7,149.2 37.5,168.9 49.1,179.2 59.1,188.1 73.9,192.9 88.3,193.5 Z M 417,193.2 V 110.6 H 422.4 C 431.5,122.5 453,147.7 475.9,169.5 L 496,188.4 502.2,190.3 506.2,186.3 C 520.7,169.6 535.8,149.2 550.1,132 L 566.5,111.6 H 571 V 190.8 L 577.4,194.5 H 614 L 618.6,190.8 V 38.6 L 614,34.6 H 576.5 L 570.6,38.6 520.3,101.4 C 514.4,108.9 507.3,118.1 501.4,125.3 495.5,118.1 488.3,108.9 482.4,101.4 L 432.1,38.6 426.2,34.6 H 388.9 L 383,38.6 V 189.3 L 387.6,193.3 H 425.7 Z M 737.5,193.5 C 762.5,195.1 789,181.1 801.9,166 816.2,149.1 820,133 820.3,113 820.6,95.1 813.3,75.5 801.9,63.9 790.4,52.6 773.4,45.7 756.5,45.7 733.7,45.7 707.1,58.4 692.3,75.1 676.8,92.5 672.4,109 673,130.7 673.5,148.8 681.3,166.7 693.2,178.2 704.9,189.3 722.7,193.1 737.5,193.5 Z M 587.6,193.2 V 113.6 H 621.8 L 638.8,137.2 675.9,188.1 683.1,193.5 H 729.4 L 734.7,187.9 C 728.3,178.7 716.1,162.2 708.9,152.3 689.2,124.9 676.3,106.9 673,100.1 690.2,90.9 700.8,74.3 700.8,56.2 700.8,42 694.3,24.2 683.6,15.7 671.2,6 652.1,1.4 633.5,1.4 H 544.9 L 539.5,5.4 V 156.1 L 544.9,160.1 H 582 L 587.6,156.1 Z M 81.3,193.2 V 38.6 L 75.9,34.6 H 37.1 L 31.7,38.6 V 189.3 L 37.1,193.3 H 77 Z" />
-          </g>
-        </svg>
-      )
-
-    case "yokogawa":
-      return (
-        <svg
-          viewBox="0 0 48 8"
-          className={cn("h-6 sm:h-7 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* YOKOGAWA Text */}
-          <g fill="#0F172A">
-            <text x="1" y="6.2" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" fontSize="6.8" letterSpacing="0.04em">
-              YOKOGAWA
-            </text>
-          </g>
-          {/* Official Yellow Diamond */}
-          <polygon points="44,3.8 45.8,1.2 47.6,3.8 45.8,6.4" fill="#FFD100" />
-        </svg>
-      )
-
-    case "honeywell":
-      return (
-        <svg
-          viewBox="0 0 678 120"
-          className={cn("h-6 sm:h-7 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g fill="#EE3124">
-            <polygon points="614.25781,91.649414 640.01074,91.649414 640.01074,0 614.25781,0 614.25781,91.649414 614.25781,91.649414 " />
-            <polygon points="677.87891,0 677.87891,91.649414 652.12988,91.649414 652.12988,0 677.87891,0 677.87891,0 " />
-            <polygon points="54.909668,35.59668 34.082031,35.59668 34.082031,0 0,0 0,91.649414 34.082031,91.649414 34.082031,46.205078 54.909668,46.205078 54.909668,91.649414 88.995117,91.649414 88.995117,0 54.909668,0 54.909668,35.59668 54.909668,35.59668 " />
-            <path d="M 179.03467,23.364258 C 163.66699,5.8007812 143.1416,0 117.43311,0 c -25.70752,0 -46.233887,5.8007812 -61.601074,23.364258 -15.368164,17.564453 -23.052734,37.893555 -23.052734,60.988281 0,23.094727 7.68457,43.423828 23.052734,60.988281 15.367187,17.56348 35.893554,23.36426 61.601074,23.36426 25.70849,0 46.23388,-5.80078 61.60156,-23.36426 15.36719,-17.564453 23.05176,-37.893554 23.05176,-60.988281 0,-23.094726 -7.68457,-43.423828 -23.05176,-60.988281 z m -26.9668,80.822262 c -8.45508,10.6875 -20.00976,16.03125 -34.63427,16.03125 -14.625,0 -26.1792,-5.34375 -34.634282,-16.03125 -8.455078,-10.6875 -12.682617,-23.364258 -12.682617,-38.03125 0,-14.666992 4.227539,-27.34375 12.682617,-38.03125 8.455082,-10.6875 20.009282,-16.03125 34.634282,-16.03125 14.62451,0 26.17919,5.34375 34.63427,16.03125 8.45508,10.6875 12.68262,23.364258 12.68262,38.03125 0,14.666992 -4.22754,27.34375 -12.68262,38.03125 z" />
-            <path d="M 270.82959,0 H 236.74414 L 209.43066,74.50293 H 208.84473 L 181.53076,0 h -34.08496 l 43.89648,119.5166 h 35.59082 l 20.21094,-57.067383 h 0.58594 l 20.21191,57.067383 h 35.59082 z" />
-            <polygon points="340.54004,21.602539 340.54004,0 263.29297,0 263.29297,91.649414 340.54004,91.649414 340.54004,70.046875 297.37793,70.046875 297.37793,52.327148 335.5498,52.327148 335.5498,32.483398 297.37793,32.483398 297.37793,21.602539 " />
-            <path d="M 444.60938,0 H 410.52393 L 383.21045,74.50293 H 382.62451 L 355.31055,0 h -34.08496 l 43.89648,119.5166 h 35.59082 l 20.21094,-57.067383 h 0.58594 l 20.21191,57.067383 h 35.59082 z" />
-            <polygon points="514.31934,21.602539 514.31934,0 437.07227,0 437.07227,91.649414 514.31934,91.649414 514.31934,70.046875 471.15723,70.046875 471.15723,52.327148 509.3291,52.327148 509.3291,32.483398 471.15723,32.483398 471.15723,21.602539 " />
-          </g>
-        </svg>
-      )
-
-    case "raychem":
-    case "teconnectivity":
-    case "teraychem":
-      return (
-        <svg
-          viewBox="0 0 160 44"
-          className={cn("h-7 sm:h-8 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* TE Orange Box */}
-          <rect x="2" y="4" width="40" height="36" rx="4" fill="#E86C00" />
-          <text x="6" y="30" fill="#FFFFFF" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" fontSize="22" letterSpacing="-0.04em">
-            TE
-          </text>
-          {/* Connectivity / Raychem text */}
-          <g fill="#0F172A" transform="translate(48, 8)">
-            <text x="0" y="16" fill="currentColor" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="800" fontSize="16" letterSpacing="-0.02em">
-              Raychem
-            </text>
-            <text x="0" y="27" fill="#E86C00" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="600" fontSize="9.5" letterSpacing="0.05em">
-              connectivity
-            </text>
-          </g>
-        </svg>
-      )
-
-    case "3m":
-    case "threem":
-      return (
-        <svg
-          viewBox="0 0 300 158"
-          className={cn("h-7 sm:h-8 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g fill="#FF0000">
-            <path d="M 0,0 H 136 V 42 H 78 V 60 H 136 V 158 H 0 V 116 H 58 V 98 H 0 Z" />
-            <polygon points="152,0 196,0 226,78 256,0 300,0 300,158 256,158 256,60 230,132 222,132 196,60 196,158 152,158" />
-          </g>
-        </svg>
-      )
-
-    case "eaton":
-      return (
-        <svg
-          viewBox="0 0 92 26"
-          className={cn("h-7 sm:h-8 w-auto max-w-full object-contain shrink-0 select-none", className)}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g fill="#005EB8">
-            <path d="M 0,0 H 26 V 5.5 H 6.5 V 10 H 22 V 15.5 H 6.5 V 20.5 H 26 V 26 H 0 Z" />
-            <path d="M 33,0 H 42.5 L 52,26 H 45 L 43.5,21.5 H 32 L 30.5,26 H 23.5 Z M 41.5,16.5 L 37.8,5.5 34,16.5 Z" />
-            <polygon points="51,0 71,0 71,5.5 64,5.5 64,26 58,26 58,5.5 51,5.5" />
-            <path d="M 70,13 C 70,4.5 76.5,0 85.5,0 94.5,0 101,4.5 101,13 101,21.5 94.5,26 85.5,26 76.5,26 70,21.5 70,13 Z M 76.5,13 C 76.5,18.5 80.5,21 85.5,21 90.5,21 94.5,18.5 94.5,13 94.5,7.5 90.5,5 85.5,5 80.5,5 76.5,7.5 76.5,13 Z" transform="scale(0.9) translate(-7, 0)" />
-          </g>
-        </svg>
-      )
-
-    case "notifier":
-    case "notifierhoneywell":
-      return <BrandLogo brand="honeywell" className={className} />
-
-    default:
-      return (
-        <span className={cn("font-display text-sm font-bold text-foreground tracking-wide", className)}>
-          {brand}
-        </span>
-      )
+  if (asset) {
+    return (
+      <Image
+        src={asset.src}
+        alt={asset.alt}
+        width={asset.width}
+        height={asset.height}
+        className={cn(
+          "h-7 sm:h-8 w-auto max-w-[130px] object-contain shrink-0 select-none transition-transform duration-300 group-hover:scale-105 pointer-events-none",
+          className
+        )}
+        priority
+        unoptimized
+      />
+    )
   }
+
+  return (
+    <span className={cn("font-display text-sm font-bold text-foreground tracking-wide", className)}>
+      {brand}
+    </span>
+  )
 }
