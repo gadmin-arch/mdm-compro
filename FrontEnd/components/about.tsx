@@ -638,10 +638,15 @@ export function About({ page }: { page?: PageContent | null }) {
                 Ruko Jati Kepuh Indah F-26 & E-21, Sidoarjo 61271, East Java, Indonesia
               </p>
               <div className="mt-6 space-y-2 border-t border-border/60 pt-4 text-xs text-muted-foreground">
-                <p className="flex items-center gap-2">
-                  <Phone className="h-3.5 w-3.5 text-primary" />
-                  Hotline / WhatsApp Sales: +62 811-8303-250
-                </p>
+                <div className="flex flex-col gap-1">
+                  <p className="flex items-center gap-2">
+                    <Phone className="h-3.5 w-3.5 text-primary" />
+                    <span className="font-medium text-foreground">Hotline / WhatsApp Sales:</span>
+                  </p>
+                  <p className="pl-5 text-muted-foreground leading-relaxed">
+                    +62 811-8303-250 &middot; +62 821-4007-4122 &middot; +62 813-3457-5542
+                  </p>
+                </div>
                 <p className="flex items-center gap-2">
                   <Mail className="h-3.5 w-3.5 text-primary" />
                   Email: sales@multidayamitra.co.id

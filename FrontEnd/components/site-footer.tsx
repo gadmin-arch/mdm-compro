@@ -71,19 +71,29 @@ export async function SiteFooter() {
                   <span className="max-w-sm">{settings.address}</span>
                 </li>
               )}
-              {settings.salesPhone && (
-                <li className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 shrink-0 text-emerald-500" />
-                  <a
-                    href={`https://wa.me/${settings.salesPhone.replace(/[^0-9]/g, "")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-foreground hover:underline"
-                  >
-                    WhatsApp / Sales: {settings.salesPhone}
-                  </a>
-                </li>
-              )}
+              <li className="flex items-start gap-2">
+                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                <div className="flex flex-col gap-1">
+                  <span className="font-medium text-foreground">WhatsApp / Sales:</span>
+                  <div className="flex flex-col gap-1 text-xs sm:text-sm">
+                    {(settings.salesPhones && settings.salesPhones.length > 0
+                      ? settings.salesPhones
+                      : ["+62 811-8303-250", "+62 821-4007-4122", "+62 813-3457-5542"]
+                    ).map((phone, idx) => (
+                      <a
+                        key={phone}
+                        href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-foreground hover:text-emerald-600 hover:underline transition-colors flex items-center gap-1.5"
+                      >
+                        <span className="text-muted-foreground font-normal">Sales {idx + 1}:</span>
+                        {phone}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </li>
               {settings.phone && (
                 <li className="flex items-center gap-2">
                   <Phone className="h-4 w-4 shrink-0 text-primary" />

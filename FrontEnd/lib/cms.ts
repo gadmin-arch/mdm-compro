@@ -821,6 +821,7 @@ export type SiteSettings = {
   address: string
   salesEmail?: string
   salesPhone?: string
+  salesPhones?: string[]
   whatsappPhone?: string
   hotlinePhone?: string
   socials: { label: string; url: string; platform?: string }[]
@@ -835,6 +836,11 @@ export const fallbackSiteSettings: SiteSettings = {
   fax: "+62 31 591 7845",
   salesEmail: "sales@multidayamitra.co.id",
   salesPhone: "+62 811-8303-250",
+  salesPhones: [
+    "+62 811-8303-250",
+    "+62 821-4007-4122",
+    "+62 813-3457-5542",
+  ],
   whatsappPhone: "+62 811-8303-250",
   hotlinePhone: "+62 811-8303-250",
   address: "Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, East Java, Indonesia",
@@ -858,6 +864,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     address: site.address ?? fallbackSiteSettings.address,
     salesEmail: site.salesEmail ?? fallbackSiteSettings.salesEmail,
     salesPhone: site.salesPhone ?? fallbackSiteSettings.salesPhone,
+    salesPhones: Array.isArray(site.salesPhones) && site.salesPhones.length > 0
+      ? site.salesPhones
+      : fallbackSiteSettings.salesPhones,
     whatsappPhone: site.whatsappPhone ?? site.salesPhone ?? fallbackSiteSettings.whatsappPhone,
     hotlinePhone: site.hotlinePhone ?? fallbackSiteSettings.hotlinePhone,
     socials: Array.isArray(site.socials)
