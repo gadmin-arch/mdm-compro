@@ -9,11 +9,11 @@ interface BrandLogoProps {
 
 const BRAND_ASSETS: Record<string, { src: string; width: number; height: number; alt: string }> = {
   // Authorized Partners
-  rittal: { src: "/brands/rittal.png", width: 189, height: 72, alt: "Rittal" },
+  rittal: { src: "/brands/rittal.png", width: 364, height: 504, alt: "Rittal" },
   schneider: { src: "/brands/schneider.png", width: 243, height: 72, alt: "Schneider Electric" },
   schneiderelectric: { src: "/brands/schneider.png", width: 243, height: 72, alt: "Schneider Electric" },
-  xarrow: { src: "/brands/xarrow.png", width: 195, height: 72, alt: "xArrow SCADA" },
-  xarrowscada: { src: "/brands/xarrow.png", width: 195, height: 72, alt: "xArrow SCADA" },
+  xarrow: { src: "/brands/xarrow.png", width: 1368, height: 441, alt: "xArrow SCADA" },
+  xarrowscada: { src: "/brands/xarrow.png", width: 1368, height: 441, alt: "xArrow SCADA" },
   mundung: { src: "/brands/mundung.png", width: 480, height: 140, alt: "Mundung Connecting Futures" },
   mundungconnectingfutures: { src: "/brands/mundung.png", width: 480, height: 140, alt: "Mundung Connecting Futures" },
 
@@ -42,9 +42,9 @@ const BRAND_ASSETS: Record<string, { src: string; width: number; height: number;
   notifier: { src: "/brands/honeywell.png", width: 405, height: 72, alt: "Honeywell Notifier" },
   notifierhoneywell: { src: "/brands/honeywell.png", width: 405, height: 72, alt: "Honeywell Notifier" },
   bosch: { src: "/brands/bosch.png", width: 323, height: 72, alt: "Bosch" },
-  asenware: { src: "/brands/asenware.png", width: 604, height: 50, alt: "ASENWARE" },
-  awasenware: { src: "/brands/asenware.png", width: 604, height: 50, alt: "ASENWARE" },
-  hooseki: { src: "/brands/hooseki.png", width: 965, height: 153, alt: "HOOSEKI" },
+  asenware: { src: "/brands/asenware.png", width: 1083, height: 285, alt: "ASENWARE" },
+  awasenware: { src: "/brands/asenware.png", width: 1083, height: 285, alt: "ASENWARE" },
+  hooseki: { src: "/brands/hooseki.png", width: 720, height: 388, alt: "HOOSEKI" },
   simplex: { src: "/brands/simplex.png", width: 344, height: 59, alt: "Simplex" },
   hikvision: { src: "/brands/hikvision.png", width: 1200, height: 216, alt: "HIKVISION" },
   advantech: { src: "/brands/advantech.png", width: 488, height: 106, alt: "ADVANTECH" },
@@ -53,8 +53,8 @@ const BRAND_ASSETS: Record<string, { src: string; width: number; height: number;
   phoenixcontact: { src: "/brands/phoenixcontact.png", width: 111, height: 35, alt: "Phoenix Contact" },
   weidmuller: { src: "/brands/weidmuller.png", width: 201, height: 35, alt: "Weidmüller" },
   weidmueller: { src: "/brands/weidmuller.png", width: 201, height: 35, alt: "Weidmüller" },
-  supreme: { src: "/brands/supreme.png", width: 527, height: 69, alt: "Supreme Cable" },
-  supremecable: { src: "/brands/supreme.png", width: 527, height: 69, alt: "Supreme Cable" },
+  supreme: { src: "/brands/supreme.png", width: 568, height: 572, alt: "Supreme Cable" },
+  supremecable: { src: "/brands/supreme.png", width: 568, height: 572, alt: "Supreme Cable" },
   kmi: { src: "/brands/kmi.png", width: 315, height: 77, alt: "KMI Wire and Cable" },
   kmiwireandcable: { src: "/brands/kmi.png", width: 315, height: 77, alt: "KMI Wire and Cable" },
   kabelmetal: { src: "/brands/kabelmetal.png", width: 315, height: 77, alt: "Kabelmetal Indonesia" },
