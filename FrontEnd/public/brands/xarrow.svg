@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 44" fill="none">
+  <g transform="translate(4, 6)">
+    <path d="M0 4L14 16L0 28H7L21 16L7 4H0Z" fill="#0284C7"/>
+    <path d="M12 4L26 16L12 28H19L33 16L19 4H12Z" fill="#0EA5E9" fill-opacity="0.8"/>
+  </g>
+  <text x="44" y="27" fill="#0F172A" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="20" letter-spacing="-0.03em">
+    xArrow
+  </text>
+  <text x="118" y="27" fill="#0284C7" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="11" letter-spacing="0.08em">
+    SCADA
+  </text>
+</svg>

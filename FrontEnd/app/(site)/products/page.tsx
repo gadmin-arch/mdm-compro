@@ -418,18 +418,20 @@ export default async function ProductsPage({ searchParams }: Props) {
               {authorizedPartners.map((p) => (
                 <div
                   key={p.name}
-                  className="group rounded-xl border border-primary/20 bg-card p-5 text-left shadow-xs transition-all hover:border-primary/50 hover:shadow-md"
+                  className="group rounded-xl border border-primary/25 bg-card p-5 text-left shadow-xs transition-all hover:border-primary/60 hover:shadow-md flex flex-col justify-between"
                 >
-                  <div className="flex items-center justify-between gap-2 h-9">
-                    <BrandLogo
-                      brand={p.name}
-                      className="h-7 w-auto max-w-[140px] text-foreground transition-transform duration-300 group-hover:scale-105"
-                    />
-                    <span className="text-[10px] font-medium text-muted-foreground bg-secondary/80 px-2 py-0.5 rounded-md shrink-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center h-10">
+                      <BrandLogo
+                        brand={p.name}
+                        className="w-auto max-w-[150px] transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    <span className="text-[10px] font-medium text-muted-foreground bg-secondary/80 px-2 py-0.5 rounded-md shrink-0 self-start mt-1">
                       {p.country}
                     </span>
                   </div>
-                  <p className="mt-3 text-xs text-primary font-semibold leading-snug">{p.role}</p>
+                  <p className="mt-4 text-xs text-primary font-semibold leading-snug">{p.role}</p>
                 </div>
               ))}
             </div>
@@ -440,17 +442,19 @@ export default async function ProductsPage({ searchParams }: Props) {
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-5">
               Experienced Working-With Brands & Components
             </p>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
               {brandExperience.map((brand) => (
                 <div
                   key={brand}
-                  className="group flex flex-col items-center justify-center rounded-xl border border-border/80 bg-secondary/20 p-4 text-center transition-all hover:border-primary/40 hover:bg-card hover:shadow-xs min-h-[76px]"
+                  className="group flex flex-col items-center justify-center rounded-xl border border-border/80 bg-secondary/20 p-4 text-center transition-all hover:border-primary/50 hover:bg-card hover:shadow-xs min-h-[80px]"
                   title={brand}
                 >
-                  <BrandLogo
-                    brand={brand}
-                    className="h-6 w-auto max-w-[110px] text-foreground/80 transition-transform duration-300 group-hover:scale-110 group-hover:text-foreground"
-                  />
+                  <div className="flex items-center justify-center h-9 w-full">
+                    <BrandLogo
+                      brand={brand}
+                      className="w-auto max-w-[120px] transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
