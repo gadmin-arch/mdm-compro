@@ -1,29 +1,28 @@
-import Image from "next/image"
 import { cn } from "@/lib/utils"
 
-const brandFileMap: Record<string, { src: string; alt: string; heightClass?: string }> = {
-  rittal: { src: "/brands/rittal.svg", alt: "Rittal", heightClass: "h-8 sm:h-9" },
-  schneider: { src: "/brands/schneider.svg", alt: "Schneider Electric", heightClass: "h-8 sm:h-9" },
-  schneiderelectric: { src: "/brands/schneider.svg", alt: "Schneider Electric", heightClass: "h-8 sm:h-9" },
-  xarrow: { src: "/brands/xarrow.svg", alt: "xArrow SCADA", heightClass: "h-7 sm:h-8" },
-  bosch: { src: "/brands/bosch.svg", alt: "Bosch", heightClass: "h-8 sm:h-9" },
-  abb: { src: "/brands/abb.svg", alt: "ABB", heightClass: "h-7 sm:h-8" },
-  siemens: { src: "/brands/siemens.svg", alt: "Siemens", heightClass: "h-6 sm:h-7" },
-  fluke: { src: "/brands/fluke.svg", alt: "Fluke", heightClass: "h-7 sm:h-8" },
-  megger: { src: "/brands/megger.svg", alt: "Megger", heightClass: "h-7 sm:h-8" },
-  flir: { src: "/brands/flir.svg", alt: "FLIR", heightClass: "h-7 sm:h-8" },
-  danfoss: { src: "/brands/danfoss.svg", alt: "Danfoss", heightClass: "h-7 sm:h-8" },
-  omron: { src: "/brands/omron.svg", alt: "Omron", heightClass: "h-6 sm:h-7" },
-  yokogawa: { src: "/brands/yokogawa.svg", alt: "Yokogawa", heightClass: "h-6 sm:h-7" },
-  honeywell: { src: "/brands/honeywell.svg", alt: "Honeywell", heightClass: "h-6 sm:h-7" },
-  notifier: { src: "/brands/honeywell.svg", alt: "Notifier / Honeywell", heightClass: "h-6 sm:h-7" },
-  notifierhoneywell: { src: "/brands/honeywell.svg", alt: "Notifier / Honeywell", heightClass: "h-6 sm:h-7" },
-  raychem: { src: "/brands/te_raychem.svg", alt: "Raychem / TE Connectivity", heightClass: "h-7 sm:h-8" },
-  teconnectivity: { src: "/brands/te_raychem.svg", alt: "TE Connectivity", heightClass: "h-7 sm:h-8" },
-  teraychem: { src: "/brands/te_raychem.svg", alt: "Raychem / TE Connectivity", heightClass: "h-7 sm:h-8" },
-  "3m": { src: "/brands/3m.svg", alt: "3M", heightClass: "h-7 sm:h-8" },
-  threem: { src: "/brands/3m.svg", alt: "3M", heightClass: "h-7 sm:h-8" },
-  eaton: { src: "/brands/eaton.svg", alt: "Eaton", heightClass: "h-7 sm:h-8" },
+const brandFileMap: Record<string, { src: string; alt: string; maxH?: string; maxW?: string }> = {
+  rittal: { src: "/brands/rittal.svg", alt: "Rittal", maxH: "max-h-10", maxW: "max-w-[90px]" },
+  schneider: { src: "/brands/schneider.svg", alt: "Schneider Electric", maxH: "max-h-8 sm:max-h-9", maxW: "max-w-[150px]" },
+  schneiderelectric: { src: "/brands/schneider.svg", alt: "Schneider Electric", maxH: "max-h-8 sm:max-h-9", maxW: "max-w-[150px]" },
+  xarrow: { src: "/brands/xarrow.svg", alt: "xArrow SCADA", maxH: "max-h-7 sm:max-h-8", maxW: "max-w-[140px]" },
+  bosch: { src: "/brands/bosch.svg", alt: "Bosch", maxH: "max-h-7 sm:max-h-8", maxW: "max-w-[140px]" },
+  abb: { src: "/brands/abb.svg", alt: "ABB", maxH: "max-h-6 sm:max-h-7", maxW: "max-w-[100px]" },
+  siemens: { src: "/brands/siemens.svg", alt: "Siemens", maxH: "max-h-5 sm:max-h-6", maxW: "max-w-[125px]" },
+  fluke: { src: "/brands/fluke.svg", alt: "Fluke", maxH: "max-h-6 sm:max-h-7", maxW: "max-w-[110px]" },
+  megger: { src: "/brands/megger.svg", alt: "Megger", maxH: "max-h-6 sm:max-h-7", maxW: "max-w-[110px]" },
+  flir: { src: "/brands/flir.svg", alt: "FLIR", maxH: "max-h-6 sm:max-h-7", maxW: "max-w-[100px]" },
+  danfoss: { src: "/brands/danfoss.svg", alt: "Danfoss", maxH: "max-h-7 sm:max-h-8", maxW: "max-w-[115px]" },
+  omron: { src: "/brands/omron.svg", alt: "Omron", maxH: "max-h-5 sm:max-h-6", maxW: "max-w-[120px]" },
+  yokogawa: { src: "/brands/yokogawa.svg", alt: "Yokogawa", maxH: "max-h-5 sm:max-h-6", maxW: "max-w-[130px]" },
+  honeywell: { src: "/brands/honeywell.svg", alt: "Honeywell", maxH: "max-h-5 sm:max-h-6", maxW: "max-w-[130px]" },
+  notifier: { src: "/brands/honeywell.svg", alt: "Notifier / Honeywell", maxH: "max-h-5 sm:max-h-6", maxW: "max-w-[130px]" },
+  notifierhoneywell: { src: "/brands/honeywell.svg", alt: "Notifier / Honeywell", maxH: "max-h-5 sm:max-h-6", maxW: "max-w-[130px]" },
+  raychem: { src: "/brands/te_raychem.svg", alt: "Raychem / TE Connectivity", maxH: "max-h-6 sm:max-h-7", maxW: "max-w-[120px]" },
+  teconnectivity: { src: "/brands/te_raychem.svg", alt: "TE Connectivity", maxH: "max-h-6 sm:max-h-7", maxW: "max-w-[120px]" },
+  teraychem: { src: "/brands/te_raychem.svg", alt: "Raychem / TE Connectivity", maxH: "max-h-6 sm:max-h-7", maxW: "max-w-[120px]" },
+  "3m": { src: "/brands/3m.svg", alt: "3M", maxH: "max-h-7 sm:max-h-8", maxW: "max-w-[70px]" },
+  threem: { src: "/brands/3m.svg", alt: "3M", maxH: "max-h-7 sm:max-h-8", maxW: "max-w-[70px]" },
+  eaton: { src: "/brands/eaton.svg", alt: "Eaton", maxH: "max-h-6 sm:max-h-7", maxW: "max-w-[110px]" },
 }
 
 interface BrandLogoProps {
@@ -32,7 +31,7 @@ interface BrandLogoProps {
   priority?: boolean
 }
 
-export function BrandLogo({ brand, className, priority }: BrandLogoProps) {
+export function BrandLogo({ brand, className }: BrandLogoProps) {
   const key = brand.toLowerCase().replace(/[^a-z0-9]/g, "")
   const info = brandFileMap[key]
 
@@ -45,17 +44,17 @@ export function BrandLogo({ brand, className, priority }: BrandLogoProps) {
   }
 
   return (
-    <div className={cn("relative flex items-center justify-center", className)}>
-      <Image
+    <div className={cn("relative flex items-center justify-center w-full h-full", className)}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={info.src}
         alt={info.alt}
-        width={180}
-        height={54}
         className={cn(
-          "w-auto max-w-full object-contain transition-transform duration-300 group-hover:scale-105",
-          info.heightClass ?? "h-7 sm:h-8"
+          "w-auto h-auto max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105 select-none",
+          info.maxH,
+          info.maxW
         )}
-        priority={priority}
+        loading="lazy"
       />
     </div>
   )
