@@ -45,7 +45,7 @@ const BRAND_ASSETS: Record<string, { src: string; width: number; height: number;
   asenware: { src: "/brands/asenware.png", width: 1304, height: 328, alt: "ASENWARE" },
   awasenware: { src: "/brands/asenware.png", width: 1304, height: 328, alt: "ASENWARE" },
   hooseki: { src: "/brands/hooseki.png", width: 720, height: 388, alt: "HOOSEKI" },
-  simplex: { src: "/brands/simplex.png", width: 344, height: 59, alt: "Simplex" },
+  simplex: { src: "/brands/simplex.png", width: 1160, height: 292, alt: "Simplex" },
   hikvision: { src: "/brands/hikvision.png", width: 1031, height: 510, alt: "HIKVISION" },
   advantech: { src: "/brands/advantech.png", width: 488, height: 106, alt: "ADVANTECH" },
   pepperlfuchs: { src: "/brands/pepperlfuchs.png", width: 443, height: 54, alt: "Pepperl+Fuchs" },
@@ -69,7 +69,7 @@ const BRAND_ASSETS: Record<string, { src: string; width: number; height: number;
   fluke: { src: "/brands/fluke.png", width: 492, height: 72, alt: "Fluke" },
   flir: { src: "/brands/flir.png", width: 209, height: 72, alt: "FLIR" },
   teledyneflir: { src: "/brands/flir.png", width: 209, height: 72, alt: "FLIR" },
-  huazheng: { src: "/brands/huazheng.png", width: 935, height: 191, alt: "Huazheng" },
+  huazheng: { src: "/brands/huazheng.png", width: 1424, height: 284, alt: "Huazheng" },
   yokogawa: { src: "/brands/yokogawa.png", width: 487, height: 72, alt: "Yokogawa" },
   eaton: { src: "/brands/eaton.png", width: 268, height: 72, alt: "Eaton" },
 }
