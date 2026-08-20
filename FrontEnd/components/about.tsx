@@ -359,20 +359,6 @@ export function About({ page }: { page?: PageContent | null }) {
               </div>
             ))}
           </div>
-
-          {/* Company Evolution Summary Cards */}
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-border/80 bg-card p-6 shadow-xs">
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                Over the years, <strong className="font-medium text-foreground">PT. Multi Daya Mitra</strong> has grown to become one of the leading electrical service partners in East Java. We provide services across Indonesia and have also participated in several overseas projects.
-              </p>
-            </div>
-            <div className="rounded-xl border border-border/80 bg-card p-6 shadow-xs">
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                Through continuous improvement and step-by-step development of expertise and certifications, we are committed to strengthening our capabilities and positioning the company as a <strong className="font-medium text-foreground">competitive global player</strong>.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
