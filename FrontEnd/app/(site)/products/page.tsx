@@ -24,6 +24,7 @@ import { SectionRenderer } from "@/components/cms/section-renderer"
 import { container } from "@/lib/layout"
 import { Badge } from "@/components/ui/badge"
 import { BrandLogo } from "@/components/brand-logos"
+import { BrandMarquee } from "@/components/brand-marquee"
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("products")
@@ -159,7 +160,6 @@ const brandExperience = [
   "Weidmüller",
   "Supreme",
   "KMI Wire and Cable",
-  "Kabelmetal Indonesia",
   "GE",
   "Danfoss",
   "GAE",
@@ -462,25 +462,10 @@ export default async function ProductsPage({ searchParams }: Props) {
 
           {/* Experienced Work-With Brands */}
           <div className="mt-10 rounded-2xl border border-border bg-card p-6 lg:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-4">
               Experienced Work With Brand
             </p>
-            <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
-              {brandExperience.map((brand) => (
-                <div
-                  key={brand}
-                  className="group flex flex-col items-center justify-center rounded-xl border border-border/80 bg-secondary/20 p-3.5 text-center transition-all hover:border-primary/50 hover:bg-card hover:shadow-xs min-h-[72px]"
-                  title={brand}
-                >
-                  <div className="flex items-center justify-center h-9 w-full">
-                    <BrandLogo
-                      brand={brand}
-                      className="w-auto max-w-[120px] transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <BrandMarquee brands={brandExperience} />
           </div>
         </div>
       </section>

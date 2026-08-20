@@ -29,6 +29,7 @@ import {
 import type { PageContent } from "@/lib/cms"
 import { container } from "@/lib/layout"
 import { BrandLogo } from "@/components/brand-logos"
+import { BrandMarquee } from "@/components/brand-marquee"
 
 const impactValues = [
   {
@@ -211,7 +212,6 @@ const experiencedBrands = [
   "Weidmüller",
   "Supreme",
   "KMI Wire and Cable",
-  "Kabelmetal Indonesia",
   "GE",
   "Danfoss",
   "GAE",
@@ -633,22 +633,7 @@ export function About({ page }: { page?: PageContent | null }) {
             <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-4">
               Experienced Work With Brand
             </h3>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7">
-              {experiencedBrands.map((brand) => (
-                <div
-                  key={brand}
-                  className="group flex flex-col items-center justify-center rounded-xl border border-border/80 bg-secondary/20 p-3.5 text-center transition-all hover:border-primary/50 hover:bg-card hover:shadow-xs min-h-[72px]"
-                  title={brand}
-                >
-                  <div className="flex items-center justify-center h-9 w-full">
-                    <BrandLogo
-                      brand={brand}
-                      className="w-auto max-w-[120px] transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <BrandMarquee brands={experiencedBrands} />
           </div>
         </div>
       </section>
