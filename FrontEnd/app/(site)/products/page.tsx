@@ -421,10 +421,10 @@ export default async function ProductsPage({ searchParams }: Props) {
                   className="group rounded-xl border border-primary/25 bg-card p-5 text-left shadow-xs transition-all hover:border-primary/60 hover:shadow-md flex flex-col justify-between"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center h-11">
+                    <div className="flex items-center h-10 w-full">
                       <BrandLogo
                         brand={p.name}
-                        className="w-auto max-w-[150px] transition-transform duration-300 group-hover:scale-105"
+                        className="transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>
                     <span className="text-[10px] font-medium text-muted-foreground bg-secondary/80 px-2 py-0.5 rounded-md shrink-0 self-start mt-1">
