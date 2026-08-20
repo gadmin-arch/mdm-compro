@@ -115,13 +115,13 @@ function MarqueeRow({
       {items.map((brand, idx) => (
         <div
           key={`${brand}-${idx}`}
-          className="group flex flex-shrink-0 items-center justify-center rounded-xl border border-border/80 bg-secondary/20 px-4 py-2 text-center transition-all hover:border-primary/50 hover:bg-card hover:shadow-xs min-w-[130px] max-w-[170px] h-[64px]"
+          className="group flex flex-shrink-0 items-center justify-center rounded-xl border border-border/80 bg-secondary/20 px-4 py-2 text-center transition-all hover:border-primary/50 hover:bg-card hover:shadow-xs min-w-[140px] max-w-[180px] h-[68px]"
           title={brand}
         >
           <div className="flex items-center justify-center h-8 w-full pointer-events-none">
             <BrandLogo
               brand={brand}
-              className="w-auto max-w-[110px] transition-transform duration-300 group-hover:scale-105"
+              className="w-auto max-w-[125px] transition-transform duration-300 group-hover:scale-105"
             />
           </div>
         </div>
