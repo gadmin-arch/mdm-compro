@@ -14,8 +14,8 @@ const BRAND_ASSETS: Record<string, { src: string; width: number; height: number;
   schneiderelectric: { src: "/brands/schneider.png", width: 243, height: 72, alt: "Schneider Electric" },
   xarrow: { src: "/brands/xarrow.png", width: 195, height: 72, alt: "xArrow SCADA" },
   xarrowscada: { src: "/brands/xarrow.png", width: 195, height: 72, alt: "xArrow SCADA" },
-  mundung: { src: "/brands/mundung.png", width: 186, height: 56, alt: "Mundung Connecting Futures" },
-  mundungconnectingfutures: { src: "/brands/mundung.png", width: 186, height: 56, alt: "Mundung Connecting Futures" },
+  mundung: { src: "/brands/mundung.png", width: 480, height: 140, alt: "Mundung Connecting Futures" },
+  mundungconnectingfutures: { src: "/brands/mundung.png", width: 480, height: 140, alt: "Mundung Connecting Futures" },
 
   // Experienced Work With Brands
   abb: { src: "/brands/abb.png", width: 188, height: 72, alt: "ABB" },
