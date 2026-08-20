@@ -70,13 +70,12 @@ const impactValues = [
 ]
 
 const milestones = [
-  { year: "2012", title: "Establishment", desc: "Founded PT Multi Daya Mitra in Surabaya, building a strong foundation in electrical engineering services." },
-  { year: "2013", title: "Early Market Trust", desc: "Successfully delivered diverse low & medium voltage projects, building market reputation." },
+  { year: "2012", title: "Establishment", desc: "Founded PT. Multi Daya Mitra, establishing a strong foundation in electrical engineering services." },
+  { year: "2013", title: "Early Market Trust", desc: "Successfully delivered diverse low & medium voltage projects, building early market trust." },
   { year: "2014", title: "Automation & ISO 50001", desc: "Expanded into automation solutions and delivered our first energy management system (ISO 50001) project." },
-  { year: "2016", title: "Security & BAS Systems", desc: "Diversified into Industrial Security Systems and Building Automation Systems (BAS)." },
-  { year: "2017", title: "Panel Assembly & Construction", desc: "Enhanced capabilities with custom panel assembly and executed major turnkey construction projects." },
-  { year: "2018", title: "International Expansion", desc: "Expanded into international markets and launched dedicated electrical product lines." },
-  { year: "2019", title: "Testing Fleet & Partnerships", desc: "Formed strategic drive partnerships and expanded capabilities in testing, commissioning, and assessment." },
+  { year: "2016", title: "Drive Partnerships & Testing Fleet", desc: "Formed strategic partnerships with global motor drive brands and strengthened capabilities in testing, commissioning, assessment, and maintenance services." },
+  { year: "2017", title: "Security & BAS Systems", desc: "Diversified into Industrial Security Systems and Building Automation Systems (BAS)." },
+  { year: "2019", title: "Panel Assembly & Construction", desc: "Enhanced capabilities with panel assembly solutions & executed major construction projects." },
   { year: "2020", title: "Nationwide Maintenance", desc: "Achieved nationwide maintenance contract coverage, serving industrial clients across Indonesia." },
   { year: "2021", title: "Business Digitalization", desc: "Digitalized operational workflows to improve project turnaround time and engineering quality." },
   { year: "2022", title: "ISO Operational Excellence", desc: "Achieved integrated ISO 9001:2015, ISO 14001:2015, and ISO 45001:2018 certifications." },
