@@ -74,23 +74,26 @@ export async function SiteFooter() {
               <li className="flex items-start gap-2">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
                 <div className="flex flex-col gap-1">
-                  <span className="font-medium text-foreground">WhatsApp / Sales:</span>
+                  <span className="font-medium text-foreground">WhatsApp Direct:</span>
                   <div className="flex flex-col gap-1 text-xs sm:text-sm">
-                    {(settings.salesPhones && settings.salesPhones.length > 0
-                      ? settings.salesPhones
-                      : ["+62 811-8303-250", "+62 821-4007-4122", "+62 813-3457-5542"]
-                    ).map((phone, idx) => (
-                      <a
-                        key={phone}
-                        href={`https://wa.me/${phone.replace(/[^0-9]/g, "")}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-medium text-foreground hover:text-emerald-600 hover:underline transition-colors flex items-center gap-1.5"
-                      >
-                        <span className="text-muted-foreground font-normal">Sales {idx + 1}:</span>
-                        {phone}
-                      </a>
-                    ))}
+                    <a
+                      href="https://wa.me/628118303250"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-foreground hover:text-emerald-600 hover:underline transition-colors flex items-center gap-1.5"
+                    >
+                      <span className="text-muted-foreground font-normal">Technical Expert:</span>
+                      +62 811-8303-250
+                    </a>
+                    <a
+                      href="https://wa.me/6282140074122"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-foreground hover:text-emerald-600 hover:underline transition-colors flex items-center gap-1.5"
+                    >
+                      <span className="text-muted-foreground font-normal">Sales:</span>
+                      +62 821-4007-4122
+                    </a>
                   </div>
                 </div>
               </li>

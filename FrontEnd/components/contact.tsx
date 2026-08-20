@@ -62,9 +62,9 @@ export function Contact({ page }: { page?: PageContent | null }) {
   const channels = [
     {
       icon: Phone,
-      title: "WhatsApp / Sales Hotline",
+      title: "Technical Expert WhatsApp",
       body: salesPhone,
-      href: `https://wa.me/${cleanSalesPhone}?text=${encodeURIComponent("Hello PT Multi Daya Mitra, I would like to inquire about your engineering solutions and services.")}`,
+      href: `https://wa.me/${cleanSalesPhone}?text=${encodeURIComponent("Hello PT Multi Daya Mitra, I would like to consult with a Technical Expert regarding your engineering solutions and services.")}`,
     },
     {
       icon: Mail,

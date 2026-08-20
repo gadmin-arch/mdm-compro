@@ -848,7 +848,7 @@ export const fallbackSiteSettings: SiteSettings = {
     { label: "Facebook", url: "https://www.facebook.com/multidayamitra/", platform: "facebook" },
     { label: "Instagram", url: "https://www.instagram.com/multidayamitra/", platform: "instagram" },
     { label: "LinkedIn", url: "https://id.linkedin.com/company/pt-multi-daya-mitra", platform: "linkedin" },
-    { label: "WhatsApp Sales", url: "https://wa.me/628118303250", platform: "whatsapp" },
+    { label: "Technical Expert WhatsApp", url: "https://wa.me/628118303250", platform: "whatsapp" },
   ],
 }
 
