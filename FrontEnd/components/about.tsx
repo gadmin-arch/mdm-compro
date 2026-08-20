@@ -181,7 +181,7 @@ const authorizedPartners = [
   { name: "Rittal", role: "Authorized Distributor", country: "Germany" },
   { name: "Schneider Electric", role: "Certified System Integrator", country: "France / Global" },
   { name: "xArrow", role: "Authorized Solutions Partner", country: "Global" },
-  { name: "Mundung", role: "Authorized Connecting Futures Partner", country: "Global" },
+  { name: "Mundung", role: "Authorized Partner", country: "Global" },
 ]
 
 const experiencedBrands = [
