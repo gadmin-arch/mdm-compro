@@ -32,7 +32,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
   const content = page?.content ?? {}
   const generalEmail = String(content.email ?? "info@multidayamitra.co.id")
   const generalPhone = String(content.phone ?? "+62 31 592 1256")
-  const salesPhone = String(content.salesPhone ?? content.whatsappPhone ?? "+62 821-4007-4122")
+  const salesPhone = String(content.salesPhone ?? content.whatsappPhone ?? "+62 811-8303-250")
 
   const offices: Office[] = Array.isArray(content.offices)
     ? (content.offices as Office[])
@@ -48,7 +48,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
         {
           name: "Engineering Office & Workshop",
           address: "Ruko Jati Kepuh Indah F-26 & E-21, Sidoarjo 61271, East Java, Indonesia",
-          phone: "+62 821-4007-4122",
+          phone: "+62 811-8303-250",
           email: "sales@multidayamitra.co.id",
           mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.4005934522964!2d112.72146907427909!3d-7.420845992589574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e42d7cd58117%3A0xc3fec86c4293f0b4!2sRuko%20Jati%20Kepuh%20Indah!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
         }

@@ -12,7 +12,7 @@ type FloatingWhatsAppProps = {
 const emptySubscribe = () => () => {}
 
 export function FloatingWhatsApp({
-  phoneNumber = "+62 821-4007-4122",
+  phoneNumber = "+62 811-8303-250",
   defaultMessage = "Hello PT Multi Daya Mitra, I would like to inquire about your engineering solutions and services.",
 }: FloatingWhatsAppProps) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)

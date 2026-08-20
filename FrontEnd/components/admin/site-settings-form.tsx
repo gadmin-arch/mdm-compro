@@ -120,8 +120,8 @@ export function SiteSettingsForm({
                 className="mt-2"
                 id="salesPhone"
                 name="salesPhone"
-                defaultValue={initial.salesPhone ?? "+62 821-4007-4122"}
-                placeholder="+62 821-4007-4122"
+                defaultValue={initial.salesPhone ?? "+62 811-8303-250"}
+                placeholder="+62 811-8303-250"
               />
             </div>
             <div>

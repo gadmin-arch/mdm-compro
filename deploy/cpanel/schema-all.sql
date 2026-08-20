@@ -671,12 +671,12 @@ SET value = jsonb_build_object(
         jsonb_build_object('platform', 'facebook',  'url', 'https://www.facebook.com/multidayamitra/',        'label', 'Facebook'),
         jsonb_build_object('platform', 'instagram', 'url', 'https://www.instagram.com/multidayamitra/',       'label', 'Instagram'),
         jsonb_build_object('platform', 'linkedin',  'url', 'https://id.linkedin.com/company/pt-multi-daya-mitra', 'label', 'LinkedIn'),
-        jsonb_build_object('platform', 'whatsapp',  'url', 'https://wa.me/6282140074122',                      'label', 'WhatsApp Sales')
+        jsonb_build_object('platform', 'whatsapp',  'url', 'https://wa.me/628118303250',                      'label', 'WhatsApp Sales')
     ),
     'salesEmail',   'sales@multidayamitra.co.id',
-    'salesPhone',   '+62 821-4007-4122',
-    'whatsappPhone','+62 821-4007-4122',
-    'hotlinePhone', '+62 821-4007-4122'
+    'salesPhone',   '+62 811-8303-250',
+    'whatsappPhone','+62 811-8303-250',
+    'hotlinePhone', '+62 811-8303-250'
 ),
     updated_at = now()
 WHERE key = 'site';
@@ -698,7 +698,7 @@ SET content = jsonb_build_object(
         jsonb_build_object(
             'name',        'Engineering Office & Workshop',
             'address',     'Ruko Jati Kepuh Indah F-26 & E-21, Sidoarjo 61271, East Java, Indonesia',
-            'phone',       '+62 821-4007-4122',
+            'phone',       '+62 811-8303-250',
             'email',       'sales@multidayamitra.co.id',
             'mapEmbedUrl', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.4005934522964!2d112.72146907427909!3d-7.420845992589574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e42d7cd58117%3A0xc3fec86c4293f0b4!2sRuko%20Jati%20Kepuh%20Indah!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid'
         )
@@ -707,9 +707,9 @@ SET content = jsonb_build_object(
     'phone',       '+62 31 592 1256',
     'fax',         '+62 31 591 7845',
     'salesEmail',  'sales@multidayamitra.co.id',
-    'salesPhone',  '+62 821-4007-4122',
-    'whatsappPhone','+62 821-4007-4122',
-    'hotlinePhone','+62 821-4007-4122'
+    'salesPhone',  '+62 811-8303-250',
+    'whatsappPhone','+62 811-8303-250',
+    'hotlinePhone','+62 811-8303-250'
 ),
     updated_at = now()
 WHERE id = '00000000-0000-0000-0000-000000000402';

@@ -717,9 +717,9 @@ export const fallbackPages: Record<string, PageContent> = {
       phone: "+62 31 592 1256",
       fax: "+62 31 591 7845",
       salesEmail: "sales@multidayamitra.co.id",
-      salesPhone: "+62 821-4007-4122",
-      whatsappPhone: "+62 821-4007-4122",
-      hotlinePhone: "+62 821-4007-4122",
+      salesPhone: "+62 811-8303-250",
+      whatsappPhone: "+62 811-8303-250",
+      hotlinePhone: "+62 811-8303-250",
       offices: [
         {
           name: "Head Office (Surabaya)",
@@ -732,7 +732,7 @@ export const fallbackPages: Record<string, PageContent> = {
         {
           name: "Engineering Office & Workshop",
           address: "Ruko Jati Kepuh Indah F-26 & E-21, Sidoarjo 61271, East Java, Indonesia",
-          phone: "+62 821-4007-4122",
+          phone: "+62 811-8303-250",
           email: "info@multidayamitra.co.id",
           mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.4005934522964!2d112.72146907427909!3d-7.420845992589574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e42d7cd58117%3A0xc3fec86c4293f0b4!2sRuko%20Jati%20Kepuh%20Indah!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
         }
@@ -834,15 +834,15 @@ export const fallbackSiteSettings: SiteSettings = {
   phone: "+62 31 592 1256",
   fax: "+62 31 591 7845",
   salesEmail: "sales@multidayamitra.co.id",
-  salesPhone: "+62 821-4007-4122",
-  whatsappPhone: "+62 821-4007-4122",
-  hotlinePhone: "+62 821-4007-4122",
+  salesPhone: "+62 811-8303-250",
+  whatsappPhone: "+62 811-8303-250",
+  hotlinePhone: "+62 811-8303-250",
   address: "Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, East Java, Indonesia",
   socials: [
     { label: "Facebook", url: "https://www.facebook.com/multidayamitra/", platform: "facebook" },
     { label: "Instagram", url: "https://www.instagram.com/multidayamitra/", platform: "instagram" },
     { label: "LinkedIn", url: "https://id.linkedin.com/company/pt-multi-daya-mitra", platform: "linkedin" },
-    { label: "WhatsApp Sales", url: "https://wa.me/6282140074122", platform: "whatsapp" },
+    { label: "WhatsApp Sales", url: "https://wa.me/628118303250", platform: "whatsapp" },
   ],
 }
 

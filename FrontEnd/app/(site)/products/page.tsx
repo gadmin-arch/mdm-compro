@@ -471,7 +471,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         description="Tell our engineering team what you are sourcing — we provide genuine hardware availability, custom assembly, and warranty support."
         primaryHref="/contact"
         primaryLabel="Request Quotation"
-        secondaryHref="https://wa.me/6282140074122?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20would%20like%20to%20inquire%20about%20product%20pricing%20and%20availability."
+        secondaryHref="https://wa.me/628118303250?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20would%20like%20to%20inquire%20about%20product%20pricing%20and%20availability."
         secondaryLabel="WhatsApp Sales Hotline"
       />
     </>

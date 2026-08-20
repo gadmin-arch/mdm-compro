@@ -15,7 +15,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     getSiteSettings(),
   ])
 
-  const salesPhone = settings.whatsappPhone || settings.salesPhone || "+62 821-4007-4122"
+  const salesPhone = settings.whatsappPhone || settings.salesPhone || "+62 811-8303-250"
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

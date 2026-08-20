@@ -109,7 +109,7 @@ export default async function ProductDetailPage({ params }: Props) {
         description="Contact our sales and engineering team with your project specifications and requirements."
         primaryHref="/contact"
         primaryLabel="Request Quotation"
-        secondaryHref={`https://wa.me/6282140074122?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20am%20interested%20in%20product%20pricing%20and%20specifications%20for:%20${encodeURIComponent(product.title)}`}
+        secondaryHref={`https://wa.me/628118303250?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20am%20interested%20in%20product%20pricing%20and%20specifications%20for:%20${encodeURIComponent(product.title)}`}
         secondaryLabel="WhatsApp Sales"
       />
     </>

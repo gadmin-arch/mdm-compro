@@ -88,7 +88,7 @@ export default async function ServiceDetailPage({ params }: Props) {
         description="Share your project scope and our team will respond with a tailored approach and quotation."
         primaryHref="/contact"
         primaryLabel="Request a Quote"
-        secondaryHref={`https://wa.me/6282140074122?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20am%20interested%20in%20learning%20more%20about%20your%20service:%20${encodeURIComponent(service.title)}`}
+        secondaryHref={`https://wa.me/628118303250?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20am%20interested%20in%20learning%20more%20about%20your%20service:%20${encodeURIComponent(service.title)}`}
         secondaryLabel="WhatsApp Hotline"
       />
     </>

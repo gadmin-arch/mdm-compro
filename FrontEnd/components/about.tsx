@@ -640,7 +640,7 @@ export function About({ page }: { page?: PageContent | null }) {
               <div className="mt-6 space-y-2 border-t border-border/60 pt-4 text-xs text-muted-foreground">
                 <p className="flex items-center gap-2">
                   <Phone className="h-3.5 w-3.5 text-primary" />
-                  Hotline / WhatsApp Sales: +62 821-4007-4122
+                  Hotline / WhatsApp Sales: +62 811-8303-250
                 </p>
                 <p className="flex items-center gap-2">
                   <Mail className="h-3.5 w-3.5 text-primary" />
