@@ -686,11 +686,11 @@ export function About({ page }: { page?: PageContent | null }) {
               <div className="mt-6 space-y-2 border-t border-border/60 pt-4 text-xs text-muted-foreground">
                 <div className="flex flex-col gap-1">
                   <p className="flex items-center gap-2">
-                    <Phone className="h-3.5 w-3.5 text-primary" />
-                    <span className="font-medium text-foreground">Hotline / WhatsApp Sales:</span>
+                    <Phone className="h-3.5 w-3.5 text-emerald-500" />
+                    <span className="font-medium text-foreground">WhatsApp Direct:</span>
                   </p>
                   <p className="pl-5 text-muted-foreground leading-relaxed">
-                    +62 811-8303-250 &middot; +62 821-4007-4122 &middot; +62 813-3457-5542
+                    +62 811-8303-250 (Technical) &middot; +62 821-4007-4122 (Sales)
                   </p>
                 </div>
                 <p className="flex items-center gap-2">
