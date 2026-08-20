@@ -578,10 +578,10 @@ export function About({ page }: { page?: PageContent | null }) {
                   key={p.name}
                   className="group rounded-xl border border-border bg-card p-4 text-center transition-all hover:border-primary/40 hover:shadow-xs"
                 >
-                  <div className="flex items-center justify-center h-10">
+                  <div className="flex items-center justify-center h-11">
                     <BrandLogo
                       brand={p.name}
-                      className="w-auto max-w-[140px] transition-transform duration-300 group-hover:scale-105"
+                      className="w-auto max-w-[150px] transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
                   <p className="text-xs font-semibold text-primary mt-2">{p.role}</p>

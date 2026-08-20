@@ -421,7 +421,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                   className="group rounded-xl border border-primary/25 bg-card p-5 text-left shadow-xs transition-all hover:border-primary/60 hover:shadow-md flex flex-col justify-between"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center h-10">
+                    <div className="flex items-center h-11">
                       <BrandLogo
                         brand={p.name}
                         className="w-auto max-w-[150px] transition-transform duration-300 group-hover:scale-105"
@@ -446,13 +446,13 @@ export default async function ProductsPage({ searchParams }: Props) {
               {brandExperience.map((brand) => (
                 <div
                   key={brand}
-                  className="group flex flex-col items-center justify-center rounded-xl border border-border/80 bg-secondary/20 p-4 text-center transition-all hover:border-primary/50 hover:bg-card hover:shadow-xs min-h-[80px]"
+                  className="group flex flex-col items-center justify-center rounded-xl border border-border/80 bg-secondary/20 p-4 text-center transition-all hover:border-primary/50 hover:bg-card hover:shadow-xs min-h-[84px]"
                   title={brand}
                 >
-                  <div className="flex items-center justify-center h-9 w-full">
+                  <div className="flex items-center justify-center h-10 w-full">
                     <BrandLogo
                       brand={brand}
-                      className="w-auto max-w-[120px] transition-transform duration-300 group-hover:scale-105"
+                      className="w-auto max-w-[130px] transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
                 </div>
