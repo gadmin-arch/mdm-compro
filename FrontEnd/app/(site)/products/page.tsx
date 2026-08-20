@@ -23,6 +23,7 @@ import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 import { SectionRenderer } from "@/components/cms/section-renderer"
 import { container } from "@/lib/layout"
 import { Badge } from "@/components/ui/badge"
+import { BrandLogo } from "@/components/brand-logos"
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("products")
@@ -415,12 +416,20 @@ export default async function ProductsPage({ searchParams }: Props) {
             </p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {authorizedPartners.map((p) => (
-                <div key={p.name} className="rounded-xl border border-primary/20 bg-card p-5 text-left shadow-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-display text-base font-bold text-foreground">{p.name}</span>
-                    <span className="text-[10px] font-medium text-muted-foreground">{p.country}</span>
+                <div
+                  key={p.name}
+                  className="group rounded-xl border border-primary/20 bg-card p-5 text-left shadow-xs transition-all hover:border-primary/50 hover:shadow-md"
+                >
+                  <div className="flex items-center justify-between gap-2 h-9">
+                    <BrandLogo
+                      brand={p.name}
+                      className="h-7 w-auto max-w-[140px] text-foreground transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <span className="text-[10px] font-medium text-muted-foreground bg-secondary/80 px-2 py-0.5 rounded-md shrink-0">
+                      {p.country}
+                    </span>
                   </div>
-                  <p className="mt-1.5 text-xs text-primary font-medium">{p.role}</p>
+                  <p className="mt-3 text-xs text-primary font-semibold leading-snug">{p.role}</p>
                 </div>
               ))}
             </div>
@@ -435,9 +444,13 @@ export default async function ProductsPage({ searchParams }: Props) {
               {brandExperience.map((brand) => (
                 <div
                   key={brand}
-                  className="flex items-center justify-center rounded-lg border border-border/80 bg-secondary/30 p-3 text-center transition-colors hover:bg-secondary/60"
+                  className="group flex flex-col items-center justify-center rounded-xl border border-border/80 bg-secondary/20 p-4 text-center transition-all hover:border-primary/40 hover:bg-card hover:shadow-xs min-h-[76px]"
+                  title={brand}
                 >
-                  <span className="font-display text-xs font-semibold text-foreground">{brand}</span>
+                  <BrandLogo
+                    brand={brand}
+                    className="h-6 w-auto max-w-[110px] text-foreground/80 transition-transform duration-300 group-hover:scale-110 group-hover:text-foreground"
+                  />
                 </div>
               ))}
             </div>

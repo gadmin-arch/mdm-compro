@@ -28,6 +28,7 @@ import {
 } from "lucide-react"
 import type { PageContent } from "@/lib/cms"
 import { container } from "@/lib/layout"
+import { BrandLogo } from "@/components/brand-logos"
 
 const impactValues = [
   {
@@ -568,14 +569,22 @@ export function About({ page }: { page?: PageContent | null }) {
 
           {/* Authorized Partnerships */}
           <div className="mt-12 rounded-xl border border-border/80 bg-secondary/30 p-6">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-foreground">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Official Authorized Partnerships & Principal Ecosystem
             </h3>
             <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {authorizedPartners.map((p) => (
-                <div key={p.name} className="rounded-lg border border-border bg-card p-3.5 text-center">
-                  <p className="font-display text-sm font-bold text-foreground">{p.name}</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">{p.role}</p>
+                <div
+                  key={p.name}
+                  className="group rounded-xl border border-border bg-card p-4 text-center transition-all hover:border-primary/40 hover:shadow-xs"
+                >
+                  <div className="flex items-center justify-center h-8">
+                    <BrandLogo
+                      brand={p.name}
+                      className="h-6 w-auto max-w-[130px] text-foreground transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                  <p className="text-xs font-semibold text-primary mt-2.5">{p.role}</p>
                 </div>
               ))}
             </div>
