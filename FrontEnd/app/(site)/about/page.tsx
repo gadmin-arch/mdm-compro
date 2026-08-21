@@ -9,9 +9,12 @@ import { getPage, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent } from "@/lib/sections"
 
 export const metadata: Metadata = {
-  title: "About — PT Multi Daya Mitra",
+  title: "Tentang Kami | Kontraktor Listrik & Otomasi Industri — PT Multi Daya Mitra",
   description:
-    "Learn about PT Multi Daya Mitra — an Indonesian electrical, automation, and fire alarm services company founded in 2012 by experienced engineers.",
+    "Profil PT Multi Daya Mitra — Didirikan tahun 2012 oleh insinyur berpengalaman, kami adalah kontraktor rekayasa elektrik, otomasi industri (PLC/SCADA), dan proteksi kebakaran terpercaya di Indonesia.",
+  alternates: {
+    canonical: "https://multidayamitra.co.id/about",
+  },
 }
 
 export default async function AboutPage() {

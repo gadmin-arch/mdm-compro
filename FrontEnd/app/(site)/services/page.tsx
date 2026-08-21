@@ -16,11 +16,15 @@ export const dynamic = "force-dynamic"
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("services")
   return {
-    title: page?.seo?.title || "Services & Solutions — PT Multi Daya Mitra",
+    title:
+      page?.seo?.title ||
+      "Layanan Rekayasa Elektrik, Otomasi SCADA & Pemeliharaan Listrik | PT Multi Daya Mitra",
     description:
       page?.seo?.description ||
-      "Integrated electrical construction, maintenance, automation, testing & commissioning, and mechanical services by certified engineers across Indonesia.",
-    alternates: page?.seo?.canonical ? { canonical: page.seo.canonical } : undefined,
+      "Solusi lengkap instalasi gardu kubikel 20kV, perakitan panel MV/LV, sistem otomasi PLC/SCADA, testing commissioning, dan preventive maintenance listrik industri di Indonesia.",
+    alternates: page?.seo?.canonical
+      ? { canonical: page.seo.canonical }
+      : { canonical: "https://multidayamitra.co.id/services" },
     robots: page?.seo?.noIndex ? { index: false, follow: false } : undefined,
   }
 }

@@ -27,6 +27,8 @@ const adminSecurityHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  compress: true,
+  poweredByHeader: false,
   async headers() {
     return [
       {
@@ -41,6 +43,7 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // 1. External portal redirects
       {
         source: '/cpanel',
         destination: 'https://cpanel.multidayamitra.co.id:2083',
@@ -50,6 +53,63 @@ const nextConfig = {
         source: '/webmail',
         destination: 'https://webmail.multidayamitra.co.id:2096',
         permanent: false,
+      },
+
+      // 2. Legacy SEO 301 Permanent Redirects (Fixes Google Sitelinks & 404s)
+      {
+        source: '/about-us',
+        destination: '/about',
+        permanent: true,
+      },
+      {
+        source: '/about-us/:path*',
+        destination: '/about',
+        permanent: true,
+      },
+      {
+        source: '/contact-us',
+        destination: '/contact',
+        permanent: true,
+      },
+      {
+        source: '/contact-us/:path*',
+        destination: '/contact',
+        permanent: true,
+      },
+      {
+        source: '/our-services',
+        destination: '/services',
+        permanent: true,
+      },
+      {
+        source: '/our-services/:path*',
+        destination: '/services',
+        permanent: true,
+      },
+      {
+        source: '/our-products',
+        destination: '/products',
+        permanent: true,
+      },
+      {
+        source: '/our-products/:path*',
+        destination: '/products',
+        permanent: true,
+      },
+      {
+        source: '/careers',
+        destination: '/career',
+        permanent: true,
+      },
+      {
+        source: '/careers/:path*',
+        destination: '/career',
+        permanent: true,
+      },
+      {
+        source: '/home',
+        destination: '/',
+        permanent: true,
       },
     ]
   },
@@ -65,11 +125,14 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '25mb',
     },
+    optimizePackageImports: ['lucide-react'],
   },
   turbopack: {
     root: __dirname,
   },
   images: {
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 31536000,
     remotePatterns: [
       {
         protocol: 'http',

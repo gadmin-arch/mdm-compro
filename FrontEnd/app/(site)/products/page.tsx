@@ -29,11 +29,15 @@ import { BrandMarquee } from "@/components/brand-marquee"
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("products")
   return {
-    title: page?.seo?.title || "Products & Partners — PT Multi Daya Mitra",
+    title:
+      page?.seo?.title ||
+      "Distributor Resmi Rittal Indonesia & Produk Elektrik Otomasi | PT Multi Daya Mitra",
     description:
       page?.seo?.description ||
-      "Official Rittal Authorized Distributor, Schneider Electric System Integrator, Electrical Distribution, Automation & Control, Enclosures, Power Quality, and Fire Alarm Products.",
-    alternates: page?.seo?.canonical ? { canonical: page.seo.canonical } : undefined,
+      "Distributor Resmi Rittal Indonesia (Enclosures & Cooling Unit), xArrow SCADA, Schneider Electric, Bosch, Asenware, Hooseki, dan komponen sistem elektrik industri.",
+    alternates: page?.seo?.canonical
+      ? { canonical: page.seo.canonical }
+      : { canonical: "https://multidayamitra.co.id/products" },
     robots: page?.seo?.noIndex ? { index: false, follow: false } : undefined,
   }
 }

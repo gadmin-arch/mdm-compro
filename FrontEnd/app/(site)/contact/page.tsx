@@ -5,9 +5,12 @@ import { PageHero } from "@/components/page-hero"
 import { getPage } from "@/lib/cms"
 
 export const metadata: Metadata = {
-  title: "Contact — PT Multi Daya Mitra",
+  title: "Hubungi Kami | Kantor Surabaya & Workshop Sidoarjo — PT Multi Daya Mitra",
   description:
-    "Get in touch with PT Multi Daya Mitra. Our engineering team responds with tailored scope, approach, and quotation for your project.",
+    "Hubungi tim insinyur PT Multi Daya Mitra untuk konsultasi teknis, penawaran harga (RFQ) instalasi listrik 20kV, otomasi industri SCADA, dan panel maker.",
+  alternates: {
+    canonical: "https://multidayamitra.co.id/contact",
+  },
 }
 
 export default async function ContactPage() {
