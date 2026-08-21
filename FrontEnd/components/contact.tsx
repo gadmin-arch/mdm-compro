@@ -35,7 +35,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
   const technicalPhone = "+62 811-8303-250"
   const salesPhone = "+62 821-4007-4122"
 
-  const offices: Office[] = Array.isArray(content.offices)
+  const rawOffices: Office[] = Array.isArray(content.offices)
     ? (content.offices as Office[])
     : [
         {
@@ -44,7 +44,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
           phone: "+62 31 592 1256",
           fax: "+62 31 591 7845",
           email: "info@multidayamitra.co.id",
-          mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.6974775466453!2d112.77587847427672!3d-7.275217492731802!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fa6ab5480eb1%3A0xe54df63b8274305c!2sRuko%20Klampis%20Megah%20Surabaya!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
+          mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.574636906236!2d112.7747579!3d-7.2854787!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbc8a9c411c1%3A0x3f527ebff4e81cdd!2sMulti%20Daya%20Mitra%20PT.!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
         },
         {
           name: "Engineering Office & Workshop",
@@ -54,6 +54,16 @@ export function Contact({ page }: { page?: PageContent | null }) {
           mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.4005934522964!2d112.72146907427909!3d-7.420845992589574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e42d7cd58117%3A0xc3fec86c4293f0b4!2sRuko%20Jati%20Kepuh%20Indah!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
         }
       ]
+
+  const offices = rawOffices.map((office) => {
+    if (office.name.toLowerCase().includes("head office") || office.mapEmbedUrl?.includes("0xe54df63b8274305c")) {
+      return {
+        ...office,
+        mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.574636906236!2d112.7747579!3d-7.2854787!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbc8a9c411c1%3A0x3f527ebff4e81cdd!2sMulti%20Daya%20Mitra%20PT.!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
+      }
+    }
+    return office
+  })
 
   const officesWithMap = offices.filter((o) => o.mapEmbedUrl)
   const [activeMapIndex, setActiveMapIndex] = useState(0)
