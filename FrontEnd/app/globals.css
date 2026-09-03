@@ -3,7 +3,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
+/* `.site-preview` repeats the light palette so the admin draft preview renders
+   in site colours even while the admin theme script has put `.dark` on <html>.
+   Custom properties inherit from the nearest declaring ancestor, so wrapping
+   the preview subtree is enough. Holds as long as the article components use
+   these tokens rather than `dark:` utilities. */
+:root,
+.site-preview {
   --background: oklch(1 0 0);
   --foreground: oklch(0.18 0.02 253.89);
   --card: oklch(1 0 0);

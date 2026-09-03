@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Eye } from "lucide-react"
 import { AdminPageHeader } from "@/components/admin/admin-page-header"
 import { FlashToast } from "@/components/admin/flash-toast"
 import { NewsForm } from "@/components/admin/resource-forms"
@@ -30,12 +30,25 @@ export default async function AdminEditNewsPage({
       eyebrow="Editorial"
       title={item?.title ?? "Edit News"}
       actions={
-        <Button asChild variant="outline">
-          <Link href="/admin/news">
-            <ArrowLeft className="h-4 w-4" />
-            News
-          </Link>
-        </Button>
+        <>
+          {item && (
+            // target="_blank" is load-bearing: navigating there client-side
+            // unmounts AdminThemeProvider, whose cleanup strips `dark` from
+            // <html> and would leave the admin stuck in light mode.
+            <Button asChild variant="outline">
+              <Link href={`/admin/news/${id}/preview`} target="_blank" rel="noreferrer">
+                <Eye className="h-4 w-4" />
+                Preview
+              </Link>
+            </Button>
+          )}
+          <Button asChild variant="outline">
+            <Link href="/admin/news">
+              <ArrowLeft className="h-4 w-4" />
+              News
+            </Link>
+          </Button>
+        </>
       }
       />
       <FlashToast resource="news post" />
