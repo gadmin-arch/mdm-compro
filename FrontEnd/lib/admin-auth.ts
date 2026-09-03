@@ -57,6 +57,17 @@ export function crossOriginPost(request: NextRequest): boolean {
   }
 }
 
+// A non-httpOnly companion to the session cookie, carrying no secret — just
+// "someone is signed into the CMS in this browser". The analytics tracker runs
+// in the browser and cannot see the httpOnly session cookie, and reading
+// cookies server-side in the public layout would opt the whole site out of
+// static rendering. This marker keeps both properties.
+export const ADMIN_MARKER_COOKIE = "cms_admin_session"
+
+export function adminMarkerCookieOptions(request: NextRequest, expires: Date) {
+  return { ...adminCookieOptions(request, expires), httpOnly: false }
+}
+
 export function adminCookieOptions(request: NextRequest, expires: Date) {
   return {
     httpOnly: true,

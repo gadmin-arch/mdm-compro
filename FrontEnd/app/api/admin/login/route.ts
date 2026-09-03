@@ -1,5 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server"
-import { TRUST_COOKIE, adminCookieOptions, crossOriginPost, safeAdminNext } from "@/lib/admin-auth"
+import {
+  ADMIN_MARKER_COOKIE,
+  TRUST_COOKIE,
+  adminCookieOptions,
+  adminMarkerCookieOptions,
+  crossOriginPost,
+  safeAdminNext,
+} from "@/lib/admin-auth"
 
 const API_BASE =
   process.env.CMS_API_BASE_URL ??
@@ -120,6 +127,11 @@ export async function POST(request: NextRequest) {
     "cms_admin_token",
     payload.tokens.accessToken,
     adminCookieOptions(request, new Date(payload.tokens.accessTokenExpiresAt)),
+  )
+  okResponse.cookies.set(
+    ADMIN_MARKER_COOKIE,
+    "1",
+    adminMarkerCookieOptions(request, new Date(payload.tokens.accessTokenExpiresAt)),
   )
   okResponse.cookies.set(
     "cms_refresh_token",

@@ -1,5 +1,5 @@
 import { cookies } from "next/headers"
-import { relativeRedirect } from "@/lib/admin-auth"
+import { ADMIN_MARKER_COOKIE, relativeRedirect } from "@/lib/admin-auth"
 
 const API_BASE =
   process.env.CMS_API_BASE_URL ??
@@ -21,5 +21,6 @@ export async function POST() {
   }
   cookieStore.delete("cms_admin_token")
   cookieStore.delete("cms_refresh_token")
+  cookieStore.delete(ADMIN_MARKER_COOKIE)
   return relativeRedirect("/admin/login")
 }

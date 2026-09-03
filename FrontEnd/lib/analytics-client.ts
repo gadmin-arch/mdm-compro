@@ -86,9 +86,12 @@ export function hasDoNotTrack(): boolean {
   )
 }
 
+// Reads the non-httpOnly marker set alongside the session, NOT cms_admin_token:
+// that one is httpOnly, so this scan could never see it and "ignore admins"
+// silently counted every CMS user's visits as real traffic.
 export function hasAdminCookie(): boolean {
   try {
-    return document.cookie.split(";").some((part) => part.trim().startsWith("cms_admin_token="))
+    return document.cookie.split(";").some((part) => part.trim().startsWith("cms_admin_session="))
   } catch {
     return false
   }

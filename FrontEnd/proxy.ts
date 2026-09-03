@@ -24,7 +24,10 @@ export async function proxy(request: NextRequest) {
     "/admin/reset-password",
     "/admin/verify-invite",
   ]
-  if (publicAdminPaths.some((path) => pathname.startsWith(path))) {
+  // Exact or whole-segment match, never a bare prefix: with startsWith(), any
+  // future route beginning with one of these strings (e.g. /admin/login-audit)
+  // would silently become world-readable.
+  if (publicAdminPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`))) {
     return NextResponse.next()
   }
 

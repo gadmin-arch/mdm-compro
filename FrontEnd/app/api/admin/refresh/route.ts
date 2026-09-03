@@ -1,6 +1,8 @@
 import { cookies } from "next/headers"
 import { type NextRequest } from "next/server"
 import {
+  ADMIN_MARKER_COOKIE,
+  adminMarkerCookieOptions,
   adminCookieOptions,
   adminLoginLocation,
   relativeRedirect,
@@ -34,6 +36,7 @@ export async function GET(request: NextRequest) {
     const loginResponse = relativeRedirect(adminLoginLocation(nextPath))
     loginResponse.cookies.delete("cms_admin_token")
     loginResponse.cookies.delete("cms_refresh_token")
+    loginResponse.cookies.delete(ADMIN_MARKER_COOKIE)
     return loginResponse
   }
 
@@ -48,6 +51,11 @@ export async function GET(request: NextRequest) {
     "cms_admin_token",
     payload.accessToken,
     adminCookieOptions(request, new Date(payload.accessTokenExpiresAt)),
+  )
+  redirectResponse.cookies.set(
+    ADMIN_MARKER_COOKIE,
+    "1",
+    adminMarkerCookieOptions(request, new Date(payload.accessTokenExpiresAt)),
   )
   redirectResponse.cookies.set(
     "cms_refresh_token",

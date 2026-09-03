@@ -1,5 +1,10 @@
 import { type NextRequest } from "next/server"
-import { adminCookieOptions, relativeRedirect } from "@/lib/admin-auth"
+import {
+  ADMIN_MARKER_COOKIE,
+  adminCookieOptions,
+  adminMarkerCookieOptions,
+  relativeRedirect,
+} from "@/lib/admin-auth"
 
 const API_BASE = process.env.CMS_API_BASE_URL ?? "http://localhost:8080/api/v1/public"
 const AUTH_BASE = API_BASE.replace("/public", "/auth")
@@ -29,6 +34,7 @@ export async function POST(request: NextRequest) {
   }
   const redirectResponse = relativeRedirect("/admin")
   redirectResponse.cookies.set("cms_admin_token", payload.accessToken, adminCookieOptions(request, new Date(payload.accessTokenExpiresAt)))
+  redirectResponse.cookies.set(ADMIN_MARKER_COOKIE, "1", adminMarkerCookieOptions(request, new Date(payload.accessTokenExpiresAt)))
   redirectResponse.cookies.set("cms_refresh_token", payload.refreshToken, adminCookieOptions(request, new Date(payload.refreshTokenExpiresAt)))
   return redirectResponse
 }
