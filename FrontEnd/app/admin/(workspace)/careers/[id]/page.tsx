@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Eye } from "lucide-react"
 import { AdminPageHeader } from "@/components/admin/admin-page-header"
 import { FlashToast } from "@/components/admin/flash-toast"
 import { CareerForm } from "@/components/admin/resource-forms"
@@ -30,12 +30,22 @@ export default async function AdminEditCareerPage({
       eyebrow="Hiring"
       title={item?.title ?? "Edit Career"}
       actions={
-        <Button asChild variant="outline">
-          <Link href="/admin/careers">
-            <ArrowLeft className="h-4 w-4" />
-            Careers
-          </Link>
-        </Button>
+        <>
+          {item && (
+            <Button asChild variant="outline">
+              <Link href={`/admin/careers/${id}/preview`} target="_blank" rel="noreferrer">
+                <Eye className="h-4 w-4" />
+                Preview
+              </Link>
+            </Button>
+          )}
+          <Button asChild variant="outline">
+            <Link href="/admin/careers">
+              <ArrowLeft className="h-4 w-4" />
+              Careers
+            </Link>
+          </Button>
+        </>
       }
       />
       <FlashToast resource="career" />

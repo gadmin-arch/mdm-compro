@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Eye } from "lucide-react"
 import { AdminPageHeader } from "@/components/admin/admin-page-header"
 import { FlashToast } from "@/components/admin/flash-toast"
 import { ContentItemForm } from "@/components/admin/resource-forms"
@@ -36,12 +36,22 @@ export default async function AdminEditServicePage({
       eyebrow="Catalog"
       title={item?.title ?? "Edit Service"}
       actions={
-        <Button asChild variant="outline">
-          <Link href="/admin/services">
-            <ArrowLeft className="h-4 w-4" />
-            Services
-          </Link>
-        </Button>
+        <>
+          {item && (
+            <Button asChild variant="outline">
+              <Link href={`/admin/services/${id}/preview`} target="_blank" rel="noreferrer">
+                <Eye className="h-4 w-4" />
+                Preview
+              </Link>
+            </Button>
+          )}
+          <Button asChild variant="outline">
+            <Link href="/admin/services">
+              <ArrowLeft className="h-4 w-4" />
+              Services
+            </Link>
+          </Button>
+        </>
       }
       />
       <FlashToast resource="service" />

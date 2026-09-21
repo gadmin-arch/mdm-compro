@@ -6,6 +6,7 @@ const STATUS_NOTE: Record<string, string> = {
   scheduled: "Terjadwal — belum terlihat oleh publik",
   archived: "Diarsipkan — tidak terlihat oleh publik",
   published: "Sudah tayang — versi publik ada di URL di bawah",
+  closed: "Ditutup — lowongan sudah tidak aktif",
 }
 
 // Chrome above the rendered draft. Colours are hardcoded rather than themed so
@@ -14,11 +15,19 @@ export function PreviewBar({
   status,
   slug,
   backHref,
+  publicHref,
+  basePath = "news",
 }: {
   status: string
-  slug: string
+  slug?: string
   backHref: string
+  publicHref?: string
+  basePath?: string
 }) {
+  const displayUrl =
+    publicHref ??
+    (slug ? `/${basePath.replace(/^\/|\/$/g, "")}/${slug}` : "")
+
   return (
     <div className="sticky top-0 z-50 border-b border-amber-300 bg-amber-50 px-4 py-2.5 text-amber-900 print:hidden">
       <div className="mx-auto flex max-w-5xl flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -29,7 +38,11 @@ export function PreviewBar({
           </p>
           <p className="mt-0.5 text-xs text-amber-800">
             Menampilkan versi <strong>tersimpan terakhir</strong> — perubahan yang belum di-Save tidak ikut tampil.
-            URL publiknya nanti: <span className="font-mono">/news/{slug}</span>
+            {displayUrl && (
+              <>
+                {" "}URL publiknya nanti: <span className="font-mono">{displayUrl}</span>
+              </>
+            )}
           </p>
         </div>
         <Link
