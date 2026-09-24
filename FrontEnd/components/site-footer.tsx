@@ -22,7 +22,7 @@ const footerNav = [
     title: "EN: Services & Solutions\nID: Layanan & Solusi",
     links: [
       { label: "EN: Electrical Construction & Installation\nID: Konstruksi & Instalasi Elektrikal", href: "/services/electrical-construction-installation" },
-      { label: "EN: Electrical Maintenance & Servicing\nID: Pemeliharaan & Perawatan Sistem Kelistrikan", href: "/services/electrical-maintenance-service" },
+      { label: "EN: Electrical Maintenance & Servicing\nID: Pemeliharaan & Perawatan Kelistrikan", href: "/services/electrical-maintenance-service" },
       { label: "EN: Automation Solutions & Services\nID: Solusi & Layanan Otomasi Industri", href: "/services/automation-solutions-services" },
       { label: "EN: Inspection, Testing & Commissioning\nID: Inspeksi, Pengujian & Commissioning", href: "/services/inspection-testing-commissioning" },
       { label: "EN: Mechanical Services & Supplies\nID: Layanan Mekanikal & Pengadaan Industri", href: "/services/mechanical-services-supplies" },
@@ -149,7 +149,7 @@ export async function SiteFooter() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-sm text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap"
+                        className="block text-sm text-muted-foreground transition-colors hover:text-foreground leading-snug break-words"
                       >
                         <BilingualText text={link.label} />
                       </Link>
