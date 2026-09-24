@@ -596,6 +596,135 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
     },
   },
 
+  "rittal-distributor/riline-compact-busbar-system": {
+    id: "00000000-0000-0000-0000-000000000777",
+    slug: "riline-compact-busbar-system",
+    fullPath: "rittal-distributor/riline-compact-busbar-system",
+    depth: 1,
+    sortOrder: 10,
+    imageUrl: "/uploads/products-rittal-riline-compact.jpg",
+    title: {
+      en: "Rittal RiLine Compact Power Distribution Board (up to 125 A)",
+      id: "Papan Distribusi Busbar Rittal RiLine Compact (hingga 125 A)",
+    },
+    summary: {
+      en: "Ultra-compact, shock-hazard-protected busbar board system with tool-free push-in component connection, designed for compact control cabinets and decentralized sub-distribution.",
+      id: "Sistem papan busbar ultra-kompak dengan proteksi sentuh aman IP2X dan koneksi snap-on tanpa perkakas, dirancang untuk kabinet kontrol ringkas dan sub-distribusi terdesentralisasi.",
+    },
+    specs: {
+      "EN: Rated Operating Current (Ie)\nID: Arus Operasional Pengenal (Ie)": "Up to 125 A (690 V AC / 1500 V DC)",
+      "EN: Short-Circuit Withstand (Ipk)\nID: Ketahanan Hubung Singkat (Ipk)": "Up to 25 kA (surge withstand strength)",
+      "EN: Touch Protection\nID: Proteksi Sentuh Aman": "IP2XB touch-safe shrouding across all board slots to IEC 60529",
+      "EN: Mounting & Connection\nID: Pemasangan & Koneksi": "Push-in clamp connection technology, drill-free snap-on mounting onto 35 mm DIN rails or mounting plates",
+      "EN: Pitch & Widths\nID: Jarak Pitch & Lebar": "Standard 4.5 mm pitch grid (Board widths: 225 mm, 405 mm, 675 mm, 855 mm)",
+      "EN: Component Adapters\nID: Adaptor Komponen": "Adapters for motor circuit breakers, contactors, and miniature circuit breakers (MCB) from 16 A to 63 A",
+    },
+    content: {
+      en: `<h3>Maximum Power Density in Minimal Space</h3>
+<p>The Rittal RiLine Compact is an innovative power distribution board system specifically engineered for small enclosures, machine control panels, and decentralized automation cabinets. Delivering up to 125 A current carrying capacity in an ultra-compact footprint, it replaces cumbersome traditional comb busbars and chaotic individual point-to-point wiring.</p>
+<h3>All-Round Shock-Hazard Protection (IP2XB)</h3>
+<p>Safety is built directly into the core of RiLine Compact. The entire copper board is completely enclosed in an insulated, flame-retardant chassis with a standardized 4.5 mm pitch grid. Any unused slots remain inherently touch-safe (IP2XB), allowing electrical technicians to safely snap on new motor starter adapters or change components without shutting down the entire distribution panel.</p>
+<h3>Drill-Free Snap-On Push-In Technology</h3>
+<p>Installation is completely tool-free. The base board snaps effortlessly onto standard 35 mm DIN rails or bolts onto enclosure mounting plates. Incoming power cables connect via spring-loaded push-in terminals, while outgoing motor feeders and circuit breakers mount via specialized snap-on component adapters with integrated wiring leads, slashing panel assembly time by up to 50%.</p>
+<h3>Universal Component Compatibility</h3>
+<p>RiLine Compact accommodates all major industrial switchgear brands including Siemens, Schneider Electric, ABB, and Eaton. With dedicated adapters for motor protection switches, reversing starters, and 1-pole/3-pole MCBs, panel builders achieve a clean, standardized, and vibration-resistant layout that adheres to international IEC 61439 standards.</p>`,
+      id: `<h3>Kepadatan Daya Maksimum dalam Ruang Minimum</h3>
+<p>Rittal RiLine Compact adalah sistem papan distribusi daya busbar inovatif yang dirancang khusus untuk enclosure kompak, panel kendali mesin, dan kabinet otomatisasi terdesentralisasi. Mengalirkan arus hingga 125 A dalam dimensi fisik yang sangat ringkas, RiLine Compact menggantikan susunan sisir busbar tradisional serta perkabelan manual titik-ke-titik yang memakan tempat.</p>
+<h3>Proteksi Sentuh Aman Menyeluruh (IP2XB)</h3>
+<p>Keamanan operator terintegrasi langsung di seluruh struktur RiLine Compact. Seluruh papan tembaga terlindung rapat di balik rangka isolasi tahan api dengan kisi pitch 4,5 mm. Seluruh slot modul yang belum terpakai otomatis aman dari sentuhan jari (IP2XB), memungkinkan teknisi menambah adaptor starter motor baru dengan aman tanpa harus mematikan total suplai listrik panel.</p>
+<h3>Teknologi Push-In Sistem Klik Tanpa Pengeboran</h3>
+<p>Proses instalasi tidak memerlukan perkakas rumit. Papan dasar langsung terpasang kuat pada rel DIN standar 35 mm atau dibaut ke pelat pemasangan kabinet. Kabel daya utama terhubung melalui terminal jepit pegas (push-in clamp), sementara modul starter motor dipasang melalui adaptor komponen sistem snap-on berkabel bawaan, memangkas waktu perakitan panel hingga 50%.</p>
+<h3>Kompatibilitas Komponen Universal</h3>
+<p>RiLine Compact mendukung berbagai merek switchgear terkemuka seperti Siemens, Schneider Electric, ABB, dan Eaton. Dilengkapi adaptor khusus untuk motor circuit breaker, starter bolak-balik (reversing starter), dan MCB 1P/3P, perakit panel dapat menciptakan tata letak switchgear yang rapi, terstandarisasi, dan tahan getaran sesuai regulasi internasional IEC 61439.</p>`,
+    },
+  },
+
+  "rittal-distributor/riline60-modular-busbar-systems": {
+    id: "00000000-0000-0000-0000-000000000778",
+    slug: "riline60-modular-busbar-systems",
+    fullPath: "rittal-distributor/riline60-modular-busbar-systems",
+    depth: 1,
+    sortOrder: 11,
+    imageUrl: "/uploads/products-rittal-riline60.jpg",
+    title: {
+      en: "Rittal RiLine60 Modular 60 mm Busbar Systems (up to 1600 A)",
+      id: "Sistem Busbar Modular 60 mm Rittal RiLine60 (hingga 1600 A)",
+    },
+    summary: {
+      en: "Standardized 60 mm and 185 mm center-to-center busbar platform featuring drill-free OM component adapters, touch-safe shrouding, and NH fuse-switch disconnectors up to 1600 A.",
+      id: "Platform busbar standar jarak 60 mm dan 185 mm dengan adaptor komponen OM bebas bor, penutup aman sentuh, dan sakelar pemutus sekring NH hingga 1600 A.",
+    },
+    specs: {
+      "EN: Busbar Center Distances\nID: Jarak Pusat Busbar": "60 mm system (up to 1600 A) and 185 mm system (up to 2100 A)",
+      "EN: Busbar Profiles Supported\nID: Profil Busbar Didukung": "Flat copper bars (12x5 mm up to 30x10 mm) and special Rittal PLS 800/1600 profiled copper bars",
+      "EN: Rated Short-Time Withstand (Icw)\nID: Ketahanan Arus Hubung Singkat (Icw)": "Up to 50 kA (1s withstand) to IEC 61439-1",
+      "EN: Component Adapters\nID: Adaptor Komponen": "OM adapters with tension spring clamps, CB circuit breaker adapters up to 630 A, connection adaptors up to 800 A",
+      "EN: Fuse-Switch Disconnectors\nID: Sakelar Pemutus Sekring": "RiLine NH slimline fuse-switch disconnectors size 000, 00, 1, 2, and 3 with electronic fuse monitoring",
+      "EN: Degree of Protection\nID: Derajat Proteksi": "IP2X touch protection with base trays, top cover profiles, and end covers",
+    },
+    content: {
+      en: `<h3>The Global Standard for Industrial Motor Control and Power Panels</h3>
+<p>The Rittal RiLine60 modular busbar system is the worldwide industry benchmark for low-voltage power distribution and Motor Control Centers (MCC). Based on an optimized 60 mm center-to-center phase distance, RiLine60 delivers a safe, organized, and space-saving busbar infrastructure accommodating currents from 250 A up to 1600 A.</p>
+<h3>100% Drill-Free Mechanical and Electrical Assembly</h3>
+<p>Traditional busbar building requires time-consuming hole punching, drilling, and tapping that permanently weakens copper bars. With RiLine60, all power connections, conductor tap-offs, and component adapters clamp directly onto the busbars without a single drilled hole. This completely eliminates copper shavings inside the enclosure and allows effortless repositioning of components during maintenance or panel expansion.</p>
+<h3>Comprehensive OM & CB Component Adapters</h3>
+<p>Rittal OM component adapters provide ready-to-mount platforms for contactors, motor protection circuit breakers, and soft starters. Equipped with pre-wired heat-resistant connection leads and adjustable support rails, OM adapters reduce wiring labor by up to 60%. For heavier feeder circuits, CB adapters mount 3-pole and 4-pole MCCBs up to 630 A directly onto the 60 mm busbars.</p>
+<h3>Integrated RiLine NH Fuse-Switch Disconnectors</h3>
+<p>From compact Size 000 (up to 160 A) to heavy-duty Size 3 (up to 630 A), Rittal NH fuse-switch disconnectors offer high-breaking capacity short-circuit isolation. Optional integrated electronic fuse monitoring (EFM) and smart current sensor modules transmit live voltage, current, and phase angle metrics via Modbus RTU or IO-Link to centralized industrial IoT energy management systems.</p>`,
+      id: `<h3>Standar Global untuk Panel Kontrol Motor & Distribusi Industri</h3>
+<p>Sistem busbar modular Rittal RiLine60 adalah acuan industri global untuk distribusi daya tegangan rendah dan pusat kendali motor (Motor Control Center / MCC). Dengan jarak antar fase standar 60 mm, RiLine60 menghadirkan infrastruktur distribusi daya yang sangat rapi, aman, dan hemat ruang untuk kapasitas arus dari 250 A hingga 1600 A.</p>
+<h3>100% Perakitan Mekanikal & Elektrikal Tanpa Pengeboran</h3>
+<p>Pekerjaan busbar konvensional membutuhkan proses pelubangan, pengeboran, dan pengetapan ulir tembaga yang memakan waktu dan berisiko mengurangi kekuatan mekanis batang tembaga. Pada RiLine60, seluruh klem sambungan daya, percabangan kabel, dan adaptor komponen menjepit langsung ke busbar tanpa perlu melubangi tembaga sama sekali. Ini menghilangkan serpihan logam di dalam panel dan memungkinkan relokasi komponen secara fleksibel saat ekspansi sistem.</p>
+<h3>Adaptor Komponen OM & CB Terintegrasi</h3>
+<p>Adaptor komponen Rittal OM menyediakan dudukan siap pasang untuk kontaktor, motor starter, dan soft starter. Dilengkapi kabel koneksi fleksibel tahan panas bawaan dan rel pendukung yang dapat digeser, adaptor OM memangkas waktu pengkabelan hingga 60%. Untuk beban feeder yang lebih besar, adaptor CB memungkinkan pemasangan MCCB 3-kutub dan 4-kutub hingga 630 A langsung di atas sistem busbar 60 mm.</p>
+<h3>Sakelar Pemutus Sekring Terpadu Rittal NH</h3>
+<p>Mulai dari ukuran kompak Size 000 (160 A) hingga beban berat Size 3 (630 A), sakelar pemutus sekring NH Rittal memberikan kapasitas pemutusan hubung singkat yang sangat tinggi. Modul pemantauan sekring elektronik (EFM) dan sensor arus cerdas opsional dapat mentransmisikan data tegangan, arus riil, dan sudut fase melalui Modbus RTU atau IO-Link ke sistem manajemen energi IoT pabrik.</p>`
+    },
+  },
+
+  "rittal-distributor/maxi-pls-flat-pls-high-current-busbars": {
+    id: "00000000-0000-0000-0000-000000000779",
+    slug: "maxi-pls-flat-pls-high-current-busbars",
+    fullPath: "rittal-distributor/maxi-pls-flat-pls-high-current-busbars",
+    depth: 1,
+    sortOrder: 12,
+    imageUrl: "/uploads/products-rittal-maxi-pls.jpg",
+    title: {
+      en: "Rittal Maxi-PLS & Flat-PLS High-Current Busbar Systems (up to 6300 A)",
+      id: "Sistem Busbar Arus Tinggi Rittal Maxi-PLS & Flat-PLS (hingga 6300 A)",
+    },
+    summary: {
+      en: "Heavy-duty high-current main busbar platforms engineered for VX25 Ri4Power switchgear, delivering certified short-circuit withstand up to 120 kA (1s) and rated currents up to 6300 A.",
+      id: "Platform busbar utama arus tinggi untuk switchgear VX25 Ri4Power, memberikan ketahanan hubung singkat tersertifikasi hingga 120 kA (1s) dan kapasitas arus hingga 6300 A.",
+    },
+    specs: {
+      "EN: Rated Current (In)\nID: Arus Pengenal (In)": "Maxi-PLS: 1600 A to 4000 A | Flat-PLS: 2500 A up to 6300 A",
+      "EN: Rated Short-Time Withstand (Icw)\nID: Ketahanan Arus Hubung Singkat (Icw)": "Up to 120 kA (1 s) / Peak short-circuit withstand (Ipk) up to 264 kA",
+      "EN: Busbar Profile Engineering\nID: Rekayasa Profil Busbar": "Maxi-PLS specially contoured E-Cu profile with T-grooves; Flat-PLS up to 4x 120x10 mm laminated copper bars",
+      "EN: Switchgear Enclosure Integration\nID: Integrasi Kabinet Switchgear": "Designed for VX25 Ri4Power low-voltage switchgear assemblies (Form 1 to Form 4b to IEC 61439-1/-2)",
+      "EN: Busbar Locations\nID: Lokasi Pemasangan Busbar": "Top roof section, rear upper/lower section, or vertical distribution busbar zone",
+      "EN: Connection Technology\nID: Teknologi Sambungan": "Drill-free T-head bolts for Maxi-PLS; heavy-duty clamping claw brackets for Flat-PLS with calibrated torque indicators",
+    },
+    content: {
+      en: `<h3>High-Performance Main Busbar Architecture for Heavy Industry</h3>
+<p>In power utility substations, data centers, steel mills, and chemical plants, main low-voltage switchgear must endure immense electrical currents and massive electrodynamic short-circuit stresses. The Rittal Maxi-PLS and Flat-PLS high-current busbar platforms deliver the ultimate solution for heavy industrial power distribution up to 6300 A.</p>
+<h3>Maxi-PLS: Specially Contoured Copper Busbar Profiles</h3>
+<p>The Maxi-PLS system (available in Maxi-PLS 45, 1600/2000 A and Maxi-PLS 60, 3200/4000 A) utilizes an engineered hollow copper extrusion featuring longitudinal T-grooves on all four sides. Conductor connections, incoming Air Circuit Breaker (ACB) busbars, and outgoing cables attach directly using high-tensile T-head bolts that slide smoothly into the profile grooves, ensuring massive contact surface pressure without requiring any bar drilling.</p>
+<h3>Flat-PLS: Modular Flat Bar Systems Up to 6300 A</h3>
+<p>For applications demanding maximum power throughput up to 6300 A, the Rittal Flat-PLS system employs parallel multi-laminated copper flat bars (up to 4 x 120 x 10 mm per phase). The reinforced busbar supports are injection molded from halogen-free, self-extinguishing thermoset plastic, capable of withstanding destructive short-circuit faults up to 120 kA for 1 full second and dynamic peak forces up to 264 kA.</p>
+<h3>Type-Tested Integration in VX25 Ri4Power</h3>
+<p>Maxi-PLS and Flat-PLS integrate seamlessly into the VX25 Ri4Power enclosure system. Positioned in the top, rear, or vertical busbar chambers, they support internal form separation Form 1, Form 2b, Form 3b, Form 4a, and Form 4b according to IEC 61439-1/-2. Standardized ACB and MCCB connection kits for ABB Emax, Schneider MasterPact, and Siemens Sentron guarantee full type-test compliance without bespoke fabrication.</p>`,
+      id: `<h3>Arsitektur Busbar Utama Berkinerja Tinggi untuk Industri Berat</h3>
+<p>Pada gardu induk utilitas listrik, pusat data berdaya besar, pabrik baja, dan kilang petrokimia, switchgear tegangan rendah utama harus mampu mengalirkan arus listrik masif sekaligus menahan gaya elektrodinamis ekstrem saat terjadi korsleting. Platform busbar arus tinggi Rittal Maxi-PLS dan Flat-PLS menghadirkan solusi paling andal untuk distribusi daya industri berat hingga kapasitas 6300 A.</p>
+<h3>Maxi-PLS: Profil Tembaga Berkontur Khusus dengan Alur T</h3>
+<p>Sistem Maxi-PLS (tersedia dalam tipe Maxi-PLS 45 untuk 1600/2000 A dan Maxi-PLS 60 untuk 3200/4000 A) menggunakan profil ekstrusi tembaga khusus (E-Cu) dengan alur-T memanjang pada keempat sisinya. Sambungan konduktor, busbar masukan dari Air Circuit Breaker (ACB), dan kabel feeder terpasang langsung menggunakan baut T-head berkekuatan tinggi yang meluncur di alur profil, menghasilkan tekanan kontak optimal tanpa perlu mengebor tembaga.</p>
+<h3>Flat-PLS: Sistem Busbar Pelat Datar Modular hingga 6300 A</h3>
+<p>Untuk kebutuhan daya super besar hingga 6300 A, sistem Rittal Flat-PLS menggunakan susunan batang tembaga datar paralel (hingga 4 x 120 x 10 mm per fase). Dudukan busbar berkekuatan tinggi dicetak dari polimer termoset bebas halogen yang tahan api, dirancang sanggup menahan arus gangguan hubung singkat mematikan hingga 120 kA selama 1 detik penuh serta gaya puncak dinamis (Ipk) hingga 264 kA.</p>
+<h3>Integrasi Teruji Tipe (Type-Tested) pada VX25 Ri4Power</h3>
+<p>Maxi-PLS dan Flat-PLS terintegrasi sempurna di dalam kabinet switchgear VX25 Ri4Power. Diposisikan di kompartemen atap, bagian belakang, atau zona distribusi vertikal, sistem ini mendukung pemisahan internal Form 1, Form 2b, Form 3b, Form 4a, hingga Form 4b sesuai IEC 61439-1/-2. Tersedia modul koneksi standar untuk ACB dan MCCB kelas dunia seperti ABB Emax, Schneider MasterPact, dan Siemens Sentron, menjamin kepatuhan sertifikasi type-test penuh tanpa fabrikasi manual khusus.</p>`
+    },
+  },
+
   "schneider-integrator/industrial-automation": {
     id: "00000000-0000-0000-0000-000000000719",
     slug: "industrial-automation",
@@ -1098,6 +1227,9 @@ export const PRODUCT_TREE_STRUCTURE: { root: string; children: string[] }[] = [
       "rittal-distributor/hygienic-design-enclosures",
       "rittal-distributor/atex-hazardous-area-enclosures",
       "rittal-distributor/hmi-consoles-support-arm-systems",
+      "rittal-distributor/riline-compact-busbar-system",
+      "rittal-distributor/riline60-modular-busbar-systems",
+      "rittal-distributor/maxi-pls-flat-pls-high-current-busbars",
     ],
   },
   {
