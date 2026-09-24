@@ -11,6 +11,7 @@ import {
   BilingualText,
   useContentLanguage,
 } from "@/components/cms/content-language"
+import { getBilingualText } from "@/lib/bilingual"
 
 // The service detail body, lifted out of app/(site)/services/[...path]/page.tsx so
 // the public page and the admin draft preview render from ONE definition.
@@ -53,7 +54,7 @@ export function ServiceDetailView({
               <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-secondary shadow-xs">
                 <Image
                   src={service.imageUrl || "/uploads/hero-project.jpg"}
-                  alt={service.title}
+                  alt={getBilingualText(service.title, isIndonesian ? "id" : "en")}
                   fill
                   sizes="(min-width: 1024px) 50vw, 100vw"
                   className="object-cover"
@@ -78,7 +79,7 @@ export function ServiceDetailView({
                 </span>
               </p>
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {service.title} {isIndonesian ? "Layanan" : "Services"}
+                <BilingualText text={service.title} /> {isIndonesian ? "Layanan" : "Services"}
               </h2>
             </div>
 
@@ -102,7 +103,7 @@ export function ServiceDetailView({
         }
         primaryHref="/contact"
         primaryLabel={isIndonesian ? "Minta Penawaran" : "Request a Quote"}
-        secondaryHref={`https://wa.me/628118303250?text=Halo%20PT%20Multi%20Daya%20Mitra,%20saya%20tertarik%20dengan%20layanan:%20${encodeURIComponent(service.title)}`}
+        secondaryHref={`https://wa.me/628118303250?text=Halo%20PT%20Multi%20Daya%20Mitra,%20saya%20tertarik%20dengan%20layanan:%20${encodeURIComponent(getBilingualText(service.title, isIndonesian ? "id" : "en"))}`}
         secondaryLabel="WhatsApp Hotline"
       />
     </>

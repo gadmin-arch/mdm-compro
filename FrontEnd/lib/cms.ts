@@ -1,6 +1,7 @@
 import { enrichNewsWithBilingual, BILINGUAL_NEWS_CATALOG } from "@/lib/news-bilingual"
 import { enrichCareerWithBilingual, BILINGUAL_CAREER_CATALOG } from "@/lib/career-bilingual"
 import { buildBilingualProductTree, enrichProductWithBilingual } from "@/lib/product-bilingual"
+import { buildBilingualServiceTree, enrichServiceWithBilingual } from "@/lib/service-bilingual"
 
 export type SEO = {
   title?: string
@@ -132,282 +133,7 @@ const API_BASE =
   process.env.NEXT_PUBLIC_CMS_API_BASE_URL ??
   "http://localhost:8080/api/v1/public"
 
-export const fallbackServices: ContentNode[] = [
-  {
-    id: "serv-electrical-construction",
-    slug: "electrical-construction-installation",
-    fullPath: "electrical-construction-installation",
-    title: "EN: Electrical Construction & Installation\nID: Konstruksi & Instalasi Elektrikal",
-    summary: "EN: Turnkey medium & low voltage substation installation, switchgear, distribution panels, transformer erection, and cable terminations.\nID: Solusi terintegrasi instalasi gardu induk tegangan menengah & rendah, switchgear, panel distribusi, pemasangan trafo, dan terminasi kabel.",
-    imageUrl: "/uploads/mdm/construction-installation.jpg",
-    status: "published",
-    sortOrder: 1,
-    depth: 0,
-    children: [
-      {
-        id: "serv-substation-installation",
-        slug: "substation-mv-switchgear-installation",
-        fullPath: "electrical-construction-installation/substation-mv-switchgear-installation",
-        title: "EN: Substation & MV Switchgear Installation\nID: Instalasi Gardu Induk & Switchgear Tegangan Menengah (MV)",
-        summary: "EN: Medium voltage metal-clad switchgear, power transformers, and substation integration up to 36kV.\nID: Switchgear metal-clad tegangan menengah, transformator daya, dan integrasi gardu induk hingga 36kV.",
-        imageUrl: "/uploads/mdm/medium-voltage-equipment.jpg",
-        status: "published",
-        sortOrder: 1,
-        depth: 1,
-      },
-      {
-        id: "serv-lv-panel-assembly",
-        slug: "lv-distribution-panels-assembly",
-        fullPath: "electrical-construction-installation/lv-distribution-panels-assembly",
-        title: "EN: LV Panels Assembly (MDP, SDP, ATS & Sync)\nID: Perakitan Panel Tegangan Rendah (MDP, SDP, ATS & Sinkronisasi)",
-        summary: "EN: Main Distribution Panels (MDP), Sub-Distribution Panels, ATS/AMF sync boards, and Motor Control Centers (MCC).\nID: Panel Distribusi Utama (MDP), Panel Sub-Distribusi, panel sinkronisasi ATS/AMF, dan Motor Control Center (MCC).",
-        imageUrl: "/uploads/mdm/circuit-breaker.jpg",
-        status: "published",
-        sortOrder: 2,
-        depth: 1,
-      },
-      {
-        id: "serv-cabling-termination",
-        slug: "mv-lv-cable-installation-termination",
-        fullPath: "electrical-construction-installation/mv-lv-cable-installation-termination",
-        title: "EN: MV & LV Cable Installation & Termination\nID: Instalasi & Terminasi Kabel MV & LV",
-        summary: "EN: Certified cable pulling, tray erection, heat/cold shrink terminations, and high-potential (Hi-Pot) insulation testing.\nID: Penarikan kabel tersertifikasi, pemasangan tray, terminasi heat/cold shrink, dan pengujian isolasi Hi-Pot.",
-        content: {
-          bilingual: true,
-          id: {
-            blocks: [
-              {
-                type: "heading",
-                text: "Distribusi Listrik yang Andal untuk Fasilitas Industri",
-              },
-              {
-                type: "html",
-                html: '<p>Keandalan sistem distribusi listrik tidak hanya bergantung pada kualitas kabel dan peralatan, tetapi juga pada proses <a href="/services/electrical-construction-installation/mv-lv-cable-installation-termination">instalasi dan terminasi kabel MV & LV</a> yang tepat. Instalasi, routing, terminasi, dan pengujian yang dilakukan secara akurat sangat penting untuk menjaga keselamatan, keandalan, dan performa sistem dalam jangka panjang.</p>',
-              },
-            ],
-          },
-          en: {
-            blocks: [
-              {
-                type: "heading",
-                text: "Reliable Power Distribution for Industrial Facilities",
-              },
-              {
-                type: "html",
-                html: '<p>Reliable electrical distribution depends not only on cable quality and equipment, but also on proper <a href="/services/electrical-construction-installation/mv-lv-cable-installation-termination">MV & LV cable installation and termination.</a> Accurate installation, routing, termination, and testing are essential to maintain electrical safety, system reliability, and long-term performance.</p>',
-              },
-            ],
-          },
-          blocks: [
-            {
-              type: "paragraph",
-              text: "Keandalan sistem distribusi listrik tidak hanya bergantung pada kualitas kabel dan peralatan, tetapi juga pada proses instalasi dan terminasi kabel MV & LV yang tepat.",
-            },
-          ],
-        },
-        imageUrl: "/uploads/mdm/electrical-equipment.jpg",
-        status: "published",
-        sortOrder: 3,
-        depth: 1,
-      },
-      {
-        id: "serv-fire-alarm-install",
-        slug: "fire-alarm-system-installation",
-        fullPath: "electrical-construction-installation/fire-alarm-system-installation",
-        title: "EN: Fire Alarm System Engineering & Installation\nID: Rekayasa & Instalasi Sistem Fire Alarm",
-        summary: "EN: Turnkey addressable fire alarm networks, multi-sensor detectors, aspirating smoke detection, and clean agent suppression.\nID: Jaringan fire alarm addressable terintegrasi, detektor multi-sensor, aspirating smoke detection, dan sistem pemadam clean agent.",
-        imageUrl: "/uploads/PM-Fire-Alarm-1.jpg",
-        status: "published",
-        sortOrder: 4,
-        depth: 1,
-      },
-    ],
-  },
-  {
-    id: "serv-electrical-maintenance",
-    slug: "electrical-maintenance-service",
-    fullPath: "electrical-maintenance-service",
-    title: "EN: Electrical Maintenance & Servicing\nID: Pemeliharaan & Perawatan Sistem Kelistrikan",
-    summary: "EN: Comprehensive preventive, predictive, and corrective maintenance for transformers, MV cubicles, switchboards, and circuit breakers.\nID: Layanan pemeliharaan preventif, prediktif, dan korektif komprehensif untuk trafo, kubikel MV, papan distribusi, dan circuit breaker.",
-    imageUrl: "/uploads/mdm/maintenance-contract.jpg",
-    status: "published",
-    sortOrder: 2,
-    depth: 0,
-    children: [
-      {
-        id: "serv-transformer-oil-dga",
-        slug: "transformer-oil-treatment-dga",
-        fullPath: "electrical-maintenance-service/transformer-oil-treatment-dga",
-        title: "EN: Transformer Oil Treatment, BDV & DGA\nID: Penanganan Minyak Trafo, Uji BDV & Analisis DGA",
-        summary: "EN: On-site oil purification, vacuum degassing, breakdown voltage (BDV) testing, and Dissolved Gas Analysis (DGA).\nID: Pemurnian minyak trafo on-site, degasifikasi vakum, pengujian tegangan tembus (BDV), dan Dissolved Gas Analysis (DGA).",
-        imageUrl: "/uploads/mdm/micrologic-test.jpg",
-        status: "published",
-        sortOrder: 1,
-        depth: 1,
-      },
-      {
-        id: "serv-mv-acb-maintenance",
-        slug: "mv-cubicle-acb-maintenance",
-        fullPath: "electrical-maintenance-service/mv-cubicle-acb-maintenance",
-        title: "EN: MV Cubicle & ACB Maintenance (Trip Testing)\nID: Pemeliharaan Kubikel MV & ACB (Pengujian Trip)",
-        summary: "EN: Preventive servicing for medium voltage switchgear, contact resistance (Ductor), and ACB secondary injection.\nID: Servis preventif switchgear tegangan menengah, uji resistansi kontak (Ductor), dan injeksi sekunder ACB.",
-        imageUrl: "/uploads/mdm/preventive-maintenance.jpg",
-        status: "published",
-        sortOrder: 2,
-        depth: 1,
-      },
-      {
-        id: "serv-thermography",
-        slug: "thermography-predictive-maintenance",
-        fullPath: "electrical-maintenance-service/thermography-predictive-maintenance",
-        title: "EN: Infrared Thermography & Predictive Maintenance\nID: Termografi Inframerah & Pemeliharaan Prediktif",
-        summary: "EN: Non-contact FLIR thermal imaging to detect hot spots, loose busbar joints, and overloaded phases under full load.\nID: Pemindaian termal non-kontak FLIR untuk mendeteksi hot spot, sambungan busbar longgar, dan fase beban berlebih saat operasi penuh.",
-        imageUrl: "/uploads/mdm/infrared-thermograph.jpg",
-        status: "published",
-        sortOrder: 3,
-        depth: 1,
-      },
-      {
-        id: "serv-amc-contracts",
-        slug: "annual-maintenance-contracts",
-        fullPath: "electrical-maintenance-service/annual-maintenance-contracts",
-        title: "EN: Annual Maintenance Contracts (AMC) & 24/7 SLA\nID: Kontrak Pemeliharaan Tahunan (AMC) & SLA Siaga 24/7",
-        summary: "EN: Customized long-term service level agreements providing scheduled shutdowns, emergency call-outs, and spare parts management.\nID: Perjanjian tingkat layanan jangka panjang terpadu dengan shutdown terjadwal, respon darurat cepat, dan manajemen suku cadang.",
-        imageUrl: "/uploads/mdm/maintenance-contract.jpg",
-        status: "published",
-        sortOrder: 4,
-        depth: 1,
-      },
-    ],
-  },
-  {
-    id: "serv-automation-solutions",
-    slug: "automation-solutions-services",
-    fullPath: "automation-solutions-services",
-    title: "EN: Automation Solutions & Services\nID: Solusi & Layanan Otomasi Industri",
-    summary: "EN: Industrial automation, SCADA systems (xArrow & EcoStruxure), PLC programming, Energy Monitoring (PME), and process optimization.\nID: Otomasi industri, sistem SCADA (xArrow & EcoStruxure), pemrograman PLC, Pemantauan Energi (PME), dan optimasi proses manufaktur.",
-    imageUrl: "/uploads/mdm/industrial-automation.jpg",
-    status: "published",
-    sortOrder: 3,
-    depth: 0,
-    children: [
-      {
-        id: "serv-scada-hmi",
-        slug: "scada-hmi-process-monitoring",
-        fullPath: "automation-solutions-services/scada-hmi-process-monitoring",
-        title: "EN: SCADA Systems, HMI & Centralized Telemetry\nID: Sistem SCADA, HMI & Telemetri Terpusat",
-        summary: "EN: Plant-wide supervisory control, dynamic mimic screens, alarm logging, historical trending, and industrial telemetry.\nID: Kontrol pengawasan pabrik terpusat, tampilan mimic dinamis, pencatatan alarm, tren historis, dan telemetri industri.",
-        imageUrl: "/uploads/xarrow.jpg",
-        status: "published",
-        sortOrder: 1,
-        depth: 1,
-      },
-      {
-        id: "serv-energy-management",
-        slug: "energy-management-iso50001",
-        fullPath: "automation-solutions-services/energy-management-iso50001",
-        title: "EN: Energy Management Systems (EMS & ISO 50001)\nID: Sistem Manajemen Energi (EMS & ISO 50001)",
-        summary: "EN: Real-time power monitoring, automated energy baselines, peak demand tracking, and ESG compliance reporting.\nID: Pemantauan daya real-time, baseline energi otomatis, pelacakan beban puncak, dan pelaporan kepatuhan standar ESG.",
-        imageUrl: "/uploads/PMS-Network_001.jpg",
-        status: "published",
-        sortOrder: 2,
-        depth: 1,
-      },
-      {
-        id: "serv-plc-vsd",
-        slug: "plc-vsd-system-integration",
-        fullPath: "automation-solutions-services/plc-vsd-system-integration",
-        title: "EN: PLC Programming & Variable Speed Drive (VSD) Integration\nID: Pemrograman PLC & Integrasi Variable Speed Drive (VSD)",
-        summary: "EN: Custom PLC logic engineering, control panel assembly, Altivar/Danfoss/ABB inverter tuning, and motion control.\nID: Rekayasa logika PLC kustom, perakitan panel kontrol, penyetelan inverter Altivar/Danfoss/ABB, dan kontrol gerak presisi.",
-        imageUrl: "/uploads/products-schneider-automation.jpg",
-        status: "published",
-        sortOrder: 3,
-        depth: 1,
-      },
-    ],
-  },
-  {
-    id: "serv-inspection-testing",
-    slug: "inspection-testing-commissioning",
-    fullPath: "inspection-testing-commissioning",
-    title: "EN: Inspection, Testing & Commissioning\nID: Inspeksi, Pengujian & Commissioning",
-    summary: "EN: Specialized testing with calibrated instruments: power quality, partial discharge (PD scan), secondary injection, and relay coordination.\nID: Pengujian spesialis dengan instrumen terkalibrasi: kualitas daya, partial discharge (PD scan), injeksi sekunder, dan koordinasi proteksi relay.",
-    imageUrl: "/uploads/mdm/testing-measurement.jpg",
-    status: "published",
-    sortOrder: 4,
-    depth: 0,
-    children: [
-      {
-        id: "serv-power-quality-study",
-        slug: "power-quality-analysis-study",
-        fullPath: "inspection-testing-commissioning/power-quality-analysis-study",
-        title: "EN: Power Quality Analysis & Harmonics Study\nID: Analisis Kualitas Daya & Studi Harmonisa",
-        summary: "EN: Class A power quality logging, harmonic distortion (THD) auditing, voltage sags/swells, and mitigation design.\nID: Perekaman kualitas daya Kelas A, audit distorsi harmonisa (THD), fluktuasi tegangan, dan perancangan filter mitigasi.",
-        imageUrl: "/uploads/mdm/power-quality.jpg",
-        status: "published",
-        sortOrder: 1,
-        depth: 1,
-      },
-      {
-        id: "serv-pd-scan",
-        slug: "partial-discharge-pd-scan",
-        fullPath: "inspection-testing-commissioning/partial-discharge-pd-scan",
-        title: "EN: Partial Discharge (PD) Scan & Insulation Diagnostics\nID: Pemindaian Partial Discharge (PD) & Diagnostik Isolasi",
-        summary: "EN: Non-invasive TEV, acoustic ultrasonic, and HFCT sensors for live switchgear and cable PD scanning.\nID: Sensor non-invasif TEV, ultrasonik akustik, dan HFCT untuk pemindaian PD switchgear dan kabel bertegangan langsung.",
-        imageUrl: "/uploads/mdm/partial-discharge.jpg",
-        status: "published",
-        sortOrder: 2,
-        depth: 1,
-      },
-      {
-        id: "serv-relay-protection",
-        slug: "relay-protection-testing-commissioning",
-        fullPath: "inspection-testing-commissioning/relay-protection-testing-commissioning",
-        title: "EN: Protection Relay Testing (Secondary Injection)\nID: Pengujian Relay Proteksi (Injeksi Sekunder)",
-        summary: "EN: 3-phase & 6-phase secondary injection testing using Omicron CMC sets for overcurrent, differential, and distance relays.\nID: Pengujian injeksi sekunder 3-fase & 6-fase menggunakan unit Omicron CMC untuk relay proteksi arus lebih, diferensial, dan jarak.",
-        imageUrl: "/uploads/mdm/secondary-injector.jpg",
-        status: "published",
-        sortOrder: 3,
-        depth: 1,
-      },
-    ],
-  },
-  {
-    id: "serv-mechanical-supplies",
-    slug: "mechanical-services-supplies",
-    fullPath: "mechanical-services-supplies",
-    title: "EN: Mechanical Services & General Supplies\nID: Layanan Mekanikal & Pengadaan Industri",
-    summary: "EN: Industrial mechanical maintenance, conveyor systems, magnetic separators, high-speed doors, vacuum lifters, and motor/generator servicing.\nID: Pemeliharaan mekanikal industri, sistem konveyor, separator magnetik, pintu industri berkecepatan tinggi, vacuum lifter, dan servis motor/generator.",
-    imageUrl: "/uploads/mdm/electrical-services.jpg",
-    status: "published",
-    sortOrder: 5,
-    depth: 0,
-    children: [
-      {
-        id: "serv-mechanical-supplies-items",
-        slug: "industrial-mechanical-supplies-services",
-        fullPath: "mechanical-services-supplies/industrial-mechanical-supplies-services",
-        title: "EN: Conveyor Systems, Magnetic Separators & Industrial Supplies\nID: Sistem Konveyor, Separator Magnetik & Perlengkapan Industri",
-        summary: "EN: Supply, installation, and servicing of conveyor lines, magnetic metal separators, sectional doors, and vacuum lifters.\nID: Pengadaan, instalasi, dan servis lini konveyor, pemisah logam magnetik, sectional door, dan peralatan vacuum lifter.",
-        imageUrl: "/uploads/mdm/construction-installation.jpg",
-        status: "published",
-        sortOrder: 1,
-        depth: 1,
-      },
-      {
-        id: "serv-motor-overhaul",
-        slug: "motor-generator-servicing-overhaul",
-        fullPath: "mechanical-services-supplies/motor-generator-servicing-overhaul",
-        title: "EN: Motor & Generator Overhaul (Insulation Recoating & Dynamic Balancing)\nID: Overhaul Motor & Generator (Pelapisan Ulang Isolasi & Balancing Dinamis)",
-        summary: "EN: Electro-motor, MV motor, generator servicing, winding insulation recoating, vibration analysis, and rotor reconditioning.\nID: Servis elektromotor, motor MV, generator, pelapisan ulang isolasi kumparan, analisis vibrasi, dan rekondisi rotor.",
-        imageUrl: "/uploads/mdm/electrical-services.jpg",
-        status: "published",
-        sortOrder: 2,
-        depth: 1,
-      },
-    ],
-  },
-]
+export const fallbackServices: ContentNode[] = buildBilingualServiceTree()
 
 export const fallbackProducts: ContentNode[] = buildBilingualProductTree()
 
@@ -755,11 +481,20 @@ export type GlobalSearchResults = {
   pages: PageContent[]
 }
 
+function enrichServiceTree(node: ContentNode): ContentNode {
+  const enriched = enrichServiceWithBilingual(node, node.fullPath || node.slug) || node
+  if (enriched.children && enriched.children.length > 0) {
+    enriched.children = enriched.children.map(enrichServiceTree)
+  }
+  return enriched
+}
+
 export async function getServices(): Promise<ContentNode[]>
 export async function getServices(filters: PageFilters): Promise<ListResponse<ContentNode>>
 export async function getServices(filters?: PageFilters): Promise<ContentNode[] | ListResponse<ContentNode>> {
   if (!filters) {
-    return cmsFetch<ContentNode[]>("/services", fallbackServices)
+    const res = await cmsFetch<ContentNode[]>("/services", fallbackServices)
+    return Array.isArray(res) ? res.map(enrichServiceTree) : fallbackServices
   }
   const query = new URLSearchParams()
   if (filters.search) query.set("search", filters.search)
@@ -770,12 +505,18 @@ export async function getServices(filters?: PageFilters): Promise<ContentNode[] 
 
   const queryString = query.toString()
   const path = queryString ? `/services?${queryString}` : "/services"
-  return cmsListFetch<ContentNode>(path, createContentFallback(fallbackServices, filters))
+  const response = await cmsListFetch<ContentNode>(path, createContentFallback(fallbackServices, filters))
+  if (response && Array.isArray(response.data)) {
+    response.data = response.data.map((item) => enrichServiceWithBilingual(item, item.fullPath || item.slug) || item)
+  }
+  return response
 }
 
 export async function getService(path: string) {
   const fallback = findByPath(fallbackServices, path)
-  return cmsFetch<ContentNode | null>(`/services/${path}`, fallback)
+  const item = await cmsFetch<ContentNode | null>(`/services/${path}`, fallback)
+  if (!item) return null
+  return enrichServiceTree(item)
 }
 
 function paginateList<T>(data: T[], page = 1, perPage = 10): ListResponse<T> {
