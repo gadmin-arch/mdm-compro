@@ -588,10 +588,17 @@ function createContentFallback(items: ContentNode[], filters?: PageFilters): Lis
 
 function enrichProductTree(node: ContentNode): ContentNode {
   const enriched = enrichProductWithBilingual(node, node.fullPath || node.slug) || node
-  if (enriched.children && enriched.children.length > 0) {
-    enriched.children = enriched.children.map(enrichProductTree)
+  const path = node.fullPath || node.slug
+  const fallbackNode = findByPath(fallbackProducts, path)
+
+  const existingChildren = (enriched.children || []).map(enrichProductTree)
+  const existingSlugs = new Set(existingChildren.map((c) => c.slug))
+  const extraChildren = (fallbackNode?.children || []).filter((c) => !existingSlugs.has(c.slug))
+
+  return {
+    ...enriched,
+    children: [...existingChildren, ...extraChildren],
   }
-  return enriched
 }
 
 export async function getProducts(): Promise<ContentNode[]>
@@ -599,7 +606,10 @@ export async function getProducts(filters: PageFilters): Promise<ListResponse<Co
 export async function getProducts(filters?: PageFilters): Promise<ContentNode[] | ListResponse<ContentNode>> {
   if (!filters) {
     const res = await cmsFetch<ContentNode[]>("/products", fallbackProducts)
-    return Array.isArray(res) ? res.map(enrichProductTree) : fallbackProducts
+    const list = Array.isArray(res) ? res.map(enrichProductTree) : fallbackProducts
+    const existingSlugs = new Set(list.map((r) => r.slug))
+    const missingRoots = fallbackProducts.filter((fb) => !existingSlugs.has(fb.slug))
+    return [...list, ...missingRoots]
   }
   const query = new URLSearchParams()
   if (filters.search) query.set("search", filters.search)
@@ -612,7 +622,11 @@ export async function getProducts(filters?: PageFilters): Promise<ContentNode[] 
   const path = queryString ? `/products?${queryString}` : "/products"
   const response = await cmsListFetch<ContentNode>(path, createContentFallback(fallbackProducts, filters))
   if (response && Array.isArray(response.data)) {
-    response.data = response.data.map((item) => enrichProductWithBilingual(item, item.fullPath || item.slug) || item)
+    const enrichedData = response.data.map((item) => enrichProductWithBilingual(item, item.fullPath || item.slug) || item)
+    const existingPaths = new Set(enrichedData.map((d) => d.fullPath || d.slug))
+    const fallbackList = createContentFallback(fallbackProducts, filters).data
+    const missingFallback = fallbackList.filter((fb) => !existingPaths.has(fb.fullPath || fb.slug))
+    response.data = [...enrichedData, ...missingFallback]
   }
   return response
 }
@@ -620,7 +634,7 @@ export async function getProducts(filters?: PageFilters): Promise<ContentNode[] 
 export async function getProduct(path: string) {
   const fallback = findByPath(fallbackProducts, path)
   const item = await cmsFetch<ContentNode | null>(`/products/${path}`, fallback)
-  if (!item) return null
+  if (!item) return fallback ? enrichProductTree(fallback) : null
   return enrichProductTree(item)
 }
 
