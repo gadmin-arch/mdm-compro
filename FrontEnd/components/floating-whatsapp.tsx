@@ -3,32 +3,57 @@
 import { useState, useRef, useEffect, useSyncExternalStore } from "react"
 import { MessageSquare, PhoneCall, ChevronRight, X } from "lucide-react"
 import { SocialIcon } from "@/components/social-icons"
+import { useContentLanguage } from "@/components/cms/content-language"
 
 interface ContactOption {
-  title: string
-  subtitle: string
+  title: { id: string; en: string }
+  subtitle: { id: string; en: string }
   phone: string
   cleanPhone: string
-  message: string
-  badge?: string
+  message: { id: string; en: string }
+  badge?: { id: string; en: string }
 }
 
 const contacts: ContactOption[] = [
   {
-    title: "Technical Expert",
-    subtitle: "Engineering consultation & technical specifications",
+    title: {
+      en: "Technical Expert",
+      id: "Konsultasi Teknis",
+    },
+    subtitle: {
+      en: "Engineering consultation & technical specifications",
+      id: "Konsultasi rekayasa teknik & spesifikasi teknis",
+    },
     phone: "+62 811-8303-250",
     cleanPhone: "628118303250",
-    message: "Hello PT Multi Daya Mitra, I would like to consult with a Technical Expert regarding engineering solutions.",
-    badge: "Engineering",
+    message: {
+      en: "Hello PT Multi Daya Mitra, I would like to consult with a Technical Expert regarding engineering solutions.",
+      id: "Halo PT Multi Daya Mitra, saya ingin berkonsultasi dengan Tim Ahli Teknis mengenai solusi kebutuhan kelistrikan & otomasi industri.",
+    },
+    badge: {
+      en: "Engineering",
+      id: "Teknik",
+    },
   },
   {
-    title: "Sales & Procurement",
-    subtitle: "Quotation, product pricing & hardware availability",
+    title: {
+      en: "Sales & Procurement",
+      id: "Penjualan & Pengadaan",
+    },
+    subtitle: {
+      en: "Quotation, product pricing & hardware availability",
+      id: "Permintaan penawaran, harga produk & ketersediaan stok",
+    },
     phone: "+62 821-4007-4122",
     cleanPhone: "6282140074122",
-    message: "Hello PT Multi Daya Mitra, I would like to inquire about product pricing and availability.",
-    badge: "Sales",
+    message: {
+      en: "Hello PT Multi Daya Mitra, I would like to inquire about product pricing and equipment availability.",
+      id: "Halo PT Multi Daya Mitra, saya ingin menanyakan informasi harga, penawaran, dan ketersediaan produk/peralatan.",
+    },
+    badge: {
+      en: "Sales",
+      id: "Penjualan",
+    },
   },
 ]
 
@@ -36,6 +61,7 @@ const emptySubscribe = () => () => {}
 
 export function FloatingWhatsApp() {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
+  const { isIndonesian } = useContentLanguage()
   const [isOpen, setIsOpen] = useState(false)
   const [showTeaser, setShowTeaser] = useState(true)
   const popupRef = useRef<HTMLDivElement>(null)
@@ -78,7 +104,7 @@ export function FloatingWhatsApp() {
                   </h3>
                   <p className="text-[11px] text-emerald-100 flex items-center gap-1.5 mt-0.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-300 animate-pulse" />
-                    Online &bull; Choose a specialist
+                    {isIndonesian ? "Online • Pilih tim ahli kami" : "Online • Choose a specialist"}
                   </p>
                 </div>
               </div>
@@ -86,7 +112,7 @@ export function FloatingWhatsApp() {
                 type="button"
                 onClick={() => setIsOpen(false)}
                 className="rounded-full p-1 text-white/80 hover:bg-white/20 hover:text-white transition-colors cursor-pointer"
-                aria-label="Close WhatsApp options"
+                aria-label={isIndonesian ? "Tutup pilihan WhatsApp" : "Close WhatsApp options"}
               >
                 <X className="h-4 w-4" />
               </button>
@@ -96,7 +122,12 @@ export function FloatingWhatsApp() {
           {/* Contacts List */}
           <div className="p-3.5 space-y-2.5 bg-card">
             {contacts.map((c) => {
-              const waUrl = `https://wa.me/${c.cleanPhone}?text=${encodeURIComponent(c.message)}`
+              const currentMessage = isIndonesian ? c.message.id : c.message.en
+              const currentTitle = isIndonesian ? c.title.id : c.title.en
+              const currentSubtitle = isIndonesian ? c.subtitle.id : c.subtitle.en
+              const currentBadge = c.badge ? (isIndonesian ? c.badge.id : c.badge.en) : null
+              const waUrl = `https://wa.me/${c.cleanPhone}?text=${encodeURIComponent(currentMessage)}`
+
               return (
                 <a
                   key={c.cleanPhone}
@@ -113,16 +144,16 @@ export function FloatingWhatsApp() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1">
                       <span className="font-semibold text-xs sm:text-sm text-foreground group-hover:text-emerald-600 transition-colors truncate">
-                        {c.title}
+                        {currentTitle}
                       </span>
-                      {c.badge && (
+                      {currentBadge && (
                         <span className="rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-600">
-                          {c.badge}
+                          {currentBadge}
                         </span>
                       )}
                     </div>
                     <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
-                      {c.subtitle}
+                      {currentSubtitle}
                     </p>
                     <p className="text-xs font-mono font-medium text-foreground/80 mt-1 flex items-center gap-1">
                       <PhoneCall className="h-3 w-3 text-emerald-500" />
@@ -137,7 +168,9 @@ export function FloatingWhatsApp() {
 
           {/* Footer note */}
           <div className="border-t border-border/60 bg-muted/30 px-3.5 py-2 text-center text-[10px] text-muted-foreground">
-            Direct WhatsApp Consultation &bull; Instant Response
+            {isIndonesian
+              ? "Konsultasi WhatsApp Langsung • Respon Cepat"
+              : "Direct WhatsApp Consultation • Instant Response"}
           </div>
         </div>
       )}
@@ -155,7 +188,8 @@ export function FloatingWhatsApp() {
             className="text-xs font-semibold text-foreground hover:text-emerald-600 transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <MessageSquare className="h-3.5 w-3.5 text-emerald-500" />
-            Chat with Experts <span className="text-muted-foreground font-normal">(2 Online)</span>
+            {isIndonesian ? "Chat dengan Tim Ahli" : "Chat with Experts"}{" "}
+            <span className="text-muted-foreground font-normal">(2 Online)</span>
           </button>
           <button
             type="button"
@@ -165,7 +199,7 @@ export function FloatingWhatsApp() {
               setShowTeaser(false)
             }}
             className="ml-1 text-muted-foreground hover:text-foreground rounded-full p-0.5 cursor-pointer"
-            aria-label="Close notification"
+            aria-label={isIndonesian ? "Tutup notifikasi" : "Close notification"}
           >
             <X className="h-3 w-3" />
           </button>
@@ -176,7 +210,7 @@ export function FloatingWhatsApp() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="Open WhatsApp direct contacts"
+        aria-label={isIndonesian ? "Buka kontak WhatsApp langsung" : "Open WhatsApp direct contacts"}
         aria-expanded={isOpen}
         className={`group relative flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl transition-all duration-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400 cursor-pointer ${
           isOpen
