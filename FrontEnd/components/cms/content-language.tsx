@@ -101,11 +101,20 @@ export function ContentLanguageProvider({
   const [lang, setLangState] = useState<ContentLanguage>(() => detectInitialLanguage(initialLang))
   const [, startTransition] = useTransition()
 
-  // Sync on mount if URL parameter was present or changed
+  // Sync if URL parameter was present or changed
   useEffect(() => {
-    const detected = detectInitialLanguage()
-    if (detected !== lang) {
-      setLangState(detected)
+    const handleSync = () => {
+      const detected = detectInitialLanguage()
+      setLangState((current) => (current !== detected ? detected : current))
+    }
+
+    handleSync()
+
+    window.addEventListener("popstate", handleSync)
+    window.addEventListener("storage", handleSync)
+    return () => {
+      window.removeEventListener("popstate", handleSync)
+      window.removeEventListener("storage", handleSync)
     }
   }, [])
 

@@ -7,9 +7,7 @@ import type { SaveAction, SaveResult } from "@/lib/save-result"
 import {
   adminStatusOptions,
   employmentTypeOptions,
-  htmlFromBlocks,
   specsToText,
-  textFromBlocks,
   toDateTimeLocal,
 } from "@/lib/admin-content"
 import { extractBilingualText } from "@/lib/bilingual"
@@ -35,10 +33,6 @@ import {
 
 // TipTap is the heaviest admin dependency; load it only when a form that
 // actually renders the editor mounts.
-const RichTextField = dynamic(
-  () => import("@/components/admin/rich-text-editor").then((mod) => mod.RichTextField),
-  { ssr: false, loading: () => <Skeleton className="h-56 w-full" /> },
-)
 const BilingualRichTextField = dynamic(
   () => import("@/components/admin/rich-text-editor").then((mod) => mod.BilingualRichTextField),
   { ssr: false, loading: () => <Skeleton className="h-56 w-full" /> },
