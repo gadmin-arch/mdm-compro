@@ -4,6 +4,7 @@ import { PageHero } from "@/components/page-hero"
 import { RichText } from "@/components/cms/rich-text"
 import { SectionRenderer } from "@/components/cms/section-renderer"
 import { getPage, resolveSectionData } from "@/lib/cms"
+import { buildBilingualMetadata } from "@/lib/bilingual"
 import { sectionsFromContent } from "@/lib/sections"
 import { container } from "@/lib/layout"
 
@@ -17,12 +18,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const page = await getPage(pageKey)
   if (!page) return {}
 
-  return {
-    title: page.seo?.title || `${page.title} - PT Multi Daya Mitra`,
+  return buildBilingualMetadata({
+    title: page.seo?.title || page.title,
     description: page.seo?.description,
-    alternates: page.seo?.canonical ? { canonical: page.seo.canonical } : undefined,
-    robots: page.seo?.noIndex ? { index: false, follow: false } : undefined,
-  }
+    canonicalPath: `/${pageKey}`,
+    noIndex: page.seo?.noIndex,
+  })
 }
 
 export default async function DynamicCmsPage({ params }: PageProps) {

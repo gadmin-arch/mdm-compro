@@ -11,16 +11,18 @@ import { getCareers, getPage, employmentTypeLabel, resolveSectionData } from "@/
 import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 import { container } from "@/lib/layout"
 
+import { buildBilingualMetadata } from "@/lib/bilingual"
+
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("career")
-  return {
-    title: page?.seo?.title || "Career — PT Multi Daya Mitra",
+  return buildBilingualMetadata({
+    title: page?.seo?.title || "Karir & Peluang Kerja\nCareers & Opportunities",
     description:
       page?.seo?.description ||
-      "Join PT Multi Daya Mitra. Open roles in electrical engineering, automation, project management, and operations across Indonesia.",
-    alternates: page?.seo?.canonical ? { canonical: page.seo.canonical } : undefined,
-    robots: page?.seo?.noIndex ? { index: false, follow: false } : undefined,
-  }
+      "Bergabunglah bersama tim insinyur dan profesional PT Multi Daya Mitra dalam proyek kelistrikan dan otomasi industri terdepan di Indonesia.\nJoin PT Multi Daya Mitra. Open roles in electrical engineering, automation, project management, and operations across Indonesia.",
+    canonicalPath: page?.seo?.canonical || "/career",
+    noIndex: page?.seo?.noIndex,
+  })
 }
 
 type Props = {

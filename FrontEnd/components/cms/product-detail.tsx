@@ -11,7 +11,6 @@ import type { ContentNode } from "@/lib/cms"
 import { container } from "@/lib/layout"
 import {
   BilingualText,
-  ContentLanguageToggle,
   useContentLanguage,
 } from "@/components/cms/content-language"
 
@@ -85,12 +84,6 @@ export function ProductDetailView({
             </div>
           </div>
           <div className="lg:col-span-7 space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/50 pb-4">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {isIndonesian ? "Bahasa Konten" : "Content Language"}
-              </span>
-              <ContentLanguageToggle size="sm" />
-            </div>
             <RichText content={product.content} />
           </div>
         </div>

@@ -26,21 +26,20 @@ import { Badge } from "@/components/ui/badge"
 import { BilingualText } from "@/components/cms/content-language"
 import { BrandLogo } from "@/components/brand-logos"
 import { BrandMarquee } from "@/components/brand-marquee"
+import { buildBilingualMetadata } from "@/lib/bilingual"
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("products")
-  return {
+  return buildBilingualMetadata({
     title:
       page?.seo?.title ||
-      "Distributor Resmi Rittal Indonesia & Produk Elektrik Otomasi | PT Multi Daya Mitra",
+      "Distributor Resmi Rittal Indonesia & Produk Elektrik Otomasi\nRittal Authorized Distributor Indonesia & Industrial Automation Products",
     description:
       page?.seo?.description ||
-      "Distributor Resmi Rittal Indonesia (Enclosures & Cooling Unit), xArrow SCADA, Schneider Electric, Bosch, Asenware, Hooseki, dan komponen sistem elektrik industri.",
-    alternates: page?.seo?.canonical
-      ? { canonical: page.seo.canonical }
-      : { canonical: "https://multidayamitra.co.id/products" },
-    robots: page?.seo?.noIndex ? { index: false, follow: false } : undefined,
-  }
+      "Distributor Resmi Rittal Indonesia (Enclosures & Cooling Unit), xArrow SCADA, Schneider Electric, Bosch, Asenware, Hooseki, dan komponen sistem elektrik industri.\nOfficial authorized distributor for Rittal enclosures & cooling units, xArrow SCADA, Schneider Electric, and industrial automation components in Indonesia.",
+    canonicalPath: page?.seo?.canonical || "/products",
+    noIndex: page?.seo?.noIndex,
+  })
 }
 
 type Props = {

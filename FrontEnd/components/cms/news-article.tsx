@@ -8,7 +8,6 @@ import { PageHero } from "@/components/page-hero"
 import { formatDate, type NewsItem } from "@/lib/cms"
 import {
   BilingualText,
-  ContentLanguageToggle,
   useContentLanguage,
 } from "@/components/cms/content-language"
 
@@ -56,16 +55,13 @@ export function NewsArticleView({
       />
       <article className="border-b border-border/60 bg-background">
         <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-border/50 pb-6">
-            <div className="flex flex-wrap items-center gap-3">
-              {news.category && (
-                <Badge variant="outline">
-                  <BilingualText text={news.category} />
-                </Badge>
-              )}
-              <span className="text-sm text-muted-foreground">{formatDate(news.publishedAt)}</span>
-            </div>
-            <ContentLanguageToggle />
+          <div className="mb-8 flex flex-wrap items-center gap-3 border-b border-border/50 pb-6">
+            {news.category && (
+              <Badge variant="outline">
+                <BilingualText text={news.category} />
+              </Badge>
+            )}
+            <span className="text-sm text-muted-foreground">{formatDate(news.publishedAt)}</span>
           </div>
           <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-xl border border-border bg-secondary shadow-xs">
             <Image

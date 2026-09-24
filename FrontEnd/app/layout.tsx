@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: '%s | PT Multi Daya Mitra',
   },
   description:
-    'PT Multi Daya Mitra adalah kontraktor rekayasa elektrik terintegrasi, otomasi industri (PLC & SCADA), panel maker MV/LV, testing & commissioning, serta distributor resmi Rittal di Indonesia sejak 2012.',
+    'PT Multi Daya Mitra adalah kontraktor rekayasa elektrik terintegrasi, otomasi industri (PLC & SCADA), panel maker MV/LV, testing & commissioning, serta distributor resmi Rittal di Indonesia sejak 2012. Integrated electrical engineering, industrial automation, and fire protection contractor.',
   keywords: [
     'kontraktor listrik surabaya',
     'kontraktor listrik indonesia',
@@ -33,6 +33,11 @@ export const metadata: Metadata = {
     'fire alarm system indonesia',
     'distributor xarrow scada indonesia',
     'jasa instalasi kubikel 20kv',
+    'electrical contractor indonesia',
+    'industrial automation contractor',
+    'plc scada system integrator indonesia',
+    'mv lv switchgear installation',
+    'transformer oil treatment dga indonesia',
     'PT Multi Daya Mitra'
   ],
   authors: [{ name: 'PT Multi Daya Mitra' }],
@@ -45,10 +50,16 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: 'https://multidayamitra.co.id',
+    languages: {
+      'id-ID': 'https://multidayamitra.co.id?lang=id',
+      'en-US': 'https://multidayamitra.co.id?lang=en',
+      'x-default': 'https://multidayamitra.co.id',
+    },
   },
   openGraph: {
     type: 'website',
     locale: 'id_ID',
+    alternateLocale: ['en_US'],
     url: 'https://multidayamitra.co.id',
     siteName: 'PT Multi Daya Mitra',
     title: 'PT Multi Daya Mitra | Kontraktor Listrik, Otomasi Industri & Fire System',

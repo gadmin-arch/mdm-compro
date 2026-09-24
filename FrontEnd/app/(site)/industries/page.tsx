@@ -3,11 +3,14 @@ import { CtaBanner } from "@/components/cta-banner"
 import { Industries } from "@/components/industries"
 import { PageHero } from "@/components/page-hero"
 
-export const metadata: Metadata = {
-  title: "Industries — PT Multi Daya Mitra",
+import { buildBilingualMetadata } from "@/lib/bilingual"
+
+export const metadata: Metadata = buildBilingualMetadata({
+  title: "Sektor Industri yang Dilayani\nIndustries We Serve",
   description:
-    "We serve power plants, oil & gas, petrochemical, manufacturing, pharmaceuticals, food & beverage, and other critical infrastructure sectors.",
-}
+    "Kami melayani pembangkit listrik, migas, petrokimia, manufaktur, farmasi, makanan & minuman, dan infrastruktur strategis di Indonesia.\nWe serve power plants, oil & gas, petrochemical, manufacturing, pharmaceuticals, food & beverage, and other critical infrastructure sectors.",
+  canonicalPath: "/industries",
+})
 
 export default function IndustriesPage() {
   return (

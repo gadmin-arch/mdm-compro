@@ -10,7 +10,6 @@ import { employmentTypeLabel, formatDate, isCareerClosed, type Career } from "@/
 import { container } from "@/lib/layout"
 import {
   BilingualText,
-  ContentLanguageToggle,
   useContentLanguage,
 } from "@/components/cms/content-language"
 
@@ -112,12 +111,6 @@ export function CareerDetailView({ career }: { career: Career }) {
             </div>
           </aside>
           <div className="lg:col-span-8 space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/50 pb-4">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {isIndonesian ? "Bahasa Konten" : "Content Language"}
-              </span>
-              <ContentLanguageToggle size="sm" />
-            </div>
 
             {isClosed && (
               <div className="flex items-start gap-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-800 dark:text-rose-300">

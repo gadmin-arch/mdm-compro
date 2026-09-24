@@ -2,17 +2,15 @@ import type { Metadata } from "next"
 import { Contact } from "@/components/contact"
 import { PageHero } from "@/components/page-hero"
 import { BilingualText } from "@/components/cms/content-language"
-
+import { buildBilingualMetadata } from "@/lib/bilingual"
 import { getPage } from "@/lib/cms"
 
-export const metadata: Metadata = {
-  title: "Hubungi Kami | Kantor Surabaya & Workshop Sidoarjo — PT Multi Daya Mitra",
+export const metadata: Metadata = buildBilingualMetadata({
+  title: "Hubungi Kami\nContact PT Multi Daya Mitra",
   description:
-    "Hubungi tim insinyur PT Multi Daya Mitra untuk konsultasi teknis, penawaran harga (RFQ) instalasi listrik 20kV, otomasi industri SCADA, dan panel maker.",
-  alternates: {
-    canonical: "https://multidayamitra.co.id/contact",
-  },
-}
+    "Hubungi tim insinyur PT Multi Daya Mitra untuk konsultasi teknis, penawaran harga (RFQ) instalasi listrik 20kV, otomasi industri SCADA, dan perakitan panel.\nContact PT Multi Daya Mitra engineering team for technical consultations, RFQ pricing, 20kV electrical installations, SCADA automation, and panel assembly.",
+  canonicalPath: "/contact",
+})
 
 export default async function ContactPage() {
   const page = await getPage("contact")

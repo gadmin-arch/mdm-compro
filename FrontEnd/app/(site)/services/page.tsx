@@ -12,22 +12,22 @@ import { getPage, getServices, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 import { container } from "@/lib/layout"
 
+import { buildBilingualMetadata } from "@/lib/bilingual"
+
 export const dynamic = "force-dynamic"
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("services")
-  return {
+  return buildBilingualMetadata({
     title:
       page?.seo?.title ||
-      "Layanan Rekayasa Elektrik, Otomasi SCADA & Pemeliharaan Listrik | PT Multi Daya Mitra",
+      "Layanan Rekayasa Elektrik, Otomasi & Pemeliharaan Listrik\nElectrical Engineering, Automation & Maintenance Services",
     description:
       page?.seo?.description ||
-      "Solusi lengkap instalasi gardu kubikel 20kV, perakitan panel MV/LV, sistem otomasi PLC/SCADA, testing commissioning, dan preventive maintenance listrik industri di Indonesia.",
-    alternates: page?.seo?.canonical
-      ? { canonical: page.seo.canonical }
-      : { canonical: "https://multidayamitra.co.id/services" },
-    robots: page?.seo?.noIndex ? { index: false, follow: false } : undefined,
-  }
+      "Solusi instalasi gardu kubikel 20kV, perakitan panel MV/LV, sistem otomasi PLC/SCADA, testing commissioning, dan preventive maintenance industri di Indonesia.\nComprehensive electrical contracting, 20kV substation installation, LV/MV panel assembly, SCADA automation, and industrial maintenance services.",
+    canonicalPath: page?.seo?.canonical || "/services",
+    noIndex: page?.seo?.noIndex,
+  })
 }
 
 type Props = {

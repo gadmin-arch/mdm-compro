@@ -1,3 +1,5 @@
+import type { Metadata } from "next"
+
 export type ContentLanguage = "id" | "en"
 
 export type ContentBlock = {
@@ -643,4 +645,103 @@ function htmlFromBlocksHelper(value: unknown): string {
       .join("")
   }
   return ""
+}
+
+export type BilingualMetadataOptions = {
+  title?: string | null
+  description?: string | null
+  canonicalPath?: string
+  image?: string | null
+  type?: "website" | "article"
+  noIndex?: boolean
+  keywords?: string[]
+}
+
+/**
+ * Builds clean bilingual SEO metadata (title, description, hreflang alternates, OpenGraph, Twitter)
+ * for search engines (Google, Bing) and social media crawlers.
+ * Combines Indonesian and English without exposing raw "EN: ... ID: ..." tags.
+ */
+export function buildBilingualMetadata(options: BilingualMetadataOptions): Metadata {
+  const { title, description, canonicalPath = "", image, type = "website", noIndex, keywords = [] } = options
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://multidayamitra.co.id").replace(/\/$/, "")
+  const cleanPath = canonicalPath.startsWith("/") ? canonicalPath : canonicalPath ? `/${canonicalPath}` : ""
+  const fullUrl = canonicalPath.startsWith("http") ? canonicalPath : `${siteUrl}${cleanPath}`
+
+  // Clean Title
+  const { id: idTitle, en: enTitle } = extractBilingualText(title)
+  let cleanTitle = ""
+  if (idTitle && enTitle && idTitle.toLowerCase() !== enTitle.toLowerCase()) {
+    cleanTitle = `${idTitle} | ${enTitle} — PT Multi Daya Mitra`
+  } else {
+    cleanTitle = `${idTitle || enTitle || "PT Multi Daya Mitra"} — PT Multi Daya Mitra`
+  }
+
+  // Clean Description
+  const { id: idDesc, en: enDesc } = extractBilingualText(description)
+  let cleanDesc = ""
+  if (idDesc && enDesc && idDesc.toLowerCase() !== enDesc.toLowerCase()) {
+    cleanDesc = `${idDesc} | ${enDesc}`
+  } else {
+    cleanDesc = idDesc || enDesc || "PT Multi Daya Mitra — Solusi rekayasa elektrik, otomasi industri (PLC/SCADA), dan fire alarm terpercaya di Indonesia."
+  }
+
+  // Combine keywords for high search visibility
+  const defaultKeywords = [
+    "PT Multi Daya Mitra",
+    "kontraktor listrik",
+    "electrical contractor indonesia",
+    "otomasi industri plc scada",
+    "industrial automation",
+    "panel maker surabaya",
+    "distributor rittal indonesia",
+  ]
+  const combinedKeywords = Array.from(
+    new Set([
+      ...keywords,
+      idTitle,
+      enTitle,
+      ...defaultKeywords,
+    ].filter((k): k is string => Boolean(k && typeof k === "string" && k.length > 2)))
+  )
+
+  const metaImage = image || "/uploads/hero-project.jpg"
+
+  return {
+    title: cleanTitle,
+    description: cleanDesc,
+    keywords: combinedKeywords,
+    alternates: {
+      canonical: fullUrl,
+      languages: {
+        "id-ID": `${fullUrl}?lang=id`,
+        "en-US": `${fullUrl}?lang=en`,
+        "x-default": fullUrl,
+      },
+    },
+    openGraph: {
+      title: cleanTitle,
+      description: cleanDesc,
+      url: fullUrl,
+      siteName: "PT Multi Daya Mitra",
+      locale: "id_ID",
+      alternateLocale: ["en_US"],
+      type,
+      images: [
+        {
+          url: metaImage,
+          width: 1200,
+          height: 630,
+          alt: idTitle || enTitle || "PT Multi Daya Mitra",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: cleanTitle,
+      description: cleanDesc,
+      images: [metaImage],
+    },
+    robots: noIndex ? { index: false, follow: false } : undefined,
+  }
 }

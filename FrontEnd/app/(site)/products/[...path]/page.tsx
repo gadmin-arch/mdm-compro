@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { ProductDetailView } from "@/components/cms/product-detail"
 import { findNodeInTree, flattenContent, getProduct, getProducts } from "@/lib/cms"
+import { buildBilingualMetadata } from "@/lib/bilingual"
 
 type Props = {
   params: Promise<{ path: string[] }>
@@ -17,10 +18,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const path = (await params).path.join("/")
   const product = await getProduct(path)
   if (!product) return {}
-  return {
-    title: product.seo?.title ?? `${product.title} — PT Multi Daya Mitra`,
-    description: product.seo?.description ?? product.summary,
-  }
+  return buildBilingualMetadata({
+    title: product.seo?.title || product.title,
+    description: product.seo?.description || product.summary,
+    canonicalPath: `/products/${product.fullPath || path}`,
+    image: product.imageUrl,
+    noIndex: product.seo?.noIndex,
+  })
 }
 
 export default async function ProductDetailPage({ params }: Props) {

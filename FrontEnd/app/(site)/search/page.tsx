@@ -8,12 +8,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { globalSearch } from "@/lib/cms"
 import { container } from "@/lib/layout"
 import { BilingualText } from "@/components/cms/content-language"
+import { buildBilingualMetadata } from "@/lib/bilingual"
 import { SearchBox } from "./search-box"
 
-export const metadata: Metadata = {
-  title: "Search Results — PT Multi Daya Mitra",
-  description: "Search products, services, careers, news, and pages on PT Multi Daya Mitra.",
-}
+export const metadata: Metadata = buildBilingualMetadata({
+  title: "Pencarian Situs\nGlobal Search Results",
+  description:
+    "Cari produk, layanan, berita, karir, dan dokumentasi PT Multi Daya Mitra.\nSearch products, services, news, careers, and documentation across PT Multi Daya Mitra.",
+  canonicalPath: "/search",
+})
 
 type Props = {
   searchParams: Promise<{ q?: string; search?: string }>

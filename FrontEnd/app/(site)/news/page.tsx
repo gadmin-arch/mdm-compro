@@ -9,16 +9,18 @@ import { getNews, getPage, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 import { container } from "@/lib/layout"
 
+import { buildBilingualMetadata } from "@/lib/bilingual"
+
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage("news")
-  return {
-    title: page?.seo?.title || "News & Insights — PT Multi Daya Mitra",
+  return buildBilingualMetadata({
+    title: page?.seo?.title || "Berita & Wawasan Industri\nNews & Engineering Insights",
     description:
       page?.seo?.description ||
-      "Latest project milestones, company updates, and engineering insights from PT Multi Daya Mitra.",
-    alternates: page?.seo?.canonical ? { canonical: page.seo.canonical } : undefined,
-    robots: page?.seo?.noIndex ? { index: false, follow: false } : undefined,
-  }
+      "Pembaruan proyek, tonggak pencapaian perusahaan, dan wawasan teknis kelistrikan dari PT Multi Daya Mitra.\nLatest project milestones, company updates, and engineering insights from PT Multi Daya Mitra.",
+    canonicalPath: page?.seo?.canonical || "/news",
+    noIndex: page?.seo?.noIndex,
+  })
 }
 
 type Props = {

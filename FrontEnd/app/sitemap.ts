@@ -4,56 +4,36 @@ import { getServices, getProducts, getNews, getCareers, type ContentNode } from 
 const rawUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://multidayamitra.co.id'
 const baseUrl = (rawUrl.includes('localhost') ? rawUrl : 'https://multidayamitra.co.id').replace(/\/$/, '')
 
+function sitemapEntry(
+  url: string,
+  lastModified: Date,
+  changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never',
+  priority: number,
+): MetadataRoute.Sitemap[number] {
+  return {
+    url,
+    lastModified,
+    changeFrequency,
+    priority,
+    alternates: {
+      languages: {
+        id: `${url}?lang=id`,
+        en: `${url}?lang=en`,
+      },
+    },
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/services`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/products`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/news`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/career`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/industries`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
+    sitemapEntry(`${baseUrl}`, new Date(), 'daily', 1.0),
+    sitemapEntry(`${baseUrl}/about`, new Date(), 'weekly', 0.9),
+    sitemapEntry(`${baseUrl}/services`, new Date(), 'daily', 0.9),
+    sitemapEntry(`${baseUrl}/products`, new Date(), 'daily', 0.9),
+    sitemapEntry(`${baseUrl}/news`, new Date(), 'daily', 0.8),
+    sitemapEntry(`${baseUrl}/career`, new Date(), 'weekly', 0.8),
+    sitemapEntry(`${baseUrl}/contact`, new Date(), 'monthly', 0.8),
+    sitemapEntry(`${baseUrl}/industries`, new Date(), 'monthly', 0.7),
   ]
 
   const [services, products, newsList, careersList] = await Promise.all([
@@ -67,12 +47,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     let urls: MetadataRoute.Sitemap = []
     for (const node of nodes) {
       if (node.fullPath) {
-        urls.push({
-          url: `${baseUrl}/${prefix}/${node.fullPath}`,
-          lastModified: new Date(),
-          changeFrequency: 'weekly',
-          priority: 0.8,
-        })
+        urls.push(
+          sitemapEntry(`${baseUrl}/${prefix}/${node.fullPath}`, new Date(), 'weekly', 0.8),
+        )
       }
       if (Array.isArray(node.children) && node.children.length > 0) {
         urls = urls.concat(flattenPaths(node.children, prefix))
@@ -84,19 +61,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const serviceRoutes = flattenPaths(Array.isArray(services) ? services : [], 'services')
   const productRoutes = flattenPaths(Array.isArray(products) ? products : [], 'products')
 
-  const newsRoutes: MetadataRoute.Sitemap = (newsList.data || []).map((item) => ({
-    url: `${baseUrl}/news/${item.slug}`,
-    lastModified: item.publishedAt ? new Date(item.publishedAt) : new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.7,
-  }))
+  const newsRoutes: MetadataRoute.Sitemap = (newsList.data || []).map((item) =>
+    sitemapEntry(
+      `${baseUrl}/news/${item.slug}`,
+      item.publishedAt ? new Date(item.publishedAt) : new Date(),
+      'weekly',
+      0.7,
+    ),
+  )
 
-  const careerRoutes: MetadataRoute.Sitemap = (careersList.data || []).map((item) => ({
-    url: `${baseUrl}/career/${item.slug}`,
-    lastModified: item.publishedAt ? new Date(item.publishedAt) : new Date(),
-    changeFrequency: 'weekly',
-    priority: 0.7,
-  }))
+  const careerRoutes: MetadataRoute.Sitemap = (careersList.data || []).map((item) =>
+    sitemapEntry(
+      `${baseUrl}/career/${item.slug}`,
+      item.publishedAt ? new Date(item.publishedAt) : new Date(),
+      'weekly',
+      0.7,
+    ),
+  )
 
   return [...staticRoutes, ...serviceRoutes, ...productRoutes, ...newsRoutes, ...careerRoutes]
 }
