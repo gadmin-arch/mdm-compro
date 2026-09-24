@@ -914,7 +914,65 @@ export async function globalSearch(q: string) {
 }
 
 export function flattenContent(items: ContentNode[]): ContentNode[] {
-  return items.flatMap((item) => [item, ...flattenContent(item.children ?? [])])
+  const result: ContentNode[] = []
+  function collect(nodes: ContentNode[]) {
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i]
+      result.push(node)
+      if (node.children && node.children.length > 0) {
+        collect(node.children)
+      }
+    }
+  }
+  collect(items)
+  return result
+}
+
+// Memoized pre-sorted node caches for O(log n) binary search
+let sortedFallbackProductsCache: ContentNode[] | null = null
+let sortedFallbackServicesCache: ContentNode[] | null = null
+
+function getSortedFallbackProducts(): ContentNode[] {
+  if (!sortedFallbackProductsCache) {
+    sortedFallbackProductsCache = flattenContent(fallbackProducts).sort((a, b) =>
+      (a.fullPath || a.slug).localeCompare(b.fullPath || b.slug)
+    )
+  }
+  return sortedFallbackProductsCache
+}
+
+function getSortedFallbackServices(): ContentNode[] {
+  if (!sortedFallbackServicesCache) {
+    sortedFallbackServicesCache = flattenContent(fallbackServices).sort((a, b) =>
+      (a.fullPath || a.slug).localeCompare(b.fullPath || b.slug)
+    )
+  }
+  return sortedFallbackServicesCache
+}
+
+/**
+ * Performs a binary search on a lexicographically sorted array of ContentNodes.
+ * Complexity: O(log n) comparisons vs O(n) linear tree scan.
+ */
+export function binarySearchByPath(sortedNodes: ContentNode[], targetPath: string): ContentNode | null {
+  let low = 0
+  let high = sortedNodes.length - 1
+
+  while (low <= high) {
+    const mid = (low + high) >>> 1
+    const midNode = sortedNodes[mid]
+    const midPath = midNode.fullPath || midNode.slug
+
+    if (midPath === targetPath) {
+      return midNode
+    } else if (midPath < targetPath) {
+      low = mid + 1
+    } else {
+      high = mid - 1
+    }
+  }
+
+  return null
 }
 
 export function formatDate(value?: string) {
@@ -949,8 +1007,14 @@ export function employmentTypeLabel(value: string) {
 }
 
 export function findNodeInTree(items: ContentNode[], path: string): ContentNode | null {
+  if (items === fallbackProducts) {
+    return binarySearchByPath(getSortedFallbackProducts(), path)
+  }
+  if (items === fallbackServices) {
+    return binarySearchByPath(getSortedFallbackServices(), path)
+  }
   for (const item of items) {
-    if (item.fullPath === path) return item
+    if (item.fullPath === path || item.slug === path) return item
     if (item.children && item.children.length > 0) {
       const found = findNodeInTree(item.children, path)
       if (found) return found
@@ -960,7 +1024,13 @@ export function findNodeInTree(items: ContentNode[], path: string): ContentNode 
 }
 
 function findByPath(items: ContentNode[], path: string): ContentNode | null {
-  return flattenContent(items).find((item) => item.fullPath === path) ?? null
+  if (items === fallbackProducts) {
+    return binarySearchByPath(getSortedFallbackProducts(), path)
+  }
+  if (items === fallbackServices) {
+    return binarySearchByPath(getSortedFallbackServices(), path)
+  }
+  return findNodeInTree(items, path)
 }
 
 // Resolves the dynamic data (services/products/news) a sections page needs,

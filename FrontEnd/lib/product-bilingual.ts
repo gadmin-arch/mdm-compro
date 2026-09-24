@@ -841,22 +841,64 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
   },
 }
 
+// Pre-sorted path index for O(log n) binary search lookups
+const PRODUCT_SORTED_PATHS: string[] = Object.keys(BILINGUAL_PRODUCT_CATALOG).sort()
+
+// Pre-indexed Maps for O(1) direct lookups
+const PRODUCT_PATH_INDEX = new Map<string, BilingualProductEntry>()
+const PRODUCT_SLUG_INDEX = new Map<string, BilingualProductEntry>()
+
+for (const [key, entry] of Object.entries(BILINGUAL_PRODUCT_CATALOG)) {
+  PRODUCT_PATH_INDEX.set(key, entry)
+  PRODUCT_PATH_INDEX.set(entry.fullPath, entry)
+  if (!PRODUCT_SLUG_INDEX.has(entry.slug)) {
+    PRODUCT_SLUG_INDEX.set(entry.slug, entry)
+  }
+}
+
+/**
+ * Performs a binary search on sorted product paths in O(log n) time.
+ */
+export function binarySearchProductPath(targetPath: string): BilingualProductEntry | undefined {
+  let low = 0
+  let high = PRODUCT_SORTED_PATHS.length - 1
+
+  while (low <= high) {
+    const mid = (low + high) >>> 1
+    const midPath = PRODUCT_SORTED_PATHS[mid]
+    if (midPath === targetPath) {
+      return BILINGUAL_PRODUCT_CATALOG[midPath]
+    } else if (midPath < targetPath) {
+      low = mid + 1
+    } else {
+      high = mid - 1
+    }
+  }
+  return undefined
+}
+
 /**
  * Finds the bilingual catalog entry for a product path or slug.
+ * Operates in O(1) via hash indexing, falling back to O(log n) binary search.
  */
 export function findBilingualProductEntry(fullPathOrSlug: string): BilingualProductEntry | undefined {
   if (!fullPathOrSlug) return undefined
   const clean = fullPathOrSlug.replace(/^\/+|\/+$/g, "")
-  if (BILINGUAL_PRODUCT_CATALOG[clean]) {
-    return BILINGUAL_PRODUCT_CATALOG[clean]
-  }
+
+  // 1. O(1) exact fullPath lookup
+  const byPath = PRODUCT_PATH_INDEX.get(clean)
+  if (byPath) return byPath
+
+  // 2. O(log n) binary search on sorted paths
+  const byBinarySearch = binarySearchProductPath(clean)
+  if (byBinarySearch) return byBinarySearch
+
+  // 3. O(1) slug lookup
   const slug = clean.split("/").pop() || clean
-  if (BILINGUAL_PRODUCT_CATALOG[slug]) {
-    return BILINGUAL_PRODUCT_CATALOG[slug]
-  }
-  return Object.values(BILINGUAL_PRODUCT_CATALOG).find(
-    (entry) => entry.slug === slug || entry.fullPath === clean || entry.fullPath.endsWith(`/${slug}`)
-  )
+  const bySlug = PRODUCT_SLUG_INDEX.get(slug)
+  if (bySlug) return bySlug
+
+  return undefined
 }
 
 /**

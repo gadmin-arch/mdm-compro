@@ -240,49 +240,61 @@ export function filterBilingualText(text: string | undefined | null, lang: Conte
   return normalized
 }
 
+// Fast bounded LRU-like memoization cache for O(1) repeat text extractions
+const BILINGUAL_CACHE_MAX_SIZE = 1500
+const bilingualExtractCache = new Map<string, { id: string; en: string }>()
+
 /**
  * Extracts distinct Indonesian and English strings from a single text field:
  * - Explicit markers: EN: ... \nID: ...
  * - Dual lines / slashes
  * - Language heuristic fallback if unmarked
+ * Cached with O(1) amortized lookup to avoid repeated regex parsing.
  */
 export function extractBilingualText(raw: string | undefined | null): { id: string; en: string } {
   if (!raw || typeof raw !== "string") return { id: "", en: "" }
   const trimmed = raw.trim()
   if (!trimmed) return { id: "", en: "" }
 
+  const cached = bilingualExtractCache.get(trimmed)
+  if (cached) return cached
+
   const normalized = trimmed.replace(/\\r\\n/g, "\n").replace(/\\n/g, "\n").trim()
   const enMatch = normalized.match(/(?:^|[\r\n\s|/;,])(?:EN\s*:|\[EN\]|English\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)|$))/i)
   const idMatch = normalized.match(/(?:^|[\r\n\s|/;,])(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:EN\s*:|\[EN\]|English\s*:)|$))/i)
 
+  let result: { id: string; en: string }
+
   if (enMatch || idMatch) {
-    return {
+    result = {
       id: idMatch ? idMatch[1].trim() : "",
       en: enMatch ? enMatch[1].trim() : "",
     }
+  } else {
+    const idText = filterBilingualText(trimmed, "id")
+    const enText = filterBilingualText(trimmed, "en")
+
+    if (idText !== enText) {
+      result = { id: idText, en: enText }
+    } else {
+      const isId = /\b(dan|yang|untuk|dengan|pada|oleh|atau|ke|dari|tentang|dalam|adalah|sebagai|layanan|produk|berita|karir|perakitan|pengujian|keandalan|fasilitas|distribusi|pabrik|sistem)\b/i.test(trimmed)
+      const isEn = /\b(and|the|for|with|in|on|at|by|to|from|about|of|as|services?|products?|news|careers?|assembly|testing|reliable|facilities|distribution|plant|systems?)\b/i.test(trimmed)
+
+      if (isId && !isEn) {
+        result = { id: trimmed, en: "" }
+      } else if (isEn && !isId) {
+        result = { id: "", en: trimmed }
+      } else {
+        result = { id: trimmed, en: trimmed }
+      }
+    }
   }
 
-  const idText = filterBilingualText(trimmed, "id")
-  const enText = filterBilingualText(trimmed, "en")
-
-  if (idText !== enText) {
-    return { id: idText, en: enText }
+  if (bilingualExtractCache.size >= BILINGUAL_CACHE_MAX_SIZE) {
+    bilingualExtractCache.clear()
   }
-
-  // If both are identical (single language text without bilingual delimiters),
-  // check if it's distinctly Indonesian or English:
-  const isId = /\b(dan|yang|untuk|dengan|pada|oleh|atau|ke|dari|tentang|dalam|adalah|sebagai|layanan|produk|berita|karir|perakitan|pengujian|keandalan|fasilitas|distribusi|pabrik|sistem)\b/i.test(trimmed)
-  const isEn = /\b(and|the|for|with|in|on|at|by|to|from|about|of|as|services?|products?|news|careers?|assembly|testing|reliable|facilities|distribution|plant|systems?)\b/i.test(trimmed)
-
-  if (isId && !isEn) {
-    return { id: trimmed, en: "" }
-  }
-  if (isEn && !isId) {
-    return { id: "", en: trimmed }
-  }
-
-  // Ambiguous or single short phrase: prefill both so user can edit either
-  return { id: trimmed, en: trimmed }
+  bilingualExtractCache.set(trimmed, result)
+  return result
 }
 
 /**
