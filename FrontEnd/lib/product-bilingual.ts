@@ -467,6 +467,135 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
     },
   },
 
+  "rittal-distributor/hygienic-design-enclosures": {
+    id: "00000000-0000-0000-0000-000000000774",
+    slug: "hygienic-design-enclosures",
+    fullPath: "rittal-distributor/hygienic-design-enclosures",
+    depth: 1,
+    sortOrder: 7,
+    imageUrl: "/uploads/products-rittal-hygienic-design.jpg",
+    title: {
+      en: "Rittal Hygienic Design (HD) Stainless Steel Enclosures",
+      id: "Enclosure Rittal Hygienic Design (HD) Stainless Steel",
+    },
+    summary: {
+      en: "Extra-hygienic stainless steel enclosures engineered with 30° sloped roofs, gap-free silicone gaskets, and IP66 / IP69K ratings for food, beverage, and pharmaceutical processing.",
+      id: "Enclosure stainless steel ultra-higienis dengan atap miring 30°, gasket silikon tanpa celah, dan proteksi IP66 / IP69K khusus untuk industri makanan, minuman, dan farmasi.",
+    },
+    specs: {
+      "EN: Material\nID: Material": "Stainless steel AISI 304 (1.4301) / AISI 316L (1.4404), brushed grain size 400, Ra < 0.8 µm",
+      "EN: Protection Category\nID: Kategori Proteksi": "IP66 and IP69K to IEC 60529 / DIN 40050-9 (high-pressure steam washdown)",
+      "EN: Hygiene Design Standard\nID: Standar Desain Higienis": "EHEDG compliant, DGUV tested, FDA compliant blue silicone seal (FDA 21 CFR 177.2600)",
+      "EN: Roof Incline\nID: Kemiringan Atap": "Integrated 30° forward slope prevents liquid accumulation and allows quick visual cleanliness inspections",
+      "EN: Locking Mechanism\nID: Mekanisme Penguncian": "Stainless steel HD cam lock with external hex drive; internal hinges prevent microbial traps",
+      "EN: Gasket Seal\nID: Segel Gasket": "All-round joint-free blue silicone seal, easily replaceable during sanitation cycles",
+    },
+    content: {
+      en: `<h3>Ultimate Hygiene for Food, Beverage, and Pharmaceutical Production</h3>
+<p>Rittal Hygienic Design (HD) enclosures are tailor-made for hygiene-critical processing environments where bacterial contamination must be completely eliminated. Designed strictly following EHEDG (European Hygienic Engineering & Design Group) principles, HD enclosures withstand regular high-pressure, high-temperature washdowns with aggressive chemical cleaning agents.</p>
+<h3>Engineered Without Gaps or Dead Spaces</h3>
+<p>Unlike standard industrial cabinets, Rittal HD enclosures feature a 30-degree forward-sloped roof that guarantees complete run-off of cleaning liquids and prohibits operators from placing objects on top. The external door edges are folded back at an angle of 10° to allow water and sanitation foam to drain completely away without leaving moisture traps or pooling zones.</p>
+<h3>FDA-Compliant Joint-Free Blue Silicone Seal</h3>
+<p>The distinctive blue all-around silicone gasket is dyed blue in accordance with FDA 21 CFR 177.2600 so that any foreign particle contamination is immediately detected visually. The seal is completely continuous without joints, resists chlorinated detergents, and can be quickly replaced during routine plant sanitation cycles without requiring adhesive removers.</p>
+<h3>IP66 and IP69K High-Pressure Washdown Protection</h3>
+<p>Certified up to IP69K, HD enclosures safely endure dynamic washdown jets exceeding 100 bar at 80°C. Internal hinges and stainless steel cam locks with external hexagonal drives ensure that no threads or internal hinge pins are exposed to the open food zone, keeping production lines 100% compliant with international food safety audits (HACCP, IFS, ISO 22000).</p>`,
+      id: `<h3>Higienitas Mutlak untuk Industri Makanan, Minuman, dan Farmasi</h3>
+<p>Enclosure Rittal Hygienic Design (HD) dirancang khusus untuk lingkungan pengolahan yang menuntut kebersihan steril tanpa risiko kontaminasi mikroba. Mengacu pada panduan ketat EHEDG (European Hygienic Engineering & Design Group), bodi panel HD dirancang tahan terhadap semprotan air bertekanan tinggi, uap panas, serta bahan kimia disinfektan berkonsentrasi tinggi.</p>
+<h3>Desain Bebas Celah & Tanpa Area Mati (Dead Space)</h3>
+<p>Berbeda dari panel industri standar, kabinet Rittal HD mengintegrasikan atap dengan kemiringan sudut 30 derajat ke arah depan. Hal ini memastikan seluruh cairan pembersih mengalir tuntas dan mencegah operator meletakkan benda asing di atas panel. Sisi tepi pintu dilipat miring 10° ke arah luar agar sisa busa dan air pencuci tidak pernah mengendap di celah paking.</p>
+<h3>Gasket Silikon Biru Bersertifikat FDA Tanpa Sambungan</h3>
+<p>Paking karet silikon solid berwarna biru kontras sesuai standar FDA 21 CFR 177.2600 memudahkan deteksi visual langsung apabila terjadi serpihan partikel. Segel paking terpasang continuous tanpa celah sambungan, sangat tahan terhadap zat pembersih klorin, dan dapat diganti secara instan saat siklus pemeliharaan sanitasi tanpa memerlukan bahan perekat kimia.</p>
+<h3>Proteksi Ekstrem IP66 dan IP69K Uap Bertekanan</h3>
+<p>Dengan sertifikasi IP69K, panel HD Rittal tahan terhadap semprotan air jet berkekuatan lebih dari 100 bar pada suhu hingga 80°C. Engsel tersembunyi di dalam panel dan pengunci hex luar stainless steel memastikan tidak ada ulir baut atau bagian bergerak terbuka di area kontak bahan makanan, memenuhi syarat penuh audit keamanan pangan internasional (HACCP, IFS, ISO 22000).</p>`,
+    },
+  },
+
+  "rittal-distributor/atex-hazardous-area-enclosures": {
+    id: "00000000-0000-0000-0000-000000000775",
+    slug: "atex-hazardous-area-enclosures",
+    fullPath: "rittal-distributor/atex-hazardous-area-enclosures",
+    depth: 1,
+    sortOrder: 8,
+    imageUrl: "/uploads/products-rittal-atex-enclosures.jpg",
+    title: {
+      en: "Rittal ATEX & IECEx Hazardous Area Explosion-Proof Enclosures",
+      id: "Enclosure Rittal ATEX & IECEx Tahan Ledakan Area Berbahaya",
+    },
+    summary: {
+      en: "Certified explosion-proof junction boxes and control cabinets for ATEX/IECEx Zone 1, 2, 21, and 22 in offshore, chemical, and petrochemical hazardous environments.",
+      id: "Kotak terminal dan kabinet kontrol bersertifikasi tahan ledakan standar ATEX/IECEx Zona 1, 2, 21, dan 22 untuk lingkungan industri kimia, migas, dan kilang lepas pantai.",
+    },
+    specs: {
+      "EN: Explosion Protection\nID: Proteksi Ledakan": "ATEX II 2 G Ex e IIC Gb / II 2 D Ex tb IIIC Db, IECEx certified to EN 60079-0/-7/-31",
+      "EN: Hazardous Zones\nID: Zona Berbahaya": "Gas: Zone 1 and Zone 2 | Dust: Zone 21 and Zone 22",
+      "EN: Protection Category\nID: Kategori Proteksi": "IP66 to IEC 60529 (Type 4X, 12 to UL 50E)",
+      "EN: Material Options\nID: Pilihan Material": "AISI 316L stainless steel (1.4404) or electrophoretic dipcoat-primed sheet steel with powder coating",
+      "EN: Operating Temperature\nID: Suhu Operasional": "-30°C to +80°C with silicone/foamed PU seals engineered for harsh climates",
+      "EN: Gland Plates & Accessories\nID: Pelat Kelenjar & Aksesori": "Integrated brass/stainless steel ATEX gland plates, earth studs, and Ex-approved viewing windows",
+    },
+    content: {
+      en: `<h3>Certified Safety in Potentially Explosive Atmospheres</h3>
+<p>Where combustible gases, vapors, or conductive dusts create an explosion hazard, electrical equipment must be housed with absolute integrity. Rittal ATEX and IECEx certified enclosures provide verified increased safety (Ex e) and dust ignition protection (Ex tb) across global oil and gas, petrochemical refineries, chemical processing plants, and grain handling facilities.</p>
+<h3>Robust Certification for Zones 1, 2, 21, and 22</h3>
+<p>Engineered and tested to the latest EN/IEC 60079 series standards, Rittal Ex enclosures carry comprehensive ATEX Directive 2014/34/EU and international IECEx approvals. Whether deployed in gas atmosphere Zone 1/2 or combustible dust atmosphere Zone 21/22, these enclosures isolate electrical sparks and internal thermal dissipation from surrounding hazardous ambient air.</p>
+<h3>Marine-Grade AISI 316L Stainless Steel Construction</h3>
+<p>For aggressive coastal and offshore marine environments, Rittal delivers enclosures manufactured from premium AISI 316L (1.4404) acid-resistant stainless steel. With electro-polished finishes and non-degrading high-temperature silicone seals, they resist high salt mist concentrations, hydrogen sulfide fumes, and ultraviolet degradation over decades of service.</p>
+<h3>Engineered System Accessories & Cable Glands</h3>
+<p>Rittal provides a complete Ex-approved ecosystem including certified brass or stainless steel cable gland plates, internal component mounting rails, external earthing studs (M6 to M10), and impact-resistant Ex inspection windows, simplifying field installation and streamlining local site certification.</p>`,
+      id: `<h3>Keamanan Teruji untuk Atmosfer Mudah Meledak</h3>
+<p>Di area industri di mana gas yang mudah terbakar, uap kimia, atau debu konduktif menciptakan bahaya ledakan tinggi, proteksi peralatan listrik menjadi keharusan mutlak. Enclosure tahan ledakan Rittal bersertifikasi ATEX dan IECEx menyediakan tingkat keamanan tinggi (Increased Safety Ex e) dan perlindungan penyalaan debu (Ex tb) untuk sektor minyak dan gas lepas pantai, kilang petrokimia, pabrik pupuk, dan industri tepung.</p>
+<h3>Sertifikasi Menyeluruh untuk Zona 1, 2, 21, dan 22</h3>
+<p>Dirancang dan diuji sesuai standar global EN/IEC 60079 series, panel Rittal Ex mengantongi sertifikat lengkap ATEX Directive 2014/34/EU serta sertifikasi internasional IECEx. Baik ditempatkan di zona gas mudah terbakar (Zona 1 & 2) maupun zona debu berbahaya (Zona 21 & 22), panel ini mengisolasi percikan listrik dan panas internal dari udara atmosfer sekitar.</p>
+<h3>Konstruksi Stainless Steel AISI 316L Kelas Marine</h3>
+<p>Untuk lingkungan kilang lepas pantai dan area pesisir yang sarat zat korosif, Rittal menyediakan panel berbahan stainless steel AISI 316L (1.4404) tahan asam. Dilengkapi lapisan brushed berkualitas tinggi dan gasket silikon tahan suhu ekstrem, panel ini tahan terhadap semprotan kabut garam pekat, uap gas hidrogen sulfida, serta paparan radiasi UV jangka panjang.</p>
+<h3>Aksesori Terintegrasi & Lubang Kabel Bersertifikat Ex</h3>
+<p>Rittal menyediakan ekosistem terpadu bersertifikat Ex mencakup pelat gland kuningan atau stainless steel, rel pemasangan internal, grounding stud tembaga/baja (M6 hingga M10), serta jendela inspeksi tahan benturan bersertifikat Ex guna mempermudah proses komisioning dan audit keselamatan operasional di lapangan.</p>`,
+    },
+  },
+
+  "rittal-distributor/hmi-consoles-support-arm-systems": {
+    id: "00000000-0000-0000-0000-000000000776",
+    slug: "hmi-consoles-support-arm-systems",
+    fullPath: "rittal-distributor/hmi-consoles-support-arm-systems",
+    depth: 1,
+    sortOrder: 9,
+    imageUrl: "/uploads/products-rittal-hmi-support-arm.jpg",
+    title: {
+      en: "Rittal HMI Operator Enclosures & Support Arm Systems (CP 60/120/180)",
+      id: "Enclosure Operator HMI & Sistem Lengan Penyangga Rittal (CP 60/120/180)",
+    },
+    summary: {
+      en: "Ergonomic operator control housings (Comfort Panel, Optipanel) and modular support arm systems designed for seamless human-machine interaction on shop floors.",
+      id: "Housing panel kontrol operator ergonomis (Comfort Panel, Optipanel) dan sistem lengan penyangga modular untuk interaksi mesin-operator optimal di lantai produksi.",
+    },
+    specs: {
+      "EN: Housing Types\nID: Tipe Housing": "Comfort Panel, Optipanel, Compact Panel, and Command Panels with custom front foil cutouts",
+      "EN: Support Arm System\nID: Sistem Lengan Penyangga": "CP 60 (up to 40 kg), CP 120 (up to 120 kg), and CP 180 (heavy-duty up to 180 kg) modular aluminum profiles",
+      "EN: Rotation & Ergonomics\nID: Rotasi & Ergonomi": "Integrated swivel angles up to 310° with adjustable rotation stops and tilt adapters (±45°)",
+      "EN: Cable Management\nID: Manajemen Kabel": "Spacious internal cable routing channel with removable clip covers for pre-terminated HDMI/Ethernet connectors",
+      "EN: Protection Rating\nID: Tingkat Proteksi": "IP65 to IEC 60529 between housing and support arm connection",
+      "EN: Material & Finish\nID: Material & Lapisan": "Extruded aluminium enclosure profiles with die-cast zinc corner caps, powder-coated in RAL 7035 / RAL 7024",
+    },
+    content: {
+      en: `<h3>Ergonomic Human-Machine Interface at the Heart of Production</h3>
+<p>Modern automated machinery demands intuitive, accessible, and fatigue-free operator interaction. Rittal HMI command panels and modular support arm systems (CP 60/120/180) deliver the perfect synthesis of ergonomic design, heavy-duty mechanical rigidity, and customizable screen housings for industrial displays, touchscreens, and push-button controls.</p>
+<h3>Comfort Panel & Optipanel Operating Housings</h3>
+<p>Rittal Comfort Panel and Optipanel housings are crafted from high-precision extruded aluminium sections. Designed to accommodate standard industrial PCs, Siemens/Schneider/Beckhoff touch panels, or customized operating keyboards, the housings feature quick-release rear doors for effortless maintenance and optimal passive heat dissipation.</p>
+<h3>Modular CP 60, CP 120, and CP 180 Support Arm Systems</h3>
+<p>Built as a versatile modular building-block system, Rittal support arm systems offer tailored load-bearing capacities: CP 60 for loads up to 40 kg, CP 120 for spans up to 120 kg, and CP 180 for heavy command stations up to 180 kg. Rotational couplings, intermediate hinges, and wall/base mounting brackets allow up to 310° horizontal rotation with precision swivel stops to protect wiring from twisting.</p>
+<h3>Spacious Cable Routing & Complete IP65 Ingress Protection</h3>
+<p>A crucial engineering advantage of Rittal support arm systems is the oversized interior cable ducting. Pre-assembled cables with large Ethernet, HDMI, or USB-C connectors can be pulled through elbows and swivel joints without disassembly or pin desoldering. Despite flexible swivel articulation, the entire mechanical system maintains continuous IP65 protection against industrial dust and cooling emulsion splashing.</p>`,
+      id: `<h3>Antarmuka Mesin-Operator (HMI) Ergonomis di Inti Lini Produksi</h3>
+<p>Mesin otomatisasi modern membutuhkan akses interaksi operator yang intuitif, ergonomis, dan tidak melelahkan. Panel kendali HMI dan sistem lengan penyangga modular Rittal (CP 60/120/180) memberikan sinergi sempurna antara desain estetis modern, kekuatan mekanis menopang beban berat, dan kompatibilitas fleksibel untuk monitor industri, layar sentuh, dan tombol darurat.</p>
+<h3>Housing Operator Comfort Panel & Optipanel</h3>
+<p>Housing Rittal Comfort Panel dan Optipanel diproduksi dari profil ekstrusi aluminium presisi tinggi. Dirancang khusus untuk memuat Industrial PC standar, layar sentuh (Siemens, Schneider, Beckhoff), atau tombol mekanik khusus, bodi housing memiliki pintu belakang sistem engsel cepat untuk kemudahan instalasi teknisi serta pelepasan panas internal yang sangat efisien.</p>
+<h3>Sistem Lengan Modular CP 60, CP 120, dan CP 180</h3>
+<p>Mengadopsi konsep modular serbaguna, sistem lengan penyangga Rittal menyediakan kapasitas beban sesuai kebutuhan: CP 60 untuk beban hingga 40 kg, CP 120 untuk bentang hingga 120 kg, dan CP 180 untuk stasiun kendali terberat hingga 180 kg. Engsel perantara dan bracket pemasangan dinding/lantai memungkinkan rotasi halus hingga 310° dengan pembatas sudut rotasi (rotation stop) untuk mencegah kabel terpelintir.</p>
+<h3>Jalur Kabel Luas & Proteksi Debu-Air IP65</h3>
+<p>Keunggulan utama sistem lengan Rittal terletak pada rongga kabel internal yang sangat lega. Kabel yang sudah terpasang konektor besar (seperti HDMI, Ethernet RJ45, atau kabel daya) dapat ditarik melewati siku dan sendi putar tanpa harus memotong atau membongkar pin konektor. Meskipun dapat berputar fleksibel, seluruh sistem tetap mempertahankan tingkat perlindungan IP65 terhadap debu industri dan percikan minyak pendingin mesin.</p>`,
+    },
+  },
+
   "schneider-integrator/industrial-automation": {
     id: "00000000-0000-0000-0000-000000000719",
     slug: "industrial-automation",
@@ -966,6 +1095,9 @@ export const PRODUCT_TREE_STRUCTURE: { root: string; children: string[] }[] = [
       "rittal-distributor/it-infrastructure",
       "rittal-distributor/outdoor-enclosures",
       "rittal-distributor/automation-systems",
+      "rittal-distributor/hygienic-design-enclosures",
+      "rittal-distributor/atex-hazardous-area-enclosures",
+      "rittal-distributor/hmi-consoles-support-arm-systems",
     ],
   },
   {
