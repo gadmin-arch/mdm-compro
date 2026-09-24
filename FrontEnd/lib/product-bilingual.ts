@@ -854,6 +854,135 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
     },
   },
 
+  "rittal-distributor/perforex-lc-laser-machining-centers": {
+    id: "00000000-0000-0000-0000-000000000783",
+    slug: "perforex-lc-laser-machining-centers",
+    fullPath: "rittal-distributor/perforex-lc-laser-machining-centers",
+    depth: 1,
+    sortOrder: 16,
+    imageUrl: "/uploads/products-rittal-perforex-lc.jpg",
+    title: {
+      en: "Rittal Perforex LC 3D Laser Machining Centers (Enclosure Modification)",
+      id: "Mesin Modifikasi Laser 3D Rittal Perforex LC (Panel & Kubikal)",
+    },
+    summary: {
+      en: "State-of-the-art 3D laser machining centers engineered for fast, burr-free, non-contact cutting of flat parts and fully assembled cubic enclosures in stainless steel, sheet steel, and aluminum.",
+      id: "Pusat permesinan laser 3D mutakhir untuk pemotongan cepat tanpa geram (burr-free) dan tanpa kontak pada panel lembaran maupun kubikal utuh berbahan stainless steel, baja, dan aluminium.",
+    },
+    specs: {
+      "EN: Machining Capability\nID: Kapabilitas Permesinan": "3D contactless cutting of cubic enclosures and flat parts (doors, side panels, mounting plates)",
+      "EN: Supported Materials\nID: Material yang Didukung": "Stainless steel (1.4301 / AISI 304, AISI 316), sheet steel, aluminum, powder-coated enclosures, and plastics",
+      "EN: Workpiece Dimensions (WxHxD)\nID: Dimensi Benda Kerja (PxTxL)": "Enclosures up to 1,270 x 2,250 x 800 mm; flat parts up to 2,800 x 1,250 mm",
+      "EN: Laser Source & Quality\nID: Sumber Laser & Kualitas": "Fiber laser up to 3 kW with automatic focus control and narrow cutting kerf (<0.2 mm)",
+      "EN: Surface Finish Quality\nID: Kualitas Permukaan Hasil Potong": "100% burr-free cut edges without paint flaking, thermal deformation, or tarnishing on stainless steel",
+      "EN: CAD/CAM & Software Integration\nID: Integrasi Perangkat Lunak & CAD/CAM": "Direct native import from EPLAN Pro Panel, RiPanel Processing, standard DXF and DWG formats",
+    },
+    content: {
+      en: `<h3>Next-Generation 3D Laser Enclosure Machining for Switchgear Manufacturing</h3>
+<p>Manual cutouts and drilling of stainless steel panels and welded enclosures require significant labor, heavy tooling wear, and time-consuming manual deburring and touch-up painting. The Rittal Perforex LC (Laser Center) series revolutionizes panel building by utilizing high-precision fiber laser cutting in full 3D space. It machines completely welded cubic enclosures as well as flat mounting plates and doors in a single uninterrupted clamping setup.</p>
+<h3>Contactless, Distortion-Free Machining with Zero Tool Wear</h3>
+<p>Unlike conventional mechanical milling or punching machines, the laser operates completely contactless. This eliminates clamping forces that can distort thin-walled panels, avoids tool breakage or wear on tough stainless steel alloys, and prevents vibration damage to pre-mounted components. The fiber laser delivers narrow, micrometric kerfs with extreme edge sharpness, allowing intricate cutouts, circular holes, and thread pilot holes to be completed in seconds.</p>
+<h3>Stainless Steel Processing Without Tarnishing or Paint Flaking</h3>
+<p>A crucial advantage of the Perforex LC is its optimized assist-gas cutting technology. When cutting stainless steel (AISI 304 / 316) with nitrogen assist gas, cut edges remain bright and completely free of oxidation or discoloration, preserving the corrosion resistance of the material without requiring pickling or chemical passivation. On powder-coated panels, the narrow heat-affected zone prevents blistering or flaking of the protective finish.</p>
+<h3>Seamless End-to-End Industry 4.0 Digital Workflow</h3>
+<p>As part of the Rittal and EPLAN digital ecosystem, the Perforex LC imports 3D virtual prototype data directly from EPLAN Pro Panel without requiring manual CNC programming at the machine. Operators simply scan a QR code from the work order; the machine automatically calculates optimum travel paths, positions pneumatic clamping fixtures, and executes cutouts with sub-millimeter repeatable precision.</p>`,
+      id: `<h3>Pusat Permesinan Laser 3D Generasi Terbaru untuk Pabrikasi Panel Listrik</h3>
+<p>Pembuatan lubang (cutout) dan pengeboran manual pada panel stainless steel dan kabinet las memerlukan waktu kerja lama, keausan mata bor/punching yang cepat, serta proses gerinda (deburring) dan pengecatan ulang yang memakan biaya. Rittal Perforex LC (Laser Center) merevolusi industri panel maker dengan memanfaatkan teknologi pemotongan laser fiber berpresisi tinggi dalam ruang 3D. Mesin ini mampu memproses kubikal utuh yang telah terakit maupun lembaran pintu dan mounting plate dalam satu kali proses clamping.</p>
+<h3>Pemotongan Tanpa Kontak, Bebas Deformasi & Tanpa Keausan Alat Potong</h3>
+<p>Berbeda dengan mesin milling atau punching konvensional, laser bekerja 100% tanpa kontak fisik dengan material. Hal ini menghilangkan gaya tekan penjepit yang dapat membengkokkan lembaran pelat tipis, mencegah keausan atau patahnya pahat potong pada material keras seperti stainless steel, serta meniadakan getaran mekanis. Sinar laser fiber menghasilkan celah potong mikrometrik yang sangat tajam dan presisi, menuntaskan lubang HMI, ventilasi, dan tombol tekan dalam hitungan detik.</p>
+<h3>Pemrosesan Stainless Steel Tanpa Perubahan Warna & Cat Bebas Mengelupas</h3>
+<p>Keunggulan utama Perforex LC terletak pada pemotongan dengan gas nitrogen bertekanan tinggi. Pada pemotongan stainless steel (AISI 304 / 316), tepi potongan tetap mengkilap, bersih dari jelaga (slag), dan tidak teroksidasi, sehingga ketahanan korosi alami baja nirkarat tetap terjaga tanpa memerlukan proses pasivasi kimia tambahan. Pada panel yang telah dilapisi cat bubuk (powder coating), zona terpengaruh panas (HAZ) yang sangat sempit menjamin cat tidak melepuh atau pecah.</p>
+<h3>Alur Kerja Digital Industry 4.0 Terintegrasi EPLAN Pro Panel</h3>
+<p>Sebagai pilar digital ekosistem Rittal dan EPLAN, Perforex LC dapat mengimpor data prototipe 3D langsung dari EPLAN Pro Panel tanpa memerlukan pemrograman manual CNC di lantai pabrik. Operator cukup memindai barcode atau QR code pada surat perintah kerja (SPK); mesin secara otomatis menghitung lintasan potong tercepat, memposisikan fixture pneumatik, dan mengeksekusi pengerjaan dengan akurasi pengulangan sub-milimeter.</p>`,
+    },
+  },
+
+  "rittal-distributor/wire-terminal-automated-wire-processing": {
+    id: "00000000-0000-0000-0000-000000000784",
+    slug: "wire-terminal-automated-wire-processing",
+    fullPath: "rittal-distributor/wire-terminal-automated-wire-processing",
+    depth: 1,
+    sortOrder: 17,
+    imageUrl: "/uploads/products-rittal-wire-terminal.jpg",
+    title: {
+      en: "Rittal Wire Terminal WT Fully Automated Wire Processing & Harnessing System",
+      id: "Mesin Pemroses & Pengkabelan Otomatis Rittal Wire Terminal WT",
+    },
+    summary: {
+      en: "Compact fully automated wire assembly machine performing wire cutting to length, stripping, crimping, and individual inkjet printing up to 8x faster than manual assembly.",
+      id: "Mesin perakitan kawat otomatis kompak yang melakukan pemotongan presisi, pengupasan isolasi, crimping ferrule, dan pencetakan inkjet hingga 8 kali lebih cepat dibanding metode manual.",
+    },
+    specs: {
+      "EN: Processing Capability\nID: Kapabilitas Pemrosesan": "Automated wire feeding, cutting to length, stripping, ultrasonic/ferrule crimping, and dual inkjet printing",
+      "EN: Wire Cross-Sections\nID: Penampang Kawat yang Didukung": "0.5 mm² to 6.0 mm² (AWG 20 to AWG 10) single-core flexible conductors",
+      "EN: Wire Processing Speed\nID: Kecepatan Pemrosesan Kawat": "Up to 8x faster than manual wiring; produces up to 36 different wire types sequentially",
+      "EN: Wire Sorting & Storage\nID: Sistem Penyortiran & Rak Penampung": "13-track rail lift storage magazines sorting finished wires by order, destination, or wiring sequence",
+      "EN: Identification & Marking\nID: Identifikasi & Penandaan": "White and black thermo-inkjet wire printing on insulation with source/target and terminal designation",
+      "EN: Software & CAE Integration\nID: Integrasi Perangkat Lunak & CAE": "Direct digital connectivity with EPLAN Smart Wiring, EPLAN Pro Panel, and CSV/XML wire lists",
+    },
+    content: {
+      en: `<h3>Accelerating Control Panel Enclosure Wiring by Up to Eight Times</h3>
+<p>Wiring control panels is traditionally the most labor-intensive bottleneck in electrical switchgear fabrication, accounting for over 40% of total assembly hours. The Rittal Wire Terminal WT automates the entire wire preparation sequence: measuring exact wire lengths, cutting, stripping both insulation ends, crimping wire ferrules, and printing clear alphanumeric markings—producing fully finished wires ready for direct installation.</p>
+<h3>Modular Tooling and Flexible Wire Magazine Options</h3>
+<p>The Wire Terminal WT accommodates wire cross-sections from 0.5 mm² to 6.0 mm² without mechanical retooling. Equipped with versatile wire magazines holding up to 36 spools or barrels of different wire colors and cross-sections, the machine automatically switches between conductor types on the fly according to digital wiring instructions.</p>
+<h3>Integrated High-Resolution Inkjet Wire Marking</h3>
+<p>Eliminate loose sleeve tags and tedious manual heat-shrink labeling. The Wire Terminal WT integrates two-color high-resolution inkjet print heads (white and black ink) that print wire numbers, connection endpoints, and terminal block addresses directly onto the conductor insulation. The ink cures instantly and is completely smudge-resistant and oil-resistant.</p>
+<h3>Seamless Integration with EPLAN Smart Wiring</h3>
+<p>Finished wires are deposited into 13-track sorting lift magazines according to their installation sequence in the panel or grouped by device destination. Combined with EPLAN Smart Wiring software, panel builders on the shop floor receive digital step-by-step visual guidance on mobile tablets, ensuring zero wiring errors, effortless wire routing, and maximum production velocity.</p>`,
+      id: `<h3>Mempercepat Pengkabelan Panel Kontrol Hingga Delapan Kali Lipat</h3>
+<p>Pengkabelan (wiring) panel kontrol secara konvensional merupakan tahapan paling memakan waktu dan tenaga kerja dalam pabrikasi switchgear, menghabiskan lebih dari 40% total jam kerja perakitan. Rittal Wire Terminal WT mengotomatiskan seluruh rangkaian persiapan kabel: mengukur panjang kawat secara presisi, memotong, mengupas kedua ujung isolasi, melakukan crimping ferrule, serta mencetak penanda alfanumerik yang jelas—menghasilkan kawat siap pasang dengan sempurna.</p>
+<h3>Opsi Tooling Modular & Pilihan Rel Kawat yang Fleksibel</h3>
+<p>Wire Terminal WT dapat memproses penampang kabel dari 0,5 mm² hingga 6,0 mm² tanpa perlu pergantian alat mekanis secara manual. Dilengkapi dengan unit dispenser kawat yang menampung hingga 36 gulungan spul atau drum dengan warna dan penampang berbeda, mesin ini secara otomatis beralih antar jenis kawat sesuai instruksi pengkabelan digital.</p>
+<h3>Pencetakan Label Inkjet Resolusi Tinggi Terintegrasi</h3>
+<p>Tinggalkan ferrule tag selongsong lepas dan proses pemasangan label heat-shrink manual yang melelahkan. Wire Terminal WT mengintegrasikan print head inkjet dua warna beresolusi tinggi (tinta putih dan hitam) yang mencetak nomor kawat, terminal asal, dan terminal tujuan langsung di atas jaket isolasi kawat. Tinta mengering seketika, tahan gesekan, serta tahan minyak pelumas industri.</p>
+<h3>Integrasi Mulus dengan EPLAN Smart Wiring</h3>
+<p>Kabel-kabel yang telah selesai diproduksi dialirkan ke dalam rak susun lift penyortir (13-track rail lift) berdasarkan urutan pemasangan di dalam kabinet atau dikelompokkan per blok komponen tujuan. Dipadukan dengan perangkat lunak EPLAN Smart Wiring, teknisi perakit di lantai produksi mendapatkan panduan visual interaktif langkah-demi-langkah melalui tablet digital, memastikan zero error wiring dan efisiensi pabrikasi optimal.</p>`,
+    },
+  },
+
+  "rittal-distributor/copper-workstation-busbar-machining": {
+    id: "00000000-0000-0000-0000-000000000785",
+    slug: "copper-workstation-busbar-machining",
+    fullPath: "rittal-distributor/copper-workstation-busbar-machining",
+    depth: 1,
+    sortOrder: 18,
+    imageUrl: "/uploads/products-rittal-copper-workstation.jpg",
+    title: {
+      en: "Rittal Copper Workstation CW 120 (Busbar Bending, Punching & Cutting)",
+      id: "Meja Kerja Pemrosesan Busbar Tembaga Rittal Copper Workstation CW 120",
+    },
+    summary: {
+      en: "Ergonomic, electro-hydraulic mobile workstation for precision bending, punching, and cutting of solid copper and aluminum busbars up to 120 x 12 mm.",
+      id: "Meja kerja elektro-hidrolik ergonomis dan mobile untuk pembengkokan presisi, pelubangan hidrolik, dan pemotongan busbar tembaga serta aluminium padat hingga ukuran 120 x 12 mm.",
+    },
+    specs: {
+      "EN: Machining Operations\nID: Operasi Permesinan": "Precision cutting, hydraulic hole punching, and angle bending on a single ergonomic station",
+      "EN: Max. Busbar Dimensions\nID: Dimensi Maksimum Busbar": "Up to 120 mm width and 12 mm thickness (copper Cu and aluminum Al busbars)",
+      "EN: Punching Capabilities\nID: Kapabilitas Pelubangan (Punching)": "Round punches Ø 6.6 mm to Ø 21.5 mm, slotted hole punches up to 21 x 18 mm with laser centering pointer",
+      "EN: Bending Accuracy & Features\nID: Akurasi & Fitur Pembengkokan": "Bending angle 0° to 90° with digital electronic angle measurement and automatic springback compensation",
+      "EN: Hydraulic Drive System\nID: Sistem Penggerak Hidrolik": "Integrated 230 V / 400 V electro-hydraulic power pack generating up to 700 bar operating pressure",
+      "EN: Mobility & Ergonomics\nID: Mobilitas & Ergonomi": "Heavy-duty industrial casters with swivel brakes, pull-out side roller supports, and built-in waste collection drawers",
+    },
+    content: {
+      en: `<h3>Professional Solid Copper Busbar Fabrication for Power Distribution Enclosures</h3>
+<p>Fabricating custom copper busbar systems for low-voltage switchboards and power distribution panels requires tremendous hydraulic force, uncompromising dimensional accuracy, and strict operator safety. The Rittal Copper Workstation CW 120 combines cutting, round/slotted hole punching, and precision bending into a compact, mobile industrial workstation designed specifically for panel builders and switchgear manufacturers.</p>
+<h3>Triple Functionality: Cutting, Punching, and Bending in One Station</h3>
+<p>Eliminate clutter and time wasted moving heavy copper stock between separate stationary machines. The CW 120 features three dedicated machining stations powered by a high-pressure 700-bar electro-hydraulic power pack. Operators can cut solid copper bars cleanly without chips or waste, punch clean round or oblong bolt holes, and bend sharp 90-degree offsets on bars up to 120 mm wide and 12 mm thick.</p>
+<h3>Digital Precision Angle Measurement and Springback Compensation</h3>
+<p>Achieving exact angles in heavy copper bars is challenging due to varying material temper and elasticity. The CW 120 bending station incorporates a digital electronic angle sensor. Once the target angle is entered on the digital display, the machine compensates for natural material springback automatically, guaranteeing identical, repeatable bends on batch production runs without manual guesswork.</p>
+<h3>Integrated Optical Laser Centering and Safe Ergonomics</h3>
+<p>To ensure perfect hole alignment with switchgear connection terminals, the punching station is equipped with a high-visibility optical line laser that projects crosshairs precisely onto the punching center mark. Extendable lateral roller conveyors support long, heavy busbars with minimal operator strain, while integrated pull-out drawers capture metal punch slugs and offcuts cleanly.</p>`,
+      id: `<h3>Fabrikasi Busbar Tembaga Profesional untuk Panel Distribusi Tenaga Listrik</h3>
+<p>Pabrikasi busbar tembaga khusus untuk switchboard tegangan rendah dan panel distribusi daya menuntut gaya hidrolik besar, presisi dimensi tanpa kompromi, serta keselamatan operator yang terjamin. Rittal Copper Workstation CW 120 mengintegrasikan fungsi pemotongan, pelubangan bulat/oval hidrolik, dan pembengkokan presisi dalam satu workstation mobile industri kompak yang dirancang khusus bagi perakit panel listrik profesional.</p>
+<h3>Tiga Fungsi Sekaligus: Potong, Punching & Tekuk dalam Satu Meja Kerja</h3>
+<p>Hilangkan pemborosan waktu dan ruang akibat memindahkan batang tembaga berat di antara mesin-mesin terpisah. CW 120 memiliki tiga stasiun kerja yang ditenagai oleh unit daya elektro-hidrolik bertekanan tinggi 700 bar. Operator dapat memotong batang tembaga padat dengan hasil bersih tanpa serpihan gram berbahaya, melubangi lubang baut bulat atau lonjong, serta menekuk busbar hingga lebar 120 mm dan ketebalan 12 mm.</p>
+<h3>Pengukuran Sudut Digital Presisi & Kompensasi Springback Otomatis</h3>
+<p>Mendapatkan sudut tekukan yang akurat pada busbar tembaga tebal sering terkendala oleh elastisitas kelenturan material (springback). Stasiun tekuk CW 120 dilengkapi sensor sudut elektronik digital. Operator cukup memasukkan target sudut pada layar digital; sistem kontrol hidrolik secara otomatis mengimbangi efek pegas material sehingga setiap tekukan berulang memiliki sudut yang persis identik tanpa coba-coba manual.</p>
+<h3>Penunjuk Laser Optik Presisi & Ergonomi Kerja Tingkat Tinggi</h3>
+<p>Untuk memastikan lubang baut sejajar sempurna dengan terminal komponen pemutus sirkuit, stasiun pelubangan dilengkapi proyektor laser garis silang presisi tinggi. Meja rol penyangga samping yang dapat dipanjangkan menopang batang busbar panjang dengan aman dan ergonomis, sementara laci penampung terintegrasi mengumpulkan limbah slug punch tembaga secara rapi dan bersih.</p>`,
+    },
+  },
+
   "schneider-integrator/industrial-automation": {
     id: "00000000-0000-0000-0000-000000000719",
     slug: "industrial-automation",
@@ -1362,6 +1491,9 @@ export const PRODUCT_TREE_STRUCTURE: { root: string; children: string[] }[] = [
       "rittal-distributor/fan-and-filter-units",
       "rittal-distributor/air-to-water-heat-exchangers-chillers",
       "rittal-distributor/enclosure-heaters-dehumidifiers",
+      "rittal-distributor/perforex-lc-laser-machining-centers",
+      "rittal-distributor/wire-terminal-automated-wire-processing",
+      "rittal-distributor/copper-workstation-busbar-machining",
     ],
   },
   {
