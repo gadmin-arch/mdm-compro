@@ -1,6 +1,7 @@
 import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons"
 import { sectionDefsByType, str, records } from "@/lib/sections"
 import { container } from "@/lib/layout"
+import { BilingualText } from "@/components/cms/content-language"
 
 export type CapabilitiesProps = {
   props?: Record<string, unknown>
@@ -22,17 +23,19 @@ export function Capabilities({ props = {} }: CapabilitiesProps) {
           <div className="max-w-2xl">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                {eyebrow}
+                <BilingualText text={eyebrow} />
               </p>
             )}
             {title && (
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-                {title}
+                <BilingualText text={title} />
               </h2>
             )}
           </div>
           {description && (
-            <p className="max-w-md text-sm leading-relaxed text-muted-foreground">{description}</p>
+            <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
+              <BilingualText text={description} />
+            </p>
           )}
         </div>
 
@@ -48,7 +51,9 @@ export function Capabilities({ props = {} }: CapabilitiesProps) {
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-secondary text-primary transition-colors group-hover:bg-accent/30">
                     <Icon className="h-4 w-4" />
                   </span>
-                  <span className="text-sm font-medium leading-tight text-foreground">{cap.label}</span>
+                  <span className="text-sm font-medium leading-tight text-foreground">
+                    <BilingualText text={cap.label} />
+                  </span>
                 </li>
               )
             })}

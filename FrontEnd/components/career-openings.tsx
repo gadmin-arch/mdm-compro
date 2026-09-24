@@ -26,15 +26,14 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              Career Opportunities
+              <BilingualText text="EN: Career Opportunities\nID: Peluang Karir" />
             </p>
             <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-              Find your next role.
+              <BilingualText text="EN: Find your next role.\nID: Temukan peran Anda berikutnya." />
             </h2>
           </div>
           <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
-            We&apos;re hiring across engineering, operations, and project management. Explore our
-            currently open vacancies and past project openings.
+            <BilingualText text="EN: We're hiring across engineering, operations, and project management. Explore our currently open vacancies and past project openings.\nID: Kami merekrut profesional di bidang rekayasa teknik, operasi, dan manajemen proyek. Jelajahi lowongan yang sedang dibuka serta riwayat posisi proyek sebelumnya." />
           </p>
         </div>
 
@@ -50,7 +49,7 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
                 : "bg-card text-muted-foreground hover:bg-secondary hover:text-foreground border border-border"
             )}
           >
-            All Roles
+            <BilingualText text="EN: All Roles\nID: Semua Posisi" />
             <span
               className={cn(
                 "rounded-full px-2 py-0.5 text-xs font-semibold",
@@ -77,7 +76,7 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
             </span>
-            Open Positions
+            <BilingualText text="EN: Open Positions\nID: Posisi Terbuka" />
             <span
               className={cn(
                 "rounded-full px-2 py-0.5 text-xs font-semibold",
@@ -101,7 +100,7 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
             )}
           >
             <XCircle className="h-3.5 w-3.5" />
-            Closed Positions
+            <BilingualText text="EN: Closed Positions\nID: Posisi Ditutup" />
             <span
               className={cn(
                 "rounded-full px-2 py-0.5 text-xs font-semibold",
@@ -119,11 +118,13 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
         <ul className="mt-6 divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
           {displayedJobs.length === 0 ? (
             <li className="p-12 text-center text-sm text-muted-foreground">
-              {statusFilter === "closed"
-                ? "No closed job positions found."
-                : statusFilter === "open"
-                  ? "There are currently no active openings in this category. Check back soon or send us your CV!"
-                  : "No roles matched your search or filters. Check back soon or send us your CV."}
+              {statusFilter === "closed" ? (
+                <BilingualText text="EN: No closed job positions found.\nID: Tidak ada lowongan ditutup yang ditemukan." />
+              ) : statusFilter === "open" ? (
+                <BilingualText text="EN: There are currently no active openings in this category. Check back soon or send us your CV!\nID: Saat ini belum ada lowongan aktif dalam kategori ini. Silakan periksa kembali nanti atau kirimkan CV Anda!" />
+              ) : (
+                <BilingualText text="EN: No roles matched your search or filters. Check back soon or send us your CV.\nID: Tidak ada lowongan yang cocok dengan pencarian atau filter Anda. Periksa kembali nanti atau kirimkan CV Anda." />
+              )}
             </li>
           ) : (
             displayedJobs.map((job) => {
@@ -142,7 +143,7 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
                             className="border-rose-500/40 bg-rose-500/10 text-rose-700 dark:text-rose-400 font-semibold"
                           >
                             <XCircle className="mr-1 h-3 w-3 text-rose-600 dark:text-rose-400" />
-                            Closed
+                            <BilingualText text="EN: Closed\nID: Ditutup" />
                           </Badge>
                         ) : (
                           <Badge
@@ -150,15 +151,17 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
                             className="border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-semibold"
                           >
                             <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            Open
+                            <BilingualText text="EN: Open\nID: Terbuka" />
                           </Badge>
                         )}
-                        <Badge variant="outline">{job.department}</Badge>
+                        <Badge variant="outline">
+                          <BilingualText text={job.department} />
+                        </Badge>
                         <Badge
                           variant="secondary"
                           className="bg-accent/25 text-foreground hover:bg-accent/25"
                         >
-                          {employmentTypeLabel(job.employmentType)}
+                          <BilingualText text={employmentTypeLabel(job.employmentType)} />
                         </Badge>
                       </div>
                       <h3
@@ -179,19 +182,21 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
                         <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/70" />
                         <div>
                           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/80">
-                            Location
+                            <BilingualText text="EN: Location\nID: Lokasi" />
                           </p>
-                          <p className="font-medium text-foreground">{job.location}</p>
+                          <p className="font-medium text-foreground">
+                            <BilingualText text={job.location} />
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-start gap-2">
                         <Briefcase className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/70" />
                         <div>
                           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/80">
-                            Type
+                            <BilingualText text="EN: Type\nID: Tipe Kerja" />
                           </p>
                           <p className="font-medium text-foreground">
-                            {employmentTypeLabel(job.employmentType)}
+                            <BilingualText text={employmentTypeLabel(job.employmentType)} />
                           </p>
                         </div>
                       </div>
@@ -199,7 +204,7 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
                         <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground/70" />
                         <div>
                           <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground/80">
-                            Deadline
+                            <BilingualText text="EN: Deadline\nID: Batas Waktu" />
                           </p>
                           <p
                             className={cn(
@@ -216,7 +221,7 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
                     <div className="flex justify-start lg:col-span-1 lg:justify-end">
                       {closed ? (
                         <span className="inline-flex items-center rounded-md bg-secondary px-3 py-1.5 text-xs font-semibold text-muted-foreground border border-border">
-                          Closed
+                          <BilingualText text="EN: Closed\nID: Ditutup" />
                         </span>
                       ) : (
                         <Button
@@ -227,7 +232,7 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
                           tabIndex={-1}
                         >
                           <span>
-                            Apply
+                            <BilingualText text="EN: Apply\nID: Lamar" />
                             <ArrowUpRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                           </span>
                         </Button>

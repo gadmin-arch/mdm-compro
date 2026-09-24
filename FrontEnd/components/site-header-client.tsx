@@ -19,6 +19,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { defaultMenuItems, type ContentNode, type MenuItem, type Navigation } from "@/lib/cms"
+import { filterBilingualText } from "@/lib/bilingual"
 import { cn } from "@/lib/utils"
 import { container } from "@/lib/layout"
 
@@ -51,7 +52,7 @@ function buildEntries(navigation: Navigation): NavNode[] {
 
       return {
         id: item.id,
-        label: item.label,
+        label: filterBilingualText(item.label, "en") || item.label,
         href: item.href || "#",
         children: [...autoChildren, ...manualChildren],
       }
@@ -61,7 +62,7 @@ function buildEntries(navigation: Navigation): NavNode[] {
 function menuNode(item: MenuItem): NavNode {
   return {
     id: item.id,
-    label: item.label,
+    label: filterBilingualText(item.label, "en") || item.label,
     href: item.href || "#",
     children: (item.children ?? []).filter((child) => child.visible !== false).map(menuNode),
   }
@@ -70,9 +71,9 @@ function menuNode(item: MenuItem): NavNode {
 function contentNodes(nodes: ContentNode[], basePath: string): NavNode[] {
   return nodes.map((node) => ({
     id: node.id,
-    label: node.title,
+    label: filterBilingualText(node.title, "en") || node.title,
     href: `${basePath}/${node.fullPath}`,
-    summary: node.summary,
+    summary: filterBilingualText(node.summary, "en") || node.summary,
     children: contentNodes(node.children ?? [], basePath),
   }))
 }

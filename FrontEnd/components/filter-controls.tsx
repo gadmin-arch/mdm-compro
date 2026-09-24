@@ -23,6 +23,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Spinner } from "@/components/ui/spinner"
+import { useContentLanguage, BilingualText, filterBilingualText } from "@/components/cms/content-language"
 
 export type FilterOption = {
   label: string
@@ -38,33 +39,33 @@ type FilterControlsProps = {
   years?: FilterOption[]
 }
 
-const sortOptionsMap = {
+const getSortOptionsMap = (isIndonesian: boolean) => ({
   products: [
-    { label: "Newest First", value: "newest" },
-    { label: "Oldest First", value: "oldest" },
+    { label: isIndonesian ? "Terbaru" : "Newest First", value: "newest" },
+    { label: isIndonesian ? "Terlama" : "Oldest First", value: "oldest" },
     { label: "A-Z", value: "alpha_asc" },
     { label: "Z-A", value: "alpha_desc" },
   ],
   services: [
-    { label: "Newest First", value: "newest" },
-    { label: "Oldest First", value: "oldest" },
+    { label: isIndonesian ? "Terbaru" : "Newest First", value: "newest" },
+    { label: isIndonesian ? "Terlama" : "Oldest First", value: "oldest" },
     { label: "A-Z", value: "alpha_asc" },
     { label: "Z-A", value: "alpha_desc" },
   ],
   news: [
-    { label: "Newest First", value: "newest" },
-    { label: "Oldest First", value: "oldest" },
+    { label: isIndonesian ? "Terbaru" : "Newest First", value: "newest" },
+    { label: isIndonesian ? "Terlama" : "Oldest First", value: "oldest" },
     { label: "A-Z", value: "alpha_asc" },
     { label: "Z-A", value: "alpha_desc" },
-    { label: "Featured First", value: "featured" },
+    { label: isIndonesian ? "Unggulan Pertama" : "Featured First", value: "featured" },
   ],
   careers: [
-    { label: "Newest First", value: "newest" },
-    { label: "Oldest First", value: "oldest" },
+    { label: isIndonesian ? "Terbaru" : "Newest First", value: "newest" },
+    { label: isIndonesian ? "Terlama" : "Oldest First", value: "oldest" },
     { label: "A-Z", value: "alpha_asc" },
     { label: "Z-A", value: "alpha_desc" },
   ],
-}
+})
 
 export function FilterControls({
   moduleType,
@@ -74,6 +75,7 @@ export function FilterControls({
   employmentTypes = [],
   years = [],
 }: FilterControlsProps) {
+  const { isIndonesian, lang } = useContentLanguage()
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -118,7 +120,7 @@ export function FilterControls({
     setSearchState({ param: "", value: "" })
   }
 
-  const sortOptions = sortOptionsMap[moduleType]
+  const sortOptions = getSortOptionsMap(isIndonesian)[moduleType]
   const currentSort = searchParams.get("sort") || "newest"
   const currentCategory = searchParams.get("category") || ""
   const currentFeatured = searchParams.get("featured") === "true"
@@ -134,27 +136,31 @@ export function FilterControls({
   // Compute active filters list for badge display
   const activeFilters: { label: string; name: string }[] = []
   if (currentCategory && categories.length > 0) {
-    const label = categories.find((c) => c.value === currentCategory)?.label || currentCategory
-    activeFilters.push({ label: `Category: ${label}`, name: "category" })
+    const rawLabel = categories.find((c) => c.value === currentCategory)?.label || currentCategory
+    const label = filterBilingualText(rawLabel, lang)
+    activeFilters.push({ label: `${isIndonesian ? "Kategori" : "Category"}: ${label}`, name: "category" })
   }
   if (moduleType === "news" && currentFeatured) {
-    activeFilters.push({ label: "Featured Only", name: "featured" })
+    activeFilters.push({ label: isIndonesian ? "Hanya Unggulan" : "Featured Only", name: "featured" })
   }
   if (currentLocation && locations.length > 0) {
-    const label = locations.find((l) => l.value === currentLocation)?.label || currentLocation
-    activeFilters.push({ label: `Location: ${label}`, name: "location" })
+    const rawLabel = locations.find((l) => l.value === currentLocation)?.label || currentLocation
+    const label = filterBilingualText(rawLabel, lang)
+    activeFilters.push({ label: `${isIndonesian ? "Lokasi" : "Location"}: ${label}`, name: "location" })
   }
   if (currentDepartment && departments.length > 0) {
-    const label = departments.find((d) => d.value === currentDepartment)?.label || currentDepartment
-    activeFilters.push({ label: `Department: ${label}`, name: "department" })
+    const rawLabel = departments.find((d) => d.value === currentDepartment)?.label || currentDepartment
+    const label = filterBilingualText(rawLabel, lang)
+    activeFilters.push({ label: `${isIndonesian ? "Departemen" : "Department"}: ${label}`, name: "department" })
   }
   if (currentType && employmentTypes.length > 0) {
-    const label = employmentTypes.find((t) => t.value === currentType)?.label || currentType
-    activeFilters.push({ label: `Type: ${label}`, name: "type" })
+    const rawLabel = employmentTypes.find((t) => t.value === currentType)?.label || currentType
+    const label = filterBilingualText(rawLabel, lang)
+    activeFilters.push({ label: `${isIndonesian ? "Tipe" : "Type"}: ${label}`, name: "type" })
   }
   if (currentYear && years.length > 0) {
     const label = years.find((y) => y.value === currentYear)?.label || currentYear
-    activeFilters.push({ label: `Year: ${label}`, name: "publishedDate" })
+    activeFilters.push({ label: `${isIndonesian ? "Tahun" : "Year"}: ${label}`, name: "publishedDate" })
   }
 
   const renderFilters = (isMobile = false) => {
@@ -164,19 +170,19 @@ export function FilterControls({
         {/* Category Filter */}
         {categories.length > 0 && (
           <div className="flex flex-col gap-1.5 min-w-[150px]">
-            {isMobile && <Label className="text-xs font-semibold text-muted-foreground">Category</Label>}
+            {isMobile && <Label className="text-xs font-semibold text-muted-foreground">{isIndonesian ? "Kategori" : "Category"}</Label>}
             <Select
               value={currentCategory}
               onValueChange={(val) => updateQueryParam("category", val === "ALL" ? null : val)}
             >
               <SelectTrigger size={selectSize} className="min-w-[160px] dark:bg-card">
-                <SelectValue placeholder="Category" />
+                <SelectValue placeholder={isIndonesian ? "Kategori" : "Category"} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All Categories</SelectItem>
+                <SelectItem value="ALL">{isIndonesian ? "Semua Kategori" : "All Categories"}</SelectItem>
                 {categories.map((c) => (
                   <SelectItem key={c.value} value={c.value}>
-                    {c.label}
+                    <BilingualText text={c.label} />
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -189,19 +195,19 @@ export function FilterControls({
           <>
             {locations.length > 0 && (
               <div className="flex flex-col gap-1.5 min-w-[140px]">
-                {isMobile && <Label className="text-xs font-semibold text-muted-foreground">Location</Label>}
+                {isMobile && <Label className="text-xs font-semibold text-muted-foreground">{isIndonesian ? "Lokasi" : "Location"}</Label>}
                 <Select
                   value={currentLocation}
                   onValueChange={(val) => updateQueryParam("location", val === "ALL" ? null : val)}
                 >
                   <SelectTrigger size={selectSize} className="min-w-[150px] dark:bg-card">
-                    <SelectValue placeholder="Location" />
+                    <SelectValue placeholder={isIndonesian ? "Lokasi" : "Location"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ALL">All Locations</SelectItem>
+                    <SelectItem value="ALL">{isIndonesian ? "Semua Lokasi" : "All Locations"}</SelectItem>
                     {locations.map((l) => (
                       <SelectItem key={l.value} value={l.value}>
-                        {l.label}
+                        <BilingualText text={l.label} />
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -211,19 +217,19 @@ export function FilterControls({
 
             {departments.length > 0 && (
               <div className="flex flex-col gap-1.5 min-w-[140px]">
-                {isMobile && <Label className="text-xs font-semibold text-muted-foreground">Department</Label>}
+                {isMobile && <Label className="text-xs font-semibold text-muted-foreground">{isIndonesian ? "Departemen" : "Department"}</Label>}
                 <Select
                   value={currentDepartment}
                   onValueChange={(val) => updateQueryParam("department", val === "ALL" ? null : val)}
                 >
                   <SelectTrigger size={selectSize} className="min-w-[150px] dark:bg-card">
-                    <SelectValue placeholder="Department" />
+                    <SelectValue placeholder={isIndonesian ? "Departemen" : "Department"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ALL">All Departments</SelectItem>
+                    <SelectItem value="ALL">{isIndonesian ? "Semua Departemen" : "All Departments"}</SelectItem>
                     {departments.map((d) => (
                       <SelectItem key={d.value} value={d.value}>
-                        {d.label}
+                        <BilingualText text={d.label} />
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -233,19 +239,19 @@ export function FilterControls({
 
             {employmentTypes.length > 0 && (
               <div className="flex flex-col gap-1.5 min-w-[140px]">
-                {isMobile && <Label className="text-xs font-semibold text-muted-foreground">Employment Type</Label>}
+                {isMobile && <Label className="text-xs font-semibold text-muted-foreground">{isIndonesian ? "Tipe Pekerjaan" : "Employment Type"}</Label>}
                 <Select
                   value={currentType}
                   onValueChange={(val) => updateQueryParam("type", val === "ALL" ? null : val)}
                 >
                   <SelectTrigger size={selectSize} className="min-w-[150px] dark:bg-card">
-                    <SelectValue placeholder="Employment Type" />
+                    <SelectValue placeholder={isIndonesian ? "Tipe Pekerjaan" : "Employment Type"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ALL">All Types</SelectItem>
+                    <SelectItem value="ALL">{isIndonesian ? "Semua Tipe" : "All Types"}</SelectItem>
                     {employmentTypes.map((t) => (
                       <SelectItem key={t.value} value={t.value}>
-                        {t.label}
+                        <BilingualText text={t.label} />
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -258,16 +264,16 @@ export function FilterControls({
         {/* News Specific Filters */}
         {moduleType === "news" && years.length > 0 && (
           <div className="flex flex-col gap-1.5 min-w-[120px]">
-            {isMobile && <Label className="text-xs font-semibold text-muted-foreground">Year</Label>}
+            {isMobile && <Label className="text-xs font-semibold text-muted-foreground">{isIndonesian ? "Tahun" : "Year"}</Label>}
             <Select
               value={currentYear}
               onValueChange={(val) => updateQueryParam("publishedDate", val === "ALL" ? null : val)}
             >
               <SelectTrigger size={selectSize} className="min-w-[130px] dark:bg-card">
-                <SelectValue placeholder="Year" />
+                <SelectValue placeholder={isIndonesian ? "Tahun" : "Year"} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All Years</SelectItem>
+                <SelectItem value="ALL">{isIndonesian ? "Semua Tahun" : "All Years"}</SelectItem>
                 {years.map((y) => (
                   <SelectItem key={y.value} value={y.value}>
                     {y.label}
@@ -290,7 +296,7 @@ export function FilterControls({
               htmlFor={isMobile ? "featured-mobile" : "featured-desktop"}
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
             >
-              Featured Only
+              {isIndonesian ? "Hanya Unggulan" : "Featured Only"}
             </Label>
           </div>
         )}
@@ -307,7 +313,7 @@ export function FilterControls({
           <Search className="pointer-events-none absolute left-3.5 top-2.5 h-4 w-4 text-muted-foreground/60" />
           <Input
             type="text"
-            placeholder="Search keywords..."
+            placeholder={isIndonesian ? "Cari kata kunci..." : "Search keywords..."}
             value={searchInput}
             onChange={(e) => setSearchState({ param: currentSearch, value: e.target.value })}
             className="pl-10 pr-8 dark:bg-input/20 h-9"
@@ -336,7 +342,7 @@ export function FilterControls({
             <SelectTrigger size="sm" className="min-w-[140px] dark:bg-card">
               <span className="flex items-center gap-1.5">
                 <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
-                <SelectValue placeholder="Sort By" />
+                <SelectValue placeholder={isIndonesian ? "Urutkan" : "Sort By"} />
               </span>
             </SelectTrigger>
             <SelectContent align="end">
@@ -357,24 +363,28 @@ export function FilterControls({
             <SheetTrigger asChild>
               <Button variant="outline" size="sm" className="w-full flex items-center justify-center gap-2 h-9">
                 <SlidersHorizontal className="h-4 w-4" />
-                Filters & Sorting
+                {isIndonesian ? "Filter & Urutkan" : "Filters & Sorting"}
               </Button>
             </SheetTrigger>
             <SheetContent side="bottom" className="max-h-[85vh] rounded-t-2xl overflow-y-auto px-6 pb-8">
               <SheetHeader className="text-left border-b pb-3 mb-4">
-                <SheetTitle className="font-display text-lg">Filter & Sort</SheetTitle>
+                <SheetTitle className="font-display text-lg">
+                  {isIndonesian ? "Filter & Pengurutan" : "Filter & Sort"}
+                </SheetTitle>
               </SheetHeader>
               
               <div className="flex flex-col gap-6">
                 {/* Sort Control Mobile */}
                 <div className="flex flex-col gap-2">
-                  <Label className="text-xs font-semibold text-muted-foreground">Sort By</Label>
+                  <Label className="text-xs font-semibold text-muted-foreground">
+                    {isIndonesian ? "Urutkan" : "Sort By"}
+                  </Label>
                   <Select
                     value={currentSort}
                     onValueChange={(val) => updateQueryParam("sort", val)}
                   >
                     <SelectTrigger className="w-full dark:bg-card">
-                      <SelectValue placeholder="Sort By" />
+                      <SelectValue placeholder={isIndonesian ? "Urutkan" : "Sort By"} />
                     </SelectTrigger>
                     <SelectContent>
                       {sortOptions.map((opt) => (
@@ -398,7 +408,9 @@ export function FilterControls({
       {/* Active Badges Panel */}
       {activeFilters.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 py-1">
-          <span className="text-xs font-medium text-muted-foreground mr-1">Active filters:</span>
+          <span className="text-xs font-medium text-muted-foreground mr-1">
+            {isIndonesian ? "Filter aktif:" : "Active filters:"}
+          </span>
           {activeFilters.map((filter) => (
             <Badge
               key={filter.name}
@@ -420,7 +432,7 @@ export function FilterControls({
             onClick={clearAllFilters}
             className="text-xs text-primary hover:text-primary/80 h-auto p-1 font-medium ml-1.5"
           >
-            Clear All
+            {isIndonesian ? "Hapus Semua" : "Clear All"}
           </Button>
         </div>
       )}

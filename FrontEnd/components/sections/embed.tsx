@@ -1,4 +1,5 @@
 import { str } from "@/lib/sections"
+import { BilingualText } from "@/components/cms/content-language"
 
 const aspectClasses: Record<string, string> = {
   "16/9": "aspect-video",
@@ -18,7 +19,7 @@ export function EmbedSection({ props }: { props: Record<string, unknown> }) {
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
         {title && (
           <h2 className="mb-8 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-            {title}
+            <BilingualText text={title} />
           </h2>
         )}
         <figure>
@@ -33,7 +34,9 @@ export function EmbedSection({ props }: { props: Record<string, unknown> }) {
             />
           </div>
           {caption && (
-            <figcaption className="mt-3 text-sm text-muted-foreground">{caption}</figcaption>
+            <figcaption className="mt-3 text-sm text-muted-foreground">
+              <BilingualText text={caption} />
+            </figcaption>
           )}
         </figure>
       </div>

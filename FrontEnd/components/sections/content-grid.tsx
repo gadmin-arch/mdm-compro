@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/cms"
 import { str, num } from "@/lib/sections"
 import type { SectionData } from "@/components/cms/section-renderer"
 import { container } from "@/lib/layout"
+import { BilingualText } from "@/components/cms/content-language"
 
 export function ContentGridSection({
   props,
@@ -27,16 +28,18 @@ export function ContentGridSection({
           <div className="max-w-2xl">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                {eyebrow}
+                <BilingualText text={eyebrow} />
               </p>
             )}
             {title && (
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-                {title}
+                <BilingualText text={title} />
               </h2>
             )}
             {description && (
-              <p className="mt-4 text-base leading-relaxed text-muted-foreground">{description}</p>
+              <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                <BilingualText text={description} />
+              </p>
             )}
           </div>
         )}
@@ -58,7 +61,11 @@ export function ContentGridSection({
 
 function NodeCards({ items, basePath }: { items: ContentNode[]; basePath: string }) {
   if (items.length === 0) {
-    return <p className="text-sm text-muted-foreground">Content will be published soon.</p>
+    return (
+      <p className="text-sm text-muted-foreground">
+        <BilingualText text="EN: Content will be published soon.\nID: Konten akan segera dipublikasikan." />
+      </p>
+    )
   }
   return (
     <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -78,15 +85,15 @@ function NodeCards({ items, basePath }: { items: ContentNode[]; basePath: string
             </div>
             <div className="flex flex-1 flex-col p-5">
               <h3 className="font-display text-base font-semibold leading-snug text-foreground">
-                {item.title}
+                <BilingualText text={item.title} />
               </h3>
               {item.summary && (
                 <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-                  {item.summary}
+                  <BilingualText text={item.summary} />
                 </p>
               )}
               <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-medium text-foreground">
-                Learn more
+                <BilingualText text="EN: Learn more\nID: Pelajari selengkapnya" />
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
               </span>
             </div>
@@ -99,7 +106,11 @@ function NodeCards({ items, basePath }: { items: ContentNode[]; basePath: string
 
 function NewsCards({ items }: { items: NewsItem[] }) {
   if (items.length === 0) {
-    return <p className="text-sm text-muted-foreground">News will be published soon.</p>
+    return (
+      <p className="text-sm text-muted-foreground">
+        <BilingualText text="EN: News will be published soon.\nID: Berita akan segera dipublikasikan." />
+      </p>
+    )
   }
   return (
     <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -119,14 +130,16 @@ function NewsCards({ items }: { items: NewsItem[] }) {
             </div>
             <div className="flex flex-1 flex-col p-5">
               <p className="text-xs text-muted-foreground">
-                {[item.category, formatDate(item.publishedAt)].filter(Boolean).join(" · ")}
+                {item.category && <BilingualText text={item.category} />}
+                {item.category && item.publishedAt ? " · " : ""}
+                {item.publishedAt ? formatDate(item.publishedAt) : ""}
               </p>
               <h3 className="mt-2 font-display text-base font-semibold leading-snug text-foreground">
-                {item.title}
+                <BilingualText text={item.title} />
               </h3>
               {item.excerpt && (
                 <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-                  {item.excerpt}
+                  <BilingualText text={item.excerpt} />
                 </p>
               )}
             </div>

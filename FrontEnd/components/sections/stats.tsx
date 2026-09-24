@@ -1,5 +1,6 @@
 import { str, records } from "@/lib/sections"
 import { container } from "@/lib/layout"
+import { BilingualText } from "@/components/cms/content-language"
 
 export function StatsSection({ props }: { props: Record<string, unknown> }) {
   const eyebrow = str(props, "eyebrow")
@@ -14,12 +15,12 @@ export function StatsSection({ props }: { props: Record<string, unknown> }) {
           <div className="mb-10 max-w-2xl">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                {eyebrow}
+                <BilingualText text={eyebrow} />
               </p>
             )}
             {title && (
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-                {title}
+                <BilingualText text={title} />
               </h2>
             )}
           </div>
@@ -30,9 +31,11 @@ export function StatsSection({ props }: { props: Record<string, unknown> }) {
           {items.map((item, index) => (
             <div key={`${item.label}-${index}`} className="border-l-2 border-accent pl-4">
               <dd className="font-display text-3xl font-semibold text-foreground sm:text-4xl">
-                {item.value}
+                <BilingualText text={item.value} />
               </dd>
-              <dt className="mt-1 text-sm text-muted-foreground">{item.label}</dt>
+              <dt className="mt-1 text-sm text-muted-foreground">
+                <BilingualText text={item.label} />
+              </dt>
             </div>
           ))}
         </dl>

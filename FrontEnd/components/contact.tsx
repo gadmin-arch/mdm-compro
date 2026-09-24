@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import type { PageContent } from "@/lib/cms"
 import { container } from "@/lib/layout"
+import { useContentLanguage, BilingualText, filterBilingualText } from "@/components/cms/content-language"
 
 interface Office {
   name: string
@@ -20,6 +21,7 @@ interface Office {
 }
 
 export function Contact({ page }: { page?: PageContent | null }) {
+  const { isIndonesian, lang } = useContentLanguage()
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle")
   // When the form became interactive, used to measure how long the visitor had
   // it open. Scripts that fill and post instantly fail that check. Stamped in
@@ -39,16 +41,16 @@ export function Contact({ page }: { page?: PageContent | null }) {
     ? (content.offices as Office[])
     : [
         {
-          name: "Head Office (Surabaya)",
-          address: "Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, East Java, Indonesia",
+          name: "EN: Head Office (Surabaya)\nID: Kantor Pusat (Surabaya)",
+          address: "EN: Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, East Java, Indonesia\nID: Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, Jawa Timur, Indonesia",
           phone: "+62 31 592 1256",
           fax: "+62 31 591 7845",
           email: "info@multidayamitra.co.id",
           mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.574636906236!2d112.7747579!3d-7.2854787!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbc8a9c411c1%3A0x3f527ebff4e81cdd!2sMulti%20Daya%20Mitra%20PT.!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
         },
         {
-          name: "Engineering Office & Workshop",
-          address: "Ruko Jati Kepuh Indah F-26 & E-21, Sidoarjo 61271, East Java, Indonesia",
+          name: "EN: Engineering Office & Workshop\nID: Kantor Rekayasa & Workshop",
+          address: "EN: Ruko Jati Kepuh Indah F-26 & E-21, Sidoarjo 61271, East Java, Indonesia\nID: Ruko Jati Kepuh Indah F-26 & E-21, Sidoarjo 61271, Jawa Timur, Indonesia",
           phone: "+62 811-8303-250 (Technical) · +62 821-4007-4122 (Sales)",
           email: "sales@multidayamitra.co.id",
           mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1978.1062972986427!2d112.7157486!3d-7.4685927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e74726f32b8d%3A0xf8229e5934963dc6!2sPT.%20Multi%20Daya%20Mitra%20(Workshop)!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
@@ -56,13 +58,14 @@ export function Contact({ page }: { page?: PageContent | null }) {
       ]
 
   const offices = rawOffices.map((office) => {
-    if (office.name.toLowerCase().includes("head office") || office.mapEmbedUrl?.includes("0xe54df63b8274305c")) {
+    const lowerName = office.name.toLowerCase()
+    if (lowerName.includes("head office") || lowerName.includes("kantor pusat") || office.mapEmbedUrl?.includes("0xe54df63b8274305c")) {
       return {
         ...office,
         mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.574636906236!2d112.7747579!3d-7.2854787!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbc8a9c411c1%3A0x3f527ebff4e81cdd!2sMulti%20Daya%20Mitra%20PT.!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
       }
     }
-    if (office.name.toLowerCase().includes("engineering") || office.name.toLowerCase().includes("workshop") || office.mapEmbedUrl?.includes("0xc3fec86c4293f0b4")) {
+    if (lowerName.includes("engineering") || lowerName.includes("workshop") || lowerName.includes("rekayasa") || office.mapEmbedUrl?.includes("0xc3fec86c4293f0b4")) {
       return {
         ...office,
         mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1978.1062972986427!2d112.7157486!3d-7.4685927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e74726f32b8d%3A0xf8229e5934963dc6!2sPT.%20Multi%20Daya%20Mitra%20(Workshop)!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid"
@@ -77,30 +80,37 @@ export function Contact({ page }: { page?: PageContent | null }) {
   const cleanTechPhone = technicalPhone.replace(/[^0-9]/g, "")
   const cleanSalesPhone = salesPhone.replace(/[^0-9]/g, "")
 
+  const techWaText = isIndonesian
+    ? "Halo PT Multi Daya Mitra, saya ingin berkonsultasi dengan Tim Ahli Teknis mengenai solusi rekayasa dan layanan kelistrikan."
+    : "Hello PT Multi Daya Mitra, I would like to consult with a Technical Expert regarding your engineering solutions and services."
+  const salesWaText = isIndonesian
+    ? "Halo PT Multi Daya Mitra, saya ingin menanyakan informasi harga dan ketersediaan produk."
+    : "Hello PT Multi Daya Mitra, I would like to inquire about product pricing and availability."
+
   const channels = [
     {
       icon: Phone,
-      title: "Technical Expert WhatsApp",
+      title: "EN: Technical Expert WhatsApp\nID: WhatsApp Ahli Teknis",
       body: technicalPhone,
-      href: `https://wa.me/${cleanTechPhone}?text=${encodeURIComponent("Hello PT Multi Daya Mitra, I would like to consult with a Technical Expert regarding your engineering solutions and services.")}`,
+      href: `https://wa.me/${cleanTechPhone}?text=${encodeURIComponent(techWaText)}`,
     },
     {
       icon: Mail,
-      title: "Sales & General Email",
+      title: "EN: Sales & General Email\nID: Email Penjualan & Umum",
       body: generalEmail,
       href: `mailto:${generalEmail}`,
     },
     {
       icon: Phone,
-      title: "Head Office Phone",
+      title: "EN: Head Office Phone\nID: Telepon Kantor Pusat",
       body: generalPhone,
       href: `tel:${generalPhone.replace(/[^0-9+]/g, "")}`,
     },
     {
       icon: Phone,
-      title: "Sales WhatsApp",
+      title: "EN: Sales WhatsApp\nID: WhatsApp Penjualan",
       body: salesPhone,
-      href: `https://wa.me/${cleanSalesPhone}?text=${encodeURIComponent("Hello PT Multi Daya Mitra, I would like to inquire about product pricing and availability.")}`,
+      href: `https://wa.me/${cleanSalesPhone}?text=${encodeURIComponent(salesWaText)}`,
     },
   ]
 
@@ -146,14 +156,13 @@ export function Contact({ page }: { page?: PageContent | null }) {
             <div className="relative bg-primary p-8 text-primary-foreground sm:p-10 lg:col-span-5 flex flex-col justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-                  Let&apos;s talk
+                  <BilingualText text={"EN: Let's talk\nID: Mari Berdiskusi"} />
                 </p>
                 <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-                  Plan your next electrical or automation project with us.
+                  <BilingualText text={"EN: Plan your next electrical or automation project with us.\nID: Rencanakan proyek kelistrikan atau otomasi Anda bersama kami."} />
                 </h2>
                 <p className="mt-4 text-sm leading-relaxed text-primary-foreground/80">
-                  Tell us about your facility and the outcomes you&apos;re after — our
-                  engineers will get back with a tailored scope, approach, and quote.
+                  <BilingualText text={"EN: Tell us about your facility and the outcomes you're after — our engineers will get back with a tailored scope, approach, and quote.\nID: Ceritakan fasilitas dan sasaran operasional Anda — tim engineer kami akan segera menindaklanjuti dengan ruang lingkup teknis, metode pelaksanaan, dan penawaran yang terstruktur."} />
                 </p>
               </div>
 
@@ -163,7 +172,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
                 className="mt-8 bg-accent text-accent-foreground hover:bg-accent/90 self-start"
               >
                 <Link href={`mailto:${generalEmail}`}>
-                  Email our team
+                  <BilingualText text={"EN: Email our team\nID: Email Tim Kami"} />
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
@@ -180,7 +189,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
                 const content = (
                   <>
                     <span className="flex h-10 w-10 items-center justify-center rounded-md bg-secondary text-primary">
-                      {channel.title === "General Fax" ? (
+                      {channel.title.includes("Fax") ? (
                         <Icon className="h-5 w-5 rotate-90" />
                       ) : (
                         <Icon className="h-5 w-5" />
@@ -188,7 +197,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
                     </span>
                     <div className="mt-4">
                       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                        {channel.title}
+                        <BilingualText text={channel.title} />
                       </p>
                       <p className="mt-1.5 font-display text-base font-medium text-foreground">
                         {channel.body}
@@ -222,10 +231,10 @@ export function Contact({ page }: { page?: PageContent | null }) {
         <div className="mt-16">
           <div className="text-center sm:text-left">
             <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Our Locations
+              <BilingualText text={"EN: Our Locations\nID: Lokasi Kantor Kami"} />
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Visit or contact any of our local offices for direct assistance.
+              <BilingualText text={"EN: Visit or contact any of our local offices for direct assistance.\nID: Kunjungi atau hubungi kantor kami untuk mendapatkan bantuan dan konsultasi langsung."} />
             </p>
           </div>
 
@@ -237,18 +246,18 @@ export function Contact({ page }: { page?: PageContent | null }) {
                     <MapPin className="h-5 w-5" />
                   </span>
                   <h3 className="font-display text-base font-semibold text-foreground">
-                    {office.name}
+                    <BilingualText text={office.name} />
                   </h3>
                 </div>
                 <p className="mt-4 text-sm text-muted-foreground leading-relaxed flex-grow">
-                  {office.address}
+                  <BilingualText text={office.address} />
                 </p>
                 
                 <div className="mt-6 space-y-2.5 border-t border-border/60 pt-4 text-xs">
                   {office.phone && (
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Phone className="h-3.5 w-3.5 text-primary" />
-                      <span>Phone: {office.phone}</span>
+                      <span>{isIndonesian ? "Telepon: " : "Phone: "}{office.phone}</span>
                     </div>
                   )}
                   {office.fax && (
@@ -270,12 +279,12 @@ export function Contact({ page }: { page?: PageContent | null }) {
                 {office.mapEmbedUrl && (
                   <div className="mt-5">
                     <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(office.name + " " + office.address)}`}
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(filterBilingualText(office.name, lang) + " " + filterBilingualText(office.address, lang))}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center text-xs font-semibold text-primary hover:underline"
                     >
-                      Get Directions
+                      {isIndonesian ? "Petunjuk Arah" : "Get Directions"}
                       <ArrowRight className="ml-1 h-3.5 w-3.5" />
                     </a>
                   </div>
@@ -290,7 +299,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
           <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
             <div className="border-b border-border bg-secondary/30 p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h3 className="font-display text-sm font-semibold tracking-wide text-foreground uppercase">
-                Interactive Maps
+                {isIndonesian ? "Peta Interaktif" : "Interactive Maps"}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {officesWithMap.map((office, idx) => (
@@ -303,7 +312,7 @@ export function Contact({ page }: { page?: PageContent | null }) {
                         : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
                     }`}
                   >
-                    {office.name}
+                    <BilingualText text={office.name} />
                   </button>
                 ))}
               </div>
@@ -327,10 +336,10 @@ export function Contact({ page }: { page?: PageContent | null }) {
         <div className="mt-16">
           <div className="text-center sm:text-left mb-8">
             <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              Send us a Message
+              <BilingualText text={"EN: Send us a Message\nID: Kirim Pesan kepada Kami"} />
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Fill out the form below and our team will follow up within 24 hours.
+              <BilingualText text={"EN: Fill out the form below and our team will follow up within 24 hours.\nID: Isi formulir di bawah ini dan tim kami akan segera menindaklanjuti dalam waktu 24 jam."} />
             </p>
           </div>
 
@@ -354,49 +363,59 @@ export function Contact({ page }: { page?: PageContent | null }) {
             </div>
             <div>
               <label className="text-sm font-medium text-foreground" htmlFor="name">
-                Name
+                {isIndonesian ? "Nama Lengkap" : "Name"}
               </label>
-              <Input id="name" name="name" required className="mt-2" />
+              <Input id="name" name="name" required className="mt-2" placeholder={isIndonesian ? "Nama lengkap Anda" : "Your full name"} />
             </div>
             <div>
               <label className="text-sm font-medium text-foreground" htmlFor="email">
                 Email
               </label>
-              <Input id="email" name="email" type="email" required className="mt-2" />
+              <Input id="email" name="email" type="email" required className="mt-2" placeholder="name@company.com" />
             </div>
             <div>
               <label className="text-sm font-medium text-foreground" htmlFor="phone">
-                Phone
+                {isIndonesian ? "Nomor Telepon" : "Phone"}
               </label>
-              <Input id="phone" name="phone" className="mt-2" />
+              <Input id="phone" name="phone" className="mt-2" placeholder="+62 812-..." />
             </div>
             <div>
               <label className="text-sm font-medium text-foreground" htmlFor="company">
-                Company
+                {isIndonesian ? "Perusahaan" : "Company"}
               </label>
-              <Input id="company" name="company" className="mt-2" />
+              <Input id="company" name="company" className="mt-2" placeholder={isIndonesian ? "Nama perusahaan atau institusi" : "Company or organization name"} />
             </div>
             <div className="md:col-span-2">
               <label className="text-sm font-medium text-foreground" htmlFor="subject">
-                Subject
+                {isIndonesian ? "Subjek" : "Subject"}
               </label>
-              <Input id="subject" name="subject" required className="mt-2" />
+              <Input id="subject" name="subject" required className="mt-2" placeholder={isIndonesian ? "Topik konsultasi atau pengadaan" : "Consultation or procurement topic"} />
             </div>
             <div className="md:col-span-2">
               <label className="text-sm font-medium text-foreground" htmlFor="message">
-                Message
+                {isIndonesian ? "Pesan" : "Message"}
               </label>
-              <Textarea id="message" name="message" required className="mt-2 min-h-32" />
+              <Textarea id="message" name="message" required className="mt-2 min-h-32" placeholder={isIndonesian ? "Jelaskan kebutuhan teknis, lokasi, dan detail proyek Anda..." : "Describe your technical requirements, facility location, and project timeline..."} />
             </div>
             <div className="flex flex-col gap-3 md:col-span-2 md:flex-row md:items-center">
               <Button type="submit" disabled={status === "submitting"}>
-                {status === "submitting" ? "Sending..." : "Send Inquiry"}
+                {status === "submitting"
+                  ? (isIndonesian ? "Mengirimkan..." : "Sending...")
+                  : (isIndonesian ? "Kirim Pesan" : "Send Inquiry")}
               </Button>
               {status === "success" && (
-                <p className="text-sm text-muted-foreground">Your inquiry has been sent.</p>
+                <p className="text-sm text-muted-foreground">
+                  {isIndonesian
+                    ? "Pesan Anda telah berhasil dikirim. Tim kami akan segera merespons."
+                    : "Your inquiry has been sent."}
+                </p>
               )}
               {status === "error" && (
-                <p className="text-sm text-destructive">Unable to send right now. Please email us directly.</p>
+                <p className="text-sm text-destructive">
+                  {isIndonesian
+                    ? "Tidak dapat mengirim pesan saat ini. Silakan hubungi kami via email langsung."
+                    : "Unable to send right now. Please email us directly."}
+                </p>
               )}
             </div>
           </form>

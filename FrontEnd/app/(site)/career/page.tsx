@@ -113,10 +113,10 @@ export default async function CareerPage({ searchParams }: Props) {
       />
       {listingBlock}
       <CtaBanner
-        title="Don't see the right role?"
-        description="We're always interested in meeting talented engineers and operators. Send us your CV and we'll keep you in mind."
+        title="EN: Don't see the right role?\nID: Tidak menemukan posisi yang sesuai?"
+        description="EN: We're always interested in meeting talented engineers and operators. Send us your CV and we'll keep you in mind.\nID: Kami selalu tertarik untuk bertemu dengan para insinyur dan tenaga profesional berbakat. Kirimkan CV Anda dan kami akan menghubungi Anda saat ada posisi yang relevan."
         primaryHref="mailto:hr@multidayamitra.co.id"
-        primaryLabel="Send Your CV"
+        primaryLabel="EN: Send Your CV\nID: Kirimkan CV Anda"
       />
     </>
   )

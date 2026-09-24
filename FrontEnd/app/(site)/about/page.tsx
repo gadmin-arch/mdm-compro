@@ -42,10 +42,10 @@ export default async function AboutPage() {
       <WhyUs />
       <Capabilities />
       <CtaBanner
-        title="Want to know more about our work?"
-        description="Get in touch with our team to discuss your project, request company credentials, or schedule a site assessment."
+        title="EN: Want to know more about our work?\nID: Ingin tahu lebih banyak tentang proyek kami?"
+        description="EN: Get in touch with our team to discuss your project, request company credentials, or schedule a site assessment.\nID: Hubungi tim kami untuk mendiskusikan kebutuhan proyek Anda, meminta profil perusahaan, atau menjadwalkan survei teknis."
         primaryHref="/contact"
-        primaryLabel="Contact Us"
+        primaryLabel="EN: Contact Us\nID: Hubungi Kami"
       />
     </>
   )

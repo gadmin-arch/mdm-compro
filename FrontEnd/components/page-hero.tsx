@@ -1,17 +1,26 @@
+import type { ReactNode } from "react"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { container } from "@/lib/layout"
+import { BilingualText } from "@/components/cms/content-language"
 
-type Crumb = { label: React.ReactNode; href?: string }
+type Crumb = { label: ReactNode; href?: string }
 
 interface PageHeroProps {
-  eyebrow: React.ReactNode
-  title: React.ReactNode
-  description?: React.ReactNode
+  eyebrow: ReactNode
+  title: ReactNode
+  description?: ReactNode
   breadcrumbs?: Crumb[]
 }
 
 export function PageHero({ eyebrow, title, description, breadcrumbs }: PageHeroProps) {
+  const renderVal = (val: ReactNode) => {
+    if (typeof val === "string") {
+      return <BilingualText text={val} />
+    }
+    return val
+  }
+
   return (
     <section className="relative overflow-hidden border-b border-border/60 bg-primary text-primary-foreground">
       <div
@@ -33,10 +42,12 @@ export function PageHero({ eyebrow, title, description, breadcrumbs }: PageHeroP
                   {i > 0 && <ChevronRight className="h-3 w-3 text-primary-foreground/40" />}
                   {crumb.href && !isLast ? (
                     <Link href={crumb.href} className="transition-colors hover:text-primary-foreground">
-                      {crumb.label}
+                      {renderVal(crumb.label)}
                     </Link>
                   ) : (
-                    <span className={isLast ? "font-medium text-primary-foreground" : ""}>{crumb.label}</span>
+                    <span className={isLast ? "font-medium text-primary-foreground" : ""}>
+                      {renderVal(crumb.label)}
+                    </span>
                   )}
                 </span>
               )
@@ -46,16 +57,16 @@ export function PageHero({ eyebrow, title, description, breadcrumbs }: PageHeroP
 
         <span className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/20 bg-primary-foreground/10 px-3 py-1 text-xs font-medium tracking-wide">
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          {eyebrow}
+          {renderVal(eyebrow)}
         </span>
 
         <h1 className="mt-5 max-w-3xl font-display text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl">
-          {title}
+          {renderVal(title)}
         </h1>
 
         {description && (
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-primary-foreground/80 sm:text-lg">
-            {description}
+            {renderVal(description)}
           </p>
         )}
       </div>

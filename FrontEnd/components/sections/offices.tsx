@@ -4,6 +4,7 @@ import { useState } from "react"
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react"
 import { str, records } from "@/lib/sections"
 import { container } from "@/lib/layout"
+import { useContentLanguage, BilingualText, filterBilingualText } from "@/components/cms/content-language"
 
 // Only render embeds that are really Google Maps iframes — the URL is
 // admin-provided free text.
@@ -14,6 +15,7 @@ function isMapEmbedUrl(url: string) {
 // Mirrors the "Our Offices" block of the original About component, plus the
 // interactive maps switcher from the Contact page.
 export function OfficesSection({ props }: { props: Record<string, unknown> }) {
+  const { isIndonesian, lang } = useContentLanguage()
   const title = str(props, "title")
   const description = str(props, "description")
   const items = records(props, "items").filter((office) => office.name || office.address)
@@ -29,10 +31,14 @@ export function OfficesSection({ props }: { props: Record<string, unknown> }) {
         <div className="text-center md:text-left">
           {title && (
             <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              {title}
+              <BilingualText text={title} />
             </h2>
           )}
-          {description && <p className="mt-2 text-sm text-muted-foreground">{description}</p>}
+          {description && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              <BilingualText text={description} />
+            </p>
+          )}
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2">
@@ -40,14 +46,16 @@ export function OfficesSection({ props }: { props: Record<string, unknown> }) {
             <div key={`${office.name}-${index}`} className="flex flex-col rounded-xl border border-border bg-card p-6 shadow-xs">
               <h3 className="flex items-center gap-2 font-display text-lg font-semibold text-foreground">
                 <MapPin className="h-5 w-5 text-primary" />
-                {office.name}
+                <BilingualText text={office.name} />
               </h3>
-              <p className="mt-3 flex-grow text-sm leading-relaxed text-muted-foreground">{office.address}</p>
+              <p className="mt-3 flex-grow text-sm leading-relaxed text-muted-foreground">
+                <BilingualText text={office.address} />
+              </p>
               <div className="mt-6 space-y-2 border-t border-border/60 pt-4 text-xs text-muted-foreground">
                 {office.phone && (
                   <p className="flex items-center gap-2">
                     <Phone className="h-3.5 w-3.5 text-primary" />
-                    Phone: {office.phone}
+                    {isIndonesian ? "Telepon: " : "Phone: "}{office.phone}
                   </p>
                 )}
                 {office.fax && (
@@ -66,12 +74,12 @@ export function OfficesSection({ props }: { props: Record<string, unknown> }) {
               {office.address && (
                 <div className="mt-5">
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(office.address)}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(filterBilingualText(office.name, lang) + " " + filterBilingualText(office.address, lang))}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center text-xs font-semibold text-primary hover:underline"
                   >
-                    Open in Google Maps
+                    {isIndonesian ? "Buka di Google Maps" : "Open in Google Maps"}
                     <ArrowRight className="ml-1 h-3.5 w-3.5" />
                   </a>
                 </div>
@@ -84,7 +92,7 @@ export function OfficesSection({ props }: { props: Record<string, unknown> }) {
           <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
             <div className="border-b border-border bg-secondary/30 p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h3 className="font-display text-sm font-semibold tracking-wide text-foreground uppercase">
-                Interactive Maps
+                {isIndonesian ? "Peta Interaktif" : "Interactive Maps"}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {officesWithMap.map((office, idx) => (
@@ -97,7 +105,7 @@ export function OfficesSection({ props }: { props: Record<string, unknown> }) {
                         : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
                     }`}
                   >
-                    {office.name}
+                    <BilingualText text={office.name} />
                   </button>
                 ))}
               </div>

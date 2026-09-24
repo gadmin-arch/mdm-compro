@@ -128,10 +128,10 @@ export default async function NewsPage({ searchParams }: Props) {
       />
       {listingBlock}
       <CtaBanner
-        title="Have a project worth talking about?"
-        description="We work with industrial owners, EPC partners, and infrastructure operators across Indonesia. Let's talk about your next milestone."
+        title="EN: Have a project worth talking about?\nID: Punya proyek yang ingin didiskusikan?"
+        description="EN: We work with industrial owners, EPC partners, and infrastructure operators across Indonesia. Let's talk about your next milestone.\nID: Kami bekerja sama dengan pemilik industri, mitra EPC, dan operator infrastruktur di seluruh Indonesia. Mari diskusikan target pencapaian Anda berikutnya."
         primaryHref="/contact"
-        primaryLabel="Contact Us"
+        primaryLabel="EN: Contact Us\nID: Hubungi Kami"
       />
     </>
   )

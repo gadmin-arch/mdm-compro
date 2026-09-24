@@ -16,51 +16,51 @@ const serviceDetails: Record<string, { icon: React.ElementType; items: string[] 
   "electrical-construction-installation": {
     icon: Zap,
     items: [
-      "Substation & MV switchgear up to 36kV",
-      "LV Panels assembly (MDP, SDP, ATS & Sync)",
-      "MV & LV cable installation & termination",
-      "Star Delta, DOL & VSD control panels",
-      "Fire alarm system engineering & erection",
+      "EN: Substation & MV switchgear up to 36kV\nID: Gardu induk & switchgear tegangan menengah hingga 36kV",
+      "EN: LV Panels assembly (MDP, SDP, ATS & Sync)\nID: Perakitan panel LV (MDP, SDP, ATS & Sinkron)",
+      "EN: MV & LV cable installation & termination\nID: Instalasi & terminasi kabel MV & LV",
+      "EN: Star Delta, DOL & VSD control panels\nID: Panel kontrol Star Delta, DOL & VSD",
+      "EN: Fire alarm system engineering & erection\nID: Rekayasa & pemasangan sistem alarm kebakaran",
     ],
   },
   "electrical-maintenance-service": {
     icon: Wrench,
     items: [
-      "Transformer oil treatment, BDV & DGA",
-      "MV cubicle & ACB secondary injection test",
-      "FLIR infrared thermography predictive audits",
-      "Capacitor bank & VSD maintenance",
-      "Annual Maintenance Contracts (AMC) with 24/7 SLA",
+      "EN: Transformer oil treatment, BDV & DGA\nID: Pemurnian oli transformator, uji BDV & DGA",
+      "EN: MV cubicle & ACB secondary injection test\nID: Uji injeksi sekunder kubikel MV & ACB",
+      "EN: FLIR infrared thermography predictive audits\nID: Audit prediktif termografi inframerah FLIR",
+      "EN: Capacitor bank & VSD maintenance\nID: Pemeliharaan bank kapasitor & VSD",
+      "EN: Annual Maintenance Contracts (AMC) with 24/7 SLA\nID: Kontrak Pemeliharaan Tahunan (AMC) dengan SLA 24/7",
     ],
   },
   "automation-solutions-services": {
     icon: Cpu,
     items: [
-      "SCADA systems & centralized telemetry (xArrow)",
-      "Energy management systems (PME & ISO 50001)",
-      "PLC programming (Schneider, Siemens, Rockwell)",
-      "Variable speed drive (VSD) system tuning",
-      "Building Automation Systems (BAS)",
+      "EN: SCADA systems & centralized telemetry (xArrow)\nID: Sistem SCADA & telemetri terpusat (xArrow)",
+      "EN: Energy management systems (PME & ISO 50001)\nID: Sistem manajemen energi (PME & ISO 50001)",
+      "EN: PLC programming (Schneider, Siemens, Rockwell)\nID: Pemrograman PLC (Schneider, Siemens, Rockwell)",
+      "EN: Variable speed drive (VSD) system tuning\nID: Penyetelan sistem inverter Variable Speed Drive (VSD)",
+      "EN: Building Automation Systems (BAS)\nID: Sistem Otomasi Gedung (BAS)",
     ],
   },
   "inspection-testing-commissioning": {
     icon: Activity,
     items: [
-      "Power quality analysis (Fluke 435-II Class A)",
-      "Partial discharge (PD scan) & ultrasonic inspection",
-      "Protection relay secondary injection (Omicron)",
-      "Power system study, arc flash & relay coordination",
-      "Earthing & grounding system audits",
+      "EN: Power quality analysis (Fluke 435-II Class A)\nID: Analisis kualitas daya listrik (Fluke 435-II Kelas A)",
+      "EN: Partial discharge (PD scan) & ultrasonic inspection\nID: Pemindaian Partial Discharge (PD) & inspeksi ultrasonik",
+      "EN: Protection relay secondary injection (Omicron)\nID: Uji injeksi sekunder relai proteksi (Omicron)",
+      "EN: Power system study, arc flash & relay coordination\nID: Studi sistem tenaga, arc flash & koordinasi relai",
+      "EN: Earthing & grounding system audits\nID: Audit sistem pentanahan & pembumian",
     ],
   },
   "mechanical-services-supplies": {
     icon: Settings,
     items: [
-      "Conveyor systems & magnetic metal separators",
-      "Sectional & high-speed industrial doors",
-      "Motor & generator winding insulation recoating",
-      "Dynamic rotor balancing & vibration analysis",
-      "Boiler HTO maintenance & pneumatic supplies",
+      "EN: Conveyor systems & magnetic metal separators\nID: Sistem konveyor & pemisah logam magnetik",
+      "EN: Sectional & high-speed industrial doors\nID: Pintu industri sectional & kecepatan tinggi (high-speed)",
+      "EN: Motor & generator winding insulation recoating\nID: Pelapisan ulang insulasi kumparan motor & generator",
+      "EN: Dynamic rotor balancing & vibration analysis\nID: Balancing rotor dinamis & analisis getaran",
+      "EN: Boiler HTO maintenance & pneumatic supplies\nID: Pemeliharaan boiler HTO & pasokan pneumatik",
     ],
   },
 }
@@ -71,10 +71,10 @@ type ServicesProps = {
 }
 
 const headingDefaults = {
-  eyebrow: "Our Business Units",
-  title: "Integrated Electrical, Automation & Mechanical Solutions",
+  eyebrow: "EN: Our Business Units\nID: Unit Bisnis Kami",
+  title: "EN: Integrated Electrical, Automation & Mechanical Solutions\nID: Solusi Terintegrasi Elektrikal, Otomasi & Mekanikal",
   description:
-    "Delivering end-to-end engineering, testing, commissioning, maintenance, and lifecycle support for critical industrial assets across Indonesia.",
+    "EN: Delivering end-to-end engineering, testing, commissioning, maintenance, and lifecycle support for critical industrial assets across Indonesia.\nID: Menghadirkan solusi menyeluruh untuk rekayasa teknik, pengujian, komisioning, pemeliharaan, dan dukungan siklus hidup aset industri vital di seluruh Indonesia.",
 }
 
 export function Services({ services = fallbackServices, props = {} }: ServicesProps) {
@@ -91,16 +91,20 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
         <div className="max-w-3xl">
           {eyebrow && (
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-              <span className="rounded-md bg-primary/10 px-2.5 py-1">{eyebrow}</span>
+              <span className="rounded-md bg-primary/10 px-2.5 py-1">
+                <BilingualText text={eyebrow} />
+              </span>
             </p>
           )}
           {title && (
             <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-              {title}
+              <BilingualText text={title} />
             </h2>
           )}
           {description && (
-            <p className="mt-3 text-base leading-relaxed text-muted-foreground">{description}</p>
+            <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+              <BilingualText text={description} />
+            </p>
           )}
         </div>
 
@@ -141,7 +145,9 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
                           aria-hidden="true"
                           className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
                         />
-                        <span>{item}</span>
+                        <span>
+                          <BilingualText text={item} />
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -149,7 +155,7 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
                     href={`/services/${service.fullPath}`}
                     className="mt-6 inline-flex items-center gap-1.5 text-xs font-semibold text-primary transition-colors hover:underline"
                   >
-                    Explore Service Details
+                    <BilingualText text="EN: Explore Service Details\nID: Lihat Detail Layanan" />
                     <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </Link>
                 </CardContent>

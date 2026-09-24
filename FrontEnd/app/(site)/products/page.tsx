@@ -54,88 +54,88 @@ type Props = {
 
 const rittalPillars = [
   {
-    title: "Enclosures",
-    desc: "VX25 modular baying systems, AX compact enclosures, KX small boxes, CS Toptec outdoor cabinets, and server IT racks.",
+    title: "EN: Enclosures\nID: Box Panel & Enclosure",
+    desc: "EN: VX25 modular baying systems, AX compact enclosures, KX small boxes, CS Toptec outdoor cabinets, and server IT racks.\nID: Sistem baying modular VX25, compact enclosure AX, small box KX, lemari outdoor CS Toptec, dan rak server IT.",
     icon: Boxes,
   },
   {
-    title: "Climate Control & Cooling",
-    desc: "Energy-saving Blue e+ hybrid cooling units (up to 75% energy savings), industrial chillers, filter fans, and heat exchangers.",
+    title: "EN: Climate Control & Cooling\nID: Sistem Pendingin & Kontrol Iklim",
+    desc: "EN: Energy-saving Blue e+ hybrid cooling units (up to 75% energy savings), industrial chillers, filter fans, and heat exchangers.\nID: Unit pendingin hibrida hemat energi Blue e+ (hemat listrik hingga 75%), chiller industri, filter fan, dan heat exchanger.",
     icon: ThermometerSnowflake,
   },
   {
-    title: "Power Distribution",
-    desc: "Type-tested Ri4Power low-voltage switchgear systems up to 6300A and modular RiLine compact busbars.",
+    title: "EN: Power Distribution\nID: Distribusi Tenaga Listrik",
+    desc: "EN: Type-tested Ri4Power low-voltage switchgear systems up to 6300A and modular RiLine compact busbars.\nID: Sistem switchgear tegangan rendah teruji Ri4Power hingga 6300A dan busbar modular kompak RiLine.",
     icon: Power,
   },
 ]
 
 const schneiderPillars = [
   {
-    title: "Industrial Automation",
-    desc: "EcoStruxure™ universal automation, Modicon M221/M241/M251/M580 PLCs, Altivar VSD drives, and Magelis HMI.",
+    title: "EN: Industrial Automation\nID: Otomasi Industri",
+    desc: "EN: EcoStruxure™ universal automation, Modicon M221/M241/M251/M580 PLCs, Altivar VSD drives, and Magelis HMI.\nID: Otomasi universal EcoStruxure™, PLC Modicon M221/M241/M251/M580, inverter Altivar VSD, dan HMI Magelis.",
     icon: Cpu,
   },
   {
-    title: "Power & Energy Monitoring",
-    desc: "EcoStruxure Power Monitoring Expert (PME), PowerLogic PM5000/PM8000 meters, power quality analytics, and ESG reports.",
+    title: "EN: Power & Energy Monitoring\nID: Pemantauan Daya & Energi",
+    desc: "EN: EcoStruxure Power Monitoring Expert (PME), PowerLogic PM5000/PM8000 meters, power quality analytics, and ESG reports.\nID: EcoStruxure Power Monitoring Expert (PME), meteran PowerLogic PM5000/PM8000, analitik kualitas daya, dan laporan ESG.",
     icon: Activity,
   },
   {
-    title: "Electrical Distribution Integration",
-    desc: "MasterPact MTZ/NT/NW ACBs, Compact NSX MCCBs, Acti9 MCBs, Prisma iPM switchboards, and TeSys motor starters.",
+    title: "EN: Electrical Distribution Integration\nID: Integrasi Distribusi Elektrikal",
+    desc: "EN: MasterPact MTZ/NT/NW ACBs, Compact NSX MCCBs, Acti9 MCBs, Prisma iPM switchboards, and TeSys motor starters.\nID: ACB MasterPact MTZ/NT/NW, MCCB Compact NSX, MCB Acti9, panel hubung Prisma iPM, dan starter motor TeSys.",
     icon: Zap,
   },
   {
-    title: "Engineering & Commissioning",
-    desc: "Turnkey panel build, PLC/SCADA programming, Factory Acceptance Testing (FAT), Site Acceptance Testing (SAT), and 24/7 support.",
+    title: "EN: Engineering & Commissioning\nID: Rekayasa Teknik & Komisioning",
+    desc: "EN: Turnkey panel build, PLC/SCADA programming, Factory Acceptance Testing (FAT), Site Acceptance Testing (SAT), and 24/7 support.\nID: Perakitan panel terpadu, pemrograman PLC/SCADA, Factory Acceptance Testing (FAT), Site Acceptance Testing (SAT), dan dukungan 24/7.",
     icon: Wrench,
   },
 ]
 
 const productCategories = [
   {
-    title: "Electrical Distribution",
+    title: "EN: Electrical Distribution\nID: Distribusi Kelistrikan",
     slug: "electrical-distribution",
-    desc: "Medium & Low Voltage switchgear, transformers, MDP/SDP distribution panels, ATS/AMF sync, and busbars.",
+    desc: "EN: Medium & Low Voltage switchgear, transformers, MDP/SDP distribution panels, ATS/AMF sync, and busbars.\nID: Switchgear tegangan menengah & rendah, transformator, panel distribusi MDP/SDP, sinkronisasi ATS/AMF, dan busbar.",
     icon: Zap,
     count: "MV & LV Systems",
   },
   {
-    title: "Automation & Control",
+    title: "EN: Automation & Control\nID: Otomasi & Kontrol",
     slug: "automation-control",
-    desc: "Industrial PLC systems, SCADA (xArrow), variable speed drive (VSD) panels, and centralized process telemetry.",
+    desc: "EN: Industrial PLC systems, SCADA (xArrow), variable speed drive (VSD) panels, and centralized process telemetry.\nID: Sistem PLC industri, SCADA (xArrow), panel variable speed drive (VSD), dan telemetri proses terpusat.",
     icon: Cpu,
     count: "PLCs & Inverters",
   },
   {
-    title: "Enclosure & Climate Control",
+    title: "EN: Enclosure & Climate Control\nID: Enclosure & Kontrol Iklim",
     slug: "enclosure-climate-control",
-    desc: "Heavy-duty IP55/IP66 industrial enclosures, Blue e+ cooling systems, server racks, and outdoor cabinets.",
+    desc: "EN: Heavy-duty IP55/IP66 industrial enclosures, Blue e+ cooling systems, server racks, and outdoor cabinets.\nID: Enclosure industri tangguh IP55/IP66, sistem pendingin Blue e+, rak server, dan lemari outdoor.",
     icon: Layers,
     count: "IP66 & Blue e+",
   },
   {
-    title: "Power Quality",
+    title: "EN: Power Quality\nID: Kualitas Daya Listrik",
     slug: "power-quality",
-    desc: "Active Harmonic Filters (AHF), Static Var Generators (SVG), capacitor banks, and power quality analyzers.",
+    desc: "EN: Active Harmonic Filters (AHF), Static Var Generators (SVG), capacitor banks, and power quality analyzers.\nID: Active Harmonic Filter (AHF), Static Var Generator (SVG), bank kapasitor, dan penganalisis kualitas daya.",
     icon: Activity,
     count: "THDi < 3% / SVG",
   },
   {
-    title: "Fire Alarm Products",
+    title: "EN: Fire Alarm Products\nID: Produk Alarm Kebakaran",
     slug: "fire-alarm-products",
-    desc: "Addressable fire alarm control panels, multi-criteria optical smoke & heat detectors, and clean agent gas suppression.",
+    desc: "EN: Addressable fire alarm control panels, multi-criteria optical smoke & heat detectors, and clean agent gas suppression.\nID: Panel kontrol alarm kebakaran addressable, detektor asap optik & panas multi-kriteria, dan sistem pemadam gas clean agent.",
     icon: Flame,
     count: "NFPA & Addressable",
   },
 ]
 
 const authorizedPartners = [
-  { name: "Rittal", role: "Authorized Distributor", country: "Germany" },
-  { name: "Schneider Electric", role: "Certified System Integrator", country: "France / Global" },
-  { name: "xArrow", role: "Authorized SCADA Solutions Partner", country: "Global" },
-  { name: "Mundung", role: "Authorized Partner", country: "Global" },
+  { name: "Rittal", role: "EN: Authorized Distributor\nID: Distributor Resmi", country: "Germany" },
+  { name: "Schneider Electric", role: "EN: Certified System Integrator\nID: Certified System Integrator", country: "France / Global" },
+  { name: "xArrow", role: "EN: Authorized SCADA Solutions Partner\nID: Mitra Solusi SCADA Resmi", country: "Global" },
+  { name: "Mundung", role: "EN: Authorized Partner\nID: Mitra Resmi", country: "Global" },
 ]
 
 const brandExperience = [
@@ -208,12 +208,23 @@ export default async function ProductsPage({ searchParams }: Props) {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-              <span className="rounded-md bg-primary/10 px-2.5 py-1">Interactive Catalog</span>
+              <span className="rounded-md bg-primary/10 px-2.5 py-1">
+                <BilingualText text="EN: Interactive Catalog\nID: Katalog Interaktif" />
+              </span>
             </p>
             <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              {category
-                ? `Products in ${categories.find((c) => c.value === category)?.label ?? category}`
-                : "Explore All Products & Solutions"}
+              {category ? (
+                <>
+                  <BilingualText text="EN: Products in\nID: Produk dalam" />{" "}
+                  {categories.find((c) => c.value === category)?.label ? (
+                    <BilingualText text={categories.find((c) => c.value === category)?.label} />
+                  ) : (
+                    category
+                  )}
+                </>
+              ) : (
+                <BilingualText text="EN: Explore All Products & Solutions\nID: Jelajahi Seluruh Produk & Solusi" />
+              )}
             </h2>
           </div>
           {isFiltered && (
@@ -221,7 +232,7 @@ export default async function ProductsPage({ searchParams }: Props) {
               href="/products"
               className="text-xs font-semibold text-primary hover:underline self-start md:self-auto"
             >
-              Reset All Filters
+              <BilingualText text="EN: Reset All Filters\nID: Reset Semua Filter" />
             </Link>
           )}
         </div>
@@ -229,7 +240,11 @@ export default async function ProductsPage({ searchParams }: Props) {
         <FilterControls moduleType="products" categories={categories} />
 
         <div className="mt-8">
-          <ContentList items={products} basePath="/products" empty="No products matched your search or filters." />
+          <ContentList
+            items={products}
+            basePath="/products"
+            empty="EN: No products matched your search or filters.\nID: Tidak ada produk yang cocok dengan pencarian atau filter Anda."
+          />
         </div>
 
         <Pagination page={response.pagination.page} totalPages={response.pagination.totalPages} />
@@ -269,14 +284,15 @@ export default async function ProductsPage({ searchParams }: Props) {
         <div className={container()}>
           <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-              <span className="rounded-md bg-primary/10 px-2.5 py-1">Strategic Principal Partnerships</span>
+              <span className="rounded-md bg-primary/10 px-2.5 py-1">
+                <BilingualText text="EN: Strategic Principal Partnerships\nID: Kemitraan Prinsipal Strategis" />
+              </span>
             </p>
             <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Authorized Distribution & Certified System Integration
+              <BilingualText text="EN: Authorized Distribution & Certified System Integration\nID: Distributor Resmi & Integrator Sistem Tersertifikasi" />
             </h2>
             <p className="mt-3 text-base text-muted-foreground leading-relaxed">
-              We partner directly with world-leading industrial automation and electrical manufacturing principals, providing
-              genuine hardware, authorized technical support, and turnkey engineering.
+              <BilingualText text="EN: We partner directly with world-leading industrial automation and electrical manufacturing principals, providing genuine hardware, authorized technical support, and turnkey engineering.\nID: Kami bermitra langsung dengan prinsipal otomasi industri dan manufaktur elektrik terkemuka dunia, menyediakan perangkat keras asli, dukungan teknis resmi, dan rekayasa teknik terpadu." />
             </p>
           </div>
 
@@ -289,12 +305,11 @@ export default async function ProductsPage({ searchParams }: Props) {
                     Rittal <span className="text-xs font-normal text-muted-foreground">— The System.</span>
                   </span>
                   <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
-                    Authorized Distributor
+                    <BilingualText text="EN: Authorized Distributor\nID: Distributor Resmi" />
                   </Badge>
                 </div>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                  Official distributor delivering German-engineered industrial enclosures, intelligent Blue e+ climate
-                  management, and modular low-voltage power distribution systems.
+                  <BilingualText text="EN: Official distributor delivering German-engineered industrial enclosures, intelligent Blue e+ climate management, and modular low-voltage power distribution systems.\nID: Distributor resmi yang menghadirkan box panel industri standar Jerman, pendingin pintar Blue e+, dan sistem distribusi daya tegangan rendah modular." />
                 </p>
 
                 <div className="mt-8 space-y-4">
@@ -306,8 +321,12 @@ export default async function ProductsPage({ searchParams }: Props) {
                           <Icon className="h-4 w-4" />
                         </span>
                         <div>
-                          <h4 className="font-display text-sm font-semibold text-foreground">{pillar.title}</h4>
-                          <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{pillar.desc}</p>
+                          <h4 className="font-display text-sm font-semibold text-foreground">
+                            <BilingualText text={pillar.title} />
+                          </h4>
+                          <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                            <BilingualText text={pillar.desc} />
+                          </p>
                         </div>
                       </div>
                     )
@@ -320,10 +339,12 @@ export default async function ProductsPage({ searchParams }: Props) {
                   href="/products?category=rittal-distributor#catalog"
                   className="inline-flex items-center text-xs font-semibold text-primary hover:underline"
                 >
-                  View Rittal Product Line
+                  <BilingualText text="EN: View Rittal Product Line\nID: Lihat Lini Produk Rittal" />
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                 </Link>
-                <span className="text-xs text-muted-foreground">Genuine Stock & Warranty</span>
+                <span className="text-xs text-muted-foreground">
+                  <BilingualText text="EN: Genuine Stock & Warranty\nID: Stok Asli & Garansi Resmi" />
+                </span>
               </div>
             </div>
 
@@ -339,8 +360,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                   </Badge>
                 </div>
                 <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                  Certified partner delivering EcoStruxure™ universal automation architectures, Power Monitoring Expert (PME)
-                  for ESG tracking, MasterPact MTZ circuit breakers, and complete site commissioning.
+                  <BilingualText text="EN: Certified partner delivering EcoStruxure™ universal automation architectures, Power Monitoring Expert (PME) for ESG tracking, MasterPact MTZ circuit breakers, and complete site commissioning.\nID: Mitra tersertifikasi yang menghadirkan arsitektur otomatisasi universal EcoStruxure™, Power Monitoring Expert (PME) untuk pelacakan ESG, pemutus sirkuit MasterPact MTZ, dan komisioning lokasi lengkap." />
                 </p>
 
                 <div className="mt-8 space-y-4">
@@ -352,8 +372,12 @@ export default async function ProductsPage({ searchParams }: Props) {
                           <Icon className="h-4 w-4" />
                         </span>
                         <div>
-                          <h4 className="font-display text-sm font-semibold text-foreground">{pillar.title}</h4>
-                          <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{pillar.desc}</p>
+                          <h4 className="font-display text-sm font-semibold text-foreground">
+                            <BilingualText text={pillar.title} />
+                          </h4>
+                          <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                            <BilingualText text={pillar.desc} />
+                          </p>
                         </div>
                       </div>
                     )
@@ -366,10 +390,12 @@ export default async function ProductsPage({ searchParams }: Props) {
                   href="/products?category=schneider-integrator#catalog"
                   className="inline-flex items-center text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
                 >
-                  View Schneider Electric Solutions
+                  <BilingualText text="EN: View Schneider Electric Solutions\nID: Lihat Solusi Schneider Electric" />
                   <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                 </Link>
-                <span className="text-xs text-muted-foreground">FAT / SAT & 24/7 Support</span>
+                <span className="text-xs text-muted-foreground">
+                  <BilingualText text="EN: FAT / SAT & 24/7 Support\nID: Uji FAT / SAT & Dukungan 24/7" />
+                </span>
               </div>
             </div>
           </div>
@@ -381,13 +407,15 @@ export default async function ProductsPage({ searchParams }: Props) {
         <div className={container()}>
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-              <span className="rounded-md bg-primary/10 px-2.5 py-1">Product Categories</span>
+              <span className="rounded-md bg-primary/10 px-2.5 py-1">
+                <BilingualText text="EN: Product Categories\nID: Kategori Produk" />
+              </span>
             </p>
             <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Complete Industrial Equipment Lines
+              <BilingualText text="EN: Complete Industrial Equipment Lines\nID: Lini Peralatan Industri Lengkap" />
             </h2>
             <p className="mt-3 text-base text-muted-foreground leading-relaxed">
-              Tailored product offerings engineered to meet rigorous electrical, automation, and safety specifications.
+              <BilingualText text="EN: Tailored product offerings engineered to meet rigorous electrical, automation, and safety specifications.\nID: Penawaran produk yang dirancang khusus untuk memenuhi standar ketat kelistrikan, otomatisasi, dan keselamatan kerja." />
             </p>
           </div>
 
@@ -408,9 +436,11 @@ export default async function ProductsPage({ searchParams }: Props) {
                       <ArrowUpRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary" />
                     </div>
                     <h3 className="mt-5 font-display text-base font-bold text-foreground group-hover:text-primary transition-colors">
-                      {cat.title}
+                      <BilingualText text={cat.title} />
                     </h3>
-                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{cat.desc}</p>
+                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                      <BilingualText text={cat.desc} />
+                    </p>
                   </div>
                   <div className="mt-6 border-t border-border/60 pt-3">
                     <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
@@ -429,21 +459,22 @@ export default async function ProductsPage({ searchParams }: Props) {
         <div className={container()}>
           <div className="text-center max-w-2xl mx-auto">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-              <span className="rounded-md bg-primary/10 px-2.5 py-1">Brand Experience</span>
+              <span className="rounded-md bg-primary/10 px-2.5 py-1">
+                <BilingualText text="EN: Brand Experience\nID: Pengalaman Brand" />
+              </span>
             </p>
             <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Authorized Partnerships & Multi-Brand Expertise
+              <BilingualText text="EN: Authorized Partnerships & Multi-Brand Expertise\nID: Kemitraan Resmi & Keahlian Multi-Brand" />
             </h2>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-              We integrate and service industry-leading global equipment brands, ensuring reliable compatibility across legacy
-              and modern plant installations.
+              <BilingualText text="EN: We integrate and service industry-leading global equipment brands, ensuring reliable compatibility across legacy and modern plant installations.\nID: Kami mengintegrasikan dan melayani berbagai merek peralatan global terkemuka di industri, memastikan kompatibilitas andal di berbagai instalasi pabrik konvensional maupun modern." />
             </p>
           </div>
 
           {/* Authorized Partners Cards */}
           <div className="mt-12">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-4">
-              Authorized Partnership
+              <BilingualText text="EN: Authorized Partnership\nID: Kemitraan Resmi" />
             </p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {authorizedPartners.map((p) => (
@@ -462,7 +493,9 @@ export default async function ProductsPage({ searchParams }: Props) {
                       {p.country}
                     </span>
                   </div>
-                  <p className="mt-4 text-xs text-primary font-semibold leading-snug">{p.role}</p>
+                  <p className="mt-4 text-xs text-primary font-semibold leading-snug">
+                    <BilingualText text={p.role} />
+                  </p>
                 </div>
               ))}
             </div>
@@ -471,7 +504,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           {/* Experienced Work-With Brands */}
           <div className="mt-10 rounded-2xl border border-border bg-card p-6 lg:p-8">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-4">
-              Experienced Work With Brand
+              <BilingualText text="EN: Experienced Work With Brand\nID: Pengalaman Bekerja Dengan Brand" />
             </p>
             <BrandMarquee brands={brandExperience} />
           </div>
@@ -483,12 +516,12 @@ export default async function ProductsPage({ searchParams }: Props) {
 
       {/* 6. CTA Banner */}
       <CtaBanner
-        title="Need a specific product quotation or datasheet?"
-        description="Tell our engineering team what you are sourcing — we provide genuine hardware availability, custom assembly, and warranty support."
+        title="EN: Need a specific product quotation or datasheet?\nID: Butuh penawaran harga produk atau lembar data teknis spesifik?"
+        description="EN: Tell our engineering team what you are sourcing — we provide genuine hardware availability, custom assembly, and warranty support.\nID: Sampaikan kebutuhan pengadaan fasilitas Anda kepada tim insinyur kami — kami menyediakan ketersediaan perangkat keras asli, perakitan kustom, dan jaminan purnajual resmi."
         primaryHref="/contact"
-        primaryLabel="Request Quotation"
+        primaryLabel="EN: Request Quotation\nID: Minta Penawaran"
         secondaryHref="https://wa.me/628118303250?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20would%20like%20to%20inquire%20about%20product%20pricing%20and%20availability."
-        secondaryLabel="WhatsApp Sales Hotline"
+        secondaryLabel="EN: WhatsApp Sales Hotline\nID: Hotline Sales WhatsApp"
       />
     </>
   )

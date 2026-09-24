@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { str, lines } from "@/lib/sections"
 import { container } from "@/lib/layout"
+import { BilingualText } from "@/components/cms/content-language"
 
 export function ImageTextSection({ props }: { props: Record<string, unknown> }) {
   const eyebrow = str(props, "eyebrow")
@@ -34,17 +35,21 @@ export function ImageTextSection({ props }: { props: Record<string, unknown> }) 
           <div className="lg:col-span-7">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-foreground/80">
-                <span className="rounded-sm bg-accent/30 px-2 py-1">{eyebrow}</span>
+                <span className="rounded-sm bg-accent/30 px-2 py-1">
+                  <BilingualText text={eyebrow} />
+                </span>
               </p>
             )}
             {title && (
               <h2 className="mt-5 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-                {title}
+                <BilingualText text={title} />
               </h2>
             )}
             <div className="mt-6 space-y-4 text-base leading-relaxed text-muted-foreground">
               {paragraphs.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
+                <p key={index}>
+                  <BilingualText text={paragraph} />
+                </p>
               ))}
             </div>
 
@@ -53,7 +58,7 @@ export function ImageTextSection({ props }: { props: Record<string, unknown> }) 
                 {bullets.map((bullet, index) => (
                   <li key={`${bullet}-${index}`} className="flex items-start gap-2.5 text-sm text-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                    {bullet}
+                    <BilingualText text={bullet} />
                   </li>
                 ))}
               </ul>
@@ -63,7 +68,7 @@ export function ImageTextSection({ props }: { props: Record<string, unknown> }) 
               <div className="mt-8">
                 <Button asChild>
                   <Link href={ctaHref}>
-                    {ctaLabel}
+                    <BilingualText text={ctaLabel} />
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
                 </Button>

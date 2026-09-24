@@ -59,12 +59,23 @@ export default async function ServicesPage({ searchParams }: Props) {
       <div className={container("py-16")}>
         <div className="mb-8">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-            <span className="rounded-md bg-primary/10 px-2.5 py-1">Service Catalog</span>
+            <span className="rounded-md bg-primary/10 px-2.5 py-1">
+              <BilingualText text="EN: Service Catalog\nID: Katalog Layanan" />
+            </span>
           </p>
           <h2 className="mt-3 font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            {category
-              ? `Services in ${categories.find((c) => c.value === category)?.label ?? category}`
-              : "Explore All Engineering & Maintenance Services"}
+            {category ? (
+              <>
+                <BilingualText text="EN: Services in\nID: Layanan dalam" />{" "}
+                {categories.find((c) => c.value === category)?.label ? (
+                  <BilingualText text={categories.find((c) => c.value === category)?.label} />
+                ) : (
+                  category
+                )}
+              </>
+            ) : (
+              <BilingualText text="EN: Explore All Engineering & Maintenance Services\nID: Jelajahi Seluruh Layanan Rekayasa & Pemeliharaan" />
+            )}
           </h2>
         </div>
         <FilterControls moduleType="services" categories={categories} />
@@ -72,7 +83,7 @@ export default async function ServicesPage({ searchParams }: Props) {
           <ContentList
             items={services}
             basePath="/services"
-            empty="No services matched your search or filters."
+            empty="EN: No services matched your search or filters.\nID: Tidak ada layanan yang cocok dengan pencarian atau filter Anda."
           />
         </div>
         <Pagination page={response.pagination.page} totalPages={response.pagination.totalPages} />
@@ -109,12 +120,12 @@ export default async function ServicesPage({ searchParams }: Props) {
       {listingBlock}
       <Capabilities />
       <CtaBanner
-        title="Need an engineering assessment or service quotation?"
-        description="Share your plant or facility requirements and our engineering team will respond with scope, timeline, and execution plan."
+        title="EN: Need an engineering assessment or service quotation?\nID: Butuh asesmen teknis atau penawaran layanan?"
+        description="EN: Share your plant or facility requirements and our engineering team will respond with scope, timeline, and execution plan.\nID: Sampaikan kebutuhan fasilitas pabrik Anda dan tim insinyur kami akan merespons dengan ruang lingkup, jadwal pelaksanaan, serta estimasi biaya yang komprehensif."
         primaryHref="/contact"
-        primaryLabel="Consult with Engineers"
+        primaryLabel="EN: Consult with Engineers\nID: Konsultasi dengan Insinyur"
         secondaryHref="https://wa.me/628118303250?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20would%20like%20to%20inquire%20about%20your%20engineering%20and%20maintenance%20services."
-        secondaryLabel="WhatsApp Hotline"
+        secondaryLabel="EN: WhatsApp Hotline\nID: Hotline WhatsApp"
       />
     </>
   )

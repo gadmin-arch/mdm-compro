@@ -51,8 +51,12 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
     return (
       <section className="border-b border-border/60 bg-background">
         <div className={container("py-20 text-muted-foreground text-center")}>
-          <p className="font-display text-lg font-semibold text-foreground mb-1">No matching articles found</p>
-          <p className="text-sm text-muted-foreground">Try adjusting your filters or search keywords.</p>
+          <p className="font-display text-lg font-semibold text-foreground mb-1">
+            <BilingualText text="EN: No matching articles found\nID: Tidak ada artikel yang sesuai" />
+          </p>
+          <p className="text-sm text-muted-foreground">
+            <BilingualText text="EN: Try adjusting your filters or search keywords.\nID: Coba sesuaikan filter atau kata kunci pencarian Anda." />
+          </p>
         </div>
       </section>
     )
@@ -78,7 +82,7 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
           <div className="flex flex-col justify-center gap-5 p-6 sm:p-8 lg:col-span-5">
             <div className="flex flex-wrap items-center gap-3">
               <Badge variant="secondary" className="bg-accent/30 text-foreground hover:bg-accent/30">
-                Featured
+                <BilingualText text="EN: Featured\nID: Sorotan" />
               </Badge>
               {featured.category && (
                 <Badge variant="outline">
@@ -103,7 +107,7 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
               </span>
             </div>
             <span className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
-              Read article
+              <BilingualText text="EN: Read article\nID: Baca artikel" />
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </span>
           </div>
@@ -113,10 +117,10 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
         <div className="mt-12">
           <div className="flex items-end justify-between">
             <h2 className="font-display text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-              Latest articles
+              <BilingualText text="EN: Latest articles\nID: Artikel terbaru" />
             </h2>
             <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
-              {initialNews.pagination.total} posts
+              {initialNews.pagination.total} <BilingualText text="EN: posts\nID: artikel" />
             </p>
           </div>
 
@@ -166,7 +170,11 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
             <div className="mt-12 flex justify-center">
               <Button onClick={handleLoadMore} disabled={loading} variant="outline" size="lg" className="min-w-[200px]">
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {loading ? "Loading..." : "Load More"}
+                {loading ? (
+                  <BilingualText text="EN: Loading...\nID: Memuat..." />
+                ) : (
+                  <BilingualText text="EN: Load More\nID: Muat Lebih Banyak" />
+                )}
               </Button>
             </div>
           )}

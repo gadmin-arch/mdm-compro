@@ -1,6 +1,7 @@
 import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons"
 import { sectionDefsByType, str, records } from "@/lib/sections"
 import { container } from "@/lib/layout"
+import { BilingualText } from "@/components/cms/content-language"
 
 export type WhyUsProps = {
   props?: Record<string, unknown>
@@ -22,16 +23,18 @@ export function WhyUs({ props = {} }: WhyUsProps) {
           <div className="lg:col-span-4">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                {eyebrow}
+                <BilingualText text={eyebrow} />
               </p>
             )}
             {title && (
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-                {title}
+                <BilingualText text={title} />
               </h2>
             )}
             {description && (
-              <p className="mt-4 text-base leading-relaxed text-muted-foreground">{description}</p>
+              <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                <BilingualText text={description} />
+              </p>
             )}
           </div>
 
@@ -44,9 +47,11 @@ export function WhyUs({ props = {} }: WhyUsProps) {
                     <Icon className="h-5 w-5" />
                   </span>
                   <h3 className="mt-4 font-display text-base font-semibold leading-snug text-foreground">
-                    {item.title}
+                    <BilingualText text={item.title} />
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    <BilingualText text={item.body} />
+                  </p>
                 </li>
               )
             })}

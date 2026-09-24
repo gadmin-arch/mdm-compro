@@ -2,6 +2,7 @@ import Image from "next/image"
 import { Compass, Handshake, Target } from "lucide-react"
 import { sectionDefsByType, str } from "@/lib/sections"
 import { container } from "@/lib/layout"
+import { BilingualText } from "@/components/cms/content-language"
 
 // Mirrors the intro block of the original About component so the CMS-built
 // about page looks identical to the hardcoded one.
@@ -32,17 +33,19 @@ export function AboutIntroSection({ props }: { props: Record<string, unknown> })
           <div className="lg:col-span-7">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-foreground/80">
-                <span className="rounded-sm bg-accent/30 px-2 py-1">{eyebrow}</span>
+                <span className="rounded-sm bg-accent/30 px-2 py-1">
+                  <BilingualText text={eyebrow} />
+                </span>
               </p>
             )}
             {title && (
               <h2 className="mt-5 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-                {title}
+                <BilingualText text={title} />
               </h2>
             )}
             <div className="mt-6 space-y-4 text-base leading-relaxed text-muted-foreground">
-              {overview && <p>{overview}</p>}
-              {body && <p>{body}</p>}
+              {overview && <p><BilingualText text={overview} /></p>}
+              {body && <p><BilingualText text={body} /></p>}
             </div>
 
             <div className="mt-10 grid gap-5 sm:grid-cols-2">
@@ -53,10 +56,12 @@ export function AboutIntroSection({ props }: { props: Record<string, unknown> })
                       <Compass className="h-4 w-4" />
                     </span>
                     <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-foreground">
-                      Our Vision
+                      <BilingualText text="EN: Our Vision\nID: Visi Kami" />
                     </h3>
                   </div>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{vision}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    <BilingualText text={vision} />
+                  </p>
                 </div>
               )}
 
@@ -67,10 +72,12 @@ export function AboutIntroSection({ props }: { props: Record<string, unknown> })
                       <Target className="h-4 w-4" />
                     </span>
                     <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-foreground">
-                      Our Mission
+                      <BilingualText text="EN: Our Mission\nID: Misi Kami" />
                     </h3>
                   </div>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{mission}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    <BilingualText text={mission} />
+                  </p>
                 </div>
               )}
 
@@ -81,10 +88,12 @@ export function AboutIntroSection({ props }: { props: Record<string, unknown> })
                       <Handshake className="h-4 w-4" />
                     </span>
                     <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-foreground">
-                      Our Culture
+                      <BilingualText text="EN: Our Culture\nID: Budaya Kami" />
                     </h3>
                   </div>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{culture}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    <BilingualText text={culture} />
+                  </p>
                 </div>
               )}
             </div>

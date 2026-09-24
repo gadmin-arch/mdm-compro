@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { str, records } from "@/lib/sections"
 import { container } from "@/lib/layout"
+import { BilingualText } from "@/components/cms/content-language"
 
 export function GallerySection({ props }: { props: Record<string, unknown> }) {
   const eyebrow = str(props, "eyebrow")
@@ -15,12 +16,12 @@ export function GallerySection({ props }: { props: Record<string, unknown> }) {
           <div className="mb-10 max-w-2xl">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                {eyebrow}
+                <BilingualText text={eyebrow} />
               </p>
             )}
             {title && (
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-                {title}
+                <BilingualText text={title} />
               </h2>
             )}
           </div>
@@ -38,7 +39,9 @@ export function GallerySection({ props }: { props: Record<string, unknown> }) {
                   />
                 </div>
                 {image.caption && (
-                  <figcaption className="mt-2 text-sm text-muted-foreground">{image.caption}</figcaption>
+                  <figcaption className="mt-2 text-sm text-muted-foreground">
+                    <BilingualText text={image.caption} />
+                  </figcaption>
                 )}
               </figure>
             </li>

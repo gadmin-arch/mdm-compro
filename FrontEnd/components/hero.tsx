@@ -1,9 +1,12 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { sectionDefsByType, str, records } from "@/lib/sections"
 import { container } from "@/lib/layout"
+import { useContentLanguage, filterBilingualText } from "@/components/cms/content-language"
 
 export type HeroProps = {
   props?: Record<string, unknown>
@@ -14,20 +17,26 @@ export type HeroProps = {
 const defaults = sectionDefsByType.hero.defaults
 
 export function Hero({ props = {} }: HeroProps) {
+  const { lang } = useContentLanguage()
   const merged = { ...defaults, ...props }
-  const eyebrow = str(merged, "eyebrow")
-  const title = str(merged, "title")
-  const highlight = str(merged, "highlight")
-  const description = str(merged, "description")
-  const primaryLabel = str(merged, "primaryLabel")
+  const eyebrow = filterBilingualText(str(merged, "eyebrow"), lang)
+  const title = filterBilingualText(str(merged, "title"), lang)
+  const highlight = filterBilingualText(str(merged, "highlight"), lang)
+  const description = filterBilingualText(str(merged, "description"), lang)
+  const primaryLabel = filterBilingualText(str(merged, "primaryLabel"), lang)
   const primaryHref = str(merged, "primaryHref", "/contact")
-  const secondaryLabel = str(merged, "secondaryLabel")
+  const secondaryLabel = filterBilingualText(str(merged, "secondaryLabel"), lang)
   const secondaryHref = str(merged, "secondaryHref", "/services")
   const imageUrl = str(merged, "imageUrl", "/placeholder.jpg")
-  const imageAlt = str(merged, "imageAlt")
-  const cardEyebrow = str(merged, "cardEyebrow")
-  const cardTitle = str(merged, "cardTitle")
-  const stats = records(merged, "stats").filter((stat) => stat.value || stat.label)
+  const imageAlt = filterBilingualText(str(merged, "imageAlt"), lang)
+  const cardEyebrow = filterBilingualText(str(merged, "cardEyebrow"), lang)
+  const cardTitle = filterBilingualText(str(merged, "cardTitle"), lang)
+  const stats = records(merged, "stats")
+    .map((stat) => ({
+      label: filterBilingualText(stat.label, lang),
+      value: filterBilingualText(stat.value, lang),
+    }))
+    .filter((stat) => stat.value || stat.label)
 
   return (
     <section className="relative overflow-hidden border-b border-border/60 bg-background">

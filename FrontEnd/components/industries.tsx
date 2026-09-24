@@ -2,6 +2,7 @@ import Image from "next/image"
 import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons"
 import { sectionDefsByType, str, records } from "@/lib/sections"
 import { container } from "@/lib/layout"
+import { BilingualText } from "@/components/cms/content-language"
 
 export type IndustriesProps = {
   props?: Record<string, unknown>
@@ -27,15 +28,19 @@ export function Industries({ props = {} }: IndustriesProps) {
       <div className={container("relative py-20")}>
         <div className="max-w-2xl">
           {eyebrow && (
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">{eyebrow}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              <BilingualText text={eyebrow} />
+            </p>
           )}
           {title && (
             <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-              {title}
+              <BilingualText text={title} />
             </h2>
           )}
           {description && (
-            <p className="mt-4 text-base leading-relaxed text-primary-foreground/80">{description}</p>
+            <p className="mt-4 text-base leading-relaxed text-primary-foreground/80">
+              <BilingualText text={description} />
+            </p>
           )}
         </div>
 
@@ -51,7 +56,9 @@ export function Industries({ props = {} }: IndustriesProps) {
                   <span className="flex h-10 w-10 items-center justify-center rounded-md bg-accent/20 text-accent">
                     <Icon className="h-5 w-5" />
                   </span>
-                  <span className="text-sm font-medium leading-tight">{industry.label}</span>
+                  <span className="text-sm font-medium leading-tight">
+                    <BilingualText text={industry.label} />
+                  </span>
                 </li>
               )
             })}
