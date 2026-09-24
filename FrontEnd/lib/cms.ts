@@ -1,4 +1,5 @@
 import { enrichNewsWithBilingual, BILINGUAL_NEWS_CATALOG } from "@/lib/news-bilingual"
+import { enrichCareerWithBilingual, BILINGUAL_CAREER_CATALOG } from "@/lib/career-bilingual"
 
 export type SEO = {
   title?: string
@@ -56,7 +57,7 @@ export type Career = {
   slug: string
   title: string
   summary?: string
-  description?: { blocks?: Array<{ type: string; text: string }> }
+  description?: unknown
   department: string
   location: string
   employmentType: string
@@ -663,8 +664,12 @@ export const fallbackNews: ListResponse<NewsItem> = {
   pagination: { page: 1, perPage: 10, total: catalogNewsList.length || 2, totalPages: 1 },
 }
 
+const catalogCareerList: Career[] = Object.keys(BILINGUAL_CAREER_CATALOG)
+  .map((slug) => enrichCareerWithBilingual(null, slug))
+  .filter((item): item is Career => Boolean(item))
+
 export const fallbackCareers: ListResponse<Career> = {
-  data: [
+  data: catalogCareerList.length > 0 ? catalogCareerList : [
     {
       id: "career-senior-electrical",
       slug: "senior-electrical-engineer",
@@ -696,7 +701,7 @@ export const fallbackCareers: ListResponse<Career> = {
       publishedAt: "2026-04-14T00:00:00Z",
     },
   ],
-  pagination: { page: 1, perPage: 10, total: 2, totalPages: 1 },
+  pagination: { page: 1, perPage: 20, total: catalogCareerList.length || 2, totalPages: 1 },
 }
 
 export const fallbackNavigation: Navigation = {
@@ -1169,6 +1174,30 @@ export async function getNewsItem(slug: string) {
   return enrichNewsWithBilingual(item, slug)
 }
 
+function careerMatchesLocation(item: Career, location: string): boolean {
+  if (!item.location) return false
+  const current = item.location.trim().toLowerCase()
+  const requested = location.trim().toLowerCase()
+  return (
+    current === requested ||
+    current.includes(requested) ||
+    requested.includes(current) ||
+    normalizeFilterValue(item.location) === normalizeFilterValue(location)
+  )
+}
+
+function careerMatchesDepartment(item: Career, department: string): boolean {
+  if (!item.department) return false
+  const current = item.department.trim().toLowerCase()
+  const requested = department.trim().toLowerCase()
+  return (
+    current === requested ||
+    current.includes(requested) ||
+    requested.includes(current) ||
+    normalizeFilterValue(item.department) === normalizeFilterValue(department)
+  )
+}
+
 function createCareerFallback(filters?: CareerFilters): ListResponse<Career> {
   const search = filters?.search?.trim().toLowerCase() ?? ""
   const location = filters?.location?.trim().toLowerCase() ?? ""
@@ -1176,8 +1205,8 @@ function createCareerFallback(filters?: CareerFilters): ListResponse<Career> {
   const employmentType = filters?.type?.trim().toLowerCase() ?? ""
 
   let data = fallbackCareers.data.filter((item) => {
-    if (location && !item.location.toLowerCase().includes(location)) return false
-    if (department && !item.department.toLowerCase().includes(department)) return false
+    if (location && !careerMatchesLocation(item, location)) return false
+    if (department && !careerMatchesDepartment(item, department)) return false
     if (employmentType && item.employmentType.toLowerCase() !== employmentType) return false
     return !search || searchCareer(item, search)
   })
@@ -1213,12 +1242,17 @@ export async function getCareers(filters?: CareerFilters) {
   if (filters?.sort) query.set("sort", filters.sort)
 
   const fallback = createCareerFallback(filters)
-  return cmsListFetch<Career>(`/careers?${query.toString()}`, fallback)
+  const response = await cmsListFetch<Career>(`/careers?${query.toString()}`, fallback)
+  if (response && Array.isArray(response.data)) {
+    response.data = response.data.map((item) => enrichCareerWithBilingual(item, item.slug) || item)
+  }
+  return response
 }
 
 export async function getCareer(slug: string) {
-  const fallback = fallbackCareers.data.find((item) => item.slug === slug) ?? null
-  return cmsFetch<Career | null>(`/careers/${slug}`, fallback)
+  const fallback = fallbackCareers.data.find((item) => item.slug === slug) ?? enrichCareerWithBilingual(null, slug)
+  const item = await cmsFetch<Career | null>(`/careers/${slug}`, fallback)
+  return enrichCareerWithBilingual(item, slug)
 }
 
 export async function getPages(filters?: PageFilters) {

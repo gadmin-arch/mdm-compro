@@ -45,7 +45,9 @@ export function CareerDetailView({ career }: { career: Career }) {
           <aside className="lg:col-span-4">
             <div className="sticky top-24 rounded-xl border border-border bg-card p-5 shadow-xs">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="outline">{career.department}</Badge>
+                <Badge variant="outline">
+                  <BilingualText text={career.department} />
+                </Badge>
                 {isClosed ? (
                   <Badge
                     variant="outline"
@@ -70,14 +72,18 @@ export function CareerDetailView({ career }: { career: Career }) {
                   <MapPin className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <dt className="font-medium text-muted-foreground">{isIndonesian ? "Lokasi Penempatan" : "Location"}</dt>
-                    <dd className="text-foreground">{career.location}</dd>
+                    <dd className="text-foreground">
+                      <BilingualText text={career.location} />
+                    </dd>
                   </div>
                 </div>
                 <div className="flex gap-3">
                   <Briefcase className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <dt className="font-medium text-muted-foreground">{isIndonesian ? "Tipe Pekerjaan" : "Employment"}</dt>
-                    <dd className="text-foreground">{employmentTypeLabel(career.employmentType)}</dd>
+                    <dd className="text-foreground">
+                      <BilingualText text={employmentTypeLabel(career.employmentType)} />
+                    </dd>
                   </div>
                 </div>
                 <div className="flex gap-3">
