@@ -9,6 +9,7 @@ import {
   Flame,
   Layers,
   Power,
+  Server,
   ThermometerSnowflake,
   Wrench,
   Zap,
@@ -54,7 +55,7 @@ type Props = {
 const rittalPillars = [
   {
     title: "EN: Enclosures\nID: Box Panel & Enclosure",
-    desc: "EN: VX25 modular baying systems, AX compact enclosures, KX small boxes, CS Toptec outdoor cabinets, and server IT racks.\nID: Sistem baying modular VX25, compact enclosure AX, small box KX, lemari outdoor CS Toptec, dan rak server IT.",
+    desc: "EN: VX25 modular baying systems, AX compact enclosures, KX small boxes, and stainless steel hygienics.\nID: Sistem baying modular VX25, compact enclosure AX, small box KX, dan stainless steel higienis.",
     icon: Boxes,
   },
   {
@@ -66,6 +67,11 @@ const rittalPillars = [
     title: "EN: Power Distribution\nID: Distribusi Tenaga Listrik",
     desc: "EN: Type-tested Ri4Power low-voltage switchgear systems up to 6300A and modular RiLine compact busbars.\nID: Sistem switchgear tegangan rendah teruji Ri4Power hingga 6300A dan busbar modular kompak RiLine.",
     icon: Power,
+  },
+  {
+    title: "EN: IT Infrastructure, Outdoor & Automation\nID: Infrastruktur IT, Outdoor & Otomasi",
+    desc: "EN: VX IT enterprise racks, Micro Data Centers, CS Toptec outdoor cabinets, and Perforex MT CNC panel automation.\nID: Rak server VX IT, Micro Data Center, lemari outdoor CS Toptec, dan mesin permesinan CNC panel Perforex MT.",
+    icon: Server,
   },
 ]
 
