@@ -1,3 +1,5 @@
+import { enrichNewsWithBilingual, BILINGUAL_NEWS_CATALOG } from "@/lib/news-bilingual"
+
 export type SEO = {
   title?: string
   description?: string
@@ -38,7 +40,7 @@ export type NewsItem = {
   slug: string
   title: string
   excerpt?: string
-  body?: { blocks?: Array<{ type: string; text: string }> }
+  body?: unknown
   category?: string
   tags?: string[]
   featuredImageUrl?: string
@@ -611,8 +613,12 @@ export const fallbackProducts: ContentNode[] = [
   },
 ]
 
+const catalogNewsList: NewsItem[] = Object.keys(BILINGUAL_NEWS_CATALOG)
+  .map((slug) => enrichNewsWithBilingual(null, slug))
+  .filter((item): item is NewsItem => Boolean(item))
+
 export const fallbackNews: ListResponse<NewsItem> = {
-  data: [
+  data: catalogNewsList.length > 0 ? catalogNewsList : [
     {
       id: "news-energy",
       slug: "energy-monitoring-system-launch",
@@ -654,7 +660,7 @@ export const fallbackNews: ListResponse<NewsItem> = {
       publishedAt: "2026-02-27T00:00:00Z",
     },
   ],
-  pagination: { page: 1, perPage: 10, total: 2, totalPages: 1 },
+  pagination: { page: 1, perPage: 10, total: catalogNewsList.length || 2, totalPages: 1 },
 }
 
 export const fallbackCareers: ListResponse<Career> = {
@@ -1081,7 +1087,21 @@ function createNewsFallback(filters?: NewsFilters): ListResponse<NewsItem> {
     if (publishedDate && !item.publishedAt?.startsWith(publishedDate)) return false
     if (!search) return true
 
-    const bodyText = item.body?.blocks?.map((block) => block.text).join(" ") ?? ""
+    let bodyText = ""
+    if (item.body && typeof item.body === "object") {
+      const b = item.body as Record<string, unknown>
+      if (Array.isArray(b.blocks)) {
+        bodyText += (b.blocks as Array<{ text?: string; html?: string }>).map((bl) => bl.text || bl.html || "").join(" ")
+      }
+      const bEn = b.en as { blocks?: Array<{ text?: string; html?: string }> } | undefined
+      if (Array.isArray(bEn?.blocks)) {
+        bodyText += " " + bEn.blocks.map((bl) => bl.text || bl.html || "").join(" ")
+      }
+      const bId = b.id as { blocks?: Array<{ text?: string; html?: string }> } | undefined
+      if (Array.isArray(bId?.blocks)) {
+        bodyText += " " + bId.blocks.map((bl) => bl.text || bl.html || "").join(" ")
+      }
+    }
     const searchable = [
       item.title,
       item.excerpt,
@@ -1136,12 +1156,17 @@ export async function getNews(filters?: NewsFilters) {
   if (filters?.publishedDate) query.set("publishedDate", filters.publishedDate)
   if (filters?.sort) query.set("sort", filters.sort)
 
-  return cmsListFetch<NewsItem>(`/news?${query.toString()}`, createNewsFallback(filters))
+  const response = await cmsListFetch<NewsItem>(`/news?${query.toString()}`, createNewsFallback(filters))
+  if (response && Array.isArray(response.data)) {
+    response.data = response.data.map((item) => enrichNewsWithBilingual(item, item.slug) || item)
+  }
+  return response
 }
 
 export async function getNewsItem(slug: string) {
-  const fallback = fallbackNews.data.find((item) => item.slug === slug) ?? null
-  return cmsFetch<NewsItem | null>(`/news/${slug}`, fallback)
+  const fallback = fallbackNews.data.find((item) => item.slug === slug) ?? enrichNewsWithBilingual(null, slug)
+  const item = await cmsFetch<NewsItem | null>(`/news/${slug}`, fallback)
+  return enrichNewsWithBilingual(item, slug)
 }
 
 function createCareerFallback(filters?: CareerFilters): ListResponse<Career> {

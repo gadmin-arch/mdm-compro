@@ -5,6 +5,7 @@ import {
   type ContentBlock,
   type ContentLanguage,
   filterBilingualBlocks,
+  filterBilingualHtml,
   filterBilingualText,
   isBilingualEnvelope,
   useContentLanguage,
@@ -91,6 +92,7 @@ export function RichText({
         if (type === "html") {
           // Rich-text editor output; always sanitized before injection.
           let rawHtml = block.html ?? ""
+          rawHtml = filterBilingualHtml(rawHtml, activeLang)
           rawHtml = rawHtml.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, anchor, href) => {
             const cleanHref = href.replace(/^https?:\/\/(?:www\.)?multidayamitra\.co\.id/i, "")
             return `<a href="${cleanHref}">${anchor}</a>`
