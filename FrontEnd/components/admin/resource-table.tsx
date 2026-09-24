@@ -19,6 +19,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
+import { BilingualStatusBadge, CleanAdminTitle } from "@/components/admin/bilingual-badge"
+
 type Action = (formData: FormData) => void | Promise<void>
 
 export type AdminResourceRow = {
@@ -70,9 +72,16 @@ export function AdminResourceTable({
         accessorKey: "title",
         // Column sizes drive the fixed layout, so no cell can stretch the
         // table and push the action column out of view.
-        size: 240,
+        size: 260,
         header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
-        cell: ({ row }) => <span className="font-medium">{row.original.title}</span>,
+        cell: ({ row }) => (
+          <div className="flex flex-col gap-1 py-0.5">
+            <CleanAdminTitle title={row.original.title} />
+            <div>
+              <BilingualStatusBadge title={row.original.title} />
+            </div>
+          </div>
+        ),
       },
       {
         id: "slug",
@@ -150,7 +159,14 @@ export function AdminResourceTable({
         renderCard={(row) => (
           <AdminCard
             key={row.id}
-            title={row.title}
+            title={
+              <div className="flex flex-col gap-1">
+                <CleanAdminTitle title={row.title} />
+                <div>
+                  <BilingualStatusBadge title={row.title} />
+                </div>
+              </div>
+            }
             href={`${basePath}/${row.id}`}
             subtitle={row.path || row.slug}
             badges={

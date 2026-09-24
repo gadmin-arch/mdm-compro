@@ -30,10 +30,148 @@ export function isBilingualEnvelope(value: unknown): value is BilingualEnvelope 
   )
 }
 
+export const DICTIONARY_EN_TO_ID: Record<string, string> = {
+  // Navigation & Menus
+  home: "Beranda",
+  "about us": "Tentang Kami",
+  about: "Tentang Kami",
+  services: "Layanan",
+  service: "Layanan",
+  products: "Produk",
+  product: "Produk",
+  news: "Berita",
+  careers: "Karir",
+  career: "Karir",
+  "contact us": "Hubungi Kami",
+  contact: "Hubungi Kami",
+  industries: "Industri",
+  industry: "Industri",
+  navigation: "Navigasi",
+
+  // Categories & Tags
+  "product & technology": "Produk & Teknologi",
+  "products & technology": "Produk & Teknologi",
+  "company news": "Berita Perusahaan",
+  insight: "Wawasan & Edukasi",
+  "industry insights": "Wawasan Industri",
+  "projects & commissioning": "Proyek & Commissioning",
+  "press release": "Siaran Pers",
+  "csr & sustainability": "CSR & Keberlanjutan",
+  "events & exhibitions": "Event & Pameran",
+  "awards & achievements": "Penghargaan & Prestasi",
+  general: "Umum",
+
+  // News Titles (Live Database)
+  "mv & lv electrical cabling for reliable industrial power distribution":
+    "Kabel Listrik MV & LV untuk Distribusi Daya Industri yang Andal",
+  "pt multi daya mitra: official rittal authorized distributor in indonesia":
+    "PT Multi Daya Mitra: Distributor Resmi Rittal di Indonesia",
+  "protecting industrial equipment with the right enclosure & climate control":
+    "Melindungi Peralatan Industri dengan Enclosure & Kontrol Iklim yang Tepat",
+  "automation & control solutions for industrial applications":
+    "Solusi Otomasi & Kontrol untuk Aplikasi Industri",
+  "building reliable power distribution with substation & mv switchgear":
+    "Membangun Distribusi Daya Andal dengan Gardu Induk & Switchgear Tegangan Menengah",
+  "mechanical services & general supplies | mdm":
+    "Layanan Mekanikal & Suplai Umum | MDM",
+  "scada systems, hmi, centralized telemetry, industrial monitoring, system integration":
+    "Sistem SCADA, HMI, Telemetri Terpusat, Monitoring Industri & Integrasi Sistem",
+  "centralized fire alarm monitoring systems for multi-building facilities":
+    "Sistem Monitoring Fire Alarm Terpusat untuk Fasilitas Multi-Gedung",
+  "transformer testing and maintenance":
+    "Pengujian dan Pemeliharaan Transformator",
+  "partial discharge analyzer":
+    "Alat Analisis Partial Discharge (PD Scan)",
+
+  // News Excerpts (Live Database)
+  "reliable mv & lv cable installation, termination, jointing, testing, and commissioning services to support safe and efficient power distribution in industrial facilities.":
+    "Layanan instalasi, terminasi, jointing, pengujian, dan commissioning kabel MV & LV yang andal untuk mendukung distribusi daya yang aman dan efisien di fasilitas industri.",
+  "multidaya mitra is the official rittal authorized distributor in indonesia, offering industrial enclosures, climate control & cooling, and power distribution systems.":
+    "Multidaya Mitra adalah Distributor Resmi Rittal di Indonesia, menyediakan enclosure industri, kontrol iklim & pendingin, serta sistem distribusi daya.",
+  "electrical and automation equipment in industrial settings faces constant exposure to dust, heat, and humidity. discover how industrial enclosures and climate control systems help protect your equipment and maintain operational reliability in demanding manufacturing environments.":
+    "Peralatan elektrikal dan otomasi di lingkungan industri terus terpapar debu, panas, dan kelembapan. Temukan bagaimana enclosure industri dan sistem kontrol iklim melindungi peralatan Anda serta menjaga keandalan operasional di fasilitas manufaktur.",
+  "pt multi daya mitra menyediakan solusi industrial automation & control meliputi plc, scada/hmi, process visualization, dan motor drives untuk mendukung proses industri yang lebih efisien, terintegrasi, dan reliable.":
+    "PT Multi Daya Mitra menyediakan solusi Otomasi & Kontrol Industri meliputi PLC, SCADA/HMI, visualisasi proses, dan motor drive untuk mendukung operasional industri yang efisien, terintegrasi, dan andal.",
+  "substation and mv switchgear systems play a critical role in delivering safe, reliable, and efficient power distribution for industrial and infrastructure applications.":
+    "Sistem gardu induk dan switchgear tegangan menengah (MV) memegang peran krusial dalam menyalurkan distribusi daya yang aman, andal, dan efisien untuk aplikasi industri dan infrastruktur.",
+  "solusi kebutuhan mekanikal industri, mulai dari maintenance, conveyor systems, magnetic separators, high-speed doors, vacuum lifters, hingga servicing motor dan generator untuk mendukung operasional yang andal dan efisien.":
+    "Solusi kebutuhan mekanikal industri, mulai dari pemeliharaan, sistem konveyor, magnetic separator, pintu berkecepatan tinggi, vacuum lifter, hingga servis motor dan generator untuk mendukung operasional yang andal dan efisien.",
+  "scada, hmi, dan centralized telemetry membantu industri melakukan monitoring equipment secara real-time, mengelola data terpusat, serta meningkatkan efisiensi dan keandalan operasional.":
+    "SCADA, HMI, dan telemetri terpusat membantu industri melakukan monitoring peralatan secara real-time, mengelola data terpusat, serta meningkatkan efisiensi dan keandalan operasional.",
+  "centralized fire alarm monitoring integrates multiple fire detection panels into a single command center for faster response, regulatory compliance, and operational efficiency.":
+    "Monitoring fire alarm terpusat mengintegrasikan banyak panel deteksi kebakaran ke dalam satu pusat komando untuk respons lebih cepat, kepatuhan regulasi, dan efisiensi operasional.",
+  "transformer health assessments including winding-resistance testing and routine field diagnostics.":
+    "Penilaian kesehatan transformator termasuk pengujian resistansi belitan dan diagnostik lapangan rutin.",
+  "pd scan for predictive maintenance of mv switchgear, transformers, and medium-voltage cable.":
+    "PD Scan untuk pemeliharaan prediktif switchgear MV, transformator, dan kabel tegangan menengah.",
+
+  // Services (Live Database)
+  "electrical construction & installation": "Konstruksi & Instalasi Elektrikal",
+  "electrical maintenance & servicing": "Pemeliharaan & Servis Elektrikal",
+  "automation solutions & services": "Solusi & Layanan Otomasi Industri",
+  "inspection, testing & commissioning": "Inspeksi, Pengujian & Commissioning",
+  "mechanical services & general supplies": "Layanan Mekanikal & Suplai Umum",
+  "mechanical services & supplies": "Layanan Mekanikal & Suplai Umum",
+  "substation & mv switchgear installation": "Instalasi Gardu Induk & Switchgear MV",
+  "lv panels assembly (mdp, sdp, ats & sync)": "Perakitan Panel LV (MDP, SDP, ATS & Sinkronisasi)",
+  "mv & lv cable installation & termination": "Instalasi & Terminasi Kabel MV & LV",
+  "transformer oil treatment & dga testing": "Treatment Oli Trafo & Pengujian DGA",
+  "mv cubicle & acb maintenance": "Pemeliharaan Cubicle MV & ACB",
+  "partial discharge & ultrasound testing": "Pengujian Partial Discharge & Ultrasound",
+  "thermography & infrared inspection": "Inspeksi Termografi & Infrared",
+  "electrical turnaround & shutdown services": "Layanan Turnaround & Shutdown Listrik Pabrik",
+  "fire alarm system installation": "Instalasi Sistem Fire Alarm",
+
+  // Products (Live Database)
+  "rittal authorized distributor": "Distributor Resmi Rittal",
+  "schneider electric system integrator": "System Integrator Schneider Electric",
+  "schneider electric integrator": "System Integrator Schneider Electric",
+  "electrical distribution": "Distribusi Elektrikal",
+  "automation & control": "Otomasi & Kontrol",
+  "enclosure & climate control": "Enclosure & Kontrol Iklim",
+  "power quality": "Kualitas Daya Listrik",
+  "power quality systems": "Sistem Kualitas Daya",
+  "fire alarm products": "Produk Sistem Fire Alarm",
+}
+
+export const DICTIONARY_ID_TO_EN: Record<string, string> = Object.entries(DICTIONARY_EN_TO_ID).reduce(
+  (acc, [en, id]) => {
+    acc[id.toLowerCase()] = en
+    return acc
+  },
+  {} as Record<string, string>
+)
+
+// Add reverse mappings for typical Indonesian terms
+DICTIONARY_ID_TO_EN["beranda"] = "Home"
+DICTIONARY_ID_TO_EN["tentang kami"] = "About Us"
+DICTIONARY_ID_TO_EN["layanan"] = "Services"
+DICTIONARY_ID_TO_EN["produk"] = "Products"
+DICTIONARY_ID_TO_EN["berita"] = "News"
+DICTIONARY_ID_TO_EN["karir"] = "Careers"
+DICTIONARY_ID_TO_EN["hubungi kami"] = "Contact Us"
+DICTIONARY_ID_TO_EN["industri"] = "Industries"
+DICTIONARY_ID_TO_EN["navigasi"] = "Navigation"
+
+function lookupDictionary(text: string, lang: ContentLanguage): string | null {
+  const normalizedKey = text.toLowerCase().trim().replace(/\s+/g, " ")
+  const strippedKey = normalizedKey.replace(/[.,:;!?]+$/, "").trim()
+
+  if (lang === "id") {
+    if (DICTIONARY_EN_TO_ID[normalizedKey]) return DICTIONARY_EN_TO_ID[normalizedKey]
+    if (DICTIONARY_EN_TO_ID[strippedKey]) return DICTIONARY_EN_TO_ID[strippedKey]
+  } else {
+    if (DICTIONARY_ID_TO_EN[normalizedKey]) return DICTIONARY_ID_TO_EN[normalizedKey]
+    if (DICTIONARY_ID_TO_EN[strippedKey]) return DICTIONARY_ID_TO_EN[strippedKey]
+  }
+  return null
+}
+
 /**
  * Filters plain text strings that may have bilingual patterns:
  * e.g. "EN: Title in English ID: Judul Bahasa Indonesia"
  * or "Title in English / Judul Bahasa Indonesia"
+ * Also applies automatic dictionary translation for known database items when single-language.
  */
 export function filterBilingualText(text: string | undefined | null, lang: ContentLanguage): string {
   if (!text || typeof text !== "string") return ""
@@ -50,10 +188,20 @@ export function filterBilingualText(text: string | undefined | null, lang: Conte
     return (lang === "id" ? idMatch[1] : enMatch[1]).trim()
   }
   if (enMatch && !idMatch) {
-    return enMatch[1].trim()
+    const enText = enMatch[1].trim()
+    if (lang === "id") {
+      const translated = lookupDictionary(enText, "id")
+      if (translated) return translated
+    }
+    return enText
   }
   if (idMatch && !enMatch) {
-    return idMatch[1].trim()
+    const idText = idMatch[1].trim()
+    if (lang === "en") {
+      const translated = lookupDictionary(idText, "en")
+      if (translated) return translated
+    }
+    return idText
   }
 
   // 2. Dual titles separated by " / " or " | "
@@ -81,6 +229,12 @@ export function filterBilingualText(text: string | undefined | null, lang: Conte
     }
     // English first, Indonesian second by standard convention
     return (lang === "id" ? lines[1] : lines[0]).trim()
+  }
+
+  // 4. Check dictionary lookup for single-language text without markers
+  const dictionaryMatch = lookupDictionary(normalized, lang)
+  if (dictionaryMatch) {
+    return dictionaryMatch
   }
 
   return normalized

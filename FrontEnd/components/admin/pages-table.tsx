@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { isSystemPageKey, type PageContent } from "@/lib/cms"
 import { deletePageAction, duplicatePageAction } from "@/app/admin/(workspace)/pages/actions"
+import { BilingualStatusBadge, CleanAdminTitle } from "@/components/admin/bilingual-badge"
 
 export function PagesTable({ pages }: { pages: PageContent[] }) {
   const [rowToArchive, setRowToArchive] = useState<PageContent | null>(null)
@@ -43,7 +44,14 @@ export function PagesTable({ pages }: { pages: PageContent[] }) {
         accessorKey: "title",
         size: 260,
         header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
-        cell: ({ row }) => <span className="font-medium">{row.original.title}</span>,
+        cell: ({ row }) => (
+          <div className="flex flex-col gap-1 py-0.5">
+            <CleanAdminTitle title={row.original.title} />
+            <div>
+              <BilingualStatusBadge title={row.original.title} />
+            </div>
+          </div>
+        ),
       },
       {
         accessorKey: "key",
@@ -126,7 +134,14 @@ export function PagesTable({ pages }: { pages: PageContent[] }) {
         renderCard={(page) => (
           <AdminCard
             key={page.id}
-            title={page.title}
+            title={
+              <div className="flex flex-col gap-1">
+                <CleanAdminTitle title={page.title} />
+                <div>
+                  <BilingualStatusBadge title={page.title} />
+                </div>
+              </div>
+            }
             href={`/admin/pages/${page.id}`}
             subtitle={page.key}
             badges={

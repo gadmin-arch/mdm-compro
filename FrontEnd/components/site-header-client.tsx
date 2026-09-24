@@ -359,7 +359,7 @@ export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
         <div className="hidden items-center gap-3 lg:flex">
           <ContentLanguageToggle size="sm" />
           <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-            <Link href="/search" aria-label="Search">
+            <Link href="/search" aria-label={lang === "id" ? "Pencarian" : "Search"}>
               <Search className="h-4.5 w-4.5" />
             </Link>
           </Button>
@@ -373,7 +373,7 @@ export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
         <div className="flex items-center gap-2 lg:hidden">
           <ContentLanguageToggle size="sm" />
           <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-            <Link href="/search" aria-label="Search">
+            <Link href="/search" aria-label={lang === "id" ? "Pencarian" : "Search"}>
               <Search className="h-5 w-5" />
             </Link>
           </Button>
@@ -385,13 +385,13 @@ export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
             }}
           >
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Open menu">
+              <Button variant="ghost" size="icon" aria-label={lang === "id" ? "Buka menu" : "Open menu"}>
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[min(22rem,calc(100vw-1rem))] overflow-y-auto">
               <SheetHeader>
-                <SheetTitle className="font-display">Navigation</SheetTitle>
+                <SheetTitle className="font-display">{lang === "id" ? "Navigasi" : "Navigation"}</SheetTitle>
               </SheetHeader>
               <nav className="mt-6 flex flex-col gap-1 px-4 pb-4" aria-label="Mobile navigation">
                 {entries.map((item) => (

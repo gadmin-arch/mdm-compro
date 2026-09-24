@@ -13,6 +13,7 @@ import {
   toDateTimeLocal,
 } from "@/lib/admin-content"
 import { extractBilingualText } from "@/lib/bilingual"
+import { cn } from "@/lib/utils"
 import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -691,6 +692,11 @@ function BilingualField({
   placeholderEn?: string
 }) {
   const extracted = extractBilingualText(defaultValue)
+  const [idVal, setIdVal] = useState(extracted.id)
+  const [enVal, setEnVal] = useState(extracted.en)
+
+  const hasId = Boolean(idVal.trim())
+  const hasEn = Boolean(enVal.trim())
 
   return (
     <div className="space-y-2">
@@ -704,37 +710,83 @@ function BilingualField({
             Dwi-Bahasa (Bilingual)
           </span>
         </div>
-        <span className="text-[11px] text-muted-foreground">
-          🇮🇩 Bahasa Indonesia & 🇬🇧 English
-        </span>
+        {hasId && hasEn ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+            ✓ Lengkap (ID + EN)
+          </span>
+        ) : !hasId && hasEn ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+            ⚠️ Versi ID Belum Diisi
+          </span>
+        ) : hasId && !hasEn ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+            ⚠️ Versi EN Belum Diisi
+          </span>
+        ) : (
+          <span className="text-[11px] text-muted-foreground">
+            🇮🇩 Bahasa Indonesia & 🇬🇧 English
+          </span>
+        )}
       </div>
+
+      {!hasId && hasEn && (
+        <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+          <span className="text-base leading-none">⚠️</span>
+          <div>
+            <p className="font-semibold">Versi Bahasa Indonesia belum diisi</p>
+            <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
+              Pengunjung berbahasa Indonesia akan melihat teks versi English sebagai fallback.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {hasId && !hasEn && (
+        <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+          <span className="text-base leading-none">⚠️</span>
+          <div>
+            <p className="font-semibold">Versi English belum diisi</p>
+            <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
+              Pengunjung berbahasa English akan melihat teks versi Bahasa Indonesia sebagai fallback.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
-          <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
-            <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-            <span>Bahasa Indonesia (ID)</span>
+          <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+            <div className="flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+              <span>Bahasa Indonesia (ID)</span>
+            </div>
+            {!hasId && hasEn && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
           </div>
           <Input
             id={nameId}
             name={nameId}
-            defaultValue={extracted.id}
+            value={idVal}
+            onChange={(e) => setIdVal(e.target.value)}
             placeholder={placeholderId || "Judul dalam Bahasa Indonesia..."}
-            className="bg-background text-xs"
+            className={cn("bg-background text-xs", !hasId && hasEn && "border-amber-400/80 focus-visible:ring-amber-400/20")}
           />
         </div>
 
         <div className="space-y-1">
-          <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
-            <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-            <span>English (EN)</span>
+          <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+            <div className="flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+              <span>English (EN)</span>
+            </div>
+            {hasId && !hasEn && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
           </div>
           <Input
             id={nameEn}
             name={nameEn}
-            defaultValue={extracted.en}
+            value={enVal}
+            onChange={(e) => setEnVal(e.target.value)}
             placeholder={placeholderEn || "Title in English..."}
-            className="bg-background text-xs"
+            className={cn("bg-background text-xs", hasId && !hasEn && "border-amber-400/80 focus-visible:ring-amber-400/20")}
           />
         </div>
       </div>
@@ -767,6 +819,11 @@ function BilingualTextAreaField({
   placeholderEn?: string
 }) {
   const extracted = extractBilingualText(defaultValue)
+  const [idVal, setIdVal] = useState(extracted.id)
+  const [enVal, setEnVal] = useState(extracted.en)
+
+  const hasId = Boolean(idVal.trim())
+  const hasEn = Boolean(enVal.trim())
 
   return (
     <div className="space-y-2">
@@ -779,39 +836,85 @@ function BilingualTextAreaField({
             Dwi-Bahasa (Bilingual)
           </span>
         </div>
-        <span className="text-[11px] text-muted-foreground">
-          🇮🇩 Bahasa Indonesia & 🇬🇧 English
-        </span>
+        {hasId && hasEn ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+            ✓ Lengkap (ID + EN)
+          </span>
+        ) : !hasId && hasEn ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+            ⚠️ Versi ID Belum Diisi
+          </span>
+        ) : hasId && !hasEn ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+            ⚠️ Versi EN Belum Diisi
+          </span>
+        ) : (
+          <span className="text-[11px] text-muted-foreground">
+            🇮🇩 Bahasa Indonesia & 🇬🇧 English
+          </span>
+        )}
       </div>
+
+      {!hasId && hasEn && (
+        <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+          <span className="text-base leading-none">⚠️</span>
+          <div>
+            <p className="font-semibold">Ringkasan versi Bahasa Indonesia belum diisi</p>
+            <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
+              Pengunjung berbahasa Indonesia akan melihat ringkasan versi English.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {hasId && !hasEn && (
+        <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+          <span className="text-base leading-none">⚠️</span>
+          <div>
+            <p className="font-semibold">Ringkasan versi English belum diisi</p>
+            <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
+              Pengunjung berbahasa English akan melihat ringkasan versi Bahasa Indonesia.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
-          <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
-            <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-            <span>Bahasa Indonesia (ID)</span>
+          <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+            <div className="flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+              <span>Bahasa Indonesia (ID)</span>
+            </div>
+            {!hasId && hasEn && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
           </div>
           <Textarea
             id={nameId}
             name={nameId}
             rows={rows}
-            defaultValue={extracted.id}
+            value={idVal}
+            onChange={(e) => setIdVal(e.target.value)}
             placeholder={placeholderId || "Ringkasan dalam Bahasa Indonesia..."}
-            className="bg-background text-xs"
+            className={cn("bg-background text-xs", !hasId && hasEn && "border-amber-400/80 focus-visible:ring-amber-400/20")}
           />
         </div>
 
         <div className="space-y-1">
-          <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
-            <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-            <span>English (EN)</span>
+          <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+            <div className="flex items-center gap-1.5">
+              <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+              <span>English (EN)</span>
+            </div>
+            {hasId && !hasEn && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
           </div>
           <Textarea
             id={nameEn}
             name={nameEn}
             rows={rows}
-            defaultValue={extracted.en}
+            value={enVal}
+            onChange={(e) => setEnVal(e.target.value)}
             placeholder={placeholderEn || "Summary in English..."}
-            className="bg-background text-xs"
+            className={cn("bg-background text-xs", hasId && !hasEn && "border-amber-400/80 focus-visible:ring-amber-400/20")}
           />
         </div>
       </div>

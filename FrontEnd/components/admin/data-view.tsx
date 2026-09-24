@@ -80,7 +80,7 @@ export function AdminCard({
   meta,
   actions,
 }: {
-  title: string
+  title: ReactNode
   href?: string
   subtitle?: string
   badges?: ReactNode
@@ -90,7 +90,7 @@ export function AdminCard({
   const body = (
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0 flex-1">
-        <p className="font-medium leading-snug text-foreground">{title}</p>
+        <div className="font-medium leading-snug text-foreground">{title}</div>
         {subtitle && (
           <p className="mt-1 break-all font-mono text-xs text-muted-foreground">{subtitle}</p>
         )}

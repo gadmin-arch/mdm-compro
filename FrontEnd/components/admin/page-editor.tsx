@@ -280,10 +280,48 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Page Title / Judul Halaman <span className="text-destructive">*</span>
                 </label>
-                <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                  Dwi-Bahasa (Bilingual)
-                </span>
+                {Boolean(titleId.trim()) && Boolean(titleEn.trim()) ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+                    ✓ Lengkap (ID + EN)
+                  </span>
+                ) : !Boolean(titleId.trim()) && Boolean(titleEn.trim()) ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+                    ⚠️ Versi ID Belum Diisi
+                  </span>
+                ) : Boolean(titleId.trim()) && !Boolean(titleEn.trim()) ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+                    ⚠️ Versi EN Belum Diisi
+                  </span>
+                ) : (
+                  <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                    Dwi-Bahasa (Bilingual)
+                  </span>
+                )}
               </div>
+
+              {!Boolean(titleId.trim()) && Boolean(titleEn.trim()) && (
+                <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+                  <span className="text-base leading-none">⚠️</span>
+                  <div>
+                    <p className="font-semibold">Judul versi Bahasa Indonesia belum diisi</p>
+                    <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
+                      Pengunjung berbahasa Indonesia akan melihat judul versi English sebagai fallback.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {Boolean(titleId.trim()) && !Boolean(titleEn.trim()) && (
+                <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+                  <span className="text-base leading-none">⚠️</span>
+                  <div>
+                    <p className="font-semibold">Judul versi English belum diisi</p>
+                    <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
+                      Pengunjung berbahasa English akan melihat judul versi Bahasa Indonesia sebagai fallback.
+                    </p>
+                  </div>
+                </div>
+              )}
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1">
                   <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">

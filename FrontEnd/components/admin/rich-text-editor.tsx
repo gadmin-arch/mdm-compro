@@ -641,6 +641,40 @@ export function BilingualRichTextField({
           </span>
         </div>
 
+        {/* Missing Language Warnings */}
+        {!hasIdContent && hasEnContent && (
+          <div className="mt-2 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+            <span className="text-base leading-none">⚠️</span>
+            <div>
+              <p className="font-semibold">Konten versi Bahasa Indonesia (ID) belum diisi</p>
+              <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
+                Pengunjung berbahasa Indonesia akan melihat konten versi English sebagai fallback. Klik tab <strong>Bahasa Indonesia (ID)</strong> untuk menambahkan terjemahan.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {hasIdContent && !hasEnContent && (
+          <div className="mt-2 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+            <span className="text-base leading-none">⚠️</span>
+            <div>
+              <p className="font-semibold">Konten versi English (EN) belum diisi</p>
+              <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
+                Pengunjung berbahasa English akan melihat konten versi Bahasa Indonesia sebagai fallback. Klik tab <strong>English (EN)</strong> untuk menambahkan terjemahan.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {hasIdContent && hasEnContent && (
+          <div className="mt-2 flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-800 dark:text-emerald-200">
+            <span className="text-sm leading-none">✓</span>
+            <span className="text-[11px] font-medium">
+              Kedua versi bahasa (ID & EN) telah terisi lengkap.
+            </span>
+          </div>
+        )}
+
         {/* Tab 1: Bahasa Indonesia */}
         <div className={cn("mt-2", activeTab !== "id" && "hidden")}>
           <RichTextEditor
