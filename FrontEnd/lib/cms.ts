@@ -1,5 +1,6 @@
 import { enrichNewsWithBilingual, BILINGUAL_NEWS_CATALOG } from "@/lib/news-bilingual"
 import { enrichCareerWithBilingual, BILINGUAL_CAREER_CATALOG } from "@/lib/career-bilingual"
+import { buildBilingualProductTree, enrichProductWithBilingual } from "@/lib/product-bilingual"
 
 export type SEO = {
   title?: string
@@ -408,211 +409,8 @@ export const fallbackServices: ContentNode[] = [
   },
 ]
 
-export const fallbackProducts: ContentNode[] = [
-  {
-    id: "prod-rittal-distributor",
-    slug: "rittal-distributor",
-    fullPath: "rittal-distributor",
-    title: "EN: Rittal Authorized Distributor\nID: Distributor Resmi Rittal",
-    summary: "EN: Official Authorized Distributor for Rittal industrial enclosures, climate control & cooling, power distribution, and IT infrastructure systems.\nID: Distributor resmi untuk sistem enclosure industri Rittal, climate control & pendingin, distribusi daya, dan infrastruktur IT.",
-    imageUrl: "/uploads/brand-rittal.jpg",
-    specs: { Partner: "Authorized Distributor", Brand: "Rittal", Origin: "Germany" },
-    status: "published",
-    sortOrder: 1,
-    depth: 0,
-    children: [
-      {
-        id: "prod-rittal-enclosures",
-        slug: "enclosures",
-        fullPath: "rittal-distributor/enclosures",
-        title: "EN: Rittal Enclosure Systems (VX25, AX, KX)\nID: Sistem Enclosure Rittal (VX25, AX, KX)",
-        summary: "EN: Official Rittal bayed large enclosure system (VX25), compact enclosures (AX), small terminal boxes (KX), and outdoor IT server racks.\nID: Sistem enclosure besar baying resmi Rittal (VX25), enclosure kompak (AX), kotak terminal kecil (KX), dan rak server IT outdoor.",
-        imageUrl: "/uploads/products-rittal-enclosures.jpg",
-        specs: {
-          "Series": "VX25, AX, KX, CS Toptec, IT Network Racks",
-          "Frame Pitch": "25 mm DIN standard symmetrical grid",
-          "Protection Rating": "IP55 / IP66 / NEMA 4X / NEMA 12",
-          "Material": "Sheet steel RAL 7035 / Stainless steel AISI 304 & 316L",
-          "Certifications": "IEC 62208, UL 508A, DNV-GL",
-        },
-        status: "published",
-        sortOrder: 1,
-        depth: 1,
-      },
-      {
-        id: "prod-rittal-cooling",
-        slug: "climate-control-cooling",
-        fullPath: "rittal-distributor/climate-control-cooling",
-        title: "EN: Rittal Climate Control & Cooling (Blue e+)\nID: Sistem Pendingin & Climate Control Rittal (Blue e+)",
-        summary: "EN: Innovative hybrid cooling units, thermoelectric coolers, and air-to-water heat exchangers providing up to 75% energy savings and digital IoT monitoring.\nID: Unit pendingin hibrida inovatif, thermoelectric cooler, dan penukar panas air-ke-udara hemat energi hingga 75% dengan pemantauan IoT digital.",
-        imageUrl: "/uploads/products-rittal-cooling.jpg",
-        specs: {
-          "Cooling Capacity": "300 W to 5,500 W (Blue e+ & Blue e+ S)",
-          "Energy Savings": "Up to 75% via patented hybrid heat pipe",
-          "Refrigerant": "Eco-friendly R-513A / R-134a",
-          "IoT Connectivity": "Modbus TCP, SNMP, OPC-UA",
-        },
-        status: "published",
-        sortOrder: 2,
-        depth: 1,
-      },
-      {
-        id: "prod-rittal-power",
-        slug: "power-distribution",
-        fullPath: "rittal-distributor/power-distribution",
-        title: "EN: Rittal Power Distribution (Ri4Power & RiLine)\nID: Sistem Distribusi Daya Rittal (Ri4Power & RiLine)",
-        summary: "EN: Type-tested low-voltage busbar and switchgear power distribution systems up to 6300A compliant with IEC 61439-1/-2.\nID: Sistem distribusi daya busbar dan switchgear tegangan rendah type-tested hingga 6300A sesuai standar IEC 61439-1/-2.",
-        imageUrl: "/uploads/products-rittal-power.jpg",
-        specs: {
-          "Rated Current": "Up to 6,300 A (Ri4Power) / 2,100 A (RiLine)",
-          "Short-Circuit Withstand": "Up to 120 kA (1s)",
-          "Internal Separation": "Form 1 to Form 4b",
-          "Standards": "IEC 61439-1, IEC 61439-2",
-        },
-        status: "published",
-        sortOrder: 3,
-        depth: 1,
-      },
-    ],
-  },
-  {
-    id: "prod-schneider-integrator",
-    slug: "schneider-integrator",
-    fullPath: "schneider-integrator",
-    title: "EN: Schneider Electric System Integrator\nID: System Integrator Resmi Schneider Electric",
-    summary: "EN: Certified System Integrator & Solutions Partner delivering industrial automation, energy monitoring, and electrical distribution.\nID: System Integrator dan Solutions Partner bersertifikat penyedia otomasi industri, pemantauan energi, dan distribusi elektrikal.",
-    imageUrl: "/uploads/brand-schneider.jpg",
-    specs: { Partner: "Certified System Integrator", Brand: "Schneider Electric" },
-    status: "published",
-    sortOrder: 2,
-    depth: 0,
-    children: [
-      {
-        id: "prod-schneider-automation",
-        slug: "industrial-automation",
-        fullPath: "schneider-integrator/industrial-automation",
-        title: "EN: Schneider Industrial Automation (Modicon & EcoStruxure)\nID: Otomasi Industri Schneider (Modicon & EcoStruxure)",
-        summary: "EN: Complete PLC/PAC automation systems featuring Schneider Modicon M340, M580 ePAC, Magelis HMI, and EcoStruxure Plant architecture.\nID: Sistem otomasi PLC/PAC lengkap beranggotakan Schneider Modicon M340, M580 ePAC, Magelis HMI, dan arsitektur EcoStruxure Plant.",
-        imageUrl: "/uploads/products-schneider-automation.jpg",
-        specs: {
-          "PLC Families": "Modicon M580 ePAC, Modicon M340, M241/M251",
-          "Cybersecurity": "Achilles Level 2 & ISA/IEC 62443",
-          "Software": "EcoStruxure Control Expert (Unity Pro)",
-        },
-        status: "published",
-        sortOrder: 1,
-        depth: 1,
-      },
-      {
-        id: "prod-schneider-pme",
-        slug: "power-energy-monitoring",
-        fullPath: "schneider-integrator/power-energy-monitoring",
-        title: "EN: Power & Energy Monitoring (PME & PowerLogic)\nID: Pemantauan Daya & Energi (PME & PowerLogic)",
-        summary: "EN: Schneider PowerLogic digital power meters, ION meters, and EcoStruxure Power Monitoring Expert (PME) software.\nID: Power meter digital Schneider PowerLogic, ION meter, dan perangkat lunak EcoStruxure Power Monitoring Expert (PME).",
-        imageUrl: "/uploads/products-schneider-pme.jpg",
-        specs: {
-          "Software Platform": "EcoStruxure PME / Power Operation",
-          "Power Meters": "PowerLogic PM8000, PM5000, ION9000",
-          "Compliance": "IEC 61000-4-30 Class A",
-        },
-        status: "published",
-        sortOrder: 2,
-        depth: 1,
-      },
-      {
-        id: "prod-schneider-distribution",
-        slug: "electrical-distribution-integration",
-        fullPath: "schneider-integrator/electrical-distribution-integration",
-        title: "EN: Electrical Distribution Integration (MasterPact & Prisma)\nID: Integrasi Distribusi Elektrikal (MasterPact & Prisma)",
-        summary: "EN: MasterPact MTZ/NW air circuit breakers, Compact NSX molded case breakers, and Prisma type-tested switchboard integration.\nID: Circuit breaker udara MasterPact MTZ/NW, breaker cetak Compact NSX, dan integrasi switchboard type-tested Prisma.",
-        imageUrl: "/uploads/products-schneider-distribution.jpg",
-        specs: {
-          "Air Circuit Breakers": "MasterPact MTZ (up to 6300A)",
-          "Trip Units": "MicroLogic X with Class 1 Energy Metering",
-          "Switchboards": "PrismaSeT G & P Modular Enclosures",
-        },
-        status: "published",
-        sortOrder: 3,
-        depth: 1,
-      },
-      {
-        id: "prod-schneider-commissioning",
-        slug: "engineering-commissioning",
-        fullPath: "schneider-integrator/engineering-commissioning",
-        title: "EN: Schneider Engineering, FAT/SAT & Commissioning Support\nID: Rekayasa Schneider, Dukungan FAT/SAT & Commissioning",
-        summary: "EN: Schneider factory acceptance testing (FAT), site acceptance testing (SAT), relay protection coordination, and energized commissioning.\nID: Factory acceptance testing (FAT), site acceptance testing (SAT), koordinasi proteksi relay, dan commissioning bertegangan.",
-        imageUrl: "/uploads/products-schneider-commissioning.jpg",
-        specs: {
-          "Testing Fleet": "Omicron CMC 356, Megger, Fluke 1777",
-          "Accreditation": "ESDM Level 6 Certified & Schneider Integrator",
-        },
-        status: "published",
-        sortOrder: 4,
-        depth: 1,
-      },
-    ],
-  },
-  {
-    id: "prod-electrical-distribution",
-    slug: "electrical-distribution",
-    fullPath: "electrical-distribution",
-    title: "EN: Electrical Distribution\nID: Peralatan Distribusi Listrik",
-    summary: "EN: Medium & Low Voltage electrical distribution equipment, switchboards, transformers, and protection systems.\nID: Peralatan distribusi kelistrikan tegangan menengah & rendah, panel switchboard, transformator, dan sistem proteksi daya.",
-    imageUrl: "/uploads/mdm/circuit-breaker.jpg",
-    specs: { Category: "Electrical Distribution" },
-    status: "published",
-    sortOrder: 3,
-    depth: 0,
-  },
-  {
-    id: "prod-automation-control",
-    slug: "automation-control",
-    fullPath: "automation-control",
-    title: "EN: Automation & Control\nID: Kontrol & Otomasi Industri",
-    summary: "EN: Industrial automation, PLC systems, SCADA / HMI process visualization, and motor drives.\nID: Otomasi industri, sistem PLC, visualisasi proses SCADA/HMI, dan penggerak motor (inverter/VSD).",
-    imageUrl: "/uploads/products-schneider-automation.jpg",
-    specs: { Category: "Automation & Control" },
-    status: "published",
-    sortOrder: 4,
-    depth: 0,
-  },
-  {
-    id: "prod-enclosure-climate-control",
-    slug: "enclosure-climate-control",
-    fullPath: "enclosure-climate-control",
-    title: "EN: Enclosure & Climate Control\nID: Enclosure & Manajemen Suhu Industri",
-    summary: "EN: Industrial enclosures, server racks, climate control, and cooling systems for harsh manufacturing environments.\nID: Enclosure industri, rak server, climate control, dan sistem pendingin untuk lingkungan manufaktur yang menuntut ketahanan tinggi.",
-    imageUrl: "/uploads/products-rittal-enclosures.jpg",
-    specs: { Category: "Enclosure & Climate Control" },
-    status: "published",
-    sortOrder: 5,
-    depth: 0,
-  },
-  {
-    id: "prod-power-quality",
-    slug: "power-quality",
-    fullPath: "power-quality",
-    title: "EN: Power Quality\nID: Solusi Kualitas Daya Listrik",
-    summary: "EN: Active harmonic filters, power factor correction, capacitor banks, and power quality analyzers.\nID: Filter harmonisa aktif, perbaikan faktor daya, kapasitor bank, dan penganalisis kualitas daya.",
-    imageUrl: "/uploads/mdm/power-quality.jpg",
-    specs: { Category: "Power Quality" },
-    status: "published",
-    sortOrder: 6,
-    depth: 0,
-  },
-  {
-    id: "prod-fire-alarm-products",
-    slug: "fire-alarm-products",
-    fullPath: "fire-alarm-products",
-    title: "EN: Fire Alarm Products\nID: Produk & Perangkat Fire Alarm",
-    summary: "EN: Industrial addressable fire alarm panels, detectors, notification appliances, and suppression solutions from Bosch Building Technologies.\nID: Panel fire alarm addressable industri, sensor detektor, perangkat notifikasi, dan solusi proteksi kebakaran dari Bosch Building Technologies.",
-    imageUrl: "/uploads/brand-bosch.png",
-    specs: { Category: "Fire Alarm Products", Brand: "Bosch" },
-    status: "published",
-    sortOrder: 7,
-    depth: 0,
-  },
-]
+export const fallbackProducts: ContentNode[] = buildBilingualProductTree()
+
 
 const catalogNewsList: NewsItem[] = Object.keys(BILINGUAL_NEWS_CATALOG)
   .map((slug) => enrichNewsWithBilingual(null, slug))
@@ -1036,11 +834,20 @@ function createContentFallback(items: ContentNode[], filters?: PageFilters): Lis
   return paginateList(data, page, perPage)
 }
 
+function enrichProductTree(node: ContentNode): ContentNode {
+  const enriched = enrichProductWithBilingual(node, node.fullPath || node.slug) || node
+  if (enriched.children && enriched.children.length > 0) {
+    enriched.children = enriched.children.map(enrichProductTree)
+  }
+  return enriched
+}
+
 export async function getProducts(): Promise<ContentNode[]>
 export async function getProducts(filters: PageFilters): Promise<ListResponse<ContentNode>>
 export async function getProducts(filters?: PageFilters): Promise<ContentNode[] | ListResponse<ContentNode>> {
   if (!filters) {
-    return cmsFetch<ContentNode[]>("/products", fallbackProducts)
+    const res = await cmsFetch<ContentNode[]>("/products", fallbackProducts)
+    return Array.isArray(res) ? res.map(enrichProductTree) : fallbackProducts
   }
   const query = new URLSearchParams()
   if (filters.search) query.set("search", filters.search)
@@ -1051,13 +858,20 @@ export async function getProducts(filters?: PageFilters): Promise<ContentNode[] 
 
   const queryString = query.toString()
   const path = queryString ? `/products?${queryString}` : "/products"
-  return cmsListFetch<ContentNode>(path, createContentFallback(fallbackProducts, filters))
+  const response = await cmsListFetch<ContentNode>(path, createContentFallback(fallbackProducts, filters))
+  if (response && Array.isArray(response.data)) {
+    response.data = response.data.map((item) => enrichProductWithBilingual(item, item.fullPath || item.slug) || item)
+  }
+  return response
 }
 
 export async function getProduct(path: string) {
   const fallback = findByPath(fallbackProducts, path)
-  return cmsFetch<ContentNode | null>(`/products/${path}`, fallback)
+  const item = await cmsFetch<ContentNode | null>(`/products/${path}`, fallback)
+  if (!item) return null
+  return enrichProductTree(item)
 }
+
 
 function normalizeFilterValue(value: string) {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")

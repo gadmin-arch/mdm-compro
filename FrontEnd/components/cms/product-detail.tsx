@@ -13,6 +13,7 @@ import {
   BilingualText,
   useContentLanguage,
 } from "@/components/cms/content-language"
+import { getBilingualText } from "@/lib/bilingual"
 
 // The product detail body, lifted out of app/(site)/products/[...path]/page.tsx so
 // the public page and the admin draft preview render from ONE definition.
@@ -56,7 +57,7 @@ export function ProductDetailView({
               <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-secondary shadow-xs">
                 <Image
                   src={product.imageUrl || "/uploads/products-rittal.jpg"}
-                  alt={product.title}
+                  alt={getBilingualText(product.title, isIndonesian ? "id" : "en")}
                   fill
                   sizes="(min-width: 1024px) 50vw, 100vw"
                   className="object-cover"
@@ -67,8 +68,12 @@ export function ProductDetailView({
                 <dl className="divide-y divide-border rounded-xl border border-border bg-card shadow-xs">
                   {specs.map(([key, value]) => (
                     <div key={key} className="grid grid-cols-2 gap-4 p-4 text-sm">
-                      <dt className="font-medium text-muted-foreground">{key}</dt>
-                      <dd className="font-medium text-foreground">{value}</dd>
+                      <dt className="font-medium text-muted-foreground">
+                        <BilingualText text={key} />
+                      </dt>
+                      <dd className="font-medium text-foreground">
+                        <BilingualText text={String(value)} />
+                      </dd>
                     </div>
                   ))}
                 </dl>
@@ -99,7 +104,7 @@ export function ProductDetailView({
                 </span>
               </p>
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {product.title} {isIndonesian ? "Varian & Tipe" : "Products"}
+                <BilingualText text={product.title} /> {isIndonesian ? "Varian & Tipe" : "Products"}
               </h2>
             </div>
 
@@ -123,7 +128,7 @@ export function ProductDetailView({
         }
         primaryHref="/contact"
         primaryLabel={isIndonesian ? "Minta Penawaran" : "Request a Quote"}
-        secondaryHref={`https://wa.me/628118303250?text=Halo%20PT%20Multi%20Daya%20Mitra,%20saya%20tertarik%20dengan%20produk:%20${encodeURIComponent(product.title)}`}
+        secondaryHref={`https://wa.me/628118303250?text=Halo%20PT%20Multi%20Daya%20Mitra,%20saya%20tertarik%20dengan%20produk:%20${encodeURIComponent(getBilingualText(product.title, isIndonesian ? "id" : "en"))}`}
         secondaryLabel="WhatsApp Hotline"
       />
     </>

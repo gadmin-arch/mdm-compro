@@ -286,6 +286,15 @@ export function extractBilingualText(raw: string | undefined | null): { id: stri
 }
 
 /**
+ * Returns either the Indonesian or English string from a bilingual text string.
+ */
+export function getBilingualText(raw: string | undefined | null, lang: "id" | "en" = "id"): string {
+  if (!raw) return ""
+  const extracted = extractBilingualText(raw)
+  return extracted[lang] || extracted.id || extracted.en || raw
+}
+
+/**
  * Combines distinct English and Indonesian strings into a single text representation
  * that backward-compatibly preserves both languages in a single column:
  * "EN: <English>\nID: <Indonesian>"
