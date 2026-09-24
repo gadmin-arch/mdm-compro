@@ -545,7 +545,12 @@ export function RichTextField({
   const [html, setHtml] = useState(defaultValue)
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</label>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</label>
+        <span className="text-[11px] text-muted-foreground">
+          Tips Dwi-Bahasa: Awali paragraf dengan <strong className="font-semibold text-foreground">EN:</strong> dan <strong className="font-semibold text-foreground">ID:</strong> (website akan otomatis memisahkan)
+        </span>
+      </div>
       <input type="hidden" name={name} value={html} />
       <RichTextEditor className="mt-1" value={defaultValue} onChange={setHtml} />
     </div>
