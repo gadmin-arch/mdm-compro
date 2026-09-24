@@ -10,6 +10,7 @@ import {
 } from "@/lib/admin-api"
 import type { PageContent } from "@/lib/cms"
 import type { SaveResult } from "@/lib/save-result"
+import { combineBilingualText } from "@/lib/bilingual"
 
 function pagePayload(formData: FormData): PageCreatePayload {
   const contentText = String(formData.get("content") ?? '{"blocks":[]}')
@@ -20,10 +21,16 @@ function pagePayload(formData: FormData): PageCreatePayload {
     throw new Error("invalid_json")
   }
 
+  const titleId = String(formData.get("title_id") ?? "").trim()
+  const titleEn = String(formData.get("title_en") ?? "").trim()
+  const combinedTitle = combineBilingualText({ id: titleId, en: titleEn })
+  const fallbackTitle = String(formData.get("title") ?? "").trim()
+  const title = combinedTitle || fallbackTitle
+
   const publishedAtValue = String(formData.get("publishedAt") ?? "")
   return {
     key: String(formData.get("key") ?? ""),
-    title: String(formData.get("title") ?? ""),
+    title,
     content,
     status: String(formData.get("status") ?? "draft"),
     publishedAt: publishedAtValue || null,

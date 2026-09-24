@@ -36,16 +36,26 @@ export function isBilingualEnvelope(value: unknown): value is BilingualEnvelope 
 export function filterBilingualText(text: string | undefined | null, lang: ContentLanguage): string {
   if (!text || typeof text !== "string") return ""
 
+  // Normalize literal escaped newlines and CRLF
+  const normalized = text.replace(/\\r\\n/g, "\n").replace(/\\n/g, "\n").trim()
+  if (!normalized) return ""
+
   // 1. Explicit markers: EN: ... ID: ... or [EN] ... [ID] ...
-  const enMatch = text.match(/(?:^|\b)(?:EN\s*:|\[EN\]|English\s*:)\s*([\s\S]*?)(?=(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)|$)/i)
-  const idMatch = text.match(/(?:^|\b)(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)\s*([\s\S]*?)(?=(?:EN\s*:|\[EN\]|English\s*:)|$)/i)
+  const enMatch = normalized.match(/(?:^|[\r\n\s|/;,])(?:EN\s*:|\[EN\]|English\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)|$))/i)
+  const idMatch = normalized.match(/(?:^|[\r\n\s|/;,])(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:EN\s*:|\[EN\]|English\s*:)|$))/i)
 
   if (enMatch && idMatch) {
     return (lang === "id" ? idMatch[1] : enMatch[1]).trim()
   }
+  if (enMatch && !idMatch) {
+    return enMatch[1].trim()
+  }
+  if (idMatch && !enMatch) {
+    return idMatch[1].trim()
+  }
 
   // 2. Dual titles separated by " / " or " | "
-  const slashParts = text.split(/\s+[\/|]\s+/)
+  const slashParts = normalized.split(/\s+[\/|]\s+/)
   if (slashParts.length === 2 && slashParts[0].length > 3 && slashParts[1].length > 3) {
     const part0IsId = /\b(dan|yang|untuk|dengan|pada|oleh|atau|ke|dari|tentang|dalam|adalah|sebagai|layanan|produk|berita|karir|perakitan|pengujian|keandalan|fasilitas|distribusi|pabrik|sistem)\b/i.test(slashParts[0])
     const part1IsId = /\b(dan|yang|untuk|dengan|pada|oleh|atau|ke|dari|tentang|dalam|adalah|sebagai|layanan|produk|berita|karir|perakitan|pengujian|keandalan|fasilitas|distribusi|pabrik|sistem)\b/i.test(slashParts[1])
@@ -57,7 +67,7 @@ export function filterBilingualText(text: string | undefined | null, lang: Conte
   }
 
   // 3. Dual lines separated by newline (\r?\n)
-  const lines = text
+  const lines = normalized
     .split(/\r?\n/)
     .map((l) => l.trim())
     .filter(Boolean)
@@ -71,7 +81,7 @@ export function filterBilingualText(text: string | undefined | null, lang: Conte
     return (lang === "id" ? lines[1] : lines[0]).trim()
   }
 
-  return text
+  return normalized
 }
 
 /**
@@ -84,6 +94,17 @@ export function extractBilingualText(raw: string | undefined | null): { id: stri
   if (!raw || typeof raw !== "string") return { id: "", en: "" }
   const trimmed = raw.trim()
   if (!trimmed) return { id: "", en: "" }
+
+  const normalized = trimmed.replace(/\\r\\n/g, "\n").replace(/\\n/g, "\n").trim()
+  const enMatch = normalized.match(/(?:^|[\r\n\s|/;,])(?:EN\s*:|\[EN\]|English\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)|$))/i)
+  const idMatch = normalized.match(/(?:^|[\r\n\s|/;,])(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:EN\s*:|\[EN\]|English\s*:)|$))/i)
+
+  if (enMatch || idMatch) {
+    return {
+      id: idMatch ? idMatch[1].trim() : "",
+      en: enMatch ? enMatch[1].trim() : "",
+    }
+  }
 
   const idText = filterBilingualText(trimmed, "id")
   const enText = filterBilingualText(trimmed, "en")
@@ -226,11 +247,14 @@ export function syncBilingualLinks(idText: string | undefined | null, enText: st
 export function filterBilingualHtml(html: string | undefined | null, lang: ContentLanguage): string {
   if (!html || typeof html !== "string") return ""
 
-  // Normalize markdown links: [text](url) -> <a href="url">text</a>
-  let processedHtml = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, anchor, href) => {
-    const cleanHref = href.replace(/^https?:\/\/(?:www\.)?multidayamitra\.co\.id/i, "")
-    return `<a href="${cleanHref}">${anchor}</a>`
-  })
+  // Normalize escaped newlines and markdown links: [text](url) -> <a href="url">text</a>
+  let processedHtml = html
+    .replace(/\\r\\n/g, "\n")
+    .replace(/\\n/g, "\n")
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, anchor, href) => {
+      const cleanHref = href.replace(/^https?:\/\/(?:www\.)?multidayamitra\.co\.id/i, "")
+      return `<a href="${cleanHref}">${anchor}</a>`
+    })
 
   // 0. If plain text without HTML tags is passed, split paragraphs into <p> tags
   if (!/<(?:p|h[1-6]|div|ul|ol|blockquote|li|br)[^>]*>/i.test(processedHtml)) {

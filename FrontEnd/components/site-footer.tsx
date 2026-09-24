@@ -4,39 +4,40 @@ import { Mail, MapPin, Phone } from "lucide-react"
 import { getSiteSettings } from "@/lib/cms"
 import { container } from "@/lib/layout"
 import { SocialButton } from "@/components/social-icons"
+import { BilingualText } from "@/components/cms/content-language"
 
 const footerNav = [
   {
-    title: "Company",
+    title: "EN: Company\nID: Perusahaan",
     links: [
-      { label: "About PT MDM", href: "/about" },
-      { label: "Services & Solutions", href: "/services" },
-      { label: "Products & Partners", href: "/products" },
-      { label: "News & Insights", href: "/news" },
-      { label: "Careers", href: "/career" },
-      { label: "Contact Us", href: "/contact" },
+      { label: "EN: About PT MDM\nID: Tentang PT MDM", href: "/about" },
+      { label: "EN: Services & Solutions\nID: Layanan & Solusi", href: "/services" },
+      { label: "EN: Products & Partners\nID: Produk & Mitra", href: "/products" },
+      { label: "EN: News & Insights\nID: Berita & Artikel", href: "/news" },
+      { label: "EN: Careers\nID: Karir", href: "/career" },
+      { label: "EN: Contact Us\nID: Hubungi Kami", href: "/contact" },
     ],
   },
   {
-    title: "Services & Solutions",
+    title: "EN: Services & Solutions\nID: Layanan & Solusi",
     links: [
-      { label: "Electrical Construction & Installation", href: "/services/electrical-construction-installation" },
-      { label: "Electrical Maintenance & Servicing", href: "/services/electrical-maintenance-service" },
-      { label: "Automation Solutions & Services", href: "/services/automation-solutions-services" },
-      { label: "Inspection, Testing & Commissioning", href: "/services/inspection-testing-commissioning" },
-      { label: "Mechanical Services & Supplies", href: "/services/mechanical-services-supplies" },
+      { label: "EN: Electrical Construction & Installation\nID: Konstruksi & Instalasi Elektrikal", href: "/services/electrical-construction-installation" },
+      { label: "EN: Electrical Maintenance & Servicing\nID: Pemeliharaan & Servis Elektrikal", href: "/services/electrical-maintenance-service" },
+      { label: "EN: Automation Solutions & Services\nID: Solusi & Layanan Otomasi", href: "/services/automation-solutions-services" },
+      { label: "EN: Inspection, Testing & Commissioning\nID: Inspeksi, Pengujian & Komisioning", href: "/services/inspection-testing-commissioning" },
+      { label: "EN: Mechanical Services & Supplies\nID: Layanan Mekanikal & Pasokan Umum", href: "/services/mechanical-services-supplies" },
     ],
   },
   {
-    title: "Products & Partners",
+    title: "EN: Products & Partners\nID: Produk & Mitra",
     links: [
-      { label: "Rittal Authorized Distributor", href: "/products/rittal-distributor" },
-      { label: "Schneider Electric Integrator", href: "/products/schneider-integrator" },
-      { label: "Electrical Distribution", href: "/products/electrical-distribution" },
-      { label: "Automation & Control", href: "/products/automation-control" },
-      { label: "Enclosure & Climate Control", href: "/products/enclosure-climate-control" },
-      { label: "Power Quality Systems", href: "/products/power-quality" },
-      { label: "Fire Alarm Products", href: "/products/fire-alarm-products" },
+      { label: "EN: Rittal Authorized Distributor\nID: Distributor Resmi Rittal", href: "/products/rittal-distributor" },
+      { label: "EN: Schneider Electric Integrator\nID: Integrator Schneider Electric", href: "/products/schneider-integrator" },
+      { label: "EN: Electrical Distribution\nID: Distribusi Elektrikal", href: "/products/electrical-distribution" },
+      { label: "EN: Automation & Control\nID: Otomasi & Kontrol", href: "/products/automation-control" },
+      { label: "EN: Enclosure & Climate Control\nID: Enclosure & Tata Udara Panel", href: "/products/enclosure-climate-control" },
+      { label: "EN: Power Quality Systems\nID: Sistem Kualitas Daya", href: "/products/power-quality" },
+      { label: "EN: Fire Alarm Products\nID: Produk Fire Alarm", href: "/products/fire-alarm-products" },
     ],
   },
 ]
@@ -62,7 +63,7 @@ export async function SiteFooter() {
               </span>
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              {settings.footerDescription}
+              <BilingualText text={settings.footerDescription} />
             </p>
             <ul className="mt-5 space-y-2 text-sm text-muted-foreground">
               {settings.address && (
@@ -130,7 +131,7 @@ export async function SiteFooter() {
             {footerNav.map((column) => (
               <div key={column.title} className="min-w-0">
                 <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-foreground">
-                  {column.title}
+                  <BilingualText text={column.title} />
                 </h3>
                 <ul className="mt-4 space-y-2.5">
                   {column.links.map((link) => (
@@ -139,7 +140,7 @@ export async function SiteFooter() {
                         href={link.href}
                         className="text-sm text-muted-foreground transition-colors hover:text-foreground whitespace-nowrap"
                       >
-                        {link.label}
+                        <BilingualText text={link.label} />
                       </Link>
                     </li>
                   ))}
@@ -153,7 +154,9 @@ export async function SiteFooter() {
           <p>
             &copy; {new Date().getFullYear()} PT Multi Daya Mitra. All rights reserved.
           </p>
-          <p className="font-medium uppercase tracking-[0.14em]">{settings.tagline}</p>
+          <p className="font-medium uppercase tracking-[0.14em]">
+            <BilingualText text={settings.tagline} />
+          </p>
         </div>
       </div>
     </footer>

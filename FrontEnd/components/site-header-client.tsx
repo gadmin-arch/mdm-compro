@@ -23,6 +23,8 @@ import { filterBilingualText } from "@/lib/bilingual"
 import { cn } from "@/lib/utils"
 import { container } from "@/lib/layout"
 
+import { ContentLanguageToggle, useContentLanguage, type ContentLanguage } from "@/components/cms/content-language"
+
 type NavNode = {
   id: string
   label: string
@@ -33,7 +35,7 @@ type NavNode = {
 
 // System menu entries are sourced from the CMS content trees, so any service
 // or product added below a parent is immediately available in the header.
-function buildEntries(navigation: Navigation): NavNode[] {
+function buildEntries(navigation: Navigation, lang: ContentLanguage = "id"): NavNode[] {
   const menu = navigation.menu?.length ? navigation.menu : defaultMenuItems
 
   return menu
@@ -41,40 +43,40 @@ function buildEntries(navigation: Navigation): NavNode[] {
     .map((item) => {
       const autoChildren =
         item.auto === "services"
-          ? contentNodes(navigation.services, "/services")
+          ? contentNodes(navigation.services, "/services", lang)
           : item.auto === "products"
-            ? contentNodes(navigation.products, "/products")
+            ? contentNodes(navigation.products, "/products", lang)
             : []
 
       const manualChildren = (item.children ?? [])
         .filter((child) => child.visible !== false)
-        .map(menuNode)
+        .map((child) => menuNode(child, lang))
 
       return {
         id: item.id,
-        label: filterBilingualText(item.label, "en") || item.label,
+        label: filterBilingualText(item.label, lang) || item.label,
         href: item.href || "#",
         children: [...autoChildren, ...manualChildren],
       }
     })
 }
 
-function menuNode(item: MenuItem): NavNode {
+function menuNode(item: MenuItem, lang: ContentLanguage = "id"): NavNode {
   return {
     id: item.id,
-    label: filterBilingualText(item.label, "en") || item.label,
+    label: filterBilingualText(item.label, lang) || item.label,
     href: item.href || "#",
-    children: (item.children ?? []).filter((child) => child.visible !== false).map(menuNode),
+    children: (item.children ?? []).filter((child) => child.visible !== false).map((child) => menuNode(child, lang)),
   }
 }
 
-function contentNodes(nodes: ContentNode[], basePath: string): NavNode[] {
+function contentNodes(nodes: ContentNode[], basePath: string, lang: ContentLanguage = "id"): NavNode[] {
   return nodes.map((node) => ({
     id: node.id,
-    label: filterBilingualText(node.title, "en") || node.title,
+    label: filterBilingualText(node.title, lang) || node.title,
     href: `${basePath}/${node.fullPath}`,
-    summary: filterBilingualText(node.summary, "en") || node.summary,
-    children: contentNodes(node.children ?? [], basePath),
+    summary: filterBilingualText(node.summary, lang) || node.summary,
+    children: contentNodes(node.children ?? [], basePath, lang),
   }))
 }
 
@@ -288,7 +290,8 @@ export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
   const [open, setOpen] = useState(false)
   const [openMobileNodeIds, setOpenMobileNodeIds] = useState<Set<string>>(new Set())
   const pathname = usePathname()
-  const entries = buildEntries(navigation)
+  const { lang } = useContentLanguage()
+  const entries = buildEntries(navigation, lang)
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/")
@@ -353,18 +356,22 @@ export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
           })}
         </nav>
 
-        <div className="hidden items-center gap-4 lg:flex">
+        <div className="hidden items-center gap-3 lg:flex">
+          <ContentLanguageToggle size="sm" />
           <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
             <Link href="/search" aria-label="Search">
               <Search className="h-4.5 w-4.5" />
             </Link>
           </Button>
           <Button asChild size="sm">
-            <Link href="/contact">Request a Quote</Link>
+            <Link href="/contact">
+              {lang === "id" ? "Minta Penawaran" : "Request a Quote"}
+            </Link>
           </Button>
         </div>
 
         <div className="flex items-center gap-2 lg:hidden">
+          <ContentLanguageToggle size="sm" />
           <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
             <Link href="/search" aria-label="Search">
               <Search className="h-5 w-5" />
@@ -398,7 +405,7 @@ export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
                 ))}
                 <Button asChild className="mt-3">
                   <Link href="/contact" onClick={closeMobileMenu}>
-                    Request a Quote
+                    {lang === "id" ? "Minta Penawaran" : "Request a Quote"}
                   </Link>
                 </Button>
               </nav>

@@ -104,13 +104,13 @@ export function isSystemPageKey(key: string): boolean {
 
 // Mirrors model.DefaultMenuItems in the backend.
 export const defaultMenuItems: MenuItem[] = [
-  { id: "home", label: "Home", href: "/", kind: "system", visible: true },
-  { id: "about", label: "About Us", href: "/about", kind: "system", visible: true },
-  { id: "services", label: "Services", href: "/services", kind: "system", auto: "services", visible: true },
-  { id: "products", label: "Products", href: "/products", kind: "system", auto: "products", visible: true },
-  { id: "news", label: "News", href: "/news", kind: "system", visible: true },
-  { id: "career", label: "Careers", href: "/career", kind: "system", visible: true },
-  { id: "contact", label: "Contact Us", href: "/contact", kind: "system", visible: true },
+  { id: "home", label: "EN: Home\nID: Beranda", href: "/", kind: "system", visible: true },
+  { id: "about", label: "EN: About Us\nID: Tentang Kami", href: "/about", kind: "system", visible: true },
+  { id: "services", label: "EN: Services\nID: Layanan", href: "/services", kind: "system", auto: "services", visible: true },
+  { id: "products", label: "EN: Products\nID: Produk", href: "/products", kind: "system", auto: "products", visible: true },
+  { id: "news", label: "EN: News\nID: Berita", href: "/news", kind: "system", visible: true },
+  { id: "career", label: "EN: Careers\nID: Karir", href: "/career", kind: "system", visible: true },
+  { id: "contact", label: "EN: Contact Us\nID: Hubungi Kami", href: "/contact", kind: "system", visible: true },
 ]
 
 export type ListResponse<T> = {

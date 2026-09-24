@@ -40,6 +40,7 @@ import {
 import { isSystemPageKey, type PageContent, type SEO } from "@/lib/cms"
 import type { SaveAction } from "@/lib/save-result"
 import { presetSectionsForKey, sectionsFromContent, type Section } from "@/lib/sections"
+import { combineBilingualText, extractBilingualText } from "@/lib/bilingual"
 
 type ContactOffice = {
   name: string
@@ -78,7 +79,9 @@ type PageEditorProps = {
 
 export function PageEditor({ action, mode, page, previewData }: PageEditorProps) {
   const initialContent = page?.content ?? { blocks: [] }
-  const [title, setTitle] = useState(page?.title ?? "")
+  const extractedTitle = useMemo(() => extractBilingualText(page?.title), [page?.title])
+  const [titleId, setTitleId] = useState(extractedTitle.id || (page?.title ?? ""))
+  const [titleEn, setTitleEn] = useState(extractedTitle.en || (page?.title ?? ""))
   const [key, setKey] = useState(page?.key ?? "")
   const [slugTouched, setSlugTouched] = useState(mode === "edit")
   const [status, setStatus] = useState(page?.status ?? "draft")
@@ -155,10 +158,17 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
   const contentJson = useMemo(() => JSON.stringify(content), [content])
   const prettyContentJson = useMemo(() => JSON.stringify(content, null, 2), [content])
 
-  function updateTitle(value: string) {
-    setTitle(value)
-    if (!slugTouched) {
-      setKey(slugify(value))
+  function handleTitleIdChange(value: string) {
+    setTitleId(value)
+    if (!slugTouched && !slugLocked) {
+      setKey(slugify(titleEn || value))
+    }
+  }
+
+  function handleTitleEnChange(value: string) {
+    setTitleEn(value)
+    if (!slugTouched && !slugLocked) {
+      setKey(slugify(value || titleId))
     }
   }
 
@@ -265,17 +275,50 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
       <div className="space-y-6">
         <section className="rounded-lg border border-border bg-background p-5">
           <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_260px]">
-            <div>
-              <label className="text-sm font-medium text-foreground" htmlFor="title">
-                Title
-              </label>
-              <Input
-                className="mt-2 h-12 text-lg font-semibold"
-                id="title"
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Page Title / Judul Halaman <span className="text-destructive">*</span>
+                </label>
+                <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                  Dwi-Bahasa (Bilingual)
+                </span>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
+                    <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+                    <span>Bahasa Indonesia (ID)</span>
+                  </div>
+                  <Input
+                    className="h-10 text-sm font-semibold"
+                    id="title_id"
+                    name="title_id"
+                    placeholder="Judul dalam Bahasa Indonesia..."
+                    value={titleId}
+                    onChange={(event) => handleTitleIdChange(event.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
+                    <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+                    <span>English (EN)</span>
+                  </div>
+                  <Input
+                    className="h-10 text-sm font-semibold"
+                    id="title_en"
+                    name="title_en"
+                    placeholder="Title in English..."
+                    value={titleEn}
+                    onChange={(event) => handleTitleEnChange(event.target.value)}
+                  />
+                </div>
+              </div>
+              <input
+                type="hidden"
                 name="title"
-                onChange={(event) => updateTitle(event.target.value)}
-                required
-                value={title}
+                value={combineBilingualText({ id: titleId, en: titleEn }) || titleId || titleEn}
               />
             </div>
             <div>
@@ -690,7 +733,7 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
                 {publicPath(key)}
               </p>
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground">
-                {title || "Untitled page"}
+                {titleId || titleEn || "Untitled page"}
               </h2>
               <div className="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground">
                 {key === "contact" ? (
