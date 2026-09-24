@@ -125,6 +125,100 @@ export function combineBilingualText(values: { en?: string | null; id?: string |
 }
 
 /**
+ * Synchronizes hyperlinks present in English content into corresponding Indonesian anchor text
+ * if the Indonesian content is missing the hyperlink.
+ */
+export function syncBilingualLinks(idText: string | undefined | null, enText: string | undefined | null): string {
+  if (!idText || typeof idText !== "string") return ""
+  if (!enText || typeof enText !== "string") return idText
+
+  // Normalize markdown links in enText: [text](url) -> <a href="url">text</a>
+  const normalizedEn = enText.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+  let result = idText.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, anchor, href) => {
+    const cleanHref = href.replace(/^https?:\/\/(?:www\.)?multidayamitra\.co\.id/i, "")
+    return `<a href="${cleanHref}">${anchor}</a>`
+  })
+
+  const linkRegex = /<a\s+[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi
+  let match: RegExpExecArray | null
+
+  while ((match = linkRegex.exec(normalizedEn)) !== null) {
+    const href = match[1].replace(/^https?:\/\/(?:www\.)?multidayamitra\.co\.id/i, "")
+    if (!href) continue
+
+    // If idText already has a link to this href, skip
+    if (result.includes(href)) continue
+
+    // Matching Indonesian patterns based on service/product href
+    if (href.includes("mv-lv-cable-installation-termination")) {
+      const idPattern = /(instalasi\s+(?:dan|&)\s+terminasi\s+kabel\s+MV\s*(?:&|dan)\s*LV)/i
+      if (idPattern.test(result)) {
+        result = result.replace(idPattern, `<a href="${href}">$1</a>`)
+        continue
+      }
+    }
+    if (href.includes("substation-mv-switchgear-installation")) {
+      const idPattern = /(gardu\s+induk(?:\s+(?:dan|&)\s+mv\s+switchgear)?)/i
+      if (idPattern.test(result)) {
+        result = result.replace(idPattern, `<a href="${href}">$1</a>`)
+        continue
+      }
+    }
+    if (href.includes("lv-distribution-panels-assembly")) {
+      const idPattern = /(perakitan\s+panel\s+LV|panel\s+distribusi\s+LV)/i
+      if (idPattern.test(result)) {
+        result = result.replace(idPattern, `<a href="${href}">$1</a>`)
+        continue
+      }
+    }
+    if (href.includes("fire-alarm-system-installation")) {
+      const idPattern = /(sistem\s+fire\s+alarm|instalasi\s+fire\s+alarm)/i
+      if (idPattern.test(result)) {
+        result = result.replace(idPattern, `<a href="${href}">$1</a>`)
+        continue
+      }
+    }
+    if (href.includes("transformer-oil-treatment-dga")) {
+      const idPattern = /(treatment\s+oli\s+trafo|purifikasi\s+oli\s+trafo|uji\s+DGA)/i
+      if (idPattern.test(result)) {
+        result = result.replace(idPattern, `<a href="${href}">$1</a>`)
+        continue
+      }
+    }
+    if (href.includes("mv-cubicle-acb-maintenance")) {
+      const idPattern = /(maintenance\s+cubicle\s+MV|pemeliharaan\s+cubicle\s+MV|maintenance\s+ACB)/i
+      if (idPattern.test(result)) {
+        result = result.replace(idPattern, `<a href="${href}">$1</a>`)
+        continue
+      }
+    }
+    if (href.includes("partial-discharge-ultrasound-testing")) {
+      const idPattern = /(pengujian\s+partial\s+discharge|partial\s+discharge|ultrasound\s+testing)/i
+      if (idPattern.test(result)) {
+        result = result.replace(idPattern, `<a href="${href}">$1</a>`)
+        continue
+      }
+    }
+    if (href.includes("thermography-infrared-inspection")) {
+      const idPattern = /(inspeksi\s+termografi|termografi\s+infrared|thermal\s+imaging)/i
+      if (idPattern.test(result)) {
+        result = result.replace(idPattern, `<a href="${href}">$1</a>`)
+        continue
+      }
+    }
+    if (href.includes("electrical-turnaround-shutdown-services")) {
+      const idPattern = /(turnaround|shutdown\s+listrik\s+pabrik)/i
+      if (idPattern.test(result)) {
+        result = result.replace(idPattern, `<a href="${href}">$1</a>`)
+        continue
+      }
+    }
+  }
+
+  return result
+}
+
+/**
  * Filters rich text HTML containing bilingual markers (EN: / ID:) or
  * consecutive paired headings (e.g. <h2>English</h2><h2>Indonesian</h2>).
  * Returns clean HTML corresponding to the requested language.
@@ -132,8 +226,13 @@ export function combineBilingualText(values: { en?: string | null; id?: string |
 export function filterBilingualHtml(html: string | undefined | null, lang: ContentLanguage): string {
   if (!html || typeof html !== "string") return ""
 
+  // Normalize markdown links: [text](url) -> <a href="url">text</a>
+  let processedHtml = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, anchor, href) => {
+    const cleanHref = href.replace(/^https?:\/\/(?:www\.)?multidayamitra\.co\.id/i, "")
+    return `<a href="${cleanHref}">${anchor}</a>`
+  })
+
   // 0. If plain text without HTML tags is passed, split paragraphs into <p> tags
-  let processedHtml = html
   if (!/<(?:p|h[1-6]|div|ul|ol|blockquote|li|br)[^>]*>/i.test(processedHtml)) {
     processedHtml = processedHtml
       .split(/\n{2,}/)
@@ -181,6 +280,15 @@ export function filterBilingualHtml(html: string | undefined | null, lang: Conte
         tagged[i].lineLang = "en"
         tagged[i + 1].lineLang = "id"
         i++
+      }
+    }
+
+    // Sync links between EN and ID lines if present
+    for (let i = 0; i < tagged.length - 1; i++) {
+      if (tagged[i].lineLang === "en" && tagged[i + 1].lineLang === "id") {
+        tagged[i + 1].cleaned = syncBilingualLinks(tagged[i + 1].cleaned, tagged[i].cleaned)
+      } else if (tagged[i].lineLang === "id" && tagged[i + 1].lineLang === "en") {
+        tagged[i].cleaned = syncBilingualLinks(tagged[i].cleaned, tagged[i + 1].cleaned)
       }
     }
 
@@ -347,6 +455,15 @@ export function filterBilingualBlocks(
           }
         }
 
+        // Sync links between EN and ID lines if present
+        for (let i = 0; i < taggedLines.length - 1; i++) {
+          if (taggedLines[i].lineLang === "en" && taggedLines[i + 1].lineLang === "id") {
+            taggedLines[i + 1].cleaned = syncBilingualLinks(taggedLines[i + 1].cleaned, taggedLines[i].cleaned)
+          } else if (taggedLines[i].lineLang === "id" && taggedLines[i + 1].lineLang === "en") {
+            taggedLines[i].cleaned = syncBilingualLinks(taggedLines[i].cleaned, taggedLines[i + 1].cleaned)
+          }
+        }
+
         const hasLangLines = taggedLines.some((t) => t.lineLang !== null)
         if (hasLangLines) {
           const kept = taggedLines
@@ -416,6 +533,22 @@ export function filterBilingualBlocks(
       cur.blockLang = "en"
       next.blockLang = "id"
       i++
+      continue
+    }
+
+    // Sync links between adjacent EN and ID blocks
+    if (cur.blockLang === "en" && next.blockLang === "id") {
+      const curContent = cur.cleanedBlock.html || cur.cleanedBlock.text || ""
+      const nextContent = next.cleanedBlock.html || next.cleanedBlock.text || ""
+      const synced = syncBilingualLinks(nextContent, curContent)
+      if (synced !== nextContent) {
+        if (next.cleanedBlock.html) {
+          next.cleanedBlock.html = synced
+        } else {
+          next.cleanedBlock.text = synced
+          if (next.cleanedBlock.data) next.cleanedBlock.data.text = synced
+        }
+      }
     }
   }
 
@@ -444,7 +577,7 @@ export function extractBilingualHtml(raw: unknown): { id: string; en: string } {
       const enPart = obj.en
       const idHtml = typeof idPart === "string" ? idPart : htmlFromBlocksHelper(idPart)
       const enHtml = typeof enPart === "string" ? enPart : htmlFromBlocksHelper(enPart)
-      return { id: idHtml, en: enHtml }
+      return { id: syncBilingualLinks(idHtml, enHtml), en: enHtml }
     }
   }
 
@@ -463,7 +596,7 @@ export function extractBilingualHtml(raw: unknown): { id: string; en: string } {
     return { id: html, en: "" }
   }
 
-  return { id: idHtml, en: enHtml }
+  return { id: syncBilingualLinks(idHtml, enHtml), en: enHtml }
 }
 
 function htmlFromBlocksHelper(value: unknown): string {

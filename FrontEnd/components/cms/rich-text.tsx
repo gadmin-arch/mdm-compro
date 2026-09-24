@@ -90,7 +90,12 @@ export function RichText({
 
         if (type === "html") {
           // Rich-text editor output; always sanitized before injection.
-          const clean = sanitizeHtml(block.html ?? "", SANITIZE_OPTIONS)
+          let rawHtml = block.html ?? ""
+          rawHtml = rawHtml.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, anchor, href) => {
+            const cleanHref = href.replace(/^https?:\/\/(?:www\.)?multidayamitra\.co\.id/i, "")
+            return `<a href="${cleanHref}">${anchor}</a>`
+          })
+          const clean = sanitizeHtml(rawHtml, SANITIZE_OPTIONS)
           if (!clean) return null
           return <div key={index} className="cms-prose" dangerouslySetInnerHTML={{ __html: clean }} />
         }
@@ -119,11 +124,30 @@ export function RichText({
         if (type === "list") {
           return (
             <ul key={index} className="list-disc space-y-2 pl-5">
-              {items.map((item, itemIndex) => (
-                <li key={`${item}-${itemIndex}`}>{item}</li>
-              ))}
+              {items.map((item, itemIndex) => {
+                const formattedItem = item.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, anchor, href) => {
+                  const cleanHref = href.replace(/^https?:\/\/(?:www\.)?multidayamitra\.co\.id/i, "")
+                  return `<a href="${cleanHref}">${anchor}</a>`
+                })
+                if (/<[a-z][\s\S]*>/i.test(formattedItem)) {
+                  const clean = sanitizeHtml(formattedItem, SANITIZE_OPTIONS)
+                  return <li key={`${item}-${itemIndex}`} className="cms-prose" dangerouslySetInnerHTML={{ __html: clean }} />
+                }
+                return <li key={`${item}-${itemIndex}`}>{item}</li>
+              })}
             </ul>
           )
+        }
+
+        const formattedText = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, anchor, href) => {
+          const cleanHref = href.replace(/^https?:\/\/(?:www\.)?multidayamitra\.co\.id/i, "")
+          return `<a href="${cleanHref}">${anchor}</a>`
+        })
+
+        if (/<[a-z][\s\S]*>/i.test(formattedText)) {
+          const clean = sanitizeHtml(formattedText, SANITIZE_OPTIONS)
+          if (!clean) return null
+          return <div key={index} className="cms-prose" dangerouslySetInnerHTML={{ __html: clean }} />
         }
         return <p key={index}>{text}</p>
       })}

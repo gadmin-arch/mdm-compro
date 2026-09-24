@@ -2662,10 +2662,8 @@ UPDATE services SET
           }
         },
         {
-          "type": "paragraph",
-          "data": {
-            "text": "Keandalan sistem distribusi listrik tidak hanya bergantung pada kualitas kabel dan peralatan, tetapi juga pada proses instalasi dan terminasi kabel MV & LV yang tepat. Instalasi, routing, terminasi, dan pengujian yang dilakukan secara akurat sangat penting untuk menjaga keselamatan, keandalan, dan performa sistem dalam jangka panjang."
-          }
+          "type": "html",
+          "html": "<p>Keandalan sistem distribusi listrik tidak hanya bergantung pada kualitas kabel dan peralatan, tetapi juga pada proses <a href=\"/services/electrical-construction-installation/mv-lv-cable-installation-termination\">instalasi dan terminasi kabel MV & LV</a> yang tepat. Instalasi, routing, terminasi, dan pengujian yang dilakukan secara akurat sangat penting untuk menjaga keselamatan, keandalan, dan performa sistem dalam jangka panjang.</p>"
         }
       ]
     },
