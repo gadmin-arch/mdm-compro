@@ -22,22 +22,22 @@ const footerNav = [
     title: "EN: Services & Solutions\nID: Layanan & Solusi",
     links: [
       { label: "EN: Electrical Construction & Installation\nID: Konstruksi & Instalasi Elektrikal", href: "/services/electrical-construction-installation" },
-      { label: "EN: Electrical Maintenance & Servicing\nID: Pemeliharaan & Servis Elektrikal", href: "/services/electrical-maintenance-service" },
-      { label: "EN: Automation Solutions & Services\nID: Solusi & Layanan Otomasi", href: "/services/automation-solutions-services" },
-      { label: "EN: Inspection, Testing & Commissioning\nID: Inspeksi, Pengujian & Komisioning", href: "/services/inspection-testing-commissioning" },
-      { label: "EN: Mechanical Services & Supplies\nID: Layanan Mekanikal & Pasokan Umum", href: "/services/mechanical-services-supplies" },
+      { label: "EN: Electrical Maintenance & Servicing\nID: Pemeliharaan & Perawatan Sistem Kelistrikan", href: "/services/electrical-maintenance-service" },
+      { label: "EN: Automation Solutions & Services\nID: Solusi & Layanan Otomasi Industri", href: "/services/automation-solutions-services" },
+      { label: "EN: Inspection, Testing & Commissioning\nID: Inspeksi, Pengujian & Commissioning", href: "/services/inspection-testing-commissioning" },
+      { label: "EN: Mechanical Services & Supplies\nID: Layanan Mekanikal & Pengadaan Industri", href: "/services/mechanical-services-supplies" },
     ],
   },
   {
     title: "EN: Products & Partners\nID: Produk & Mitra",
     links: [
       { label: "EN: Rittal Authorized Distributor\nID: Distributor Resmi Rittal", href: "/products/rittal-distributor" },
-      { label: "EN: Schneider Electric Integrator\nID: Integrator Schneider Electric", href: "/products/schneider-integrator" },
-      { label: "EN: Electrical Distribution\nID: Distribusi Elektrikal", href: "/products/electrical-distribution" },
-      { label: "EN: Automation & Control\nID: Otomasi & Kontrol", href: "/products/automation-control" },
-      { label: "EN: Enclosure & Climate Control\nID: Enclosure & Tata Udara Panel", href: "/products/enclosure-climate-control" },
-      { label: "EN: Power Quality Systems\nID: Sistem Kualitas Daya", href: "/products/power-quality" },
-      { label: "EN: Fire Alarm Products\nID: Produk Fire Alarm", href: "/products/fire-alarm-products" },
+      { label: "EN: Schneider Electric System Integrator\nID: System Integrator Schneider Electric", href: "/products/schneider-integrator" },
+      { label: "EN: Electrical Distribution\nID: Distribusi Kelistrikan", href: "/products/electrical-distribution" },
+      { label: "EN: Automation & Control\nID: Otomasi & Kontrol Industri", href: "/products/automation-control" },
+      { label: "EN: Enclosure & Climate Control Systems\nID: Sistem Enclosure & Kontrol Suhu Industri", href: "/products/enclosure-climate-control" },
+      { label: "EN: Power Quality Systems & Active Filters\nID: Sistem Kualitas Daya & Filter Harmonisa Aktif", href: "/products/power-quality" },
+      { label: "EN: Fire Alarm & Suppression Systems\nID: Sistem Fire Alarm & Pemadam Kebakaran", href: "/products/fire-alarm-products" },
     ],
   },
 ]
@@ -69,13 +69,17 @@ export async function SiteFooter() {
               {settings.address && (
                 <li className="flex items-start gap-2">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                  <span className="max-w-sm">{settings.address}</span>
+                  <span className="max-w-sm">
+                    <BilingualText text={settings.address} />
+                  </span>
                 </li>
               )}
               <li className="flex items-start gap-2">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
                 <div className="flex flex-col gap-1">
-                  <span className="font-medium text-foreground">WhatsApp Direct:</span>
+                  <span className="font-medium text-foreground">
+                    <BilingualText text="EN: WhatsApp Direct:\nID: Kontak WhatsApp:" />
+                  </span>
                   <div className="flex flex-col gap-1 text-xs sm:text-sm">
                     <a
                       href="https://wa.me/628118303250"
@@ -83,7 +87,9 @@ export async function SiteFooter() {
                       rel="noopener noreferrer"
                       className="font-medium text-foreground hover:text-emerald-600 hover:underline transition-colors flex items-center gap-1.5"
                     >
-                      <span className="text-muted-foreground font-normal">Technical Expert:</span>
+                      <span className="text-muted-foreground font-normal">
+                        <BilingualText text="EN: Technical Expert:\nID: Konsultasi Teknis:" />
+                      </span>
                       +62 811-8303-250
                     </a>
                     <a
@@ -92,7 +98,9 @@ export async function SiteFooter() {
                       rel="noopener noreferrer"
                       className="font-medium text-foreground hover:text-emerald-600 hover:underline transition-colors flex items-center gap-1.5"
                     >
-                      <span className="text-muted-foreground font-normal">Sales:</span>
+                      <span className="text-muted-foreground font-normal">
+                        <BilingualText text="EN: Sales & Inquiry:\nID: Penjualan & Penawaran:" />
+                      </span>
                       +62 821-4007-4122
                     </a>
                   </div>
@@ -102,7 +110,10 @@ export async function SiteFooter() {
                 <li className="flex items-center gap-2">
                   <Phone className="h-4 w-4 shrink-0 text-primary" />
                   <a href={`tel:${settings.phone.replace(/\s+/g, "")}`} className="transition-colors hover:text-foreground">
-                    Office: {settings.phone}
+                    <span className="text-muted-foreground font-normal">
+                      <BilingualText text="EN: Office:\nID: Kantor:" />{" "}
+                    </span>
+                    {settings.phone}
                   </a>
                 </li>
               )}
@@ -152,7 +163,8 @@ export async function SiteFooter() {
 
         <div className="mt-12 flex flex-col gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>
-            &copy; {new Date().getFullYear()} PT Multi Daya Mitra. All rights reserved.
+            &copy; {new Date().getFullYear()} PT Multi Daya Mitra.{" "}
+            <BilingualText text="EN: All rights reserved.\nID: Seluruh hak cipta dilindungi undang-undang." />
           </p>
           <p className="font-medium uppercase tracking-[0.14em]">
             <BilingualText text={settings.tagline} />

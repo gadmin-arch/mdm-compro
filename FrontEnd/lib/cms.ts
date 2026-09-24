@@ -396,9 +396,9 @@ export type SiteSettings = {
 }
 
 export const fallbackSiteSettings: SiteSettings = {
-  tagline: "Electrical · Automation · Fire System",
+  tagline: "EN: Electrical · Automation · Fire System\nID: Elektrikal · Otomasi · Sistem Fire Alarm",
   footerDescription:
-    "Indonesian electrical, industrial automation, and fire alarm services company — delivering reliable engineering across power, oil & gas, manufacturing, and infrastructure since 2012.",
+    "EN: Indonesian electrical, industrial automation, and fire alarm services company — delivering reliable engineering across power, oil & gas, manufacturing, and infrastructure since 2012.\nID: Perusahaan layanan rekayasa elektrikal, otomasi industri, dan sistem fire alarm terkemuka di Indonesia — menghadirkan solusi andal untuk sektor ketenagalistrikan, migas, manufaktur, dan infrastruktur sejak 2012.",
   email: "info@multidayamitra.co.id",
   phone: "+62 31 592 1256",
   fax: "+62 31 591 7845",
@@ -423,9 +423,20 @@ export const fallbackSiteSettings: SiteSettings = {
 export async function getSiteSettings(): Promise<SiteSettings> {
   const response = await cmsFetch<{ site?: Partial<SiteSettings> } | null>("/settings", null)
   const site = response?.site ?? {}
+
+  let tagline = site.tagline ?? fallbackSiteSettings.tagline
+  if (tagline && !tagline.includes("ID:") && !tagline.includes("EN:")) {
+    tagline = `EN: ${tagline}\nID: Elektrikal · Otomasi · Sistem Fire Alarm`
+  }
+
+  let footerDescription = site.footerDescription ?? fallbackSiteSettings.footerDescription
+  if (footerDescription && !footerDescription.includes("ID:") && !footerDescription.includes("EN:")) {
+    footerDescription = `EN: ${footerDescription}\nID: Perusahaan layanan rekayasa elektrikal, otomasi industri, dan sistem fire alarm terkemuka di Indonesia — menghadirkan solusi andal untuk sektor ketenagalistrikan, migas, manufaktur, dan infrastruktur sejak 2012.`
+  }
+
   return {
-    tagline: site.tagline ?? fallbackSiteSettings.tagline,
-    footerDescription: site.footerDescription ?? fallbackSiteSettings.footerDescription,
+    tagline,
+    footerDescription,
     email: site.email ?? fallbackSiteSettings.email,
     phone: site.phone ?? fallbackSiteSettings.phone,
     fax: site.fax ?? fallbackSiteSettings.fax,
