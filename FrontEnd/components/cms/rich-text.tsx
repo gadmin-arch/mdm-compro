@@ -5,6 +5,7 @@ import {
   type ContentBlock,
   type ContentLanguage,
   filterBilingualBlocks,
+  filterBilingualText,
   isBilingualEnvelope,
   useContentLanguage,
 } from "@/components/cms/content-language"
@@ -83,8 +84,8 @@ export function RichText({
   return (
     <div className="space-y-4 text-base leading-relaxed text-muted-foreground">
       {blocks.map((block, index) => {
-        const text = block.text ?? block.data?.text
-        const items = block.items ?? block.data?.items ?? []
+        const text = filterBilingualText(block.text ?? block.data?.text, activeLang)
+        const items = (block.items ?? block.data?.items ?? []).map((i) => filterBilingualText(i, activeLang))
         const type = block.type ?? "paragraph"
 
         if (type === "html") {

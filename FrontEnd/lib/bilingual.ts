@@ -145,7 +145,7 @@ export function filterBilingualHtml(html: string | undefined | null, lang: Conte
 
   // 1. Process inline <p> that contains both EN and ID or dual language lines
   processedHtml = processedHtml.replace(/<p([^>]*)>([\s\S]*?)<\/p>/gi, (match: string, attrs: string, content: string) => {
-    const parts = content.split(/<br\s*\/?>/i).map((p: string) => p.trim()).filter(Boolean)
+    const parts = content.split(/<br\s*\/?>|\r?\n/i).map((p: string) => p.trim()).filter(Boolean)
     if (parts.length <= 1) return match
 
     const enMarkerRegex = /^(?:EN\s*:|\[EN\]|English\s*:)/i
@@ -321,12 +321,48 @@ export function filterBilingualBlocks(
     let blockLang: ContentLanguage | null = null
     let cleanedText = text
 
-    if (enMarkerRegex.test(text)) {
-      blockLang = "en"
-      cleanedText = text.replace(enMarkerRegex, "").trim()
-    } else if (idMarkerRegex.test(text)) {
-      blockLang = "id"
-      cleanedText = text.replace(idMarkerRegex, "").trim()
+    // A. Check if the block has multiline text that contains dual language lines
+    if (text.includes("\n")) {
+      const rawLines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+      if (rawLines.length > 1) {
+        type TaggedLine = { raw: string; cleaned: string; lineLang: ContentLanguage | null }
+        const taggedLines: TaggedLine[] = rawLines.map((l) => {
+          let lineLang: ContentLanguage | null = null
+          let cleaned = l
+          if (enMarkerRegex.test(l)) {
+            lineLang = "en"
+            cleaned = l.replace(enMarkerRegex, "").trim()
+          } else if (idMarkerRegex.test(l)) {
+            lineLang = "id"
+            cleaned = l.replace(idMarkerRegex, "").trim()
+          }
+          return { raw: l, cleaned, lineLang }
+        })
+
+        for (let i = 0; i < taggedLines.length - 1; i++) {
+          if (taggedLines[i].lineLang === null && taggedLines[i + 1].lineLang === null) {
+            taggedLines[i].lineLang = "en"
+            taggedLines[i + 1].lineLang = "id"
+            i++
+          }
+        }
+
+        const hasLangLines = taggedLines.some((t) => t.lineLang !== null)
+        if (hasLangLines) {
+          const kept = taggedLines
+            .filter((t) => t.lineLang === null || t.lineLang === lang)
+            .map((t) => t.cleaned)
+          cleanedText = kept.join("\n")
+        }
+      }
+    } else {
+      if (enMarkerRegex.test(text)) {
+        blockLang = "en"
+        cleanedText = text.replace(enMarkerRegex, "").trim()
+      } else if (idMarkerRegex.test(text)) {
+        blockLang = "id"
+        cleanedText = text.replace(idMarkerRegex, "").trim()
+      }
     }
 
     let cleanedItems = block.items ?? block.data?.items
@@ -356,19 +392,27 @@ export function filterBilingualBlocks(
     }
   })
 
-  // Detect consecutive paired headings
+  // Detect consecutive paired headings or paired short paragraph titles
   for (let i = 0; i < tagged.length - 1; i++) {
     const cur = tagged[i]
     const next = tagged[i + 1]
-    const curType = cur.original.type
-    const nextType = next.original.type
+    const curType = cur.original.type ?? "paragraph"
+    const nextType = next.original.type ?? "paragraph"
 
-    if (
-      (curType === "heading" || curType === "header") &&
-      curType === nextType &&
-      !cur.blockLang &&
-      !next.blockLang
-    ) {
+    const isHeading = (curType === "heading" || curType === "header") && curType === nextType
+    const curText = cur.cleanedBlock.text ?? ""
+    const nextText = next.cleanedBlock.text ?? ""
+    const isShortParagraphPair =
+      (curType === "paragraph" || !curType) &&
+      (nextType === "paragraph" || !nextType) &&
+      curText.length > 3 &&
+      curText.length < 120 &&
+      nextText.length > 3 &&
+      nextText.length < 120 &&
+      !curText.endsWith(".") &&
+      !nextText.endsWith(".")
+
+    if ((isHeading || isShortParagraphPair) && !cur.blockLang && !next.blockLang) {
       cur.blockLang = "en"
       next.blockLang = "id"
       i++
