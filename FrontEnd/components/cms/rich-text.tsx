@@ -5,6 +5,7 @@ import {
   type ContentBlock,
   type ContentLanguage,
   filterBilingualBlocks,
+  isBilingualEnvelope,
   useContentLanguage,
 } from "@/components/cms/content-language"
 
@@ -44,12 +45,28 @@ export function RichText({
   const activeLang = forcedLang ?? contextLang
 
   let rawBlocks: ContentBlock[] = []
-  if (isBlockContent(content)) {
-    rawBlocks = content.blocks
-  } else if (typeof content === "string" && content.trim()) {
-    rawBlocks = [{ type: "html", html: content.trim() }]
-  } else if (content && typeof content === "object" && "html" in content && typeof (content as { html: unknown }).html === "string") {
-    rawBlocks = [{ type: "html", html: (content as { html: string }).html.trim() }]
+
+  // 1. Direct language extraction if saved from separate 2-input fields
+  if (isBilingualEnvelope(content)) {
+    const target = activeLang === "en" ? (content.en ?? content.id) : (content.id ?? content.en)
+    if (isBlockContent(target)) {
+      rawBlocks = target.blocks
+    } else if (typeof target === "string" && target.trim()) {
+      rawBlocks = [{ type: "html", html: target.trim() }]
+    } else if (target && typeof target === "object" && "html" in target && typeof (target as { html: unknown }).html === "string") {
+      rawBlocks = [{ type: "html", html: (target as { html: string }).html.trim() }]
+    }
+  }
+
+  // 2. Standard block content or raw string fallback
+  if (rawBlocks.length === 0) {
+    if (isBlockContent(content)) {
+      rawBlocks = content.blocks
+    } else if (typeof content === "string" && content.trim()) {
+      rawBlocks = [{ type: "html", html: content.trim() }]
+    } else if (content && typeof content === "object" && "html" in content && typeof (content as { html: unknown }).html === "string") {
+      rawBlocks = [{ type: "html", html: (content as { html: string }).html.trim() }]
+    }
   }
 
   // Filter bilingual content so only active language (ID or EN) is rendered

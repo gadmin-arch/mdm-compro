@@ -271,12 +271,30 @@ async function contentPayload(formData: FormData, nextPath: string): Promise<Con
   const uploadedImageUrl = await uploadFileURL(formData, "imageUpload", nextPath)
   const uploadedDatasheetUrl = await uploadFileURL(formData, "datasheetUpload", nextPath)
   const parentID = String(formData.get("parentId") ?? "")
+
+  const contentHtmlId = String(formData.get("contentHtml_id") ?? "")
+  const contentHtmlEn = String(formData.get("contentHtml_en") ?? "")
+  let contentValue: unknown
+
+  if (formData.has("contentHtml_id") || formData.has("contentHtml_en")) {
+    const idBlocks = blocksFromHtml(contentHtmlId).blocks
+    const enBlocks = blocksFromHtml(contentHtmlEn).blocks
+    contentValue = {
+      bilingual: true,
+      id: { blocks: idBlocks },
+      en: { blocks: enBlocks },
+      blocks: idBlocks.length > 0 ? idBlocks : enBlocks,
+    }
+  } else {
+    contentValue = blocksFromText(String(formData.get("contentText") ?? ""))
+  }
+
   return {
     parentId: parentID || null,
     slug: slugify(String(formData.get("slug") ?? "")),
     title: String(formData.get("title") ?? ""),
     summary: String(formData.get("summary") ?? ""),
-    content: blocksFromText(String(formData.get("contentText") ?? "")),
+    content: contentValue,
     imageUrl: uploadedImageUrl || String(formData.get("imageUrl") ?? ""),
     specs: specsFromText(String(formData.get("specsText") ?? "")),
     datasheetUrl: uploadedDatasheetUrl || String(formData.get("datasheetUrl") ?? ""),
@@ -297,11 +315,29 @@ async function newsPayload(formData: FormData, nextPath: string): Promise<NewsPa
     throw new FieldValidationError(zodFields(check.error))
   }
   const uploadedImageUrl = await uploadFileURL(formData, "featuredImageUpload", nextPath)
+
+  const bodyHtmlId = String(formData.get("bodyHtml_id") ?? "")
+  const bodyHtmlEn = String(formData.get("bodyHtml_en") ?? "")
+  let bodyValue: unknown
+
+  if (formData.has("bodyHtml_id") || formData.has("bodyHtml_en")) {
+    const idBlocks = blocksFromHtml(bodyHtmlId).blocks
+    const enBlocks = blocksFromHtml(bodyHtmlEn).blocks
+    bodyValue = {
+      bilingual: true,
+      id: { blocks: idBlocks },
+      en: { blocks: enBlocks },
+      blocks: idBlocks.length > 0 ? idBlocks : enBlocks,
+    }
+  } else {
+    bodyValue = blocksFromHtml(String(formData.get("bodyHtml") ?? ""))
+  }
+
   return {
     slug: slugify(String(formData.get("slug") ?? "")),
     title: String(formData.get("title") ?? ""),
     excerpt: String(formData.get("excerpt") ?? ""),
-    body: blocksFromHtml(String(formData.get("bodyHtml") ?? "")),
+    body: bodyValue,
     category: String(formData.get("category") ?? ""),
     featuredImageUrl: uploadedImageUrl || String(formData.get("featuredImageUrl") ?? ""),
     featured: formData.get("featured") === "on",
@@ -324,11 +360,29 @@ function careerPayload(formData: FormData): CareerPayload {
   if (!check.success) {
     throw new FieldValidationError(zodFields(check.error))
   }
+
+  const descHtmlId = String(formData.get("descriptionHtml_id") ?? "")
+  const descHtmlEn = String(formData.get("descriptionHtml_en") ?? "")
+  let descValue: unknown
+
+  if (formData.has("descriptionHtml_id") || formData.has("descriptionHtml_en")) {
+    const idBlocks = blocksFromHtml(descHtmlId).blocks
+    const enBlocks = blocksFromHtml(descHtmlEn).blocks
+    descValue = {
+      bilingual: true,
+      id: { blocks: idBlocks },
+      en: { blocks: enBlocks },
+      blocks: idBlocks.length > 0 ? idBlocks : enBlocks,
+    }
+  } else {
+    descValue = blocksFromHtml(String(formData.get("descriptionHtml") ?? ""))
+  }
+
   return {
     slug: slugify(String(formData.get("slug") ?? "")),
     title: String(formData.get("title") ?? ""),
     summary: String(formData.get("summary") ?? ""),
-    description: blocksFromHtml(String(formData.get("descriptionHtml") ?? "")),
+    description: descValue,
     department: String(formData.get("department") ?? ""),
     location: String(formData.get("location") ?? ""),
     employmentType: String(formData.get("employmentType") ?? "full_time"),

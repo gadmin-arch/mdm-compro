@@ -37,6 +37,10 @@ const RichTextField = dynamic(
   () => import("@/components/admin/rich-text-editor").then((mod) => mod.RichTextField),
   { ssr: false, loading: () => <Skeleton className="h-56 w-full" /> },
 )
+const BilingualRichTextField = dynamic(
+  () => import("@/components/admin/rich-text-editor").then((mod) => mod.BilingualRichTextField),
+  { ssr: false, loading: () => <Skeleton className="h-56 w-full" /> },
+)
 
 type ContentItemFormProps = {
   action: SaveAction
@@ -140,11 +144,12 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
           ]}
         />
         <Field label="Short description" name="summary" defaultValue={item?.summary} />
-        <TextAreaField
+        <BilingualRichTextField
           label="Description"
-          name="contentText"
-          rows={10}
-          defaultValue={textFromBlocks(item?.content)}
+          nameId="contentHtml_id"
+          nameEn="contentHtml_en"
+          nameFallback="contentText"
+          rawDefaultValue={item?.content}
         />
         <MediaUpload
           label="Image"
@@ -267,7 +272,13 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
           <Field label="Excerpt" name="excerpt" defaultValue={item?.excerpt} error={fields?.excerpt} />
           <NewsCategoryField defaultValue={item?.category} error={fields?.category} />
         </div>
-        <RichTextField label="Body Content" name="bodyHtml" defaultValue={htmlFromBlocks(item?.body)} />
+        <BilingualRichTextField
+          label="Body Content"
+          nameId="bodyHtml_id"
+          nameEn="bodyHtml_en"
+          nameFallback="bodyHtml"
+          rawDefaultValue={item?.body}
+        />
         <MediaUpload
           label="Featured Image"
           name="featuredImageUrl"
@@ -370,10 +381,12 @@ export function CareerForm({ action, item, mode }: CareerFormProps) {
           <Field label="Department" name="department" required defaultValue={item?.department} error={fields?.department} />
           <Field label="Location" name="location" required defaultValue={item?.location} error={fields?.location} />
         </div>
-        <RichTextField
+        <BilingualRichTextField
           label="Job description"
-          name="descriptionHtml"
-          defaultValue={htmlFromBlocks(item?.description)}
+          nameId="descriptionHtml_id"
+          nameEn="descriptionHtml_en"
+          nameFallback="descriptionHtml"
+          rawDefaultValue={item?.description}
         />
         <Field label="Apply URL" name="applyUrl" placeholder="https://docs.google.com/forms/..." defaultValue={item?.applyUrl} error={fields?.applyUrl} />
       </div>

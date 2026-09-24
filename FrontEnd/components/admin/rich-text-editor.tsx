@@ -35,6 +35,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
+import { extractBilingualHtml } from "@/lib/bilingual"
 
 type RichTextEditorProps = {
   value: string
@@ -547,12 +548,117 @@ export function RichTextField({
     <div className="space-y-1.5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</label>
-        <span className="text-[11px] text-muted-foreground">
-          Tips Dwi-Bahasa: Awali paragraf dengan <strong className="font-semibold text-foreground">EN:</strong> dan <strong className="font-semibold text-foreground">ID:</strong> (website akan otomatis memisahkan)
-        </span>
       </div>
       <input type="hidden" name={name} value={html} />
       <RichTextEditor className="mt-1" value={defaultValue} onChange={setHtml} />
+    </div>
+  )
+}
+
+export function BilingualRichTextField({
+  label,
+  nameId,
+  nameEn,
+  nameFallback,
+  rawDefaultValue,
+  defaultIdValue = "",
+  defaultEnValue = "",
+  className,
+}: {
+  label: string
+  nameId: string
+  nameEn: string
+  nameFallback?: string
+  rawDefaultValue?: unknown
+  defaultIdValue?: string
+  defaultEnValue?: string
+  className?: string
+}) {
+  const extracted = rawDefaultValue
+    ? extractBilingualHtml(rawDefaultValue)
+    : { id: defaultIdValue, en: defaultEnValue }
+
+  const [activeTab, setActiveTab] = useState<"id" | "en">("id")
+  const [htmlId, setHtmlId] = useState(extracted.id || defaultIdValue)
+  const [htmlEn, setHtmlEn] = useState(extracted.en || defaultEnValue)
+
+  const hasIdContent = Boolean(htmlId && htmlId.replace(/<[^>]+>/g, "").trim().length > 0)
+  const hasEnContent = Boolean(htmlEn && htmlEn.replace(/<[^>]+>/g, "").trim().length > 0)
+
+  return (
+    <div className={cn("space-y-2.5", className)}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</label>
+          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+            Dwi-Bahasa (Bilingual)
+          </span>
+        </div>
+        <span className="text-[11px] text-muted-foreground">
+          Gunakan 2 tab terpisah di bawah ini (tidak perlu mengetikkan tag EN/ID manual)
+        </span>
+      </div>
+
+      <input type="hidden" name={nameId} value={htmlId} />
+      <input type="hidden" name={nameEn} value={htmlEn} />
+      {nameFallback && <input type="hidden" name={nameFallback} value={htmlId || htmlEn} />}
+
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "id" | "en")} className="w-full">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-slate-50/80 dark:bg-slate-900/60 p-1.5">
+          <TabsList className="bg-muted/70 p-1 h-auto">
+            <TabsTrigger
+              value="id"
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs"
+            >
+              <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+              <span>Bahasa Indonesia (ID)</span>
+              {hasIdContent ? (
+                <span className="inline-flex items-center rounded-full bg-emerald-100 dark:bg-emerald-950 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300">
+                  Terisi
+                </span>
+              ) : (
+                <span className="text-[10px] text-muted-foreground">(kosong)</span>
+              )}
+            </TabsTrigger>
+            <TabsTrigger
+              value="en"
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs"
+            >
+              <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+              <span>English (EN)</span>
+              {hasEnContent ? (
+                <span className="inline-flex items-center rounded-full bg-emerald-100 dark:bg-emerald-950 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300">
+                  Filled
+                </span>
+              ) : (
+                <span className="text-[10px] text-muted-foreground">(empty)</span>
+              )}
+            </TabsTrigger>
+          </TabsList>
+
+          <span className="text-[11px] text-muted-foreground pr-2 hidden sm:inline">
+            {activeTab === "id" ? "🇮🇩 Mengedit versi Bahasa Indonesia" : "🇬🇧 Editing English version"}
+          </span>
+        </div>
+
+        {/* Tab 1: Bahasa Indonesia */}
+        <div className={cn("mt-2", activeTab !== "id" && "hidden")}>
+          <RichTextEditor
+            value={extracted.id || defaultIdValue}
+            onChange={setHtmlId}
+            className="border-slate-300 dark:border-slate-700 shadow-xs"
+          />
+        </div>
+
+        {/* Tab 2: English */}
+        <div className={cn("mt-2", activeTab !== "en" && "hidden")}>
+          <RichTextEditor
+            value={extracted.en || defaultEnValue}
+            onChange={setHtmlEn}
+            className="border-slate-300 dark:border-slate-700 shadow-xs"
+          />
+        </div>
+      </Tabs>
     </div>
   )
 }
