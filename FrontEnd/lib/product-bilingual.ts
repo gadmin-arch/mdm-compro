@@ -983,6 +983,140 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
     },
   },
 
+  "rittal-distributor/tx-cablenet-network-racks": {
+    id: "00000000-0000-0000-0000-000000000786",
+    slug: "tx-cablenet-network-racks",
+    fullPath: "rittal-distributor/tx-cablenet-network-racks",
+    depth: 1,
+    sortOrder: 19,
+    imageUrl: "/uploads/products-rittal-tx-cablenet.jpg",
+    title: {
+      en: "Rittal TX CableNet Network Racks (Waterfall Cable Management)",
+      id: "Rak Jaringan & Server Rittal TX CableNet (Manajemen Kabel Waterfall)",
+    },
+    summary: {
+      en: "Purpose-built IT network and server rack with patented 'waterfall' roof cable routing, safeguarding fiber-optic and copper bending radii with rapid tool-free interior installation.",
+      id: "Rak jaringan dan server IT dengan konsep perutean kabel atap 'waterfall' berpaten, menjaga radius lekukan kabel fiber optik dan tembaga dengan instalasi interior cepat tanpa perkakas.",
+    },
+    specs: {
+      "EN: System Architecture\nID: Arsitektur Sistem": "Welded torsion-free steel frame with dynamic 'waterfall' cable routing over the roof plate",
+      "EN: Load Capacity\nID: Kapasitas Beban": "Static load capacity up to 15,000 N (1,500 kg); dynamic load up to 10,000 N",
+      "EN: Dimensions & Form Factors\nID: Dimensi & Pilihan Ukuran": "Heights: 24U, 42U, 47U | Widths: 600 mm & 800 mm | Depths: 800 mm & 1,000 mm",
+      "EN: Door Configurations\nID: Konfigurasi Pintu": "Glazed front door with 3 mm toughened safety glass or 78% vented perforated sheet steel door for airflow",
+      "EN: Cable Routing Concept\nID: Konsep Manajemen Kabel": "Moulded plastic waterfall arches ensure compliance with minimum cable bending radius (copper & fiber)",
+      "EN: Standards & Protection\nID: Standar & Kategori Proteksi": "IP20 to IEC 60529, EIA-310-E, DIN EN 61587-1, RoHs and UL 2416 compliant",
+    },
+    content: {
+      en: `<h3>Next-Level Network Infrastructure with Patented 'Waterfall' Cable Management</h3>
+<p>Managing high-density copper and fiber-optic cabling in data centers and telecom rooms is one of the most critical challenges in modern network engineering. Kinking, excessive tension, or sharp bends violate the minimum bending radius of Cat 6A/7 cables and multi-strand optical fibers, degrading transmission signal bandwidth and causing packet loss. The Rittal TX CableNet solves this with an innovative roof concept: curved plastic 'waterfall' profiles direct incoming cables from above into the rack interior smoothly, preserving the required bending radius automatically without requiring manual dressing.</p>
+<h3>Fast-Track Deployment with Zero-Tool Snap-In Interior Installation</h3>
+<p>Time is of the essence when deploying enterprise networks. The TX CableNet is delivered pre-assembled and engineered for rapid out-of-the-box commissioning. The 19" (482.6 mm) mounting angles are continuously adjustable in depth and feature standard U-height markings. Quick-release fasteners allow side panels, doors, and cable fingers to be removed and repositioned in seconds without requiring screwdrivers or specialized tools.</p>
+<h3>Optimized Airflow for Active Switches & Dense Patch Panels</h3>
+<p>Available with either a modern glazed safety glass front door for low-noise office closets or a 78% perforated vented steel door for high-density network switches and patch panels. The vented door configuration maximizes natural convection and fan-assisted airflow, eliminating localized hot spots around high-throughput core routers and enterprise SAN directors.</p>
+<h3>Full Compatibility with Rittal PDU, CMC III & System Accessories</h3>
+<p>The TX CableNet integrates seamlessly into the complete Rittal IT ecosystem. Intelligent Rittal PDUs mount directly in the zero-U space along the vertical frame, leaving all 19" horizontal rack units available for IT servers and switches. CMC III environmental sensors, cable trays, and brush strips snap into pre-punched system punchings without requiring field drilling.</p>`,
+      id: `<h3>Infrastruktur Jaringan Tingkat Tinggi dengan Manajemen Kabel 'Waterfall' Berpaten</h3>
+<p>Pengelolaan kabel tembaga dan serat optik berdensitas tinggi di pusat data dan ruang telekomunikasi merupakan salah satu tantangan paling kritis dalam operasional jaringan modern. Tekukan tajam atau tarikan kabel yang berlebih melanggar batas minimum bending radius kabel Cat 6A/7 dan fiber optik, memicu pelemahan sinyal (attenuation) serta packet loss. Rittal TX CableNet mengatasi masalah ini melalui konsep atap inovatif: profil lengkung plastik 'waterfall' memandu kabel masuk dari atas kabinet ke dalam rak secara mulus, menjaga radius kelengkungan alami kabel secara otomatis tanpa perlu penataan manual yang rumit.</p>
+<h3>Pemasangan Cepat dengan Sistem Snap-In Tanpa Perkakas</h3>
+<p>Kecepatan implementasi sangat krusial dalam pembangunan jaringan enterprise. TX CableNet dikirim dalam kondisi siap rakit dan dirancang untuk commissioning instan. Rel dudukan 19" (482,6 mm) dapat digeser kedalamannya secara fleksibel dan dilengkapi penanda unit U yang jelas. Pengunci pelepas cepat (quick-release fasteners) memungkinkan panel samping, pintu, dan pengatur kabel dilepas maupun dipasang kembali dalam hitungan detik tanpa obeng atau perkakas khusus.</p>
+<h3>Aliran Udara Optimal untuk Switch Aktif & Patch Panel Densitas Tinggi</h3>
+<p>Tersedia dengan opsi pintu kaca tempered berpemandangan jernih untuk ruang server kantor yang senyap, atau pintu pelat baja berlubang (perforasi 78%) untuk sakelar jaringan (switches) dan patch panel berdensitas tinggi. Konfigurasi pintu berlubang memaksimalkan ventilasi konveksi udara bebas, mendinginkan router core dan perangkat storage SAN tanpa terbentuknya kantong panas (hot spots).</p>
+<h3>Kompatibilitas Penuh dengan Smart PDU Rittal & Sensor CMC III</h3>
+<p>TX CableNet terintegrasi sempurna dengan ekosistem perangkat IT Rittal lainnya. Smart PDU Rittal dapat dipasang langsung pada ruang 'Zero-U' di sepanjang tiang vertikal rak, membebaskan seluruh ruang 19" horizontal untuk peralatan server dan switch. Sensor pemantau lingkungan CMC III, nampan kabel, dan strip sikat debu terkunci rapat pada lubang sistem bawaan pabrik tanpa perlu pengeboran tambahan.</p>`,
+    },
+  },
+
+  "rittal-distributor/intelligent-it-pdu-power-distribution": {
+    id: "00000000-0000-0000-0000-000000000787",
+    slug: "intelligent-it-pdu-power-distribution",
+    fullPath: "rittal-distributor/intelligent-it-pdu-power-distribution",
+    depth: 1,
+    sortOrder: 20,
+    imageUrl: "/uploads/products-rittal-intelligent-pdu.jpg",
+    title: {
+      en: "Rittal Intelligent IT PDU (Metered, Switched & Managed Power Distribution)",
+      id: "Unit Distribusi Daya Cerdas Rittal IT PDU (Metered, Switched & Managed)",
+    },
+    summary: {
+      en: "Intelligent zero-U rack power distribution units featuring billing-grade energy metering (EN 62053-21 Class 1), individual outlet remote switching, integrated Type B RCM, and CMC III IoT sensors.",
+      id: "Unit distribusi daya cerdas untuk rak server zero-U dengan pengukuran energi kelas billing (EN 62053-21 Kelas 1), remote switching per-outlet, proteksi RCM Tipe B, dan konektivitas IoT CMC III.",
+    },
+    specs: {
+      "EN: PDU Variant Portfolio\nID: Varian Portofolio PDU": "Basic, Metered (phase-infeed), Metered Plus (per-outlet), Switched (remote toggle), Managed (metered + switched)",
+      "EN: Form Factor & Mounting\nID: Faktor Bentuk & Pemasangan": "Slim aluminum profile for tool-free vertical zero-U mounting in VX IT and TX CableNet server racks",
+      "EN: Socket Configurations\nID: Konfigurasi Soket Outlet": "Combinations of IEC 60320 C13 (10 A) and C19 (16 A) with patented dual mechanical locking mechanism",
+      "EN: Metering & Accuracy\nID: Pengukuran & Akurasi Energi": "Billing-grade measurement accuracy Class 1 (±1%) compliant with EN 62053-21 (kWh, kW, V, A, PF, THD)",
+      "EN: Safety & Residual Current\nID: Fitur Keamanan & Arus Sisa": "Integrated AC/DC sensitive Residual Current Monitoring (RCM Type B) and Type 3 surge arresters",
+      "EN: Network & IoT Protocols\nID: Protokol Jaringan & IoT": "Gigabit Ethernet, SNMPv1/v2c/v3, Modbus TCP, OPC-UA, IPv6, RESTful API, and CAN-bus sensor connectivity",
+    },
+    content: {
+      en: `<h3>Intelligent Power Management for Mission-Critical Data Center Enclosures</h3>
+<p>In modern cloud facilities, enterprise server rooms, and edge computing nodes, raw power delivery is no longer sufficient. Operators require granular visibility into rack energy consumption, remote control capabilities to reboot locked servers, and automated alerts before circuit overloads cause unplanned outages. The Rittal Intelligent PDU portfolio provides scalable, high-reliability power distribution across five functional variants: Basic, Metered, Metered Plus, Switched, and Managed.</p>
+<h3>Tool-Free Zero-U Mounting in Rittal VX IT and TX CableNet Racks</h3>
+<p>Rack space is valuable. Rittal PDUs feature a slender extruded aluminum profile engineered specifically for tool-free, clip-in mounting into the zero-U space between the 19" rail and the side panel of Rittal enclosures. This leaves all 42U or 47U rack units completely free for servers, storage arrays, and network switches, while providing immediate, unhindered access to individual power cords.</p>
+<h3>Patented IEC Lock Sockets & Billing-Grade Energy Measurement</h3>
+<p>Accidental cord disconnection during routine maintenance is a primary cause of downtime. Rittal PDUs integrate a patented universal locking mechanism for standard IEC C13 and C19 plugs—locking cables securely without requiring proprietary cords. For colocation and internal chargebacks, Metered Plus and Managed models feature Class 1 (±1%) billing-grade revenue metering per outlet according to EN 62053-21, measuring voltage, current, active/apparent power, power factor, and harmonic distortion.</p>
+<h3>Integrated Type B RCM and Advanced Environmental Sensor Integration</h3>
+<p>To eliminate costly external earth leakage relays, Rittal PDUs integrate an AC/DC sensitive Residual Current Monitor (RCM Type B) that detects smooth DC leakage currents often generated by server power supplies. Furthermore, each PDU incorporates a dedicated CAN-bus port that directly connects up to eight CMC III plug-and-play sensors (temperature, humidity, water leak, and electronic door locks), transforming the PDU into a centralized rack management gateway.</p>`,
+      id: `<h3>Manajemen Daya Cerdas untuk Kabinet Server & Pusat Data Misi Kritis</h3>
+<p>Pada fasilitas cloud modern, ruang server enterprise, dan titik komputasi edge, penyaluran listrik biasa sudah tidak lagi mencukupi. Operator membutuhkan visibilitas mendalam atas konsumsi daya per rak, kemampuan kendali jarak jauh untuk me-reboot server yang hang, serta peringatan dini otomatis sebelum beban lebih memicu pemadaman tak terduga. Rittal Intelligent PDU menghadirkan distribusi daya andal dalam lima varian fungsional: Basic, Metered, Metered Plus, Switched, dan Managed.</p>
+<h3>Pemasangan Zero-U Tanpa Perkakas pada Rak VX IT & TX CableNet</h3>
+<p>Ruang rak server sangat berharga. Rittal PDU dirancang dengan profil aluminium ekstrusi ramping khusus untuk pemasangan klip snap-in tanpa perkakas di ruang 'Zero-U' (antara tiang rel 19" dan dinding samping kabinet). Hal ini membuat seluruh unit 42U atau 47U tetap bebas sepenuhnya untuk server, storage SAN, dan sakelar jaringan, sekaligus memudahkan akses penataan kabel daya tanpa menghalangi aliran udara dingin.</p>
+<h3>Soket Pengunci Paten IEC Lock & Pengukuran Energi Berstandar Billing</h3>
+<p>Kabel power yang terlepas secara tidak sengaja saat teknisi melakukan perawatan rutin adalah penyebab umum server down. Rittal PDU mengintegrasikan mekanisme pengunci universal berpaten untuk colokan standar IEC C13 dan C19—mengunci kabel daya secara mekanis tanpa memerlukan kabel khusus berharga mahal. Untuk fasilitas colocation dan penagihan biaya listrik per departemen, tipe Metered Plus dan Managed dilengkapi pengukuran energi akurasi tinggi Kelas 1 (±1%) sesuai standar EN 62053-21 (kWh, kW, tegangan, arus, power factor, dan THD).</p>
+<h3>Proteksi Arus Sisa RCM Tipe B & Konektivitas Sensor Lingkungan</h3>
+<p>Menghilangkan kebutuhan relay kebocoran arus eksternal yang memakan biaya, Rittal PDU mengintegrasikan Residual Current Monitoring (RCM Tipe B) sensitif AC/DC yang mampu mendeteksi arus bocor DC halus dari power supply switching server. Selain itu, setiap PDU dilengkapi port CAN-bus yang dapat langsung dihubungkan ke delapan sensor pintar CMC III (suhu, kelembaban, kebocoran air, dan kontrol kunci pintu elektronik), menjadikan PDU sebagai gateway pemantau fisik rak terpadu.</p>`,
+    },
+  },
+
+  "rittal-distributor/lcp-liquid-cooling-packages": {
+    id: "00000000-0000-0000-0000-000000000788",
+    slug: "lcp-liquid-cooling-packages",
+    fullPath: "rittal-distributor/lcp-liquid-cooling-packages",
+    depth: 1,
+    sortOrder: 21,
+    imageUrl: "/uploads/products-rittal-lcp-cooling.jpg",
+    title: {
+      en: "Rittal Liquid Cooling Packages (LCP CW & DX High-Density IT Cooling)",
+      id: "Unit Pendingin Cair Rittal Liquid Cooling Package (LCP CW & DX High-Density)",
+    },
+    summary: {
+      en: "High-density rack- and row-based liquid cooling systems delivering up to 55 kW cooling output per server rack using chilled water (CW) or direct expansion (DX) with zero room heat footprint.",
+      id: "Sistem pendingin cair berdensitas tinggi berbasis rak dan deret (row-based) berdaya hingga 55 kW per rak server menggunakan air dingin (CW) atau refrigeran (DX) tanpa jejak panas ke ruangan.",
+    },
+    specs: {
+      "EN: Cooling Output\nID: Kapasitas Pendinginan": "From 12 kW up to 55 kW per rack (LCP Rack CW/DX, LCP Inline CW/DX, and LCP Rear Door CW)",
+      "EN: Cooling Media & Technology\nID: Media Pendingin & Teknologi": "Chilled water (CW) closed circuit or direct expansion refrigerant (DX) with inverter-driven scroll compressor",
+      "EN: Airflow Configuration\nID: Konfigurasi Aliran Udara": "Closed-loop rack cooling (LCP Rack) or open hot/cold aisle containment row cooling (LCP Inline)",
+      "EN: Fan Architecture\nID: Arsitektur Kipas": "Redundant EC fans with N+1 hot-swappable replacement during live IT operations",
+      "EN: Temperature Regulation\nID: Regulasi Suhu": "Continuous server intake temperature monitoring with stepless 0-10 V EC fan & motorized water valve control",
+      "EN: Monitoring & Safety\nID: Pemantauan & Keamanan": "Integrated optical/conductive water leak detection, condensate drip tray with float switch, SNMP/Modbus/BACnet",
+    },
+    content: {
+      en: `<h3>High-Density Liquid Cooling for AI, HPC, and Mission-Critical Server Racks</h3>
+<p>High-density compute clusters, GPU accelerated artificial intelligence servers, and blade enclosures generate thermal dissipation exceeding 20 kW to 55 kW per rack—well beyond the physical cooling limits of traditional raised-floor perimeter CRAC units. The Rittal Liquid Cooling Package (LCP) family provides targeted, localized thermal management directly at the server level, capturing 100% of heat dissipation before it enters the data center room.</p>
+<h3>LCP Rack vs. LCP Inline: Tailored for Every Data Center Architecture</h3>
+<p>Rittal offers two distinct architectural configurations:
+<b>LCP Rack:</b> Creates a completely sealed, airtight closed-loop cooling circuit with one or two bayed VX IT server racks. Hot exhaust air from servers is drawn directly into the heat exchanger, cooled, and blown back across the front of the servers at the exact setpoint temperature, achieving IP55 enclosure protection and zero room noise.
+<b>LCP Inline:</b> Installed directly within a row of bayed server cabinets, expelling cooled air into a contained cold aisle and drawing hot air from a contained hot aisle, maximizing energy efficiency for open-row data center suites.</p>
+<h3>Chilled Water (CW) and Direct Expansion (DX) Options</h3>
+<p>For large enterprise facilities with central chilled water plants, LCP CW utilizes water/air heat exchangers controlled by motorized proportional 2-way regulating valves, achieving exceptional PUE (Power Usage Effectiveness) ratings under 1.15. For edge data centers or distributed installations without chilled water loops, LCP DX integrates an inverter-controlled variable-speed brushless compressor with an external air-cooled condenser, dynamically modulating cooling capacity from 20% to 100% to match instantaneous IT server loads.</p>
+<h3>Hot-Swappable Redundant EC Fans and Multi-Layer Leak Protection</h3>
+<p>Continuous uptime is guaranteed through an array of redundant, high-efficiency EC (Electronically Commutated) axial fans in an N+1 configuration. In the rare event of a fan issue, individual fan modules can be replaced hot-swappable in seconds without tools while the IT servers remain fully operational. Multiple leak-detection sensors along the condensate tray and piping connect directly to the automated shutoff valve and alert the facility BMS via SNMP, Modbus, or BACnet.</p>`,
+      id: `<h3>Pendinginan Cair Berdensitas Tinggi untuk AI, HPC & Rak Server Kritis</h3>
+<p>Kluster komputasi densitas tinggi, server Artificial Intelligence (AI) bertenaga GPU, serta blade server modern menghasilkan panas termal ekstrem melebihi 20 kW hingga 55 kW per rak—jauh melampaui kemampuan fisik AC presisi perimeter (CRAC) konvensional dengan lantai raised floor. Rittal Liquid Cooling Package (LCP) menghadirkan solusi pendinginan terarah langsung di samping rak server, menangkap 100% beban panas sebelum sempat menyebar ke udara ruangan pusat data.</p>
+<h3>Pilihan LCP Rack vs. LCP Inline: Fleksibel untuk Segala Arsitektur Data Center</h3>
+<p>Rittal menghadirkan dua konfigurasi arsitektur pendinginan utama:
+<b>LCP Rack:</b> Membentuk sirkulasi tertutup (closed-loop) kedap udara dengan satu atau dua rak server VX IT di sebelahnya. Udara panas buangan server ditarik langsung ke penukar panas LCP, didinginkan, lalu dihembuskan kembali ke bagian depan server pada suhu presisi, menghasilkan proteksi kabinet IP55 tanpa kebocoran suara bising ke ruangan.
+<b>LCP Inline:</b> Dipasang sejajar dalam deretan rak server (row-based), mengalirkan udara dingin ke dalam lorong dingin tertutup (cold aisle containment) dan menghisap udara dari lorong panas (hot aisle), memaksimalkan efisiensi energi PUE untuk ruang data center modern.</p>
+<h3>Varian Air Dingin (CW) & Refrigeran Ekspansi Langsung (DX)</h3>
+<p>Untuk fasilitas pusat data besar yang memiliki jaringan pipa chiller air dingin, tipe LCP CW menggunakan penukar panas air/udara berefisiensi tinggi dengan katup proporsional bermotor, menghasilkan rasio efisiensi PUE (Power Usage Effectiveness) istimewa di bawah 1,15. Untuk fasilitas edge data center atau pabrik yang tidak memiliki instalasi chiller air, LCP DX mengintegrasikan kompresor inverter berkecepatan dinamis yang terkoneksi ke kondensor luar ruangan, secara otomatis memodulasi daya pendingin dari 20% hingga 100% mengikuti beban kerja komputasi server seketika.</p>
+<h3>Kipas EC Redundan Hot-Swappable & Proteksi Kebocoran Berlapis</h3>
+<p>Keandalan non-stop dijamin oleh susunan kipas motor EC (Electronically Commutated) berkonfigurasi redundan N+1. Apabila terjadi kendala pada salah satu modul kipas, teknisi dapat menggantinya secara langsung (hot-swappable) dalam hitungan detik tanpa alat dan tanpa mematikan server IT. Sensor kebocoran air optik dan konduktif di sepanjang bak kondensat terhubung ke katup pemutus darurat otomatis dan mengirimkan notifikasi instan ke sistem BMS gedung melalui protokol SNMP, Modbus, atau BACnet.</p>`,
+    },
+  },
+
+
   "schneider-integrator/industrial-automation": {
     id: "00000000-0000-0000-0000-000000000719",
     slug: "industrial-automation",
@@ -1494,6 +1628,9 @@ export const PRODUCT_TREE_STRUCTURE: { root: string; children: string[] }[] = [
       "rittal-distributor/perforex-lc-laser-machining-centers",
       "rittal-distributor/wire-terminal-automated-wire-processing",
       "rittal-distributor/copper-workstation-busbar-machining",
+      "rittal-distributor/tx-cablenet-network-racks",
+      "rittal-distributor/intelligent-it-pdu-power-distribution",
+      "rittal-distributor/lcp-liquid-cooling-packages",
     ],
   },
   {
