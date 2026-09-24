@@ -1,9 +1,16 @@
+"use client"
+
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { RichText } from "@/components/cms/rich-text"
 import { CtaBanner } from "@/components/cta-banner"
 import { PageHero } from "@/components/page-hero"
 import { formatDate, type NewsItem } from "@/lib/cms"
+import {
+  BilingualText,
+  ContentLanguageToggle,
+  useContentLanguage,
+} from "@/components/cms/content-language"
 
 // The article body, lifted out of app/(site)/news/[slug]/page.tsx so the public
 // page and the admin draft preview render from ONE definition. Purely
@@ -17,21 +24,38 @@ export function NewsArticleView({
   // reject; the preview opts out of optimisation rather than failing to render.
   unoptimizedImage?: boolean
 }) {
+  const { isIndonesian } = useContentLanguage()
+
   return (
     <>
       <PageHero
         eyebrow={news.category ?? "News"}
-        title={news.title}
-        description={news.excerpt ?? "Company update from PT Multi Daya Mitra."}
-        breadcrumbs={[{ label: "Home", href: "/" }, { label: "News", href: "/news" }, { label: news.title }]}
+        title={<BilingualText text={news.title} />}
+        description={
+          news.excerpt ? (
+            <BilingualText text={news.excerpt} />
+          ) : isIndonesian ? (
+            "Pembaruan informasi dan wawasan teknis dari PT Multi Daya Mitra."
+          ) : (
+            "Company update and technical insights from PT Multi Daya Mitra."
+          )
+        }
+        breadcrumbs={[
+          { label: "Home", href: "/" },
+          { label: "News", href: "/news" },
+          { label: news.title },
+        ]}
       />
       <article className="border-b border-border/60 bg-background">
-        <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
-          <div className="mb-8 flex flex-wrap items-center gap-3">
-            {news.category && <Badge variant="outline">{news.category}</Badge>}
-            <span className="text-sm text-muted-foreground">{formatDate(news.publishedAt)}</span>
+        <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-border/50 pb-6">
+            <div className="flex flex-wrap items-center gap-3">
+              {news.category && <Badge variant="outline">{news.category}</Badge>}
+              <span className="text-sm text-muted-foreground">{formatDate(news.publishedAt)}</span>
+            </div>
+            <ContentLanguageToggle />
           </div>
-          <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-xl border border-border bg-secondary">
+          <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-xl border border-border bg-secondary shadow-xs">
             <Image
               src={news.featuredImageUrl || "/placeholder.jpg"}
               alt={news.title}
@@ -46,10 +70,20 @@ export function NewsArticleView({
         </div>
       </article>
       <CtaBanner
-        title="Have a project worth discussing?"
-        description="Talk with our engineers about electrical, automation, and fire system needs."
+        title={
+          isIndonesian
+            ? "Punya proyek elektrikal atau otomasi yang ingin didiskusikan?"
+            : "Have a project worth discussing?"
+        }
+        description={
+          isIndonesian
+            ? "Konsultasikan kebutuhan teknis kelistrikan, sistem tegangan menengah/rendah, dan otomasi industri bersama engineer kami."
+            : "Talk with our engineers about electrical, automation, and fire system needs."
+        }
         primaryHref="/contact"
-        primaryLabel="Contact Us"
+        primaryLabel={isIndonesian ? "Hubungi Kami" : "Contact Us"}
+        secondaryHref={`https://wa.me/628118303250?text=Halo%20PT%20Multi%20Daya%20Mitra,%20saya%20tertarik%20dengan%20artikel:%20${encodeURIComponent(news.title)}`}
+        secondaryLabel="WhatsApp Hotline"
       />
     </>
   )

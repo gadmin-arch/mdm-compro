@@ -6,8 +6,8 @@ type Crumb = { label: string; href?: string }
 
 interface PageHeroProps {
   eyebrow: string
-  title: string
-  description?: string
+  title: React.ReactNode
+  description?: React.ReactNode
   breadcrumbs?: Crumb[]
 }
 
