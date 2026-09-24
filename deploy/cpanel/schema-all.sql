@@ -2648,9 +2648,52 @@ UPDATE products SET image_url = '/uploads/products-schneider-distribution.jpg' W
 
 UPDATE services SET image_url = '/uploads/mdm/construction-installation.jpg' WHERE slug = 'electrical-construction-installation';
 UPDATE services SET image_url = '/uploads/mdm/medium-voltage-equipment.jpg' WHERE slug = 'substation-mv-switchgear-installation';
-UPDATE services SET image_url = '/uploads/mdm/circuit-breaker.jpg' WHERE slug = 'lv-distribution-panels-assembly';
-UPDATE services SET image_url = '/uploads/mdm/electrical-equipment.jpg' WHERE slug = 'mv-lv-cable-installation-termination';
-UPDATE services SET image_url = '/uploads/PM-Fire-Alarm-1.jpg' WHERE slug = 'fire-alarm-system-installation';
+UPDATE services SET 
+  image_url = '/uploads/mdm/electrical-equipment.jpg',
+  content = '{
+    "bilingual": true,
+    "id": {
+      "blocks": [
+        {
+          "type": "heading",
+          "data": {
+            "level": 3,
+            "text": "Distribusi Listrik yang Andal untuk Fasilitas Industri"
+          }
+        },
+        {
+          "type": "paragraph",
+          "data": {
+            "text": "Keandalan sistem distribusi listrik tidak hanya bergantung pada kualitas kabel dan peralatan, tetapi juga pada proses instalasi dan terminasi kabel MV & LV yang tepat. Instalasi, routing, terminasi, dan pengujian yang dilakukan secara akurat sangat penting untuk menjaga keselamatan, keandalan, dan performa sistem dalam jangka panjang."
+          }
+        }
+      ]
+    },
+    "en": {
+      "blocks": [
+        {
+          "type": "heading",
+          "data": {
+            "level": 3,
+            "text": "Reliable Power Distribution for Industrial Facilities"
+          }
+        },
+        {
+          "type": "html",
+          "html": "<p>Reliable electrical distribution depends not only on cable quality and equipment, but also on proper <a href=\"/services/electrical-construction-installation/mv-lv-cable-installation-termination\">MV & LV cable installation and termination.</a> Accurate installation, routing, termination, and testing are essential to maintain electrical safety, system reliability, and long-term performance.</p>"
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "type": "paragraph",
+        "data": {
+          "text": "Keandalan sistem distribusi listrik tidak hanya bergantung pada kualitas kabel dan peralatan, tetapi juga pada proses instalasi dan terminasi kabel MV & LV yang tepat."
+        }
+      }
+    ]
+  }'::jsonb
+WHERE slug = 'mv-lv-cable-installation-termination';
 UPDATE services SET image_url = '/uploads/mdm/maintenance-contract.jpg' WHERE slug = 'electrical-maintenance-service';
 UPDATE services SET image_url = '/uploads/mdm/micrologic-test.jpg' WHERE slug = 'transformer-oil-treatment-dga';
 UPDATE services SET image_url = '/uploads/mdm/preventive-maintenance.jpg' WHERE slug = 'mv-cubicle-acb-maintenance';

@@ -1,0 +1,52 @@
+{
+  "backup_created_at": "2026-09-24T13:52:00+07:00",
+  "note": "Backup of services, products, and news content prior to applying bilingual ID/EN separation",
+  "services": {
+    "mv-lv-cable-installation-termination": {
+      "id": "serv-cabling-termination",
+      "uuid": "00000000-0000-0000-0000-000000000813",
+      "parentId": "00000000-0000-0000-0000-000000000801",
+      "slug": "mv-lv-cable-installation-termination",
+      "fullPath": "electrical-construction-installation/mv-lv-cable-installation-termination",
+      "title": "MV & LV Cable Installation & Termination",
+      "summary": "Certified cable pulling, tray erection, heat-shrink/cold-shrink terminations, and high-potential (Hi-Pot) insulation testing.",
+      "imageUrl": "/uploads/mdm/electrical-equipment.jpg",
+      "status": "published",
+      "sortOrder": 3,
+      "content_legacy": {
+        "blocks": [
+          {
+            "type": "paragraph",
+            "data": {
+              "text": "Certified cable jointing and termination specialists using 3M and Raychem kits, followed by VLF / DC Hi-Pot and sheath integrity testing."
+            }
+          }
+        ]
+      }
+    },
+    "substation-mv-switchgear-installation": {
+      "id": "serv-substation-installation",
+      "slug": "substation-mv-switchgear-installation",
+      "fullPath": "electrical-construction-installation/substation-mv-switchgear-installation",
+      "title": "Substation & MV Switchgear Installation",
+      "summary": "Medium voltage metal-clad switchgear, power transformers, and substation integration up to 36kV.",
+      "imageUrl": "/uploads/mdm/medium-voltage-equipment.jpg",
+      "status": "published"
+    },
+    "lv-distribution-panels-assembly": {
+      "id": "serv-lv-panel-assembly",
+      "slug": "lv-distribution-panels-assembly",
+      "fullPath": "electrical-construction-installation/lv-distribution-panels-assembly",
+      "title": "LV Panels Assembly (MDP, SDP, ATS & Sync)",
+      "summary": "Main Distribution Panels (MDP), Sub-Distribution Panels, ATS/AMF sync boards, and Motor Control Centers (MCC).",
+      "imageUrl": "/uploads/mdm/circuit-breaker.jpg",
+      "status": "published"
+    }
+  },
+  "raw_user_submitted_content": {
+    "title_en": "Reliable Power Distribution for Industrial Facilities",
+    "title_id": "Distribusi Listrik yang Andal untuk Fasilitas Industri",
+    "content_en": "Reliable electrical distribution depends not only on cable quality and equipment, but also on proper <a href=\"/services/electrical-construction-installation/mv-lv-cable-installation-termination\">MV & LV cable installation and termination.</a> Accurate installation, routing, termination, and testing are essential to maintain electrical safety, system reliability, and long-term performance.",
+    "content_id": "Keandalan sistem distribusi listrik tidak hanya bergantung pada kualitas kabel dan peralatan, tetapi juga pada proses instalasi dan terminasi kabel MV & LV yang tepat. Instalasi, routing, terminasi, dan pengujian yang dilakukan secara akurat sangat penting untuk menjaga keselamatan, keandalan, dan performa sistem dalam jangka panjang."
+  }
+}

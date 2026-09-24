@@ -51,6 +51,16 @@ export function filterBilingualText(text: string | undefined | null, lang: Conte
     return (lang === "id" ? slashParts[1] : slashParts[0]).trim()
   }
 
+  // 3. Dual lines separated by newline (\r?\n)
+  const lines = text
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+  if (lines.length === 2 && lines[0].length > 3 && lines[1].length > 3) {
+    // English first, Indonesian second by standard convention
+    return (lang === "id" ? lines[1] : lines[0]).trim()
+  }
+
   return text
 }
 
@@ -73,32 +83,62 @@ export function filterBilingualHtml(html: string | undefined | null, lang: Conte
       .join("\n")
   }
 
-  // 1. Process inline <p> that contains both EN and ID separated by <br>
-  processedHtml = processedHtml.replace(/<p([^>]*)>([\s\S]*?)<\/p>/gi, (match, attrs, content) => {
-    const hasEn = /(?:^|<br\s*\/?>)\s*(?:<(?:strong|b|span)[^>]*>)?\s*(?:EN\s*:|\[EN\]|English\s*:)/i.test(content)
-    const hasId = /(?:^|<br\s*\/?>)\s*(?:<(?:strong|b|span)[^>]*>)?\s*(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)/i.test(content)
+  // 1. Process inline <p> that contains both EN and ID or dual language lines
+  processedHtml = processedHtml.replace(/<p([^>]*)>([\s\S]*?)<\/p>/gi, (match: string, attrs: string, content: string) => {
+    const parts = content.split(/<br\s*\/?>/i).map((p: string) => p.trim()).filter(Boolean)
+    if (parts.length <= 1) return match
 
-    if (hasEn && hasId) {
-      const parts = content.split(/<br\s*\/?>/i)
-      const kept: string[] = []
-      for (const part of parts) {
-        const raw = part.replace(/<[^>]+>/g, "").trim()
-        const isEn = /^(?:EN\s*:|\[EN\]|English\s*:)/i.test(raw)
-        const isId = /^(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)/i.test(raw)
+    const enMarkerRegex = /^(?:EN\s*:|\[EN\]|English\s*:)/i
+    const idMarkerRegex = /^(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)/i
 
-        if ((lang === "en" && isEn) || (lang === "id" && isId)) {
-          const cleaned = part.replace(
-            /^\s*(?:<(?:strong|b|span)[^>]*>)?\s*(?:(?:EN|ID)\s*:|\[(?:EN|ID)\]|(?:English|Indonesian|Bahasa)\s*:)\s*(?:<\/(?:strong|b|span)>)?\s*/i,
-            ""
-          )
-          kept.push(cleaned)
-        } else if (!isEn && !isId) {
-          kept.push(part)
-        }
+    // Tag each line with its detected language
+    type TaggedLine = { raw: string; part: string; cleaned: string; lineLang: ContentLanguage | null }
+    const tagged: TaggedLine[] = parts.map((part: string) => {
+      const raw = part.replace(/<[^>]+>/g, "").trim()
+      let lineLang: ContentLanguage | null = null
+      let cleaned = part
+
+      if (enMarkerRegex.test(raw)) {
+        lineLang = "en"
+        cleaned = part.replace(
+          /^\s*(?:<(?:strong|b|span)[^>]*>)?\s*(?:EN\s*:|\[EN\]|English\s*:)\s*(?:<\/(?:strong|b|span)>)?\s*/i,
+          ""
+        )
+      } else if (idMarkerRegex.test(raw)) {
+        lineLang = "id"
+        cleaned = part.replace(
+          /^\s*(?:<(?:strong|b|span)[^>]*>)?\s*(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)\s*(?:<\/(?:strong|b|span)>)?\s*/i,
+          ""
+        )
       }
-      return kept.length > 0 ? `<p${attrs}>${kept.join("<br>")}</p>` : ""
+
+      return { raw, part, cleaned, lineLang }
+    })
+
+    // Detect pairs among unmarked lines (e.g. English title followed by Indonesian title)
+    for (let i = 0; i < tagged.length - 1; i++) {
+      if (tagged[i].lineLang === null && tagged[i + 1].lineLang === null) {
+        tagged[i].lineLang = "en"
+        tagged[i + 1].lineLang = "id"
+        i++
+      }
     }
-    return match
+
+    const hasAnyLang = tagged.some((t: TaggedLine) => t.lineLang !== null)
+    if (!hasAnyLang) return match
+
+    const kept = tagged
+      .filter((t: TaggedLine) => t.lineLang === null || t.lineLang === lang)
+      .map((t: TaggedLine) => t.cleaned)
+
+    if (kept.length === 0) return ""
+
+    // If kept has a title line (< 120 chars) and body line, separate cleanly into <h2> and <p>
+    if (kept.length === 2 && kept[0].length < 120 && !kept[0].endsWith(".")) {
+      return `<h2>${kept[0]}</h2><p${attrs}>${kept[1]}</p>`
+    }
+
+    return `<p${attrs}>${kept.join("<br>")}</p>`
   })
 
   // 2. Process list items with language markers (<li>EN: ...</li><li>ID: ...</li>)
@@ -170,16 +210,23 @@ export function filterBilingualHtml(html: string | undefined | null, lang: Conte
   }
 
   // 4. Detect paired consecutive headings (e.g. <h2>English</h2><h2>Indonesian</h2>)
+  // or paired short title paragraphs (e.g. <p>English Title</p><p>Judul Indonesia</p>)
   for (let i = 0; i < blocks.length - 1; i++) {
     const cur = blocks[i]
     const next = blocks[i + 1]
 
-    if (
-      cur.tag.startsWith("h") &&
-      cur.tag === next.tag &&
-      !cur.blockLang &&
-      !next.blockLang
-    ) {
+    const isHeading = cur.tag.startsWith("h") && cur.tag === next.tag
+    const isShortParagraphPair =
+      cur.tag === "p" &&
+      next.tag === "p" &&
+      cur.rawText.length > 3 &&
+      cur.rawText.length < 120 &&
+      next.rawText.length > 3 &&
+      next.rawText.length < 120 &&
+      !cur.rawText.endsWith(".") &&
+      !next.rawText.endsWith(".")
+
+    if ((isHeading || isShortParagraphPair) && !cur.blockLang && !next.blockLang) {
       cur.blockLang = "en"
       next.blockLang = "id"
       i++ // Skip next
