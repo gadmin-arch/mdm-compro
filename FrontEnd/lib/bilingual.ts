@@ -47,6 +47,11 @@ export function filterBilingualText(text: string | undefined | null, lang: Conte
   // 2. Dual titles separated by " / " or " | "
   const slashParts = text.split(/\s+[\/|]\s+/)
   if (slashParts.length === 2 && slashParts[0].length > 3 && slashParts[1].length > 3) {
+    const part0IsId = /\b(dan|yang|untuk|dengan|pada|oleh|atau|ke|dari|tentang|dalam|adalah|sebagai|layanan|produk|berita|karir|perakitan|pengujian|keandalan|fasilitas|distribusi|pabrik|sistem)\b/i.test(slashParts[0])
+    const part1IsId = /\b(dan|yang|untuk|dengan|pada|oleh|atau|ke|dari|tentang|dalam|adalah|sebagai|layanan|produk|berita|karir|perakitan|pengujian|keandalan|fasilitas|distribusi|pabrik|sistem)\b/i.test(slashParts[1])
+    if (part0IsId && !part1IsId) {
+      return (lang === "id" ? slashParts[0] : slashParts[1]).trim()
+    }
     // English first, Indonesian second by standard convention
     return (lang === "id" ? slashParts[1] : slashParts[0]).trim()
   }
@@ -57,11 +62,66 @@ export function filterBilingualText(text: string | undefined | null, lang: Conte
     .map((l) => l.trim())
     .filter(Boolean)
   if (lines.length === 2 && lines[0].length > 3 && lines[1].length > 3) {
+    const line0IsId = /\b(dan|yang|untuk|dengan|pada|oleh|atau|ke|dari|tentang|dalam|adalah|sebagai|layanan|produk|berita|karir|perakitan|pengujian|keandalan|fasilitas|distribusi|pabrik|sistem)\b/i.test(lines[0])
+    const line1IsId = /\b(dan|yang|untuk|dengan|pada|oleh|atau|ke|dari|tentang|dalam|adalah|sebagai|layanan|produk|berita|karir|perakitan|pengujian|keandalan|fasilitas|distribusi|pabrik|sistem)\b/i.test(lines[1])
+    if (line0IsId && !line1IsId) {
+      return (lang === "id" ? lines[0] : lines[1]).trim()
+    }
     // English first, Indonesian second by standard convention
     return (lang === "id" ? lines[1] : lines[0]).trim()
   }
 
   return text
+}
+
+/**
+ * Extracts distinct Indonesian and English strings from a single text field:
+ * - Explicit markers: EN: ... \nID: ...
+ * - Dual lines / slashes
+ * - Language heuristic fallback if unmarked
+ */
+export function extractBilingualText(raw: string | undefined | null): { id: string; en: string } {
+  if (!raw || typeof raw !== "string") return { id: "", en: "" }
+  const trimmed = raw.trim()
+  if (!trimmed) return { id: "", en: "" }
+
+  const idText = filterBilingualText(trimmed, "id")
+  const enText = filterBilingualText(trimmed, "en")
+
+  if (idText !== enText) {
+    return { id: idText, en: enText }
+  }
+
+  // If both are identical (single language text without bilingual delimiters),
+  // check if it's distinctly Indonesian or English:
+  const isId = /\b(dan|yang|untuk|dengan|pada|oleh|atau|ke|dari|tentang|dalam|adalah|sebagai|layanan|produk|berita|karir|perakitan|pengujian|keandalan|fasilitas|distribusi|pabrik|sistem)\b/i.test(trimmed)
+  const isEn = /\b(and|the|for|with|in|on|at|by|to|from|about|of|as|services?|products?|news|careers?|assembly|testing|reliable|facilities|distribution|plant|systems?)\b/i.test(trimmed)
+
+  if (isId && !isEn) {
+    return { id: trimmed, en: "" }
+  }
+  if (isEn && !isId) {
+    return { id: "", en: trimmed }
+  }
+
+  // Ambiguous or single short phrase: prefill both so user can edit either
+  return { id: trimmed, en: trimmed }
+}
+
+/**
+ * Combines distinct English and Indonesian strings into a single text representation
+ * that backward-compatibly preserves both languages in a single column:
+ * "EN: <English>\nID: <Indonesian>"
+ */
+export function combineBilingualText(values: { en?: string | null; id?: string | null }): string {
+  const en = (values.en ?? "").trim()
+  const id = (values.id ?? "").trim()
+
+  if (en && id) {
+    if (en === id) return en
+    return `EN: ${en}\nID: ${id}`
+  }
+  return id || en || ""
 }
 
 /**

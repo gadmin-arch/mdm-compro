@@ -10,6 +10,7 @@ import type { ListResponse, NewsItem } from "@/lib/cms"
 import { fallbackNews, formatDate } from "@/lib/cms"
 import { fetchNewsAction } from "@/app/(site)/news/actions"
 import { container } from "@/lib/layout"
+import { BilingualText } from "@/components/cms/content-language"
 
 type NewsListProps = {
   initialNews?: ListResponse<NewsItem>
@@ -79,13 +80,17 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
               <Badge variant="secondary" className="bg-accent/30 text-foreground hover:bg-accent/30">
                 Featured
               </Badge>
-              {featured.category && <Badge variant="outline">{featured.category}</Badge>}
+              {featured.category && (
+                <Badge variant="outline">
+                  <BilingualText text={featured.category} />
+                </Badge>
+              )}
             </div>
             <h2 className="font-display text-2xl font-semibold leading-snug tracking-tight text-foreground text-balance sm:text-3xl">
-              {featured.title}
+              <BilingualText text={featured.title} />
             </h2>
             <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-              {featured.excerpt}
+              <BilingualText text={featured.excerpt} />
             </p>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
@@ -133,14 +138,14 @@ export function NewsList({ initialNews = fallbackNews, searchParams = {} }: News
                 <div className="flex flex-1 flex-col gap-3 p-5">
                   {item.category && (
                     <Badge variant="outline" className="w-fit">
-                      {item.category}
+                      <BilingualText text={item.category} />
                     </Badge>
                   )}
                   <h3 className="font-display text-base font-semibold leading-snug text-foreground text-pretty">
-                    {item.title}
+                    <BilingualText text={item.title} />
                   </h3>
                   <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                    {item.excerpt}
+                    <BilingualText text={item.excerpt} />
                   </p>
                   <div className="mt-auto flex items-center justify-between pt-3 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1.5">

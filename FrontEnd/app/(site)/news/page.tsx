@@ -4,6 +4,7 @@ import { NewsList } from "@/components/news-list"
 import { PageHero } from "@/components/page-hero"
 import { SectionRenderer } from "@/components/cms/section-renderer"
 import { FilterControls } from "@/components/filter-controls"
+import { BilingualText } from "@/components/cms/content-language"
 import { getNews, getPage, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 import { container } from "@/lib/layout"
@@ -117,10 +118,13 @@ export default async function NewsPage({ searchParams }: Props) {
   return (
     <>
       <PageHero
-        eyebrow="News & Insights"
-        title="Project milestones, company updates, and field-tested insights."
-        description="Stay current on what our engineers are delivering across power, oil & gas, manufacturing, and infrastructure projects."
-        breadcrumbs={[{ label: "Home", href: "/" }, { label: "News" }]}
+        eyebrow={<BilingualText text="EN: News & Insights\nID: Berita & Wawasan" />}
+        title={<BilingualText text="EN: Project milestones, company updates, and field-tested insights.\nID: Pencapaian proyek, kabar perusahaan, dan wawasan teknis industri." />}
+        description={<BilingualText text="EN: Stay current on what our engineers are delivering across power, oil & gas, manufacturing, and infrastructure projects.\nID: Pantau kontribusi teknisi kami dalam menyukseskan proyek kelistrikan, migas, manufaktur, dan infrastruktur." />}
+        breadcrumbs={[
+          { label: <BilingualText text="EN: Home\nID: Beranda" />, href: "/" },
+          { label: <BilingualText text="EN: News\nID: Berita" /> },
+        ]}
       />
       {listingBlock}
       <CtaBanner

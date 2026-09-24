@@ -2,10 +2,10 @@ import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { container } from "@/lib/layout"
 
-type Crumb = { label: string; href?: string }
+type Crumb = { label: React.ReactNode; href?: string }
 
 interface PageHeroProps {
-  eyebrow: string
+  eyebrow: React.ReactNode
   title: React.ReactNode
   description?: React.ReactNode
   breadcrumbs?: Crumb[]
@@ -29,7 +29,7 @@ export function PageHero({ eyebrow, title, description, breadcrumbs }: PageHeroP
             {breadcrumbs.map((crumb, i) => {
               const isLast = i === breadcrumbs.length - 1
               return (
-                <span key={`${crumb.label}-${i}`} className="flex items-center gap-1">
+                <span key={i} className="flex items-center gap-1">
                   {i > 0 && <ChevronRight className="h-3 w-3 text-primary-foreground/40" />}
                   {crumb.href && !isLast ? (
                     <Link href={crumb.href} className="transition-colors hover:text-primary-foreground">

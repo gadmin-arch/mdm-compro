@@ -9,6 +9,7 @@ import type { Career } from "@/lib/cms"
 import { employmentTypeLabel, fallbackCareers, formatDate, isCareerClosed } from "@/lib/cms"
 import { container } from "@/lib/layout"
 import { cn } from "@/lib/utils"
+import { BilingualText } from "@/components/cms/content-language"
 
 export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[] }) {
   const [statusFilter, setStatusFilter] = useState<"all" | "open" | "closed">("all")
@@ -166,10 +167,10 @@ export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[
                           closed && "text-foreground/80"
                         )}
                       >
-                        {job.title}
+                        <BilingualText text={job.title} />
                       </h3>
                       <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                        {job.summary}
+                        <BilingualText text={job.summary} />
                       </p>
                     </div>
 

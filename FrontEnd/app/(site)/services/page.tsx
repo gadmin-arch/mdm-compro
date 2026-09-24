@@ -7,6 +7,7 @@ import { Pagination } from "@/components/cms/pagination"
 import { SectionRenderer } from "@/components/cms/section-renderer"
 import { FilterControls } from "@/components/filter-controls"
 import { Services } from "@/components/services"
+import { BilingualText } from "@/components/cms/content-language"
 import { getPage, getServices, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 import { container } from "@/lib/layout"
@@ -96,10 +97,13 @@ export default async function ServicesPage({ searchParams }: Props) {
   return (
     <>
       <PageHero
-        eyebrow="Our Business Units"
-        title="Integrated Electrical, Automation & Mechanical Services"
-        description="From turnkey substation construction and automation integration to predictive maintenance, testing & commissioning, and mechanical supplies across Indonesia."
-        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Services" }]}
+        eyebrow={<BilingualText text="EN: Our Business Units\nID: Unit Bisnis & Layanan" />}
+        title={<BilingualText text="EN: Integrated Electrical, Automation & Mechanical Services\nID: Layanan Terintegrasi Elektrikal, Otomasi & Mekanikal" />}
+        description={<BilingualText text="EN: From turnkey substation construction and automation integration to predictive maintenance, testing & commissioning, and mechanical supplies across Indonesia.\nID: Dari konstruksi gardu induk dan integrasi otomasi hingga pemeliharaan prediktif, testing & commissioning, serta pasokan mekanikal di seluruh Indonesia." />}
+        breadcrumbs={[
+          { label: <BilingualText text="EN: Home\nID: Beranda" />, href: "/" },
+          { label: <BilingualText text="EN: Services\nID: Layanan" /> },
+        ]}
       />
       <Services services={allServicesTree} />
       {listingBlock}

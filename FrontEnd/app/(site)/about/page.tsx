@@ -7,6 +7,7 @@ import { SectionRenderer } from "@/components/cms/section-renderer"
 import { WhyUs } from "@/components/why-us"
 import { getPage, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent } from "@/lib/sections"
+import { BilingualText } from "@/components/cms/content-language"
 
 export const metadata: Metadata = {
   title: "Tentang Kami | Kontraktor Listrik & Otomasi Industri — PT Multi Daya Mitra",
@@ -29,10 +30,13 @@ export default async function AboutPage() {
   return (
     <>
       <PageHero
-        eyebrow="About Us"
-        title="A team built for your most demanding electrical projects."
-        description="Founded in 2012 by seasoned engineers, PT Multi Daya Mitra has grown into one of East Java's largest electrical service partners — delivering across Indonesia and selected overseas assignments."
-        breadcrumbs={[{ label: "Home", href: "/" }, { label: "About" }]}
+        eyebrow={<BilingualText text="EN: About Us\nID: Tentang Kami" />}
+        title={<BilingualText text="EN: A team built for your most demanding electrical projects.\nID: Tim ahli berpengalaman untuk proyek kelistrikan paling menantang." />}
+        description={<BilingualText text="EN: Founded in 2012 by seasoned engineers, PT Multi Daya Mitra has grown into one of East Java's largest electrical service partners — delivering across Indonesia and selected overseas assignments.\nID: Didirikan sejak tahun 2012 oleh para insinyur berpengalaman, PT Multi Daya Mitra telah berkembang menjadi salah satu mitra layanan elektrikal terdepan di Jawa Timur — melayani seluruh Indonesia dan proyek mancanegara." />}
+        breadcrumbs={[
+          { label: <BilingualText text="EN: Home\nID: Beranda" />, href: "/" },
+          { label: <BilingualText text="EN: About\nID: Tentang Kami" /> },
+        ]}
       />
       <About page={page} />
       <WhyUs />

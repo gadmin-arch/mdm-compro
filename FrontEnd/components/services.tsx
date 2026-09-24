@@ -10,6 +10,7 @@ import {
 import type { ContentNode } from "@/lib/cms"
 import { fallbackServices } from "@/lib/cms"
 import { container } from "@/lib/layout"
+import { BilingualText } from "@/components/cms/content-language"
 
 const serviceDetails: Record<string, { icon: React.ElementType; items: string[] }> = {
   "electrical-construction-installation": {
@@ -123,10 +124,10 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
                     <Icon className="h-5 w-5" />
                   </span>
                   <CardTitle className="font-display text-xl leading-snug">
-                    {service.title}
+                    <BilingualText text={service.title} />
                   </CardTitle>
                   <CardDescription className="text-sm leading-relaxed line-clamp-2">
-                    {service.summary}
+                    <BilingualText text={service.summary} />
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col justify-between flex-1">

@@ -29,7 +29,15 @@ export function NewsArticleView({
   return (
     <>
       <PageHero
-        eyebrow={news.category ?? "News"}
+        eyebrow={
+          news.category ? (
+            <BilingualText text={news.category} />
+          ) : isIndonesian ? (
+            "Berita"
+          ) : (
+            "News"
+          )
+        }
         title={<BilingualText text={news.title} />}
         description={
           news.excerpt ? (
@@ -41,16 +49,20 @@ export function NewsArticleView({
           )
         }
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "News", href: "/news" },
-          { label: news.title },
+          { label: isIndonesian ? "Beranda" : "Home", href: "/" },
+          { label: isIndonesian ? "Berita" : "News", href: "/news" },
+          { label: <BilingualText text={news.title} /> },
         ]}
       />
       <article className="border-b border-border/60 bg-background">
         <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-border/50 pb-6">
             <div className="flex flex-wrap items-center gap-3">
-              {news.category && <Badge variant="outline">{news.category}</Badge>}
+              {news.category && (
+                <Badge variant="outline">
+                  <BilingualText text={news.category} />
+                </Badge>
+              )}
               <span className="text-sm text-muted-foreground">{formatDate(news.publishedAt)}</span>
             </div>
             <ContentLanguageToggle />

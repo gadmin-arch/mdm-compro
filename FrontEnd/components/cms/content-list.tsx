@@ -3,6 +3,7 @@ import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { ContentNode } from "@/lib/cms"
+import { BilingualText } from "@/components/cms/content-language"
 
 export function ContentList({
   items,
@@ -31,8 +32,12 @@ export function ContentList({
               />
             </div>
             <CardHeader>
-              <CardTitle className="font-display text-xl">{item.title}</CardTitle>
-              <CardDescription className="line-clamp-3 leading-relaxed">{item.summary}</CardDescription>
+              <CardTitle className="font-display text-xl">
+                <BilingualText text={item.title} />
+              </CardTitle>
+              <CardDescription className="line-clamp-3 leading-relaxed">
+                <BilingualText text={item.summary} />
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <span className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground">

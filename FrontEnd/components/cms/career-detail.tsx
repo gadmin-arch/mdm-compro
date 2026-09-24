@@ -24,7 +24,7 @@ export function CareerDetailView({ career }: { career: Career }) {
   return (
     <>
       <PageHero
-        eyebrow="Career"
+        eyebrow={isIndonesian ? "Karir" : "Career"}
         title={<BilingualText text={career.title} />}
         description={
           career.summary ? (
@@ -36,9 +36,9 @@ export function CareerDetailView({ career }: { career: Career }) {
           )
         }
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Careers", href: "/career" },
-          { label: career.title },
+          { label: isIndonesian ? "Beranda" : "Home", href: "/" },
+          { label: isIndonesian ? "Karir" : "Careers", href: "/career" },
+          { label: <BilingualText text={career.title} /> },
         ]}
       />
       <section className="border-b border-border/60 bg-background">

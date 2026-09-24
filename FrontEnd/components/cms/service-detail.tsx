@@ -30,7 +30,7 @@ export function ServiceDetailView({
   return (
     <>
       <PageHero
-        eyebrow="Service"
+        eyebrow={isIndonesian ? "Layanan" : "Service"}
         title={<BilingualText text={service.title} />}
         description={
           service.summary ? (
@@ -42,9 +42,9 @@ export function ServiceDetailView({
           )
         }
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Services", href: "/services" },
-          { label: service.title },
+          { label: isIndonesian ? "Beranda" : "Home", href: "/" },
+          { label: isIndonesian ? "Layanan" : "Services", href: "/services" },
+          { label: <BilingualText text={service.title} /> },
         ]}
       />
       <section className="border-b border-border/60 bg-background">

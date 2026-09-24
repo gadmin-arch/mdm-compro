@@ -33,7 +33,7 @@ export function ProductDetailView({
   return (
     <>
       <PageHero
-        eyebrow="Product"
+        eyebrow={isIndonesian ? "Produk" : "Product"}
         title={<BilingualText text={product.title} />}
         description={
           product.summary ? (
@@ -45,9 +45,9 @@ export function ProductDetailView({
           )
         }
         breadcrumbs={[
-          { label: "Home", href: "/" },
-          { label: "Products", href: "/products" },
-          { label: product.title },
+          { label: isIndonesian ? "Beranda" : "Home", href: "/" },
+          { label: isIndonesian ? "Produk" : "Products", href: "/products" },
+          { label: <BilingualText text={product.title} /> },
         ]}
       />
       <section className="border-b border-border/60 bg-background">

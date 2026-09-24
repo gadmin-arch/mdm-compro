@@ -23,6 +23,7 @@ import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 import { SectionRenderer } from "@/components/cms/section-renderer"
 import { container } from "@/lib/layout"
 import { Badge } from "@/components/ui/badge"
+import { BilingualText } from "@/components/cms/content-language"
 import { BrandLogo } from "@/components/brand-logos"
 import { BrandMarquee } from "@/components/brand-marquee"
 
@@ -254,10 +255,13 @@ export default async function ProductsPage({ searchParams }: Props) {
     <>
       {/* 1. Page Header */}
       <PageHero
-        eyebrow="Products & Strategic Partners"
-        title="Engineered electrical, automation & climate control products."
-        description="Official Authorized Distributor for Rittal, Certified System Integrator for Schneider Electric, and complete product lines for electrical distribution, automation, power quality & fire systems."
-        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Products" }]}
+        eyebrow={<BilingualText text="EN: Products & Strategic Partners\nID: Produk & Mitra Strategis" />}
+        title={<BilingualText text="EN: Engineered electrical, automation & climate control products.\nID: Produk rekayasa elektrikal, otomasi & sistem kontrol iklim." />}
+        description={<BilingualText text="EN: Official Authorized Distributor for Rittal, Certified System Integrator for Schneider Electric, and complete product lines for electrical distribution, automation, power quality & fire systems.\nID: Distributor Resmi Rittal, Certified System Integrator Schneider Electric, serta lini produk lengkap untuk distribusi listrik, otomasi, power quality, dan fire system." />}
+        breadcrumbs={[
+          { label: <BilingualText text="EN: Home\nID: Beranda" />, href: "/" },
+          { label: <BilingualText text="EN: Products\nID: Produk" /> },
+        ]}
       />
 
       {/* 2. Strategic Partnerships Section (Rittal & Schneider Electric) */}

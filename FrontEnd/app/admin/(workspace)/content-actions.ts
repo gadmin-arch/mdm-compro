@@ -20,6 +20,7 @@ import {
   newsSchema,
   zodFields,
 } from "@/lib/admin-schemas"
+import { combineBilingualText } from "@/lib/bilingual"
 
 type Resource = "services" | "products" | "news" | "careers"
 
@@ -258,10 +259,26 @@ export async function deleteCareerAction(formData: FormData) {
 }
 
 async function contentPayload(formData: FormData, nextPath: string): Promise<ContentItemPayload> {
+  const rawTitleId = String(formData.get("title_id") ?? "").trim()
+  const rawTitleEn = String(formData.get("title_en") ?? "").trim()
+  const rawTitle = String(formData.get("title") ?? "").trim()
+  const resolvedTitle = (rawTitleId || rawTitleEn)
+    ? combineBilingualText({ en: rawTitleEn, id: rawTitleId })
+    : rawTitle
+
+  const rawSummaryId = String(formData.get("summary_id") ?? "").trim()
+  const rawSummaryEn = String(formData.get("summary_en") ?? "").trim()
+  const rawSummary = String(formData.get("summary") ?? "").trim()
+  const resolvedSummary = (rawSummaryId || rawSummaryEn)
+    ? combineBilingualText({ en: rawSummaryEn, id: rawSummaryId })
+    : rawSummary
+
+  const baseSlugInput = String(formData.get("slug") || rawTitleEn || rawTitleId || rawTitle)
+
   // Validate before uploading files so an invalid form never uploads media.
   const check = contentItemSchema.safeParse({
-    title: String(formData.get("title") ?? ""),
-    slug: slugify(String(formData.get("slug") ?? "")),
+    title: resolvedTitle,
+    slug: slugify(baseSlugInput),
     status: String(formData.get("status") ?? "draft"),
     sortOrder: String(formData.get("sortOrder") ?? "0"),
   })
@@ -291,9 +308,9 @@ async function contentPayload(formData: FormData, nextPath: string): Promise<Con
 
   return {
     parentId: parentID || null,
-    slug: slugify(String(formData.get("slug") ?? "")),
-    title: String(formData.get("title") ?? ""),
-    summary: String(formData.get("summary") ?? ""),
+    slug: slugify(baseSlugInput),
+    title: resolvedTitle,
+    summary: resolvedSummary,
     content: contentValue,
     imageUrl: uploadedImageUrl || String(formData.get("imageUrl") ?? ""),
     specs: specsFromText(String(formData.get("specsText") ?? "")),
@@ -306,9 +323,25 @@ async function contentPayload(formData: FormData, nextPath: string): Promise<Con
 }
 
 async function newsPayload(formData: FormData, nextPath: string): Promise<NewsPayload> {
+  const rawTitleId = String(formData.get("title_id") ?? "").trim()
+  const rawTitleEn = String(formData.get("title_en") ?? "").trim()
+  const rawTitle = String(formData.get("title") ?? "").trim()
+  const resolvedTitle = (rawTitleId || rawTitleEn)
+    ? combineBilingualText({ en: rawTitleEn, id: rawTitleId })
+    : rawTitle
+
+  const rawExcerptId = String(formData.get("excerpt_id") ?? "").trim()
+  const rawExcerptEn = String(formData.get("excerpt_en") ?? "").trim()
+  const rawExcerpt = String(formData.get("excerpt") ?? "").trim()
+  const resolvedExcerpt = (rawExcerptId || rawExcerptEn)
+    ? combineBilingualText({ en: rawExcerptEn, id: rawExcerptId })
+    : rawExcerpt
+
+  const baseSlugInput = String(formData.get("slug") || rawTitleEn || rawTitleId || rawTitle)
+
   const check = newsSchema.safeParse({
-    title: String(formData.get("title") ?? ""),
-    slug: slugify(String(formData.get("slug") ?? "")),
+    title: resolvedTitle,
+    slug: slugify(baseSlugInput),
     status: String(formData.get("status") ?? "draft"),
   })
   if (!check.success) {
@@ -334,9 +367,9 @@ async function newsPayload(formData: FormData, nextPath: string): Promise<NewsPa
   }
 
   return {
-    slug: slugify(String(formData.get("slug") ?? "")),
-    title: String(formData.get("title") ?? ""),
-    excerpt: String(formData.get("excerpt") ?? ""),
+    slug: slugify(baseSlugInput),
+    title: resolvedTitle,
+    excerpt: resolvedExcerpt,
     body: bodyValue,
     category: String(formData.get("category") ?? ""),
     featuredImageUrl: uploadedImageUrl || String(formData.get("featuredImageUrl") ?? ""),
@@ -348,9 +381,25 @@ async function newsPayload(formData: FormData, nextPath: string): Promise<NewsPa
 }
 
 function careerPayload(formData: FormData): CareerPayload {
+  const rawTitleId = String(formData.get("title_id") ?? "").trim()
+  const rawTitleEn = String(formData.get("title_en") ?? "").trim()
+  const rawTitle = String(formData.get("title") ?? "").trim()
+  const resolvedTitle = (rawTitleId || rawTitleEn)
+    ? combineBilingualText({ en: rawTitleEn, id: rawTitleId })
+    : rawTitle
+
+  const rawSummaryId = String(formData.get("summary_id") ?? "").trim()
+  const rawSummaryEn = String(formData.get("summary_en") ?? "").trim()
+  const rawSummary = String(formData.get("summary") ?? "").trim()
+  const resolvedSummary = (rawSummaryId || rawSummaryEn)
+    ? combineBilingualText({ en: rawSummaryEn, id: rawSummaryId })
+    : rawSummary
+
+  const baseSlugInput = String(formData.get("slug") || rawTitleEn || rawTitleId || rawTitle)
+
   const check = careerSchema.safeParse({
-    title: String(formData.get("title") ?? ""),
-    slug: slugify(String(formData.get("slug") ?? "")),
+    title: resolvedTitle,
+    slug: slugify(baseSlugInput),
     department: String(formData.get("department") ?? ""),
     location: String(formData.get("location") ?? ""),
     employmentType: String(formData.get("employmentType") ?? "full_time"),
@@ -379,9 +428,9 @@ function careerPayload(formData: FormData): CareerPayload {
   }
 
   return {
-    slug: slugify(String(formData.get("slug") ?? "")),
-    title: String(formData.get("title") ?? ""),
-    summary: String(formData.get("summary") ?? ""),
+    slug: slugify(baseSlugInput),
+    title: resolvedTitle,
+    summary: resolvedSummary,
     description: descValue,
     department: String(formData.get("department") ?? ""),
     location: String(formData.get("location") ?? ""),

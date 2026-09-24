@@ -12,6 +12,7 @@ import {
   textFromBlocks,
   toDateTimeLocal,
 } from "@/lib/admin-content"
+import { extractBilingualText } from "@/lib/bilingual"
 import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -127,23 +128,45 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
       )}
 
       <div className="space-y-6 rounded-xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0b0f17]">
-        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_240px]">
-          <Field label="Name" name="title" required defaultValue={item?.title} error={fields?.title} />
-          <Field label="Slug" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
-        </div>
-        <SelectField
-          label="Parent"
-          name="parentId"
-          defaultValue={item?.parentId ?? ""}
-          options={[
-            { value: "", label: "No parent" },
-            ...selectableParents.map((option) => ({
-              value: option.id,
-              label: option.fullPath || option.title,
-            })),
-          ]}
+        <BilingualField
+          label={isProduct ? "Product Name / Nama Produk" : "Service Name / Nama Layanan"}
+          nameId="title_id"
+          nameEn="title_en"
+          nameFallback="title"
+          defaultValue={item?.title}
+          required
+          error={fields?.title}
+          placeholderId={isProduct ? "cth. Panel Distribusi Tegangan Rendah (LVMDP)" : "cth. Instalasi & Terminasi Kabel MV & LV"}
+          placeholderEn={isProduct ? "e.g. Low Voltage Main Distribution Panel" : "e.g. MV & LV Cable Installation & Termination"}
         />
-        <Field label="Short description" name="summary" defaultValue={item?.summary} />
+
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_260px]">
+          <Field label="Slug (URL)" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
+          <SelectField
+            label="Parent"
+            name="parentId"
+            defaultValue={item?.parentId ?? ""}
+            options={[
+              { value: "", label: "No parent" },
+              ...selectableParents.map((option) => ({
+                value: option.id,
+                label: option.fullPath || option.title,
+              })),
+            ]}
+          />
+        </div>
+
+        <BilingualTextAreaField
+          label="Short description / Ringkasan Singkat"
+          nameId="summary_id"
+          nameEn="summary_en"
+          nameFallback="summary"
+          defaultValue={item?.summary}
+          rows={2}
+          error={fields?.summary}
+          placeholderId="Ringkasan singkat dalam Bahasa Indonesia..."
+          placeholderEn="Short summary in English..."
+        />
         <BilingualRichTextField
           label="Description"
           nameId="contentHtml_id"
@@ -264,14 +287,34 @@ export function NewsForm({ action, item, mode }: NewsFormProps) {
       )}
 
       <div className="space-y-6 rounded-xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0b0f17]">
-        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_240px]">
-          <Field label="Title" name="title" required defaultValue={item?.title} error={fields?.title} />
-          <Field label="Slug" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
-        </div>
+        <BilingualField
+          label="Title / Judul Berita & Artikel"
+          nameId="title_id"
+          nameEn="title_en"
+          nameFallback="title"
+          defaultValue={item?.title}
+          required
+          error={fields?.title}
+          placeholderId="cth. Distribusi Listrik yang Andal untuk Fasilitas Industri"
+          placeholderEn="e.g. Reliable Power Distribution for Industrial Facilities"
+        />
+
         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_260px]">
-          <Field label="Excerpt" name="excerpt" defaultValue={item?.excerpt} error={fields?.excerpt} />
+          <Field label="Slug (URL)" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
           <NewsCategoryField defaultValue={item?.category} error={fields?.category} />
         </div>
+
+        <BilingualTextAreaField
+          label="Excerpt / Ringkasan Singkat"
+          nameId="excerpt_id"
+          nameEn="excerpt_en"
+          nameFallback="excerpt"
+          defaultValue={item?.excerpt}
+          rows={2}
+          error={fields?.excerpt}
+          placeholderId="Ringkasan singkat artikel dalam Bahasa Indonesia..."
+          placeholderEn="Short summary of the article in English..."
+        />
         <BilingualRichTextField
           label="Body Content"
           nameId="bodyHtml_id"
@@ -372,11 +415,34 @@ export function CareerForm({ action, item, mode }: CareerFormProps) {
       )}
 
       <div className="space-y-6 rounded-xl border border-slate-200/80 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-[#0b0f17]">
+        <BilingualField
+          label="Role title / Posisi Lowongan"
+          nameId="title_id"
+          nameEn="title_en"
+          nameFallback="title"
+          defaultValue={item?.title}
+          required
+          error={fields?.title}
+          placeholderId="cth. Teknisi Listrik Tegangan Menengah"
+          placeholderEn="e.g. MV Electrical Technician"
+        />
+
         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_240px]">
-          <Field label="Role title" name="title" required defaultValue={item?.title} error={fields?.title} />
-          <Field label="Slug" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
+          <Field label="Slug (URL)" name="slug" required defaultValue={item?.slug} error={fields?.slug} />
+          <Field label="Department" name="department" required defaultValue={item?.department} error={fields?.department} />
         </div>
-        <TextAreaField label="Summary" name="summary" rows={3} defaultValue={item?.summary} error={fields?.summary} />
+
+        <BilingualTextAreaField
+          label="Summary / Ringkasan Posisi"
+          nameId="summary_id"
+          nameEn="summary_en"
+          nameFallback="summary"
+          defaultValue={item?.summary}
+          rows={3}
+          error={fields?.summary}
+          placeholderId="Ringkasan posisi dalam Bahasa Indonesia..."
+          placeholderEn="Role summary in English..."
+        />
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="Department" name="department" required defaultValue={item?.department} error={fields?.department} />
           <Field label="Location" name="location" required defaultValue={item?.location} error={fields?.location} />
@@ -599,6 +665,159 @@ function TextAreaField({
         rows={rows}
       />
       <FieldError id={`${name}-error`} message={error} />
+    </div>
+  )
+}
+
+function BilingualField({
+  label,
+  nameId,
+  nameEn,
+  nameFallback,
+  defaultValue,
+  required,
+  error,
+  placeholderId,
+  placeholderEn,
+}: {
+  label: string
+  nameId: string
+  nameEn: string
+  nameFallback?: string
+  defaultValue?: string
+  required?: boolean
+  error?: string
+  placeholderId?: string
+  placeholderEn?: string
+}) {
+  const extracted = extractBilingualText(defaultValue)
+
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={nameId}>
+            {label}
+            {required && <span className="ml-1 text-destructive">*</span>}
+          </label>
+          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+            Dwi-Bahasa (Bilingual)
+          </span>
+        </div>
+        <span className="text-[11px] text-muted-foreground">
+          🇮🇩 Bahasa Indonesia & 🇬🇧 English
+        </span>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+            <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+            <span>Bahasa Indonesia (ID)</span>
+          </div>
+          <Input
+            id={nameId}
+            name={nameId}
+            defaultValue={extracted.id}
+            placeholder={placeholderId || "Judul dalam Bahasa Indonesia..."}
+            className="bg-background text-xs"
+          />
+        </div>
+
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+            <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+            <span>English (EN)</span>
+          </div>
+          <Input
+            id={nameEn}
+            name={nameEn}
+            defaultValue={extracted.en}
+            placeholder={placeholderEn || "Title in English..."}
+            className="bg-background text-xs"
+          />
+        </div>
+      </div>
+
+      {nameFallback && <input type="hidden" name={nameFallback} value={defaultValue ?? ""} />}
+      <FieldError id={`${nameId}-error`} message={error} />
+    </div>
+  )
+}
+
+function BilingualTextAreaField({
+  label,
+  nameId,
+  nameEn,
+  nameFallback,
+  defaultValue,
+  rows = 3,
+  error,
+  placeholderId,
+  placeholderEn,
+}: {
+  label: string
+  nameId: string
+  nameEn: string
+  nameFallback?: string
+  defaultValue?: string
+  rows?: number
+  error?: string
+  placeholderId?: string
+  placeholderEn?: string
+}) {
+  const extracted = extractBilingualText(defaultValue)
+
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={nameId}>
+            {label}
+          </label>
+          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+            Dwi-Bahasa (Bilingual)
+          </span>
+        </div>
+        <span className="text-[11px] text-muted-foreground">
+          🇮🇩 Bahasa Indonesia & 🇬🇧 English
+        </span>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+            <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+            <span>Bahasa Indonesia (ID)</span>
+          </div>
+          <Textarea
+            id={nameId}
+            name={nameId}
+            rows={rows}
+            defaultValue={extracted.id}
+            placeholder={placeholderId || "Ringkasan dalam Bahasa Indonesia..."}
+            className="bg-background text-xs"
+          />
+        </div>
+
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+            <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+            <span>English (EN)</span>
+          </div>
+          <Textarea
+            id={nameEn}
+            name={nameEn}
+            rows={rows}
+            defaultValue={extracted.en}
+            placeholder={placeholderEn || "Summary in English..."}
+            className="bg-background text-xs"
+          />
+        </div>
+      </div>
+
+      {nameFallback && <input type="hidden" name={nameFallback} value={defaultValue ?? ""} />}
+      <FieldError id={`${nameId}-error`} message={error} />
     </div>
   )
 }

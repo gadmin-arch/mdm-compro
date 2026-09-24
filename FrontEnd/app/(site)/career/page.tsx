@@ -6,6 +6,7 @@ import { PageHero } from "@/components/page-hero"
 import { SectionRenderer } from "@/components/cms/section-renderer"
 import { FilterControls } from "@/components/filter-controls"
 import { Pagination } from "@/components/cms/pagination"
+import { BilingualText } from "@/components/cms/content-language"
 import { getCareers, getPage, employmentTypeLabel, resolveSectionData } from "@/lib/cms"
 import { sectionsFromContent, splitSectionsAtListing } from "@/lib/sections"
 import { container } from "@/lib/layout"
@@ -102,10 +103,13 @@ export default async function CareerPage({ searchParams }: Props) {
   return (
     <>
       <PageHero
-        eyebrow="Career"
-        title="Build your engineering career on real, large-scale projects."
-        description="Join a team that designs, installs, and maintains the electrical and automation systems behind Indonesia's most demanding industries."
-        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Career" }]}
+        eyebrow={<BilingualText text="EN: Career\nID: Karir" />}
+        title={<BilingualText text="EN: Build your engineering career on real, large-scale projects.\nID: Bangun karir rekayasa teknik Anda dalam proyek-proyek industri nyata." />}
+        description={<BilingualText text="EN: Join a team that designs, installs, and maintains the electrical and automation systems behind Indonesia's most demanding industries.\nID: Bergabunglah bersama tim yang merancang, memasang, dan memelihara sistem kelistrikan dan otomasi industri paling menantang di Indonesia." />}
+        breadcrumbs={[
+          { label: <BilingualText text="EN: Home\nID: Beranda" />, href: "/" },
+          { label: <BilingualText text="EN: Career\nID: Karir" /> },
+        ]}
       />
       {listingBlock}
       <CtaBanner

@@ -166,8 +166,8 @@ export const fallbackServices: ContentNode[] = [
         id: "serv-cabling-termination",
         slug: "mv-lv-cable-installation-termination",
         fullPath: "electrical-construction-installation/mv-lv-cable-installation-termination",
-        title: "MV & LV Cable Installation & Termination",
-        summary: "Certified cable pulling, tray erection, heat/cold shrink terminations, and high-potential (Hi-Pot) insulation testing.",
+        title: "EN: MV & LV Cable Installation & Termination\nID: Instalasi & Terminasi Kabel MV & LV",
+        summary: "EN: Certified cable pulling, tray erection, heat/cold shrink terminations, and high-potential (Hi-Pot) insulation testing.\nID: Penarikan kabel tersertifikasi, pemasangan tray, terminasi heat/cold shrink, dan pengujian isolasi Hi-Pot.",
         content: {
           bilingual: true,
           id: {
@@ -616,18 +616,18 @@ export const fallbackNews: ListResponse<NewsItem> = {
     {
       id: "news-energy",
       slug: "energy-monitoring-system-launch",
-      title: "Launching our Energy Monitoring System for ESG-ready facilities",
+      title: "EN: Launching our Energy Monitoring System for ESG-ready facilities\nID: Peluncuran Sistem Pemantauan Energi untuk Fasilitas Industri Berstandar ESG",
       excerpt:
-        "A turnkey solution helps plants track real-time consumption and produce ESG-grade sustainability reports.",
+        "EN: A turnkey solution helps plants track real-time consumption and produce ESG-grade sustainability reports.\nID: Solusi terintegrasi untuk membantu pabrik memantau konsumsi energi real-time dan menghasilkan laporan keberlanjutan ESG.",
       body: {
         blocks: [
           {
             type: "paragraph",
-            text: "Our Energy Monitoring System helps facilities understand usage patterns, reduce waste, and report energy performance with confidence.",
+            text: "EN: Our Energy Monitoring System helps facilities understand usage patterns, reduce waste, and report energy performance with confidence.\nID: Sistem Pemantauan Energi kami membantu fasilitas industri memahami pola penggunaan daya, mengurangi pemborosan, dan melaporkan kinerja efisiensi energi dengan akurat.",
           },
         ],
       },
-      category: "Company",
+      category: "EN: Company\nID: Perusahaan",
       featuredImageUrl: "/placeholder.jpg",
       featured: true,
       status: "published",
@@ -636,18 +636,18 @@ export const fallbackNews: ListResponse<NewsItem> = {
     {
       id: "news-substation",
       slug: "20mw-substation-commissioning-east-java",
-      title: "Successful commissioning of a 20 MW substation in East Java",
+      title: "EN: Successful commissioning of a 20 MW substation in East Java\nID: Sukses Commissioning Gardu Induk 20 MW di Jawa Timur",
       excerpt:
-        "Our team completed end-to-end testing, protection coordination, and commissioning for an industrial client.",
+        "EN: Our team completed end-to-end testing, protection coordination, and commissioning for an industrial client.\nID: Tim teknisi kami menyelesaikan pengujian menyeluruh, koordinasi proteksi, dan commissioning untuk klien industri.",
       body: {
         blocks: [
           {
             type: "paragraph",
-            text: "The commissioning scope covered protection coordination, testing, and energization support.",
+            text: "EN: The commissioning scope covered protection coordination, testing, and energization support.\nID: Lingkup commissioning mencakup koordinasi proteksi relay, pengujian isolasi, dan dukungan energize bertahap.",
           },
         ],
       },
-      category: "Project",
+      category: "EN: Project\nID: Proyek",
       featuredImageUrl: "/placeholder.jpg",
       featured: false,
       status: "published",
