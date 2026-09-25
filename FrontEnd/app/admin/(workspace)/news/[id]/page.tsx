@@ -6,6 +6,7 @@ import { NewsForm } from "@/components/admin/resource-forms"
 import { Button } from "@/components/ui/button"
 import { AdminApiError, adminFetch } from "@/lib/admin-api"
 import type { NewsItem } from "@/lib/cms"
+import { enrichNewsWithBilingual } from "@/lib/news-bilingual"
 import { updateNewsAction } from "../../content-actions"
 
 export default async function AdminEditNewsPage({
@@ -18,6 +19,9 @@ export default async function AdminEditNewsPage({
   let apiError = false
   try {
     item = await adminFetch<NewsItem>(`/news/${id}`, {}, `/admin/news/${id}`)
+    if (item) {
+      item = enrichNewsWithBilingual(item, item.slug) || item
+    }
   } catch (error) {
     if (error instanceof AdminApiError) apiError = true
     else throw error

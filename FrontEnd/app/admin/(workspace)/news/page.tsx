@@ -7,6 +7,7 @@ import { AdminPagination } from "@/components/admin/admin-pagination"
 import { ResourceToolbar } from "@/components/admin/resource-toolbar"
 import { AdminResourceTable } from "@/components/admin/resource-table"
 import { AdminApiError, adminFetch, type AdminNewsResponse } from "@/lib/admin-api"
+import { enrichNewsWithBilingual } from "@/lib/news-bilingual"
 import { deleteNewsAction } from "../content-actions"
 
 export default async function AdminNewsPage({
@@ -53,14 +54,17 @@ export default async function AdminNewsPage({
         deleteAction={deleteNewsAction}
         empty="No news found."
         publicBasePath="/news"
-        rows={(response?.data ?? []).map((item) => ({
-          id: item.id,
-          title: item.title,
-          slug: item.slug,
-          status: item.status,
-          version: item.version,
-          meta: item.category || item.excerpt,
-        }))}
+        rows={(response?.data ?? []).map((item) => {
+          const enriched = enrichNewsWithBilingual(item, item.slug) || item
+          return {
+            id: enriched.id,
+            title: enriched.title,
+            slug: enriched.slug,
+            status: enriched.status,
+            version: enriched.version,
+            meta: enriched.category || enriched.excerpt,
+          }
+        })}
       />
       {response && (
         <AdminPagination

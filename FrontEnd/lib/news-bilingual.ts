@@ -591,6 +591,226 @@ export const BILINGUAL_NEWS_CATALOG: Record<string, BilingualNewsEntry> = {
 <p>Kontak:<br>📱 +62 821-4007-4122<br>📧 <a href="mailto:info@multidayamitra.co.id">info@multidayamitra.co.id</a></p>`,
     },
   },
+
+  "20mw-substation-commissioning-east-java": {
+    slug: "20mw-substation-commissioning-east-java",
+    id: "00000000-0000-0000-0000-000000000802",
+    title: {
+      en: "Preventive Maintenance of Medium Voltage (MV) Switchgear",
+      id: "Pemeliharaan Preventif Switchgear Tegangan Menengah (MV)",
+    },
+    category: {
+      en: "Industrial Projects",
+      id: "Proyek Industri",
+    },
+    excerpt: {
+      en: "Comprehensive preventive maintenance and diagnostic testing for Medium Voltage (MV) switchgear to ensure operational safety, minimize downtime, and extend electrical asset longevity.",
+      id: "Pemeliharaan preventif komprehensif dan pengujian diagnostik untuk switchgear tegangan menengah (MV) guna menjamin keselamatan operasional, meminimalkan downtime, dan memperpanjang usia pakai aset kelistrikan.",
+    },
+    featuredImageUrl: "/uploads/hero-project.jpg",
+    featured: false,
+    publishedAt: "2020-06-25T00:00:00Z",
+    body: {
+      en: `<h2>Ensuring Reliability, Safety, and Asset Longevity</h2>
+<p>Medium Voltage (MV) switchgear forms the backbone of industrial power distribution networks, responsible for switching, isolating, and protecting electrical circuits under both normal and fault conditions. Over time, environmental factors such as dust, humidity, thermal expansion, and mechanical wear degrade insulation and contact surfaces. A structured <strong>preventive maintenance program</strong> detects incipient anomalies before they escalate into catastrophic flashovers or unplanned plant blackouts.</p>
+<h3>Key Objectives of MV Switchgear Preventive Maintenance</h3>
+<ul>
+  <li><p><strong>System Reliability:</strong> Minimize sudden trip events and maintain uninterrupted power supply to continuous industrial processes.</p></li>
+  <li><p><strong>Personnel and Asset Safety:</strong> Mitigate arc-flash hazards, internal arcing risks, and catastrophic explosive failures.</p></li>
+  <li><p><strong>Extended Asset Lifespan:</strong> Prevent premature degradation of vacuum interrupters, SF6 compartments, busbar insulation, and operating mechanisms.</p></li>
+  <li><p><strong>Compliance &amp; Documentation:</strong> Adhere to IEC 62271, IEEE standards, and insurance regulatory safety requirements.</p></li>
+</ul>
+<h3>Core Inspection and Diagnostic Scope</h3>
+<p>Our comprehensive MV switchgear maintenance procedure covers every critical component:</p>
+<ol>
+  <li><p><strong>Visual Inspection &amp; Mechanical Servicing:</strong> Cleaning cubicle compartments, checking door interlocks, inspecting racking mechanisms, and lubricating moving mechanical linkages.</p></li>
+  <li><p><strong>Contact Resistance (Ductor / Micro-Ohm) Testing:</strong> Measuring main circuit contact resistance across vacuum / SF6 circuit breaker poles and tulip finger clusters to eliminate hot-spot risks.</p></li>
+  <li><p><strong>Insulation Resistance (Megger) &amp; Hi-Pot Testing:</strong> Verifying dielectric integrity of busbars, post insulators, current transformers (CT), and potential transformers (PT) phase-to-phase and phase-to-earth.</p></li>
+  <li><p><strong>Circuit Breaker Timing &amp; Motion Analysis:</strong> Measuring opening, closing, and trip-free operational times to ensure strict synchronization within manufacturer tolerances.</p></li>
+  <li><p><strong>Protection Relay Secondary Injection Testing:</strong> Calibrating overcurrent (50/51), earth-fault (50N/51N), undervoltage (27), and directional relays to confirm protection coordination integrity.</p></li>
+  <li><p><strong>Infrared Thermography Inspection:</strong> Scanning busbar joints, terminations, and breaker connections under load to detect abnormal thermal signatures prior to planned shutdown.</p></li>
+</ol>
+<h3>Partner with PT Multi Daya Mitra for Switchgear Maintenance</h3>
+<p>PT Multi Daya Mitra provides certified electrical testing engineers equipped with calibrated testing equipment (Omicron, Megger, Fluke) to execute turnkey preventive maintenance during planned shutdowns or turnaround periods. We provide detailed condition assessment reports with actionable recommendations.</p>
+<p>Contact our engineering specialists:<br>📱 +62 821-4007-4122<br>📧 <a href="mailto:info@multidayamitra.co.id">info@multidayamitra.co.id</a></p>`,
+      id: `<h2>Menjamin Keandalan, Keselamatan, dan Usia Pakai Aset Kelistrikan</h2>
+<p>Switchgear tegangan menengah (Medium Voltage / MV Switchgear) merupakan tulang punggung distribusi daya fasilitas industri, yang berfungsi melakukan switching, isolasi, dan proteksi jaringan listrik baik saat kondisi normal maupun saat terjadi gangguan arus hubung singkat. Seiring waktu, faktor lingkungan seperti debu, kelembapan, ekspansi termal, dan keausan mekanis dapat menurunkan kualitas isolasi dan kontak listrik. Program <strong>pemeliharaan preventif (preventive maintenance) terstruktur</strong> mampu mendeteksi potensi kerusakan sebelum berkembang menjadi ledakan busur api (arc-flash) atau pemadaman total pabrik.</p>
+<h3>Tujuan Utama Pemeliharaan Preventif Switchgear MV</h3>
+<ul>
+  <li><p><strong>Keandalan Sistem Distribusi:</strong> Mencegah trip mendadak dan menjaga pasokan listrik kontinu untuk lini produksi dan utilitas penting.</p></li>
+  <li><p><strong>Keselamatan Personel &amp; Fasilitas:</strong> Mereduksi bahaya arc-flash, percikan api internal, dan risiko ledakan kubikel.</p></li>
+  <li><p><strong>Memperpanjang Usia Pakai Peralatan:</strong> Mencegah degradasi dini pada vacuum interrupter, kompartemen SF6, isolator busbar, dan mekanisme pegas penggerak.</p></li>
+  <li><p><strong>Kepatuhan Regulasi &amp; Standar:</strong> Memenuhi standar internasional IEC 62271, IEEE, PUIL/SNI, serta audit kelayakan asuransi industri.</p></li>
+</ul>
+<h3>Ruang Lingkup Inspeksi &amp; Pengujian Diagnostik</h3>
+<p>Prosedur pemeliharaan switchgear MV oleh tim ahli kami mencakup seluruh komponen vital:</p>
+<ol>
+  <li><p><strong>Inspeksi Visual &amp; Pembersihan Mekanikal:</strong> Pembersihan kompartemen kubikel dari debu dan partikel konduktif, pemeriksaan interlock pintu, pelumasan mekanisme racking, dan verifikasi shutter otomatis.</p></li>
+  <li><p><strong>Uji Resistansi Kontak (Micro-Ohm / Ductor Test):</strong> Mengukur tahanan kontak utama pada pole circuit breaker (VCB/SF6) dan kluster tulip kontak untuk mencegah titik panas (hot-spot).</p></li>
+  <li><p><strong>Uji Tahanan Isolasi (Megger) &amp; Uji Tegangan Tinggi (Hi-Pot):</strong> Memeriksa kekuatan dielektrik isolasi busbar, trafo arus (CT), dan trafo tegangan (PT) antar-fasa dan fasa-ke-ground.</p></li>
+  <li><p><strong>Analisis Waktu Kerja Breaker (Timing Test):</strong> Mengukur waktu buka (opening time), waktu tutup (closing time), dan sinkronisasi tiga fasa sesuai spesifikasi pabrikan.</p></li>
+  <li><p><strong>Uji Injeksi Sekunder Relay Proteksi:</strong> Menguji keandalan dan waktu kerja relay proteksi arus lebih (50/51), gangguan tanah (50N/51N), dan tegangan kurang (27) untuk memastikan koordinasi proteksi bekerja tepat.</p></li>
+  <li><p><strong>Inspeksi Termografi Inframerah:</strong> Pemindaian termal pada sambungan busbar dan terminasi kabel saat berbeban guna mendeteksi panas abnormal sebelum shutdown terencana.</p></li>
+</ol>
+<h3>Layanan Pemeliharaan Switchgear oleh PT Multi Daya Mitra</h3>
+<p>PT Multi Daya Mitra didukung oleh tim engineer berpengalaman dan instrumen uji presisi terkalibrasi (Omicron, Megger, Fluke) siap menangani pemeliharaan switchgear MV saat shutdown atau turnaround period secara tepat waktu dan aman.</p>
+<p>Konsultasikan jadwal pemeliharaan switchgear fasilitas Anda:<br>📱 +62 821-4007-4122<br>📧 <a href="mailto:info@multidayamitra.co.id">info@multidayamitra.co.id</a></p>`,
+    },
+  },
+
+  "effects-of-harmonic-distortion": {
+    slug: "effects-of-harmonic-distortion",
+    id: "00000000-0000-0000-0000-000000000804",
+    title: {
+      en: "Effects of Harmonics – Resonance in Industrial Electrical Systems",
+      id: "Pengaruh Harmonisa – Resonansi pada Sistem Distribusi Listrik Industri",
+    },
+    category: {
+      en: "Engineering Insights",
+      id: "Wawasan Teknik & Analisis",
+    },
+    excerpt: {
+      en: "Understanding how harmonic currents, voltage distortion, and electrical resonance impact industrial power distribution, leading to transformer overheating, capacitor failure, and equipment malfunction.",
+      id: "Memahami bagaimana arus harmonisa, distorsi tegangan, dan resonansi kelistrikan memengaruhi sistem distribusi daya industri, memicu panas berlebih pada transformator, kerusakan kapasitor, dan malfungsi peralatan.",
+    },
+    featuredImageUrl: "/uploads/Relay-Protection-Study.jpg",
+    featured: false,
+    publishedAt: "2020-05-12T00:00:00Z",
+    body: {
+      en: `<h2>Definition and Origin of Harmonics in Electrical Distribution</h2>
+<p>In modern industrial facilities, the widespread adoption of power electronic devices has fundamentally changed the nature of electrical loads. While traditional loads are linear (drawing sinusoidal current proportional to applied voltage), modern equipment utilizes <strong>non-linear loads</strong>. These non-linear loads draw current in abrupt pulses, injecting harmonic currents that distort the fundamental 50 Hz sinusoidal waveform across the power distribution network.</p>
+<h3>Common Sources of Harmonic Distortion</h3>
+<p>Harmonics are primarily generated by non-linear electronic equipment, including:</p>
+<ul>
+  <li><p><strong>Variable Speed Drives (VSD / VFD) and Inverters:</strong> 6-pulse and 12-pulse rectifiers driving induction motors.</p></li>
+  <li><p><strong>Uninterruptible Power Supplies (UPS):</strong> Double-conversion rectifier and battery-charging stages.</p></li>
+  <li><p><strong>Arc Furnaces &amp; Welding Equipment:</strong> Erratic arc dynamics creating broadband harmonic spectrums.</p></li>
+  <li><p><strong>Switching Power Supplies (SMPS) &amp; Industrial LED Lighting:</strong> Generating significant 3rd, 5th, and 7th harmonic orders.</p></li>
+</ul>
+<h3>The Phenomenon of Electrical Resonance</h3>
+<p>One of the most dangerous side effects of harmonic currents is <strong>harmonic resonance</strong>, which occurs when the inductive reactance of power transformers equals the capacitive reactance of Power Factor Correction (PFC) capacitor banks at a particular harmonic frequency:</p>
+<ul>
+  <li><p><strong>Parallel Resonance:</strong> Occurs when the transformer inductance and capacitor bank form a parallel resonant circuit. Harmonic currents matching this resonant frequency are magnified multiple times, generating extreme voltage distortion (THD-V) across switchgear and panels.</p></li>
+  <li><p><strong>Series Resonance:</strong> Occurs when the supply inductance and capacitor bank form a low-impedance path to ground, causing excessive harmonic currents to flow into the capacitor units, leading to blown fuses or ruptured casings.</p></li>
+</ul>
+<h3>Consequences on Industrial Equipment</h3>
+<p>If harmonic distortion exceeds recommended IEEE 519 standards, industrial operations face severe risks:</p>
+<ol>
+  <li><p><strong>Transformer Overheating:</strong> Increased eddy current and stray load losses dramatically elevate winding temperatures, demanding derating or causing insulation failure.</p></li>
+  <li><p><strong>Capacitor Bank Destruction:</strong> Overvoltage stress and excessive harmonic currents lead to capacitor bulging, dielectric breakdown, and fire hazards.</p></li>
+  <li><p><strong>Nuisance Tripping:</strong> Protection relays, circuit breakers, and sensitive PLC controllers malfunction due to zero-crossing distortion.</p></li>
+  <li><p><strong>Neutral Conductor Overloading:</strong> Triplen harmonics (3rd, 9th, 15th) accumulate in neutral conductors, causing neutral current to exceed phase current.</p></li>
+</ol>
+<h3>Harmonic Mitigation Solutions by PT Multi Daya Mitra</h3>
+<p>PT Multi Daya Mitra provides comprehensive power quality engineering services to diagnose and eliminate harmonic problems:</p>
+<ul>
+  <li><p><strong>Power Quality Audit:</strong> On-site measurement and class-A logging of THD-V, THD-I, and individual harmonic spectrums up to the 50th order.</p></li>
+  <li><p><strong>Detuned Filter Reactors:</strong> Installing detuned harmonic reactors (7%, 14%) in series with capacitor banks to shift resonance frequencies below the dominant harmonic orders.</p></li>
+  <li><p><strong>Active Harmonic Filters (AHF):</strong> Deploying dynamic IGBT-based active filters that inject canceling harmonic currents in real time, reducing THD-I below 5%.</p></li>
+</ul>
+<p>Protect your industrial network against harmonic resonance. Consult our power quality team:<br>📱 +62 821-4007-4122<br>📧 <a href="mailto:info@multidayamitra.co.id">info@multidayamitra.co.id</a></p>`,
+      id: `<h2>Definisi dan Asal Muasal Harmonisa pada Distribusi Listrik</h2>
+<p>Dalam fasilitas industri modern, penggunaan perangkat elektronika daya telah mengubah karakteristik beban kelistrikan secara mendasar. Berbeda dengan beban linier konvensional yang menyerap arus sinusoidal murni sebanding dengan tegangan, peralatan modern merupakan <strong>beban non-linier</strong>. Beban ini menyerap arus dalam bentuk pulsa-pulsa tajam, yang menginjeksikan arus harmonisa dan mendistorsi gelombang sinusoidal fundamental 50 Hz pada jaringan distribusi listrik pabrik.</p>
+<h3>Sumber Utama Distorsi Harmonisa</h3>
+<p>Harmonisa terutama dihasilkan oleh peralatan industri berbasis konverter daya, seperti:</p>
+<ul>
+  <li><p><strong>Variable Speed Drive (VSD / Inverter Motor):</strong> Rangkaian rectifier 6-pulsa dan 12-pulsa pengatur putaran motor.</p></li>
+  <li><p><strong>Uninterruptible Power Supply (UPS):</strong> Rangkaian penyearah dan sistem pengisian baterai berkapasitas besar.</p></li>
+  <li><p><strong>Mesin Las Busur Listrik (Welder) &amp; Arc Furnace:</strong> Beban dinamis berfluktuasi tinggi yang menghasilkan spektrum harmonisa luas.</p></li>
+  <li><p><strong>Switching Power Supply (SMPS) &amp; Pencahayaan LED Industri:</strong> Menyumbang harmonisa orde ke-3, ke-5, dan ke-7 secara signifikan.</p></li>
+</ul>
+<h3>Fenomena Resonansi Harmonisa</h3>
+<p>Dampak paling berbahaya dari distorsi harmonisa adalah timbulnya <strong>resonansi kelistrikan</strong>. Resonansi terjadi ketika reaktansi induktif dari transformator daya berinteraksi sama besar dengan reaktansi kapasitif dari Bank Kapasitor (Power Factor Correction / PFC) pada frekuensi harmonisa tertentu:</p>
+<ul>
+  <li><p><strong>Resonansi Paralel:</strong> Terbentuk dari kombinasi induktansi transformator dan bank kapasitor. Arus harmonisa pada frekuensi resonansi ini akan diamplifikasi berkali-kali lipat, memicu lonjakan tegangan harmonisa tinggi (THD-V ekstrem) di busbar panel.</p></li>
+  <li><p><strong>Resonansi Seri:</strong> Menciptakan jalur impedansi sangat rendah menuju ground pada frekuensi tertentu, menarik arus harmonisa sangat besar melewati bank kapasitor hingga sekring putus atau modul kapasitor meledak.</p></li>
+</ul>
+<h3>Dampak Buruk pada Peralatan Pabrik</h3>
+<p>Bila total harmonic distortion melebihi ambang batas standar IEEE 519 atau regulasi PLN, berbagai dampak kerugian akan dialami:</p>
+<ol>
+  <li><p><strong>Overheating Transformator:</strong> Kerugian arus eddy dan kerugian stray load meningkat drastis, menyebabkan trafo cepat panas dan kapasitas daya efektifnya menurun (derating).</p></li>
+  <li><p><strong>Kerusakan Kapasitor Bank:</strong> Tegangan berlebih dan arus harmonisa tinggi menyebabkan kapasitor menggelembung (bulging), rusak isolasi dielektriknya, hingga memicu bahaya kebakaran.</p></li>
+  <li><p><strong>Malfungsi Relay &amp; PLC (Nuisance Tripping):</strong> Gelombang yang terdistorsi mengganggu deteksi zero-crossing pada perangkat elektronik sensitif, memicu trip palsu.</p></li>
+  <li><p><strong>Overload Penghantar Netral:</strong> Harmonisa urutan ke-3 (triplen harmonics) saling menjumlahkan diri pada kabel netral, membuat arus kabel netral melampaui kapasitas fasa.</p></li>
+</ol>
+<h3>Solusi Mitigasi Harmonisa oleh PT Multi Daya Mitra</h3>
+<p>PT Multi Daya Mitra menyediakan solusi menyeluruh untuk audit dan mitigasi harmonisa di fasilitas industri:</p>
+<ul>
+  <li><p><strong>Audit Kualitas Daya (Power Quality Audit):</strong> Pengukuran dan perekaman komprehensif THD-V, THD-I, dan spektrum orde harmonisa hingga orde ke-50 menggunakan power quality analyzer terkalibrasi.</p></li>
+  <li><p><strong>Detuned Reactor pada Kapasitor:</strong> Pemasangan reaktor harmonisa (detuned reactor 7% atau 14%) secara seri dengan kapasitor untuk menggeser titik resonansi jauh di bawah orde harmonisa utama.</p></li>
+  <li><p><strong>Active Harmonic Filter (AHF):</strong> Instalasi filter aktif berbasis IGBT cerdas yang menginjeksikan arus balik secara real-time guna menekan THD-I di bawah 5%.</p></li>
+</ul>
+<p>Lindungi sistem kelistrikan pabrik Anda dari risiko resonansi harmonisa. Hubungi tim engineering kami:<br>📱 +62 821-4007-4122<br>📧 <a href="mailto:info@multidayamitra.co.id">info@multidayamitra.co.id</a></p>`,
+    },
+  },
+
+  "energy-monitoring-system-launch": {
+    slug: "energy-monitoring-system-launch",
+    id: "00000000-0000-0000-0000-000000000801",
+    title: {
+      en: "Energy Monitoring System for Sustainability & ESG Reporting",
+      id: "Sistem Monitoring Energi Cerdas untuk Keberlanjutan & Pelaporan ESG",
+    },
+    category: {
+      en: "Company News",
+      id: "Berita Perusahaan",
+    },
+    excerpt: {
+      en: "PT Multi Daya Mitra deploys smart energy monitoring systems integrated with industrial IoT and SCADA, enabling real-time energy intelligence, cost reduction, and automated ESG carbon-emission reporting.",
+      id: "PT Multi Daya Mitra menghadirkan sistem monitoring energi cerdas terintegrasi IoT dan SCADA industri untuk pemantauan konsumsi daya real-time, efisiensi biaya operasional, dan pelaporan emisi karbon ESG otomatis.",
+    },
+    featuredImageUrl: "/uploads/M2.jpeg",
+    featured: true,
+    publishedAt: "2020-04-18T00:00:00Z",
+    body: {
+      en: `<h2>Turning Energy Data into Measurable Business Impact</h2>
+<p>As modern manufacturing industries advance toward net-zero targets and cost optimization, energy management has transitioned from a routine facility task into a strategic operational priority. PT Multi Daya Mitra deploys industrial-grade <strong>Smart Energy Monitoring Systems (SEMS)</strong> integrated with SCADA and IoT platforms, transforming raw power measurements into actionable intelligence for plant managers, utility supervisors, and corporate sustainability executives.</p>
+<h3>Core Architecture of the Smart Energy Monitoring Platform</h3>
+<p>Our solution links physical electrical assets to an intuitive centralized visualization platform through four robust architectural layers:</p>
+<ol>
+  <li><p><strong>Measurement Layer:</strong> High-precision digital power meters (Class 0.2S / 0.5S) installed across Main Distribution Panels (MDP), Sub-Distribution Panels (SDP), transformer secondaries, chillers, and critical motor control centers (MCC).</p></li>
+  <li><p><strong>Edge Connectivity &amp; Telemetry:</strong> Industrial IoT gateways acquiring data via Modbus RTU/TCP, BACnet, and OPC-UA over secure Ethernet, fiber-optic, and wireless telemetry networks.</p></li>
+  <li><p><strong>Analytics &amp; Processing Engine:</strong> Automated aggregation of voltage, current, active power (kW), apparent power (kVA), power factor (PF), peak demand, and total harmonic distortion (THD).</p></li>
+  <li><p><strong>Visualization &amp; ESG Reporting Dashboard:</strong> Cloud or on-premise SCADA dashboards offering customizable KPI widgets, automated alerts, and exportable regulatory reporting modules.</p></li>
+</ol>
+<h3>Key Features &amp; Capabilities</h3>
+<ul>
+  <li><p><strong>120+ Electrical &amp; Utility Measurement Points:</strong> Unified dashboard tracking power, water, steam, and compressed air across distributed facilities.</p></li>
+  <li><p><strong>Sub-Metering Granularity:</strong> Departmental, machine-level, and production-line cost allocation to identify inefficient production cycles and idle equipment losses.</p></li>
+  <li><p><strong>Peak Demand Management:</strong> Automated threshold alerts preventing costly maximum demand penalties from utility providers (PLN kVA limits).</p></li>
+  <li><p><strong>Automated Scope 2 Carbon Emission Tracking:</strong> Real-time conversion of kWh consumption into GHG Protocol compliant CO₂ equivalent (tCO₂e) metrics for ESG corporate sustainability audits.</p></li>
+  <li><p><strong>Predictive Anomaly Detection:</strong> Early warning notifications for phase imbalance, power factor drops below 0.85, and voltage sag/swell occurrences.</p></li>
+</ul>
+<h3>Measurable ROI for Industrial Operations</h3>
+<p>Facilities implementing our Smart Energy Monitoring System typically experience <strong>8% to 15% reductions in overall electrical utility expenditure</strong> within the first year by eliminating baseline leakage, optimizing chiller schedules, and avoiding utility penalty tariffs. Furthermore, automated reporting saves hundreds of engineering hours during annual ISO 50001 and ESG compliance audits.</p>
+<h3>End-to-End Implementation by PT Multi Daya Mitra</h3>
+<p>PT Multi Daya Mitra provides complete turnkey engineering — including energy auditing, meter sizing, panel retrofit, gateway installation, software commissioning, and staff training. Connect with our engineering experts to modernize your plant's energy intelligence.</p>
+<p>Contact:<br>📱 +62 821-4007-4122<br>📧 <a href="mailto:info@multidayamitra.co.id">info@multidayamitra.co.id</a></p>`,
+      id: `<h2>Mengubah Data Energi Menjadi Dampak Bisnis yang Terukur</h2>
+<p>Di tengah tuntutan efisiensi operasional dan target dekarbonisasi industri global, manajemen energi telah bergeser dari sekadar tugas utilitas rutin menjadi prioritas strategis perusahaan. PT Multi Daya Mitra menghadirkan <strong>Sistem Monitoring Energi Cerdas (Smart Energy Monitoring System - SEMS)</strong> berstandar industri yang terintegrasi dengan platform SCADA dan IoT, mengubah pembacaan parameter kelistrikan menjadi wawasan analitik mendalam bagi manajemen pabrik, tim engineering, dan divisi pelaporan ESG.</p>
+<h3>Arsitektur Sistem Monitoring Energi Terintegrasi</h3>
+<p>Solusi kami menghubungkan aset kelistrikan fisik ke antarmuka visualisasi terpusat melalui empat lapisan arsitektur andal:</p>
+<ol>
+  <li><p><strong>Lapisan Pengukuran (Measurement Layer):</strong> Pemasangan digital power meter berpresisi tinggi (Class 0.2S / 0.5S) pada Main Distribution Panel (MDP), Sub-Distribution Panel (SDP), trafo distribusi, sistem chiller, dan Motor Control Center (MCC).</p></li>
+  <li><p><strong>Konektivitas Edge &amp; Telemetri:</strong> Gateway IoT industri yang mengumpulkan data secara kontinu melalui protokol Modbus RTU/TCP, BACnet, dan OPC-UA menggunakan jaringan kabel optik atau nirkabel yang aman.</p></li>
+  <li><p><strong>Mesin Analitik &amp; Komputasi:</strong> Pengolahan otomatis parameter tegangan, arus, daya aktif (kW), daya semu (kVA), faktor daya (cos phi), konsumsi kWh, beban puncak, dan distorsi harmonisa (THD).</p></li>
+  <li><p><strong>Dashboard Visualisasi &amp; Laporan ESG:</strong> Tampilan SCADA visual on-premise maupun cloud yang menyajikan grafik tren real-time, perbandingan konsumsi antar-shift, serta ekspor laporan kepatuhan otomatis.</p></li>
+</ol>
+<h3>Fitur Unggulan Sistem</h3>
+<ul>
+  <li><p><strong>120+ Titik Pengukuran Terpadu:</strong> Monitoring menyeluruh pemakaian listrik, air, gas, dan udara bertekanan (compressed air) dalam satu antarmuka tunggal.</p></li>
+  <li><p><strong>Sub-Metering per Lini Produksi:</strong> Alokasi biaya energi yang presisi per mesin atau per batch produksi untuk mendeteksi pemborosan saat mesin dalam kondisi stand-by.</p></li>
+  <li><p><strong>Manajemen Beban Puncak (Peak Demand):</strong> Notifikasi peringatan dini sebelum batas daya kontrak (kVA) terlampaui guna menghindari denda kelebihan beban dari PLN.</p></li>
+  <li><p><strong>Kalkulasi Emisi Karbon Scope 2 Otomatis:</strong> Konversi langsung konsumsi listrik (kWh) menjadi metrik emisi gas rumah kaca (tCO₂e) sesuai standar GHG Protocol untuk kebutuhan audit ESG dan sertifikasi ISO 50001.</p></li>
+  <li><p><strong>Deteksi Dini Gangguan Listrik:</strong> Alarm instan untuk ketidakseimbangan fasa (phase unbalance), penurunan faktor daya di bawah 0.85, serta indikasi distorsi tegangan.</p></li>
+</ul>
+<h3>Efisiensi Nyata untuk Fasilitas Industri</h3>
+<p>Pabrik dan gedung komersial yang mengadopsi sistem monitoring energi kami mencatatkan <strong>penghematan biaya listrik rata-rata 8% hingga 15%</strong> pada tahun pertama implementasi, sekaligus menghemat ratusan jam kerja staf teknis dalam pengumpulan data manual.</p>
+<h3>Layanan Turnkey oleh PT Multi Daya Mitra</h3>
+<p>PT Multi Daya Mitra melayani implementasi end-to-end: mulai dari audit kelayakan, suplai power meter, retrofit panel, pemrograman gateway dan SCADA, hingga pelatihan komprehensif bagi operator dan tim manajemen fasilitas Anda.</p>
+<p>Konsultasikan kebutuhan smart energy monitoring bersama kami:<br>📱 +62 821-4007-4122<br>📧 <a href="mailto:info@multidayamitra.co.id">info@multidayamitra.co.id</a></p>`,
+    },
+  },
 }
 
 /**

@@ -82,6 +82,16 @@ export const DICTIONARY_EN_TO_ID: Record<string, string> = {
     "Pengujian dan Pemeliharaan Transformator",
   "partial discharge analyzer":
     "Alat Analisis Partial Discharge (PD Scan)",
+  "preventive maintenance of medium voltage (mv) switchgear":
+    "Pemeliharaan Preventif Switchgear Tegangan Menengah (MV)",
+  "effects of harmonics – resonance":
+    "Pengaruh Harmonisa – Resonansi",
+  "effects of harmonics - resonance":
+    "Pengaruh Harmonisa – Resonansi",
+  "effects of harmonics – resonance in industrial electrical systems":
+    "Pengaruh Harmonisa – Resonansi pada Sistem Distribusi Listrik Industri",
+  "energy monitoring system for sustainability & esg reporting":
+    "Sistem Monitoring Energi Cerdas untuk Keberlanjutan & Pelaporan ESG",
 
   // News Excerpts (Live Database)
   "reliable mv & lv cable installation, termination, jointing, testing, and commissioning services to support safe and efficient power distribution in industrial facilities.":
