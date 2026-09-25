@@ -7,6 +7,7 @@ import { AdminPagination } from "@/components/admin/admin-pagination"
 import { ResourceToolbar } from "@/components/admin/resource-toolbar"
 import { AdminResourceTable } from "@/components/admin/resource-table"
 import { AdminApiError, adminFetch, type AdminContentResponse } from "@/lib/admin-api"
+import { enrichServiceWithBilingual } from "@/lib/service-bilingual"
 import { deleteContentItemAction } from "../content-actions"
 
 export default async function AdminServicesPage({
@@ -54,15 +55,18 @@ export default async function AdminServicesPage({
         empty="No services found."
         publicBasePath="/services"
         resource="services"
-        rows={(response?.data ?? []).map((item) => ({
-          id: item.id,
-          title: item.title,
-          slug: item.slug,
-          path: item.fullPath,
-          status: item.status,
-          version: item.version,
-          meta: item.summary,
-        }))}
+        rows={(response?.data ?? []).map((item) => {
+          const enriched = enrichServiceWithBilingual(item, item.fullPath || item.slug) || item
+          return {
+            id: enriched.id,
+            title: enriched.title,
+            slug: enriched.slug,
+            path: enriched.fullPath,
+            status: enriched.status,
+            version: enriched.version,
+            meta: enriched.summary,
+          }
+        })}
       />
       {response && (
         <AdminPagination

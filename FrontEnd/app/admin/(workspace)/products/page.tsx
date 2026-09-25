@@ -7,6 +7,7 @@ import { AdminPagination } from "@/components/admin/admin-pagination"
 import { ResourceToolbar } from "@/components/admin/resource-toolbar"
 import { AdminResourceTable } from "@/components/admin/resource-table"
 import { AdminApiError, adminFetch, type AdminContentResponse } from "@/lib/admin-api"
+import { enrichProductWithBilingual } from "@/lib/product-bilingual"
 import { deleteContentItemAction } from "../content-actions"
 
 export default async function AdminProductsPage({
@@ -54,15 +55,18 @@ export default async function AdminProductsPage({
         empty="No products found."
         publicBasePath="/products"
         resource="products"
-        rows={(response?.data ?? []).map((item) => ({
-          id: item.id,
-          title: item.title,
-          slug: item.slug,
-          path: item.fullPath,
-          status: item.status,
-          version: item.version,
-          meta: item.summary,
-        }))}
+        rows={(response?.data ?? []).map((item) => {
+          const enriched = enrichProductWithBilingual(item, item.fullPath || item.slug) || item
+          return {
+            id: enriched.id,
+            title: enriched.title,
+            slug: enriched.slug,
+            path: enriched.fullPath,
+            status: enriched.status,
+            version: enriched.version,
+            meta: enriched.summary,
+          }
+        })}
       />
       {response && (
         <AdminPagination

@@ -6,6 +6,7 @@ import { ContentItemForm } from "@/components/admin/resource-forms"
 import { Button } from "@/components/ui/button"
 import { AdminApiError, adminFetch, type AdminContentResponse } from "@/lib/admin-api"
 import type { ContentNode } from "@/lib/cms"
+import { enrichProductWithBilingual } from "@/lib/product-bilingual"
 import { updateContentItemAction } from "../../content-actions"
 
 export default async function AdminEditProductPage({
@@ -22,8 +23,8 @@ export default async function AdminEditProductPage({
       adminFetch<ContentNode>(`/products/${id}`, {}, `/admin/products/${id}`),
       adminFetch<AdminContentResponse>("/products?perPage=100", {}, `/admin/products/${id}`),
     ])
-    item = itemResponse
-    parents = parentResponse.data
+    item = itemResponse ? enrichProductWithBilingual(itemResponse, itemResponse.fullPath || itemResponse.slug) || itemResponse : null
+    parents = (parentResponse.data ?? []).map((p) => enrichProductWithBilingual(p, p.fullPath || p.slug) || p)
   } catch (error) {
     if (error instanceof AdminApiError) apiError = true
     else throw error
