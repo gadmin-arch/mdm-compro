@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath, updateTag } from "next/cache"
+import { revalidatePath, revalidateTag, updateTag, refresh } from "next/cache"
 import { redirect } from "next/navigation"
 import { AdminApiError, adminFetch, type AdminSetting } from "@/lib/admin-api"
 import type { SaveResult } from "@/lib/save-result"
@@ -70,7 +70,21 @@ export async function saveSiteSettingsAction(formData: FormData): Promise<SaveRe
   }
 
   // The footer renders on every public page, so purge everything.
-  updateTag("cms")
+  try {
+    revalidateTag("cms", { expire: 0 })
+  } catch {
+    // ignore
+  }
+  try {
+    updateTag("cms")
+  } catch {
+    // ignore
+  }
+  try {
+    refresh()
+  } catch {
+    // ignore
+  }
   revalidatePath("/", "layout")
   revalidatePath("/admin/site-settings")
   redirect("/admin/site-settings?saved=1")
@@ -115,7 +129,21 @@ export async function saveAnalyticsSettingsAction(formData: FormData): Promise<S
   }
 
   // The tracker mounts from the public layout, which reads this flag.
-  updateTag("cms")
+  try {
+    revalidateTag("cms", { expire: 0 })
+  } catch {
+    // ignore
+  }
+  try {
+    updateTag("cms")
+  } catch {
+    // ignore
+  }
+  try {
+    refresh()
+  } catch {
+    // ignore
+  }
   revalidatePath("/", "layout")
   revalidatePath("/admin/site-settings")
   redirect("/admin/site-settings?saved=analytics")

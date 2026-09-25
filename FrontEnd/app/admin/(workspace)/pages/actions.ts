@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath, updateTag } from "next/cache"
+import { revalidatePath, revalidateTag, updateTag, refresh } from "next/cache"
 import { redirect } from "next/navigation"
 import {
   AdminApiError,
@@ -46,17 +46,37 @@ function pagePayload(formData: FormData): PageCreatePayload {
 function revalidatePagePaths(...keys: string[]) {
   // Purge every CMS fetch (pages, navigation, grids) so edits show up
   // immediately instead of waiting out the time-based revalidate window.
-  updateTag("cms")
-  revalidatePath("/")
-  revalidatePath("/about")
-  revalidatePath("/contact")
+  try {
+    revalidateTag("cms", { expire: 0 })
+  } catch {
+    // ignore
+  }
+  try {
+    updateTag("cms")
+  } catch {
+    // ignore
+  }
+  try {
+    refresh()
+  } catch {
+    // ignore
+  }
+  revalidatePath("/", "layout")
+  revalidatePath("/", "page")
+  revalidatePath("/about", "page")
+  revalidatePath("/contact", "page")
+  revalidatePath("/services", "page")
+  revalidatePath("/products", "page")
+  revalidatePath("/news", "page")
+  revalidatePath("/career", "page")
   for (const key of keys) {
     if (key) {
-      revalidatePath(`/${key}`)
+      revalidatePath(`/${key}`, "page")
+      revalidatePath(`/${key}`, "layout")
     }
   }
-  revalidatePath("/admin")
-  revalidatePath("/admin/pages")
+  revalidatePath("/admin", "layout")
+  revalidatePath("/admin/pages", "page")
 }
 
 export async function createPageAction(formData: FormData): Promise<SaveResult | void> {

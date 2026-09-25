@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath, updateTag } from "next/cache"
+import { revalidatePath, revalidateTag, updateTag, refresh } from "next/cache"
 import { redirect } from "next/navigation"
 import { AdminApiError, adminFetch } from "@/lib/admin-api"
 
@@ -31,7 +31,21 @@ export async function restoreItemAction(formData: FormData) {
   }
 
   // Revalidate pages to refresh lists
-  updateTag("cms")
+  try {
+    revalidateTag("cms", { expire: 0 })
+  } catch {
+    // ignore
+  }
+  try {
+    updateTag("cms")
+  } catch {
+    // ignore
+  }
+  try {
+    refresh()
+  } catch {
+    // ignore
+  }
   revalidatePath("/")
   revalidatePath("/admin")
   revalidatePath("/admin/archive")

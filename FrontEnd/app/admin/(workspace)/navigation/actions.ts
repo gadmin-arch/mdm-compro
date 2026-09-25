@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath, updateTag } from "next/cache"
+import { revalidatePath, revalidateTag, updateTag, refresh } from "next/cache"
 import { redirect } from "next/navigation"
 import { AdminApiError, adminFetch } from "@/lib/admin-api"
 import type { MenuItem } from "@/lib/cms"
@@ -42,7 +42,21 @@ export async function saveNavigationAction(formData: FormData): Promise<SaveResu
   }
 
   // The menu renders in the shared site header, so purge all public pages.
-  updateTag("cms")
+  try {
+    revalidateTag("cms", { expire: 0 })
+  } catch {
+    // ignore
+  }
+  try {
+    updateTag("cms")
+  } catch {
+    // ignore
+  }
+  try {
+    refresh()
+  } catch {
+    // ignore
+  }
   revalidatePath("/", "layout")
   revalidatePath("/admin/navigation")
   redirect("/admin/navigation?saved=1")

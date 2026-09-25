@@ -2,7 +2,7 @@ import { enrichNewsWithBilingual, BILINGUAL_NEWS_CATALOG } from "@/lib/news-bili
 import { enrichCareerWithBilingual, BILINGUAL_CAREER_CATALOG } from "@/lib/career-bilingual"
 import { buildBilingualProductTree, enrichProductWithBilingual } from "@/lib/product-bilingual"
 import { buildBilingualServiceTree, enrichServiceWithBilingual } from "@/lib/service-bilingual"
-import { enrichPageWithBilingual } from "@/lib/page-bilingual"
+import { enrichPageWithBilingual, DEFAULT_BILINGUAL_IMPACT_VALUES } from "@/lib/page-bilingual"
 
 export type SEO = {
   title?: string
@@ -273,6 +273,7 @@ export const fallbackPages: Record<string, PageContent> = {
         "NFPA Member",
         "D&B Rating"
       ],
+      impactValues: DEFAULT_BILINGUAL_IMPACT_VALUES,
     },
   },
   contact: {
