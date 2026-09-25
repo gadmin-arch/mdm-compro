@@ -6063,6 +6063,38 @@ SET content = jsonb_build_object(
         'EN: Commitment to Safety & Customer First' || E'\n' || 'ID: Komitmen Keselamatan (K3) & Utamakan Pelanggan',
         'EN: Total Engineering Solutions' || E'\n' || 'ID: Solusi Rekayasa Teknik Menyeluruh'
       ),
+      'impactValues', jsonb_build_array(
+        jsonb_build_object(
+          'letter', 'I',
+          'title', 'EN: Integrity & Innovation' || E'\n' || 'ID: Integritas & Inovasi',
+          'desc', 'EN: Building trust through honesty and responsibility while advancing with modern, up-to-date technologies.' || E'\n' || 'ID: Membangun kepercayaan melalui kejujuran dan tanggung jawab seraya terus berinovasi dengan teknologi termutakhir.'
+        ),
+        jsonb_build_object(
+          'letter', 'M',
+          'title', 'EN: Mastery & Intelligent Problem-Solving' || E'\n' || 'ID: Keahlian Teknis & Solusi Cerdas',
+          'desc', 'EN: Deep technical mastery in electrical and automation systems with structured precision engineering — not assumptions.' || E'\n' || 'ID: Penguasaan teknis mendalam di bidang sistem kelistrikan dan otomasi melalui rekayasa presisi yang terstruktur — bukan asumsi.'
+        ),
+        jsonb_build_object(
+          'letter', 'P',
+          'title', 'EN: Professional & Trusted Partnership' || E'\n' || 'ID: Kemitraan Profesional & Terpercaya',
+          'desc', 'EN: Discipline, consistency, and high execution standards that position us as a strategic long-term partner.' || E'\n' || 'ID: Disiplin, konsistensi, dan standar eksekusi tinggi yang menempatkan kami sebagai mitra strategis jangka panjang.'
+        ),
+        jsonb_build_object(
+          'letter', 'A',
+          'title', 'EN: Agile & Adaptable Execution' || E'\n' || 'ID: Eksekusi Tangkas & Adaptif',
+          'desc', 'EN: Swift, resilient response to evolving site dynamics, operational challenges, and technological demands.' || E'\n' || 'ID: Tanggap dan tangguh dalam merespons dinamika lapangan yang berkembang, tantangan operasional, dan tuntutan teknologi.'
+        ),
+        jsonb_build_object(
+          'letter', 'C',
+          'title', 'EN: Commitment to Safety & Customer First' || E'\n' || 'ID: Komitmen Keselamatan (K3) & Utamakan Pelanggan',
+          'desc', 'EN: Safety is non-negotiable. Prioritizing operational continuity, asset reliability, and zero-accident culture.' || E'\n' || 'ID: Keselamatan tidak dapat ditawar. Memprioritaskan kontinuitas operasional, keandalan aset, dan budaya nihil kecelakaan kerja.'
+        ),
+        jsonb_build_object(
+          'letter', 'T',
+          'title', 'EN: Total Engineering Solutions' || E'\n' || 'ID: Solusi Rekayasa Teknik Menyeluruh',
+          'desc', 'EN: End-to-end coverage from design, assembly, and installation to testing, commissioning, and lifecycle maintenance.' || E'\n' || 'ID: Cakupan menyeluruh dari perancangan, perakitan, dan instalasi hingga pengujian, commissioning, serta pemeliharaan siklus hidup aset.'
+        )
+      ),
       'certifications', jsonb_build_array(
         'ISO 9001:2015 (Quality Management - KAN)',
         'ISO 14001:2015 (Environmental Management)',

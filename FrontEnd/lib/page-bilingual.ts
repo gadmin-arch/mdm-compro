@@ -256,11 +256,58 @@ export function enrichPageWithBilingual<
         }
       }
     }
+
+    // 3. Enrich impactValues if page is about
+    if (pageKey === "about") {
+      if (Array.isArray(enrichedContent.impactValues) && enrichedContent.impactValues.length > 0) {
+        enrichedContent.impactValues = (enrichedContent.impactValues as Array<Record<string, unknown>>).map((item, idx) => {
+          const defaultItem = DEFAULT_BILINGUAL_IMPACT_VALUES[idx] || DEFAULT_BILINGUAL_IMPACT_VALUES[0]
+          const letter = String(item.letter || defaultItem.letter || "")
+
+          let title = String(item.title || "")
+          if (title) {
+            const ext = extractBilingualText(title)
+            if (!ext.id || ext.id === ext.en) {
+              const matched = DEFAULT_BILINGUAL_IMPACT_VALUES.find((d) => d.letter === letter)
+              if (matched) title = matched.title
+            } else {
+              title = combineBilingualText(ext)
+            }
+          } else {
+            title = defaultItem.title
+          }
+
+          let desc = String(item.desc || "")
+          if (desc) {
+            const ext = extractBilingualText(desc)
+            if (!ext.id || ext.id === ext.en) {
+              const matched = DEFAULT_BILINGUAL_IMPACT_VALUES.find((d) => d.letter === letter)
+              if (matched) desc = matched.desc
+            } else {
+              desc = combineBilingualText(ext)
+            }
+          } else {
+            desc = defaultItem.desc
+          }
+
+          return {
+            letter,
+            title,
+            desc,
+          }
+        })
+      } else {
+        enrichedContent.impactValues = DEFAULT_BILINGUAL_IMPACT_VALUES
+      }
+    }
   } else if (knownFields) {
     // If content is empty/undefined, initialize with known fields
     enrichedContent = {}
     for (const [key, pair] of Object.entries(knownFields)) {
       enrichedContent[key] = combineBilingualText({ id: pair.id, en: pair.en })
+    }
+    if (pageKey === "about") {
+      enrichedContent.impactValues = DEFAULT_BILINGUAL_IMPACT_VALUES
     }
   }
 
@@ -271,3 +318,37 @@ export function enrichPageWithBilingual<
     content: enrichedContent,
   }
 }
+
+export const DEFAULT_BILINGUAL_IMPACT_VALUES = [
+  {
+    letter: "I",
+    title: "EN: Integrity & Innovation\nID: Integritas & Inovasi",
+    desc: "EN: Building trust through honesty and responsibility while advancing with modern, up-to-date technologies.\nID: Membangun kepercayaan melalui kejujuran dan tanggung jawab seraya terus berinovasi dengan teknologi termutakhir.",
+  },
+  {
+    letter: "M",
+    title: "EN: Mastery & Intelligent Problem-Solving\nID: Keahlian Teknis & Solusi Cerdas",
+    desc: "EN: Deep technical mastery in electrical and automation systems with structured precision engineering — not assumptions.\nID: Penguasaan teknis mendalam di bidang sistem kelistrikan dan otomasi melalui rekayasa presisi yang terstruktur — bukan asumsi.",
+  },
+  {
+    letter: "P",
+    title: "EN: Professional & Trusted Partnership\nID: Kemitraan Profesional & Terpercaya",
+    desc: "EN: Discipline, consistency, and high execution standards that position us as a strategic long-term partner.\nID: Disiplin, konsistensi, dan standar eksekusi tinggi yang menempatkan kami sebagai mitra strategis jangka panjang.",
+  },
+  {
+    letter: "A",
+    title: "EN: Agile & Adaptable Execution\nID: Eksekusi Tangkas & Adaptif",
+    desc: "EN: Swift, resilient response to evolving site dynamics, operational challenges, and technological demands.\nID: Tanggap dan tangguh dalam merespons dinamika lapangan yang berkembang, tantangan operasional, dan tuntutan teknologi.",
+  },
+  {
+    letter: "C",
+    title: "EN: Commitment to Safety & Customer First\nID: Komitmen Keselamatan (K3) & Utamakan Pelanggan",
+    desc: "EN: Safety is non-negotiable. Prioritizing operational continuity, asset reliability, and zero-accident culture.\nID: Keselamatan tidak dapat ditawar. Memprioritaskan kontinuitas operasional, keandalan aset, dan budaya nihil kecelakaan kerja.",
+  },
+  {
+    letter: "T",
+    title: "EN: Total Engineering Solutions\nID: Solusi Rekayasa Teknik Menyeluruh",
+    desc: "EN: End-to-end coverage from design, assembly, and installation to testing, commissioning, and lifecycle maintenance.\nID: Cakupan menyeluruh dari perancangan, perakitan, dan instalasi hingga pengujian, commissioning, serta pemeliharaan siklus hidup aset.",
+  },
+]
+

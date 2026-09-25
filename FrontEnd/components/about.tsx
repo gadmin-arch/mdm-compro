@@ -271,6 +271,15 @@ const experiencedBrands = [
   "Huazheng",
 ]
 
+const IMPACT_ICONS: Record<string, typeof Lightbulb> = {
+  I: Lightbulb,
+  M: Target,
+  P: HeartHandshake,
+  A: Sparkles,
+  C: ShieldCheck,
+  T: Wrench,
+}
+
 export function About({ page }: { page?: PageContent | null }) {
   const content = page?.content ?? {}
   const overview = String(
@@ -285,6 +294,43 @@ export function About({ page }: { page?: PageContent | null }) {
     content.mission ??
       "EN: Mutual Partnership and Professionalism in delivering every engineering engagement.\nID: Menjalin Kemitraan Strategis dan Profesionalisme Tinggi dalam Setiap Layanan Rekayasa Teknik.",
   )
+
+  const tagline = content.tagline
+    ? String(content.tagline)
+    : "EN: Always Make an IMPACT — Powering Solution, Creating Impact\nID: Always Make an IMPACT — Solusi Kelistrikan Andal, Menciptakan Dampak Nyata"
+
+  const culture = content.culture
+    ? String(content.culture)
+    : "EN: Our culture of disciplined engineering, safety commitment, and innovation is built around six foundational principles.\nID: Budaya disiplin rekayasa teknik, komitmen keselamatan, dan inovasi kami dibangun di atas enam prinsip dasar."
+
+  const established = content.established
+    ? (String(content.established).includes("EN:")
+        ? String(content.established)
+        : `EN: Established ${content.established}\nID: Berdiri Sejak ${content.established}`)
+    : "EN: Established 2012\nID: Berdiri Sejak 2012"
+
+  const experienceYears = content.experienceYears
+    ? (String(content.experienceYears).includes("Years") || String(content.experienceYears).includes("Tahun")
+        ? String(content.experienceYears)
+        : `${content.experienceYears} Years`)
+    : "14+ Years"
+
+  const clientCount = content.clientCount ? String(content.clientCount) : "400+"
+  const teamCount = content.teamCount ? String(content.teamCount) : "200+"
+  const foundedYear = content.established ? String(content.established) : "2012"
+
+  const resolvedImpactValues = Array.isArray(content.impactValues) && content.impactValues.length > 0
+    ? (content.impactValues as Array<Record<string, unknown>>).map((item, idx) => {
+        const fallback = impactValues[idx] || impactValues[0]
+        const letter = String(item.letter || fallback.letter || "").toUpperCase()
+        return {
+          letter,
+          title: String(item.title || fallback.title || ""),
+          desc: String(item.desc || fallback.desc || ""),
+          icon: IMPACT_ICONS[letter] || fallback.icon || Lightbulb,
+        }
+      })
+    : impactValues
 
   return (
     <>
@@ -305,10 +351,10 @@ export function About({ page }: { page?: PageContent | null }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-5 left-5 right-5 text-white">
                   <p className="text-xs font-semibold uppercase tracking-widest text-accent">
-                    <BilingualText text="EN: Established 2012\nID: Berdiri Sejak 2012" />
+                    <BilingualText text={established} />
                   </p>
                   <p className="mt-1 font-display text-lg font-semibold leading-snug">
-                    <BilingualText text="EN: Always Make an IMPACT — Powering Solution, Creating Impact\nID: Always Make an IMPACT — Solusi Kelistrikan Andal, Menciptakan Dampak Nyata" />
+                    <BilingualText text={tagline} />
                   </p>
                 </div>
               </div>
@@ -333,25 +379,25 @@ export function About({ page }: { page?: PageContent | null }) {
               {/* 4 Key Numerical Stats */}
               <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4 border-y border-border/70 py-6">
                 <div>
-                  <p className="font-display text-2xl font-bold text-foreground sm:text-3xl">14+ Years</p>
+                  <p className="font-display text-2xl font-bold text-foreground sm:text-3xl">{experienceYears}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     <BilingualText text="EN: Business Experience\nID: Pengalaman Industri" />
                   </p>
                 </div>
                 <div>
-                  <p className="font-display text-2xl font-bold text-foreground sm:text-3xl">400+</p>
+                  <p className="font-display text-2xl font-bold text-foreground sm:text-3xl">{clientCount}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     <BilingualText text="EN: Corporate Clients\nID: Klien Korporasi" />
                   </p>
                 </div>
                 <div>
-                  <p className="font-display text-2xl font-bold text-foreground sm:text-3xl">200+</p>
+                  <p className="font-display text-2xl font-bold text-foreground sm:text-3xl">{teamCount}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     <BilingualText text="EN: Staff & Engineers\nID: Tim Ahli & Insinyur" />
                   </p>
                 </div>
                 <div>
-                  <p className="font-display text-2xl font-bold text-foreground sm:text-3xl">2012</p>
+                  <p className="font-display text-2xl font-bold text-foreground sm:text-3xl">{foundedYear}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     <BilingualText text="EN: Founded in Surabaya\nID: Berdiri di Surabaya" />
                   </p>
@@ -405,12 +451,12 @@ export function About({ page }: { page?: PageContent | null }) {
               <BilingualText text="EN: The IMPACT Values Driving Every Project\nID: Nilai-Nilai IMPACT yang Menjadi Landasan Setiap Proyek" />
             </h2>
             <p className="mt-3 text-base text-muted-foreground leading-relaxed">
-              <BilingualText text="EN: Our culture of disciplined engineering, safety commitment, and innovation is built around six foundational principles.\nID: Budaya disiplin rekayasa teknik, komitmen keselamatan, dan inovasi kami dibangun di atas enam prinsip dasar." />
+              <BilingualText text={culture} />
             </p>
           </div>
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {impactValues.map((val) => {
+            {resolvedImpactValues.map((val) => {
               const Icon = val.icon
               return (
                 <div

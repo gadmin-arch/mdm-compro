@@ -41,7 +41,7 @@ import { isSystemPageKey, type PageContent, type SEO } from "@/lib/cms"
 import type { SaveAction } from "@/lib/save-result"
 import { presetSectionsForKey, sectionsFromContent, type Section } from "@/lib/sections"
 import { combineBilingualText, extractBilingualText, lookupDictionary } from "@/lib/bilingual"
-import { BILINGUAL_PAGE_FIELDS } from "@/lib/page-bilingual"
+import { BILINGUAL_PAGE_FIELDS, DEFAULT_BILINGUAL_IMPACT_VALUES } from "@/lib/page-bilingual"
 
 type ContactOffice = {
   name: string
@@ -990,6 +990,48 @@ function contentToFields(content: Record<string, unknown>, pageKey?: string): Fi
         if (resolvedId && resolvedEn && resolvedId !== resolvedEn) {
           textValue = combineBilingualText({ id: resolvedId, en: resolvedEn })
         }
+      } else if (fieldKey === "impactValues") {
+        let items: Array<Record<string, unknown>> = []
+        if (Array.isArray(value)) {
+          items = value as Array<Record<string, unknown>>
+        } else if (typeof value === "string") {
+          try {
+            const p = JSON.parse(value)
+            if (Array.isArray(p)) items = p
+          } catch {}
+        }
+        if (items.length > 0) {
+          const enriched = items.map((it, idx) => {
+            const def = DEFAULT_BILINGUAL_IMPACT_VALUES[idx] || DEFAULT_BILINGUAL_IMPACT_VALUES[0]
+            const letter = String(it.letter || def.letter || "")
+            let title = String(it.title || "")
+            if (title) {
+              const ext = extractBilingualText(title)
+              if (!ext.id || ext.id === ext.en) {
+                const matched = DEFAULT_BILINGUAL_IMPACT_VALUES.find((d) => d.letter === letter)
+                if (matched) title = matched.title
+              } else {
+                title = combineBilingualText(ext)
+              }
+            } else {
+              title = def.title
+            }
+            let desc = String(it.desc || "")
+            if (desc) {
+              const ext = extractBilingualText(desc)
+              if (!ext.id || ext.id === ext.en) {
+                const matched = DEFAULT_BILINGUAL_IMPACT_VALUES.find((d) => d.letter === letter)
+                if (matched) desc = matched.desc
+              } else {
+                desc = combineBilingualText(ext)
+              }
+            } else {
+              desc = def.desc
+            }
+            return { letter, title, desc }
+          })
+          textValue = JSON.stringify(enriched, null, 2)
+        }
       }
       return {
         id: `field-${fieldKey}`,
@@ -1265,7 +1307,14 @@ function BilingualPageFieldCard({
             ))}
           </select>
 
-          {isText && (
+          {field.key === "impactValues" ? (
+            <span
+              title="6 Nilai IMPACT dalam format dwi-bahasa (ID + EN)"
+              className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
+            >
+              ✓ 6 Nilai IMPACT (ID + EN)
+            </span>
+          ) : isText && (
             hasId && hasEn ? (
               <span
                 title="Lengkap: Versi ID dan EN terisi"
@@ -1296,13 +1345,13 @@ function BilingualPageFieldCard({
         </div>
 
         <div className="flex items-center gap-2">
-          {isText && (
+          {(isText || field.key === "impactValues") && (
             <button
               type="button"
               onClick={() => setShowRaw(!showRaw)}
               className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
-              {showRaw ? "Mode Dwi-Bahasa" : "Raw"}
+              {showRaw ? "Mode Dwi-Bahasa" : field.key === "impactValues" ? "Raw JSON" : "Raw"}
             </button>
           )}
           <Button
@@ -1374,6 +1423,8 @@ function BilingualPageFieldCard({
               value={field.value}
             />
           </div>
+        ) : field.key === "impactValues" && !showRaw ? (
+          <ImpactValuesBilingualEditor value={field.value} onChange={onUpdateValue} />
         ) : (
           <div className="space-y-1.5">
             <p className="text-[11px] text-muted-foreground">
@@ -1388,6 +1439,187 @@ function BilingualPageFieldCard({
             />
           </div>
         )}
+      </div>
+    </div>
+  )
+}
+
+function ImpactValuesBilingualEditor({
+  value,
+  onChange,
+}: {
+  value: string
+  onChange: (value: string) => void
+}) {
+  const items = useMemo(() => {
+    try {
+      const parsed = JSON.parse(value)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((item: any, idx: number) => {
+          const defaultItem = DEFAULT_BILINGUAL_IMPACT_VALUES[idx] || DEFAULT_BILINGUAL_IMPACT_VALUES[0]
+          const letter = String(item.letter || defaultItem.letter || "")
+
+          let title = String(item.title || "")
+          if (title) {
+            const ext = extractBilingualText(title)
+            if (!ext.id || ext.id === ext.en) {
+              const matched = DEFAULT_BILINGUAL_IMPACT_VALUES.find((d) => d.letter === letter)
+              if (matched) title = matched.title
+            } else {
+              title = combineBilingualText(ext)
+            }
+          } else {
+            title = defaultItem.title
+          }
+
+          let desc = String(item.desc || "")
+          if (desc) {
+            const ext = extractBilingualText(desc)
+            if (!ext.id || ext.id === ext.en) {
+              const matched = DEFAULT_BILINGUAL_IMPACT_VALUES.find((d) => d.letter === letter)
+              if (matched) desc = matched.desc
+            } else {
+              desc = combineBilingualText(ext)
+            }
+          } else {
+            desc = defaultItem.desc
+          }
+
+          return { letter, title, desc }
+        })
+      }
+    } catch {
+      // ignore
+    }
+    return DEFAULT_BILINGUAL_IMPACT_VALUES
+  }, [value])
+
+  function updateItem(index: number, patch: { title?: string; desc?: string; letter?: string }) {
+    const updated = items.map((it, idx) => (idx === index ? { ...it, ...patch } : it))
+    onChange(JSON.stringify(updated, null, 2))
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <span>Prinsip Nilai Budaya Perusahaan (I - M - P - A - C - T)</span>
+        <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+          ✓ Dwi-Bahasa Terintegrasi (ID + EN)
+        </span>
+      </div>
+
+      <div className="space-y-3">
+        {items.map((item, idx) => {
+          const extTitle = extractBilingualText(item.title)
+          const extDesc = extractBilingualText(item.desc)
+
+          return (
+            <div
+              key={item.letter || idx}
+              className="rounded-lg border border-border/80 bg-background/80 p-3 shadow-xs space-y-3"
+            >
+              <div className="flex items-center justify-between border-b border-border/50 pb-2">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 font-display text-sm font-bold text-primary">
+                    {item.letter}
+                  </span>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
+                    Nilai &quot;{item.letter}&quot;
+                  </span>
+                </div>
+                {Boolean(extTitle.id.trim()) && Boolean(extTitle.en.trim()) && Boolean(extDesc.id.trim()) && Boolean(extDesc.en.trim()) ? (
+                  <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                    ✓ Lengkap
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-medium text-amber-600 dark:text-amber-400">
+                    ⚠️ Belum Lengkap
+                  </span>
+                )}
+              </div>
+
+              {/* Title Section */}
+              <div className="space-y-1">
+                <p className="text-[11px] font-semibold text-muted-foreground">Judul / Title</p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {/* Title ID */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-500" />
+                      <span>Bahasa Indonesia (ID)</span>
+                    </div>
+                    <Input
+                      className="h-8 text-xs font-medium"
+                      placeholder="Judul dalam Bahasa Indonesia..."
+                      value={extTitle.id}
+                      onChange={(e) => {
+                        const newTitle = combineBilingualText({ id: e.target.value, en: extTitle.en })
+                        updateItem(idx, { title: newTitle })
+                      }}
+                    />
+                  </div>
+
+                  {/* Title EN */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500" />
+                      <span>English (EN)</span>
+                    </div>
+                    <Input
+                      className="h-8 text-xs font-medium"
+                      placeholder="Title in English..."
+                      value={extTitle.en}
+                      onChange={(e) => {
+                        const newTitle = combineBilingualText({ id: extTitle.id, en: e.target.value })
+                        updateItem(idx, { title: newTitle })
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Desc Section */}
+              <div className="space-y-1">
+                <p className="text-[11px] font-semibold text-muted-foreground">Deskripsi / Description</p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {/* Desc ID */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-500" />
+                      <span>Bahasa Indonesia (ID)</span>
+                    </div>
+                    <Textarea
+                      className="min-h-16 text-xs bg-background"
+                      placeholder="Deskripsi dalam Bahasa Indonesia..."
+                      value={extDesc.id}
+                      onChange={(e) => {
+                        const newDesc = combineBilingualText({ id: e.target.value, en: extDesc.en })
+                        updateItem(idx, { desc: newDesc })
+                      }}
+                    />
+                  </div>
+
+                  {/* Desc EN */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500" />
+                      <span>English (EN)</span>
+                    </div>
+                    <Textarea
+                      className="min-h-16 text-xs bg-background"
+                      placeholder="Description in English..."
+                      value={extDesc.en}
+                      onChange={(e) => {
+                        const newDesc = combineBilingualText({ id: extDesc.id, en: e.target.value })
+                        updateItem(idx, { desc: newDesc })
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
