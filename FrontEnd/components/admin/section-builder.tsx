@@ -23,15 +23,20 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import {
+  Activity,
+  Award,
   BarChart3,
   Building2,
+  CheckCircle2,
   ChevronDown,
   Compass,
   Copy,
   Database,
   Factory,
   GripVertical,
+  HeartHandshake,
   HelpCircle,
+  History,
   Image as ImageIcon,
   Images,
   LayoutGrid,
@@ -40,9 +45,13 @@ import {
   MonitorPlay,
   PanelTop,
   Plus,
+  Shield,
+  ShieldCheck,
   Sparkles,
+  Target,
   Text,
   Trash2,
+  Users,
   Wrench,
   type LucideIcon,
 } from "lucide-react"
@@ -72,8 +81,18 @@ const paletteIcons: Record<string, LucideIcon> = {
   megaphone: Megaphone,
   "monitor-play": MonitorPlay,
   building: Building2,
+  "building-2": Building2,
   compass: Compass,
   wrench: Wrench,
+  users: Users,
+  shield: Shield,
+  "shield-check": ShieldCheck,
+  activity: Activity,
+  history: History,
+  award: Award,
+  handshake: HeartHandshake,
+  target: Target,
+  "check-circle": CheckCircle2,
 }
 
 

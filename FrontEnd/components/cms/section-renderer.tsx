@@ -1,4 +1,14 @@
-import { About } from "@/components/about"
+import {
+  About,
+  AboutStorySection,
+  ImpactValuesSection,
+  MilestonesSection,
+  HseCultureSection,
+  CertificationsSection,
+  LicensedExpertsSection,
+  TestingEquipmentSection,
+  BrandPartnersSection,
+} from "@/components/about"
 import { Capabilities } from "@/components/capabilities"
 import { Contact } from "@/components/contact"
 import { CtaBanner } from "@/components/cta-banner"
@@ -90,6 +100,22 @@ export function SectionView({
       )
     case "aboutIntro":
       return <AboutIntroSection props={props} />
+    case "aboutStory":
+      return <AboutStorySection props={props} />
+    case "impactValues":
+      return <ImpactValuesSection props={props} />
+    case "milestones":
+      return <MilestonesSection props={props} />
+    case "hseCulture":
+      return <HseCultureSection props={props} />
+    case "certifications":
+      return <CertificationsSection props={props} />
+    case "licensedExperts":
+      return <LicensedExpertsSection props={props} />
+    case "testingEquipment":
+      return <TestingEquipmentSection props={props} />
+    case "brandPartners":
+      return <BrandPartnersSection props={props} />
     case "about":
       return <About page={{ content: props } as any} />
     case "contact":

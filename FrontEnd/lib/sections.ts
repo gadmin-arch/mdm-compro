@@ -279,9 +279,317 @@ export const sectionDefs: SectionDef[] = [
     },
   },
   {
+    type: "aboutStory",
+    label: "Company Story & Stats",
+    description: "Company overview, key numbers, vision, mission, tagline, and corporate photo.",
+    icon: "building",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "textarea", name: "overview", label: "Company Overview" },
+      { kind: "textarea", name: "description", label: "Description / Reach" },
+      { kind: "textarea", name: "tagline", label: "Tagline" },
+      { kind: "text", name: "established", label: "Established Year" },
+      { kind: "text", name: "experienceYears", label: "Experience Years" },
+      { kind: "text", name: "clientCount", label: "Client Count" },
+      { kind: "text", name: "teamCount", label: "Team Count" },
+      { kind: "textarea", name: "vision", label: "Vision" },
+      { kind: "textarea", name: "mission", label: "Mission" },
+      { kind: "image", name: "imageUrl", label: "Photo" },
+      { kind: "text", name: "imageAlt", label: "Image alt text" },
+    ],
+    defaults: {
+      eyebrow: "EN: About PT Multi Daya Mitra\nID: Tentang PT Multi Daya Mitra",
+      title: "EN: Integrated electrical, automation & safety solutions for heavy industry.\nID: Solusi terintegrasi elektrikal, otomasi & keselamatan untuk industri berat.",
+      overview:
+        "EN: Established in 2012, PT Multi Daya Mitra delivers integrated electrical, industrial automation, and fire alarm solutions across Indonesia with 14+ years of industrial experience, 400+ corporate clients, and over 200 engineers and professionals.\nID: Didirikan pada tahun 2012, PT Multi Daya Mitra menghadirkan solusi terintegrasi di bidang kelistrikan, otomasi industri, dan proteksi kebakaran di seluruh Indonesia dengan pengalaman industri 14+ tahun, 400+ klien korporasi, serta lebih dari 200 insinyur dan tenaga profesional.",
+      description:
+        "EN: From our headquarters in East Java and branch network across Indonesia, we serve heavy industries including power generation, oil & gas, petrochemicals, manufacturing, food & beverage, cement, pharmaceuticals, and critical infrastructure.\nID: Berpusat di Jawa Timur dengan jangkauan proyek di seluruh Indonesia, kami melayani industri berat termasuk pembangkit listrik, migas, petrokimia, manufaktur, makanan & minuman, semen, farmasi, dan infrastruktur strategis.",
+      tagline:
+        "EN: Always Make an IMPACT — Powering Solution, Creating Impact\nID: Always Make an IMPACT — Solusi Kelistrikan Andal, Menciptakan Dampak Nyata",
+      established: "2012",
+      experienceYears: "14+ Years",
+      clientCount: "400+",
+      teamCount: "200+",
+      vision:
+        "EN: Global Electrical, Automation and Fire Alarm Services Company.\nID: Perusahaan Jasa Layanan Kelistrikan, Otomasi, dan Sistem Fire Alarm Kelas Dunia.",
+      mission:
+        "EN: Mutual Partnership and Professionalism in delivering every engineering engagement.\nID: Menjalin Kemitraan Strategis dan Profesionalisme Tinggi dalam Setiap Layanan Rekayasa Teknik.",
+      imageUrl: "/uploads/automation-project.jpg",
+      imageAlt: "PT Multi Daya Mitra industrial automation and electrical team",
+    },
+  },
+  {
+    type: "impactValues",
+    label: "IMPACT Core Values",
+    description: "The 6 IMPACT values (Integrity, Mastery, Partnership, Agile, Safety Commitment, Total Solutions).",
+    icon: "target",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "textarea", name: "culture", label: "Culture Description" },
+      {
+        kind: "list",
+        name: "items",
+        label: "Values",
+        itemLabel: "Value",
+        fields: [
+          { kind: "text", name: "letter", label: "Letter (I, M, P, A, C, T)" },
+          { kind: "textarea", name: "title", label: "Title" },
+          { kind: "textarea", name: "desc", label: "Description" },
+        ],
+      },
+    ],
+    defaults: {
+      eyebrow: "EN: Core Values\nID: Nilai Utama",
+      title: "EN: The IMPACT Values Driving Every Project\nID: Nilai-Nilai IMPACT yang Menjadi Landasan Setiap Proyek",
+      culture:
+        "EN: Our culture of disciplined engineering, safety commitment, and innovation is built around six foundational principles.\nID: Budaya disiplin rekayasa teknik, komitmen keselamatan, dan inovasi kami dibangun di atas enam prinsip dasar.",
+      items: [
+        { letter: "I", title: "EN: Integrity & Innovation\nID: Integritas & Inovasi", desc: "EN: Building trust through honesty and responsibility while advancing with modern, up-to-date technologies.\nID: Membangun kepercayaan melalui kejujuran dan tanggung jawab seraya terus berinovasi dengan teknologi termutakhir." },
+        { letter: "M", title: "EN: Mastery & Intelligent Problem-Solving\nID: Keahlian Teknis & Solusi Cerdas", desc: "EN: Deep technical mastery in electrical and automation systems with structured precision engineering — not assumptions.\nID: Penguasaan teknis mendalam di bidang sistem kelistrikan dan otomasi melalui rekayasa presisi yang terstruktur — bukan asumsi." },
+        { letter: "P", title: "EN: Professional & Trusted Partnership\nID: Kemitraan Profesional & Terpercaya", desc: "EN: Discipline, consistency, and high execution standards that position us as a strategic long-term partner.\nID: Disiplin, konsistensi, dan standar eksekusi tinggi yang menempatkan kami sebagai mitra strategis jangka panjang." },
+        { letter: "A", title: "EN: Agile & Adaptable Execution\nID: Eksekusi Tangkas & Adaptif", desc: "EN: Swift, resilient response to evolving site dynamics, operational challenges, and technological demands.\nID: Tanggap dan tangguh dalam merespons dinamika lapangan yang berkembang, tantangan operasional, dan tuntutan teknologi." },
+        { letter: "C", title: "EN: Commitment to Safety & Customer First\nID: Komitmen Keselamatan (K3) & Utamakan Pelanggan", desc: "EN: Safety is non-negotiable. Prioritizing operational continuity, asset reliability, and zero-accident culture.\nID: Keselamatan tidak dapat ditawar. Memprioritaskan kontinuitas operasional, keandalan aset, dan budaya nihil kecelakaan kerja." },
+        { letter: "T", title: "EN: Total Engineering Solutions\nID: Solusi Rekayasa Teknik Menyeluruh", desc: "EN: End-to-end coverage from design, assembly, and installation to testing, commissioning, and lifecycle maintenance.\nID: Cakupan menyeluruh dari perancangan, perakitan, dan instalasi hingga pengujian, commissioning, serta pemeliharaan siklus hidup aset." },
+      ],
+    },
+  },
+  {
+    type: "milestones",
+    label: "Growth & Milestones Timeline",
+    description: "14-year evolution timeline (2012–2026) with milestones.",
+    icon: "history",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "textarea", name: "description", label: "Description" },
+      {
+        kind: "list",
+        name: "items",
+        label: "Milestones",
+        itemLabel: "Milestone",
+        fields: [
+          { kind: "text", name: "year", label: "Year" },
+          { kind: "textarea", name: "title", label: "Title" },
+          { kind: "textarea", name: "desc", label: "Description" },
+        ],
+      },
+    ],
+    defaults: {
+      eyebrow: "EN: Journey & Evolution\nID: Perjalanan & Perkembangan",
+      title: "EN: 14 Years of Continuous Growth (2012 – 2026)\nID: 14 Tahun Pertumbuhan Berkelanjutan (2012 – 2026)",
+      description:
+        "EN: Step-by-step development of technical mastery, international accreditations, and nationwide execution excellence.\nID: Perkembangan bertahap dalam keahlian teknis, akreditasi internasional, dan keunggulan eksekusi berskala nasional.",
+      items: [
+        { year: "2012", title: "EN: Establishment\nID: Pendirian Perusahaan", desc: "EN: Founded PT. Multi Daya Mitra, establishing a strong foundation in electrical engineering services.\nID: Mendirikan PT Multi Daya Mitra, membangun fondasi kokoh dalam penyediaan layanan rekayasa kelistrikan industri." },
+        { year: "2013", title: "EN: Early Market Trust\nID: Kepercayaan Pasar Awal", desc: "EN: Successfully delivered diverse low & medium voltage projects, building early market trust.\nID: Berhasil menyelesaikan berbagai proyek tegangan rendah & menengah, membangun kepercayaan awal para pelaku industri." },
+        { year: "2014", title: "EN: Automation & ISO 50001\nID: Otomasi & ISO 50001", desc: "EN: Expanded into automation solutions and delivered our first energy management system (ISO 50001) project.\nID: Berekspansi ke solusi otomasi industri dan menyelesaikan proyek sistem manajemen energi (ISO 50001) perdana." },
+        { year: "2016", title: "EN: Testing Fleet & Drive Partnerships\nID: Armada Pengujian & Kemitraan Drive", desc: "EN: Formed strategic partnerships with global motor drive brands and strengthened capabilities in testing, commissioning, assessment, and maintenance services.\nID: Menjalin kemitraan strategis dengan prinsipal motor drive global dan memperkuat kemampuan armada pengujian, commissioning, serta asesmen." },
+        { year: "2017", title: "EN: Security & BAS Systems\nID: Sistem Keamanan & BAS", desc: "EN: Diversified into Industrial Security Systems and Building Automation Systems (BAS).\nID: Diversifikasi portofolio ke sistem keamanan industri dan Building Automation Systems (BAS)." },
+        { year: "2018", title: "EN: Nationwide Maintenance\nID: Pemeliharaan Berskala Nasional", desc: "EN: Achieved nationwide maintenance contract coverage, serving clients across Indonesia.\nID: Menjangkau kontrak pemeliharaan tahunan berskala nasional, melayani klien di berbagai wilayah kepulauan Indonesia." },
+        { year: "2019", title: "EN: Panel Assembly & Construction\nID: Perakitan Panel & Konstruksi", desc: "EN: Enhanced capabilities with panel assembly solutions & executed major construction projects.\nID: Meningkatkan fasilitas perakitan panel listrik lokal dan mengeksekusi proyek konstruksi gardu industri besar." },
+        { year: "2020", title: "EN: ISO Operational Excellence\nID: Keunggulan Operasional ISO", desc: "EN: Reinforced operational excellence by achieving ISO 9001, ISO 14001, and ISO 45001 certifications.\nID: Memperkuat standar operasional dengan meraih sertifikasi internasional ISO 9001, ISO 14001, dan ISO 45001." },
+        { year: "2021", title: "EN: High Voltage Portfolio\nID: Portofolio Tegangan Tinggi", desc: "EN: Entered the high voltage supply and services sector, expanding our technical portfolio.\nID: Memasuki sektor pasokan dan layanan tegangan tinggi, memperluas jangkauan kompetensi teknik perusahaan." },
+        { year: "2022", title: "EN: International Expansion & Products\nID: Ekspansi Internasional & Produk", desc: "EN: Expanded into international markets and launched new electrical product lines.\nID: Memperluas jangkauan ke pasar regional internasional dan meluncurkan lini produk komponen elektrikal baru." },
+        { year: "2024", title: "EN: Business Digitalization\nID: Digitalisasi Bisnis & Operasional", desc: "EN: Successfully digitalized business processes, improving efficiency and scalability.\nID: Sukses mendigitalisasi proses alur kerja bisnis, meningkatkan efisiensi operasional dan skalabilitas layanan." },
+        { year: "2026", title: "EN: Global Principal Alliances\nID: Aliansi Prinsipal Global", desc: "EN: Strengthened market position through strategic partnerships with global electrical leaders.\nID: Mengukuhkan posisi pasar melalui kemitraan strategis sebagai distributor dan integrator prinsipal kelas dunia." },
+      ],
+    },
+  },
+  {
+    type: "hseCulture",
+    label: "Safety & HSE Culture",
+    description: "'Saya Pilih Selamat' commitment, zero-accident policy, and 4 HSE pillars (PROTECT, CARE, COMMIT, SUSTAIN).",
+    icon: "shield-check",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "text", name: "subtitle", label: "Subtitle" },
+      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "lines", name: "highlights", label: "Key Policies / Accreditations (one per line)" },
+      {
+        kind: "list",
+        name: "pillars",
+        label: "HSE Pillars",
+        itemLabel: "Pillar",
+        fields: [
+          { kind: "text", name: "title", label: "Title" },
+          { kind: "text", name: "subtitle", label: "Subtitle" },
+          { kind: "textarea", name: "desc", label: "Description" },
+          { kind: "icon", name: "icon", label: "Icon" },
+        ],
+      },
+    ],
+    defaults: {
+      eyebrow: "EN: HSE & Safety Commitment\nID: Komitmen K3 & Keselamatan Kerja",
+      title: "EN: &ldquo;I Choose Safety&rdquo;\nID: &ldquo;Saya Pilih Selamat&rdquo;",
+      subtitle:
+        "EN: Safe & Healthy at All Times · Think Safe, Work Safe, Go Home Safe\nID: Selamat & Sehat Setiap Saat · Pikirkan Selamat, Bekerja Selamat, Pulang Selamat",
+      description:
+        "EN: Safety is non-negotiable. At PT Multi Daya Mitra, every engineer, technician, and subcontractor is empowered with stop-work authority whenever safety conditions are compromised.\nID: Keselamatan tidak dapat ditawar. Di PT Multi Daya Mitra, setiap insinyur, teknisi, dan subkontraktor memiliki otoritas untuk menghentikan pekerjaan (stop-work authority) jika kondisi keselamatan kerja terkompromi.",
+      highlights: [
+        "EN: Zero Accident Policy across all site engagements\nID: Kebijakan Nihil Kecelakaan (Zero Accident) di setiap lokasi proyek",
+        "EN: SMK3 Kemenaker & ISO 45001:2018 Certified\nID: Bersertifikasi SMK3 Kemenaker & ISO 45001:2018",
+        "EN: Avetta Contractor Safety Network Verified\nID: Terverifikasi dalam Jaringan Keselamatan Kontraktor Avetta",
+      ],
+      pillars: [
+        { title: "EN: PROTECT Every Person\nID: LINDUNGI Setiap Insan", subtitle: "EN: Safety begins with individual awareness\nID: Keselamatan berawal dari kesadaran individu", desc: "EN: Comprehensive safety briefings, mandatory PPE compliance, and risk assessments before any field task begins.\nID: Briefing keselamatan komprehensif, kepatuhan APD wajib, dan asesmen risiko sebelum pekerjaan lapangan dimulai.", icon: "hard-hat" },
+        { title: "EN: CARE For Each Other\nID: PEDULI Terhadap Sesama", subtitle: "EN: Caring today, protecting the future\nID: Peduli hari ini, menjaga masa depan", desc: "EN: Proactive mutual oversight among team members on high-voltage and critical manufacturing sites.\nID: Pengawasan aktif antar anggota tim di lokasi proyek tegangan tinggi dan lingkungan manufaktur kritis.", icon: "shield" },
+        { title: "EN: COMMIT To Excellence\nID: KOMITMEN Menuju Keunggulan", subtitle: "EN: Safe execution defines professionalism\nID: Eksekusi aman adalah cerminan profesionalisme", desc: "EN: Adherence to national and international safety regulations without compromising quality or timeline.\nID: Kepatuhan penuh terhadap regulasi keselamatan nasional dan internasional tanpa mengurangi mutu atau jadwal kerja.", icon: "award" },
+        { title: "EN: SUSTAIN For The Future\nID: KEBERLANJUTAN untuk Masa Depan", subtitle: "EN: Safety is an investment in sustainability\nID: Keselamatan adalah investasi masa depan", desc: "EN: Continuous safety training, incident prevention reporting, and sustainable environmental practices.\nID: Pelatihan K3 berkelanjutan, pelaporan pencegahan insiden, dan penerapan tata kelola lingkungan yang ramah alam.", icon: "scale" },
+      ],
+    },
+  },
+  {
+    type: "certifications",
+    label: "Certifications & ISO Compliance",
+    description: "ISO 9001, 14001, 45001, Ecovadis Silver, Avetta, and ESDM legal compliance grid.",
+    icon: "award",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "textarea", name: "description", label: "Description" },
+      {
+        kind: "list",
+        name: "items",
+        label: "Certifications",
+        itemLabel: "Certificate",
+        fields: [
+          { kind: "text", name: "title", label: "Title (e.g. ISO 9001:2015)" },
+          { kind: "textarea", name: "desc", label: "Description" },
+          { kind: "text", name: "badge", label: "Badge Tag" },
+        ],
+      },
+      { kind: "lines", name: "certifications", label: "Certifications as Lines (alternative)" },
+    ],
+    defaults: {
+      eyebrow: "EN: Trust & Credentials\nID: Legalitas & Kredensial",
+      title: "EN: Legal Compliance, ISO Certifications & Official Credentials\nID: Kepatuhan Hukum, Sertifikasi ISO & Kredensial Resmi",
+      description:
+        "EN: Documented compliance, safety accreditations, and official licensing supporting industrial vendor qualification and tender audits.\nID: Kepatuhan terdokumentasi, akreditasi keselamatan, dan perizinan resmi untuk kualifikasi vendor industri serta audit tender.",
+      items: [
+        { title: "ISO 9001:2015", desc: "EN: Quality Management System (KAN Accredited)\nID: Sistem Manajemen Mutu (Terakreditasi KAN)", badge: "Quality" },
+        { title: "ISO 14001:2015", desc: "EN: Environmental Management System\nID: Sistem Manajemen Lingkungan", badge: "Environment" },
+        { title: "ISO 45001:2018", desc: "EN: Occupational Health & Safety (KAN Accredited)\nID: Sistem Manajemen Keselamatan & Kesehatan Kerja (KAN)", badge: "Safety" },
+        { title: "Ecovadis Silver", desc: "EN: Top 15% Global Sustainability Rating (Nov 2024)\nID: Peringkat Keberlanjutan Global 15% Terbaik (Nov 2024)", badge: "ESG" },
+        { title: "Avetta Member", desc: "EN: Global Contractor Safety & Compliance Network\nID: Jaringan Kepatuhan & Keselamatan Kontraktor Global", badge: "Compliance" },
+        { title: "SBUJTL & IUJPTL ESDM", desc: "EN: Official Electrical Power Support Services License (ESDM)\nID: Izin Usaha Jasa Penunjang Tenaga Listrik Resmi ESDM", badge: "License" },
+        { title: "Kompetensi Level 6 ESDM", desc: "EN: Certified Medium-Voltage Technical Competency (ESDM)\nID: Sertifikat Kompetensi Teknis Tegangan Menengah Level 6 ESDM", badge: "Technical" },
+        { title: "SMK3 Kemenaker", desc: "EN: National Occupational Safety & Health Management System\nID: Sistem Manajemen Keselamatan dan Kesehatan Kerja Nasional", badge: "HSE" },
+        { title: "NFPA Member", desc: "EN: National Fire Protection Association Member\nID: Anggota National Fire Protection Association Global", badge: "Fire System" },
+        { title: "D&B Rating", desc: "EN: Dun & Bradstreet Verified Corporate Credential\nID: Kredensial Korporasi Terverifikasi Dun & Bradstreet", badge: "Corporate" },
+      ],
+    },
+  },
+  {
+    type: "licensedExperts",
+    label: "Certified Engineering Team & Licensed Experts",
+    description: "Licensed workforce credentials (AK3 Listrik Kemnaker, AK3 Umum, AK3 Kebakaran, ESDM MV, etc.).",
+    icon: "users",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "textarea", name: "description", label: "Description" },
+      {
+        kind: "lines",
+        name: "experts",
+        label: "Licensed Experts (one per line)",
+        placeholder: "AK3 Listrik (Ahli K3 Listrik Kemnaker)\nAK3 Umum (Ahli K3 Umum)...",
+      },
+    ],
+    defaults: {
+      eyebrow: "EN: Certified Engineering Team\nID: Tim Insinyur Bersertifikasi",
+      title: "EN: Competent & Licensed Workforce\nID: Tenaga Kerja Kompeten & Berlisensi",
+      description:
+        "EN: All field operations and site assessments are led by licensed engineering specialists certified by the Ministry of Manpower, Ministry of Energy and Mineral Resources (ESDM), and global automation principals.\nID: Seluruh operasional lapangan dan asesmen teknis dipimpin oleh tenaga ahli bersertifikasi dari Kementerian Ketenagakerjaan, Kementerian ESDM, dan prinsipal otomasi global.",
+      experts: [
+        "AK3 Listrik (Ahli K3 Listrik Kemnaker)",
+        "AK3 Umum (Ahli K3 Umum)",
+        "AK3 Kebakaran (Kelas A, B, C, D)",
+        "Teknisi Kompetensi Tegangan Menengah ESDM",
+        "Licensed Mechanical & Termination Specialists",
+      ],
+    },
+  },
+  {
+    type: "testingEquipment",
+    label: "Testing Fleet & Diagnostics",
+    description: "Calibrated testing equipment fleet (Omicron, Megger, Fluke, Partial Discharge, etc.).",
+    icon: "activity",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "textarea", name: "description", label: "Description" },
+      {
+        kind: "list",
+        name: "items",
+        label: "Testing Equipment Fleet",
+        itemLabel: "Equipment",
+        fields: [
+          { kind: "text", name: "name", label: "Tool Name" },
+          { kind: "text", name: "category", label: "Category" },
+          { kind: "textarea", name: "desc", label: "Description" },
+        ],
+      },
+      { kind: "lines", name: "testingTools", label: "Testing Tools as Lines (alternative)" },
+    ],
+    defaults: {
+      eyebrow: "EN: Equipment Fleet\nID: Armada Peralatan",
+      title: "EN: Advanced Testing Fleet & Calibrated Instrumentation\nID: Armada Pengujian Mutakhir & Instrumentasi Terkalibrasi",
+      description:
+        "EN: We invest in calibrated, international-grade diagnostic equipment to ensure accurate measurements, rigorous commissioning, and maximum operational safety.\nID: Kami berinvestasi pada peralatan diagnostik terkalibrasi berstandar internasional demi memastikan keakuratan pengukuran, commissioning ketat, dan keselamatan operasi optimal.",
+      items: [
+        { name: "Partial Discharge Analyzer & Scanner", category: "EN: Predictive Diagnosis\nID: Diagnosis Prediktif", desc: "EN: Non-invasive insulation breakdown detection for MV/HV switchgear & cables.\nID: Deteksi degradasi isolasi non-invasif untuk switchgear & kabel tegangan menengah/tinggi." },
+        { name: "Omicron Secondary Injection & Relay Tester", category: "EN: Protection Testing\nID: Pengujian Proteksi", desc: "EN: High-precision automated protection relay calibration and CT/VT analysis.\nID: Kalibrasi otomatis presisi tinggi relay proteksi serta analisis karakteristik CT/VT." },
+        { name: "Megger & Fluke Insulation / Earth Resistance", category: "EN: Electrical Safety\nID: Keselamatan Elektrikal", desc: "EN: Up to 10kV digital insulation resistance, ground grid integrity & loop impedance testing.\nID: Pengujian resistansi isolasi digital hingga 10kV, integritas grid pentanahan & impedansi loop." },
+        { name: "Fluke 3-Phase Power Quality Analyzer", category: "EN: Power Analysis\nID: Analisis Kualitas Daya", desc: "EN: Harmonics, voltage dips/swells, transient analysis and energy audit profiling.\nID: Analisis harmonisa (THDi/THDv), fluktuasi tegangan, transien dan audit efisiensi energi." },
+        { name: "Transformer Oil BDV & DGA Treatment Unit", category: "EN: Substation Maintenance\nID: Pemeliharaan Gardu", desc: "EN: Breakdown voltage testing, dissolved gas analysis, filtering, and purification.\nID: Uji tegangan tembus oli (BDV), uji gas terlarut (DGA), filtrasi, dan pemurnian oli trafo." },
+        { name: "Circuit Breaker Dynamic Timing Analyzer", category: "EN: Switchgear Testing\nID: Pengujian Switchgear", desc: "EN: Contact resistance (micro-ohm), opening/closing velocity, and stroke measurement.\nID: Pengukuran resistansi kontak (micro-ohm), kecepatan buka/tutup kontak, dan panjang langkah breaker." },
+      ],
+    },
+  },
+  {
+    type: "brandPartners",
+    label: "Brand Partners & Marquee",
+    description: "Authorized partnerships (Rittal, Schneider Electric, etc.) and brand marquee.",
+    icon: "handshake",
+    fields: [
+      { kind: "text", name: "eyebrow", label: "Eyebrow" },
+      { kind: "textarea", name: "title", label: "Title" },
+      {
+        kind: "list",
+        name: "partners",
+        label: "Authorized Partners",
+        itemLabel: "Partner",
+        fields: [
+          { kind: "text", name: "name", label: "Brand Name" },
+          { kind: "text", name: "role", label: "Role / Status" },
+          { kind: "text", name: "country", label: "Country" },
+        ],
+      },
+      { kind: "text", name: "marqueeTitle", label: "Marquee Title" },
+      { kind: "lines", name: "brands", label: "Experienced Brands (one per line)" },
+    ],
+    defaults: {
+      eyebrow: "EN: Authorized Partnership\nID: Kemitraan Resmi Principal",
+      title: "EN: Strategic Alliances & Multi-Brand Engineering Experience\nID: Aliansi Strategis & Pengalaman Rekayasa Berbagai Brand",
+      partners: [
+        { name: "Rittal", role: "EN: Authorized Distributor\nID: Distributor Resmi", country: "Germany" },
+        { name: "Schneider Electric", role: "EN: Certified System Integrator\nID: Certified System Integrator", country: "France / Global" },
+        { name: "xArrow", role: "EN: Authorized Solutions Partner\nID: Mitra Solusi Resmi", country: "Global" },
+        { name: "Mundung", role: "EN: Authorized Partner\nID: Mitra Resmi", country: "Global" },
+      ],
+      marqueeTitle: "EN: Experienced Work With Brand\nID: Pengalaman Proyek Berbagai Brand",
+      brands: [
+        "ABB", "Siemens", "Hitachi", "TRAFINDO", "B&D Transformer", "Raychem", "3M", "Legrand", "Socomec", "Autonics", "Omron", "CHINT", "MSA", "Honeywell", "Bosch", "Asenware", "Hooseki", "Simplex", "Hikvision", "Advantech", "Pepperl+Fuchs", "Moxa", "Phoenix Contact", "Weidmüller", "Supreme", "KMI Wire and Cable", "GE", "Danfoss", "GAE", "LS Electric", "Megger", "Fluke", "FLIR", "Huazheng"
+      ],
+    },
+  },
+  {
     type: "about",
-    label: "About & Credentials",
-    description: "Company overview, IMPACT values, ISO certifications, licensed experts, testing fleet, and partnerships.",
+    label: "About & Credentials (Legacy)",
+    description: "Legacy composite block: overview, IMPACT values, ISO certifications, licensed experts, testing fleet, and partnerships.",
     icon: "building-2",
     fields: [
       { kind: "textarea", name: "overview", label: "Overview" },
@@ -726,13 +1034,35 @@ export function makeSectionId() {
   return `sec-${Math.random().toString(36).slice(2, 10)}`
 }
 
+export function unpackLegacySections(sections: Section[]): Section[] {
+  const result: Section[] = []
+  for (const sec of sections) {
+    if (sec.type === "about") {
+      // Unpack monolithic about into modular individual sections
+      const unpacked = aboutPresetSections(sec.props)
+      result.push(
+        ...unpacked.filter(
+          (s) =>
+            s.type !== "pageHero" &&
+            s.type !== "cta" &&
+            s.type !== "features" &&
+            s.type !== "capabilities",
+        ),
+      )
+    } else {
+      result.push(sec)
+    }
+  }
+  return result
+}
+
 // Pages built with the builder store sections here; legacy pages only
 // carry `blocks` and custom fields and keep rendering through RichText.
 export function sectionsFromContent(content: unknown): Section[] {
   if (!content || typeof content !== "object") return []
   const raw = (content as { sections?: unknown }).sections
   if (!Array.isArray(raw)) return []
-  return raw
+  const parsed = raw
     .filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === "object")
     .map((item, index) => ({
       id: typeof item.id === "string" && item.id ? item.id : `sec-${index}`,
@@ -740,6 +1070,7 @@ export function sectionsFromContent(content: unknown): Section[] {
       props:
         item.props && typeof item.props === "object" ? (item.props as Record<string, unknown>) : {},
     }))
+  return unpackLegacySections(parsed)
 }
 
 export function hasSections(content: unknown): boolean {
@@ -816,10 +1147,49 @@ export function aboutPresetSections(content: Record<string, unknown> = {}): Sect
       "EN: Founded in 2012 by seasoned engineers, PT Multi Daya Mitra has grown into one of East Java's largest electrical service partners — delivering across Indonesia and selected overseas assignments.\nID: Didirikan sejak tahun 2012 oleh para insinyur berpengalaman, PT Multi Daya Mitra telah berkembang menjadi salah satu mitra layanan elektrikal terdepan di Jawa Timur — melayani seluruh Indonesia dan proyek mancanegara.",
   }
 
-  const aboutSection = createSection("about")
-  aboutSection.props = {
-    ...aboutSection.props,
-    ...content,
+  const aboutStory = createSection("aboutStory")
+  if (content.overview) aboutStory.props.overview = content.overview
+  if (content.vision) aboutStory.props.vision = content.vision
+  if (content.mission) aboutStory.props.mission = content.mission
+  if (content.tagline) aboutStory.props.tagline = content.tagline
+  if (content.established) aboutStory.props.established = content.established
+  if (content.experienceYears) aboutStory.props.experienceYears = content.experienceYears
+  if (content.clientCount) aboutStory.props.clientCount = content.clientCount
+  if (content.teamCount) aboutStory.props.teamCount = content.teamCount
+  if (content.imageUrl) aboutStory.props.imageUrl = content.imageUrl
+
+  const impactValues = createSection("impactValues")
+  if (content.culture) impactValues.props.culture = content.culture
+  if (Array.isArray(content.impactValues) && content.impactValues.length > 0) {
+    impactValues.props.items = content.impactValues
+  }
+
+  const milestones = createSection("milestones")
+  const hseCulture = createSection("hseCulture")
+
+  const certifications = createSection("certifications")
+  if (content.certifications) {
+    certifications.props.certifications = content.certifications
+  }
+
+  const licensedExperts = createSection("licensedExperts")
+  if (content.licensedExperts) {
+    licensedExperts.props.experts = Array.isArray(content.licensedExperts)
+      ? content.licensedExperts
+      : String(content.licensedExperts)
+          .split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean)
+  }
+
+  const testingEquipment = createSection("testingEquipment")
+  if (content.testingTools) {
+    testingEquipment.props.testingTools = content.testingTools
+  }
+
+  const brandPartners = createSection("brandPartners")
+  if (content.partnerships) {
+    brandPartners.props.brands = content.partnerships
   }
 
   const cta = createSection("cta")
@@ -836,9 +1206,17 @@ export function aboutPresetSections(content: Record<string, unknown> = {}): Sect
 
   return [
     pageHero,
-    aboutSection,
+    aboutStory,
+    impactValues,
+    milestones,
+    hseCulture,
+    certifications,
+    licensedExperts,
+    testingEquipment,
+    brandPartners,
     createSection("features"),
     createSection("capabilities"),
+    createSection("offices"),
     cta,
   ]
 }
