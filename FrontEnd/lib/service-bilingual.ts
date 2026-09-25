@@ -1,4 +1,5 @@
 import type { ContentNode } from "@/lib/cms"
+import { extractBilingualText, combineBilingualText } from "@/lib/bilingual"
 
 export type BilingualServiceEntry = {
   id?: string
@@ -644,38 +645,328 @@ export const BILINGUAL_SERVICE_CATALOG: Record<string, BilingualServiceEntry> = 
 <p>Balancing dinamis presisi standar ISO 1940 untuk poros rotor, blower impeller, dan kopling transmisi guna mengeliminasi getaran sentrifugal destruktif, memperpanjang usia bearing, dan meningkatkan keandalan motor.</p>`,
     },
   },
+
+  "grounding-lightning-protection": {
+    id: "serv-grounding-lightning",
+    slug: "grounding-lightning-protection",
+    fullPath: "electrical-construction-installation/grounding-lightning-protection",
+    depth: 1,
+    sortOrder: 5,
+    imageUrl: "/uploads/mdm/construction-installation.jpg",
+    title: {
+      en: "Grounding & Lightning Protection System",
+      id: "Sistem Pembumian & Proteksi Petir",
+    },
+    summary: {
+      en: "Deep well grounding installation, exothermic CAD welding, copper tape routing, and early streamer emission (ESE) lightning protection.",
+      id: "Instalasi pembumian deep well, pengelasan eksotermik CAD, penarikan pita tembaga, dan penangkal petir elektrostatis (ESE).",
+    },
+    content: {
+      en: `<h3>Industrial Grounding & Lightning Safety Engineering</h3>
+<p>Comprehensive engineering and certified installation of grounding earthing networks and external lightning protection systems adhering to PUIL 2011, SNI 03-7015, and NFPA 780 standards to safeguard critical industrial facilities and personnel.</p>
+<h3>Deep Well Grounding & CAD Exothermic Welding</h3>
+<p>Deep drilled copper grounding rods, low-resistance soil enhancement materials (Bentonite / conductive cement), and molecular exothermic CAD welding joints achieving system resistance below 1 Ohm.</p>
+<h3>Early Streamer Emission (ESE) & Faraday Cage Protection</h3>
+<p>Turnkey erection of electrostatic ESE air terminals, non-inductive down-conductors, lightning surge strike counters, and surge protective devices (SPD) across distribution switchboards.</p>`,
+      id: `<h3>Rekayasa Proteksi Petir & Pembumian Industri</h3>
+<p>Rekayasa teknik dan instalasi tersertifikasi untuk jaringan pembumian (grounding) dan sistem penangkal petir eksternal sesuai standar PUIL 2011, SNI 03-7015, dan NFPA 780 demi melindungi aset industri vital serta keselamatan personil.</p>
+<h3>Pembumian Deep Well & Pengelasan Eksotermik CAD</h3>
+<p>Pengeboran deep well dengan batang tembaga murni, bahan peningkat konduktivitas tanah (Bentonite / semen konduktif), serta penyambungan molekuler exothermic CAD weld guna mencapai nilai tahanan tanah di bawah 1 Ohm.</p>
+<h3>Penangkal Petir Elektrostatis (ESE) & Sangkar Faraday</h3>
+<p>Pemasangan penangkal petir elektrostatis ESE beradius proteksi luas, konduktor penyalur petir non-induktif, penghitung sambaran petir (strike counter), dan arrester proteksi surja (SPD) pada panel listrik.</p>`,
+    },
+  },
+
+  "busduct-canalis-installation": {
+    id: "serv-busduct-canalis",
+    slug: "busduct-canalis-installation",
+    fullPath: "electrical-construction-installation/busduct-canalis-installation",
+    depth: 1,
+    sortOrder: 6,
+    imageUrl: "/uploads/mdm/construction-installation.jpg",
+    title: {
+      en: "Busduct & Canalis Trunking Installation",
+      id: "Instalasi Busduct & Trunking Canalis",
+    },
+    summary: {
+      en: "High-amperage sandwich busduct feeder erection, tap-off unit installation, and torque-checked jointing for industrial plants.",
+      id: "Pemasangan busduct sandwich ampere tinggi, unit tap-off, dan penyambungan terverifikasi torsi untuk pabrik industri.",
+    },
+    content: {
+      en: `<h3>High-Capacity Industrial Power Busduct Systems</h3>
+<p>Precision installation, suspension, and commissioning of compact sandwich copper and aluminum busduct systems from 630A up to 6300A, providing high-efficiency, space-saving power distribution across multi-story buildings and factory floors.</p>
+<h3>Torque-Controlled Jointing & Fire Barriers</h3>
+<p>Installation of double-headed torque indicator bolts, joint packs with silver-plated contact surfaces, integrated fire-stop barriers at floor/wall penetrations, and flexible expansion joints.</p>
+<h3>Tap-Off Units & Commissioning Testing</h3>
+<p>Mounting of plug-in tap-off units with MCCB protection, phase sequence verification, micro-ohm joint resistance measurement, and high-voltage insulation resistance testing.</p>`,
+      id: `<h3>Sistem Busduct Distribusi Tenaga Listrik Kapasitas Tinggi</h3>
+<p>Instalasi presisi, penggantungan (hanger), dan komisioning sistem busduct sandwich tembaga dan aluminium dari 630A hingga 6300A, menghadirkan penyaluran energi hemat ruang dan berdaya hantar tinggi untuk fasilitas bertingkat dan lantai pabrik.</p>
+<h3>Penyambungan Terkontrol Torsi & Fire Barrier</h3>
+<p>Pemasangan baut sambungan berindikator torsi ganda (torque shear bolts), pelat kontak berlapis perak, sekat penahan api (fire barrier) pada penetrasi dinding/lantai, serta sambungan ekspansi fleksibel.</p>
+<h3>Unit Tap-Off & Pengujian Komisioning</h3>
+<p>Pemasangan unit tap-off plug-in berproteksi MCCB, verifikasi urutan fasa, pengukuran resistansi sambungan mikro-ohm, serta uji ketahanan isolasi tegangan tinggi.</p>`,
+    },
+  },
+
+  "low-voltage-switchboard-maintenance": {
+    id: "serv-lv-switchboard-maint",
+    slug: "low-voltage-switchboard-maintenance",
+    fullPath: "electrical-maintenance-service/low-voltage-switchboard-maintenance",
+    depth: 1,
+    sortOrder: 5,
+    imageUrl: "/uploads/mdm/circuit-breaker.jpg",
+    title: {
+      en: "Low Voltage Switchboard Maintenance",
+      id: "Pemeliharaan Papan Hubung Tegangan Rendah",
+    },
+    summary: {
+      en: "ACB/MCCB servicing, cradle mechanism testing, thermal scanning, and digital trip unit secondary injection calibration.",
+      id: "Servis ACB/MCCB, pengujian mekanisme cradle, pemindaian termal, dan kalibrasi injeksi sekunder trip unit digital.",
+    },
+    content: {
+      en: `<h3>Low Voltage Switchboard Overhaul & Servicing</h3>
+<p>Routine preventive servicing and mechanical reconditioning of Main Distribution Panels (MDP), Sub-Distribution Boards, and Motor Control Centers (MCC) up to 1000V.</p>
+<h3>Circuit Breaker Diagnostics & Secondary Injection</h3>
+<p>MicroLogic / digital trip unit calibration via secondary injection, contact wear inspection, cradle racking mechanism lubrication, and dielectric tests.</p>
+<h3>Busbar Joint Retorquing & De-dusting</h3>
+<p>Complete panel busbar retorquing, infrared thermographic verification, anti-tracking insulation barrier cleaning, and auxiliary relay testing.</p>`,
+      id: `<h3>Overhaul & Pemeliharaan Panel Distribusi Tegangan Rendah</h3>
+<p>Servis preventif rutin dan rekondisi mekanikal untuk Panel Distribusi Utama (LVMDP), Sub-Distribusi (SDP), dan Motor Control Center (MCC) hingga 1000V.</p>
+<h3>Diagnostik Circuit Breaker & Injeksi Sekunder</h3>
+<p>Kalibrasi trip unit digital / MicroLogic dengan alat uji injeksi sekunder, inspeksi keausan kontak utama, pelumasan mekanisme draw-out cradle, dan uji dielektrik.</p>
+<h3>Pemeriksaan Torsi Busbar & Pembersihan Kompartemen</h3>
+<p>Pengencangan torsi baut busbar panel, verifikasi termografi inframerah, pembersihan isolator pencegah tracking arus bocor, serta pengujian relai bantu.</p>`,
+    },
+  },
+
+  "ups-battery-bank-maintenance": {
+    id: "serv-ups-battery-maint",
+    slug: "ups-battery-bank-maintenance",
+    fullPath: "electrical-maintenance-service/ups-battery-bank-maintenance",
+    depth: 1,
+    sortOrder: 6,
+    imageUrl: "/uploads/mdm/circuit-breaker.jpg",
+    title: {
+      en: "Industrial UPS & Battery Bank Maintenance",
+      id: "Pemeliharaan UPS Industri & Bank Baterai",
+    },
+    summary: {
+      en: "Impedance testing, conductance measurement, cell equalization, and autonomy discharge runtime testing for critical power UPS.",
+      id: "Uji impedansi baterai, pengukuran konduktansi, ekualisasi sel, dan pengujian runtime debit untuk sistem UPS kritis.",
+    },
+    content: {
+      en: `<h3>Industrial UPS Systems & Battery Bank Maintenance</h3>
+<p>Lifecycle testing, preventive servicing, and runtime capacity verification for industrial Uninterruptible Power Supply (UPS) units and VRLA / Ni-Cd battery banks ensuring mission-critical continuity.</p>
+<h3>Cell Impedance & Conductance Testing</h3>
+<p>Internal cell resistance and conductance measurements using calibrated Fluke battery analyzers to detect deteriorating cells before bank-wide failure.</p>
+<h3>Full-Load Discharge & Thermal Runaway Prevention</h3>
+<p>Controlled dummy-load discharge testing, cell equalization charge balancing, DC bus ripple voltage measurement, and temperature-compensated charging checks.</p>`,
+      id: `<h3>Pemeliharaan Sistem UPS Industri & Bank Baterai</h3>
+<p>Pengujian siklus hidup, servis preventif berkala, dan verifikasi kapasitas runtime untuk unit Uninterruptible Power Supply (UPS) industri dan bank baterai VRLA / Ni-Cd guna menjamin kontinuitas daya kritis.</p>
+<h3>Pengujian Impedansi & Konduktansi Sel Baterai</h3>
+<p>Pengukuran resistansi internal dan konduktansi tiap sel baterai menggunakan battery analyzer Fluke terkalibrasi untuk mendeteksi sel yang mulai rusak sebelum merusak seluruh rangkaian.</p>
+<h3>Uji Pelepasan Beban Penuh & Pencegahan Thermal Runaway</h3>
+<p>Uji pelepasan beban terkontrol menggunakan dummy load, penyeimbangan muatan sel (equalization), pengukuran riak tegangan DC bus, dan verifikasi kompensasi suhu pengisian daya.</p>`,
+    },
+  },
+
+  "building-automation-system-bas": {
+    id: "serv-bas-automation",
+    slug: "building-automation-system-bas",
+    fullPath: "automation-solutions-services/building-automation-system-bas",
+    depth: 1,
+    sortOrder: 5,
+    imageUrl: "/uploads/mdm/automation-control.jpg",
+    title: {
+      en: "Building Automation & HVAC Control (BAS)",
+      id: "Otomasi Gedung & Kontrol HVAC (BAS)",
+    },
+    summary: {
+      en: "Centralized HVAC chiller plant optimization, AHU VAV control, lighting automation, and Modbus/BACnet integration.",
+      id: "Optimasi sistem pendingin chiller HVAC, kontrol AHU VAV, otomasi tata cahaya, dan integrasi protokol Modbus/BACnet.",
+    },
+    content: {
+      en: `<h3>Intelligent Building Automation Systems (BAS / BMS)</h3>
+<p>Integrated Building Management Systems engineering optimizing HVAC, central chiller plants, lighting, and indoor air quality across commercial buildings and industrial cleanrooms.</p>
+<h3>Chiller Plant Optimization & VAV AHU Controls</h3>
+<p>Automated delta-T staging algorithms for water chillers, variable primary flow pump sequencing, dynamic cooling tower fan VFD control, and CO2-demand ventilation.</p>
+<h3>BACnet / Modbus Open Protocol Integration</h3>
+<p>Unified supervisory software connecting multi-vendor field controllers, smart energy meters, fire alarm interfaces, and elevator status into a centralized command dashboard.</p>`,
+      id: `<h3>Sistem Otomasi Gedung Pintar (BAS / BMS)</h3>
+<p>Rekayasa Sistem Manajemen Gedung (BMS) terpadu untuk mengoptimalkan kinerja HVAC, sistem chiller sentral, tata cahaya cerdas, dan kualitas udara ruangan pada gedung komersial serta cleanroom industri.</p>
+<h3>Optimasi Sentral Chiller & Kontrol AHU VAV</h3>
+<p>Algoritma otomatis delta-T staging untuk chiller air, sekuensial pompa aliran primer variabel, kontrol VFD kipas cooling tower dinamis, serta ventilasi kebutuhan udara berbasis sensor CO2.</p>
+<h3>Integrasi Protokol Terbuka BACnet & Modbus</h3>
+<p>Perangkat lunak supervisi terpadu yang menghubungkan kontroler lapangan multi-vendor, power meter digital, antarmuka alarm kebakaran, dan pemantauan lift ke satu dasbor komando terpusat.</p>`,
+    },
+  },
 }
 
 /**
- * Finds the bilingual catalog entry for a service path or slug.
+ * Historical and alternative slug aliases mapped to canonical catalog paths.
  */
-export function findBilingualServiceEntry(fullPathOrSlug: string): BilingualServiceEntry | undefined {
-  if (!fullPathOrSlug) return undefined
-  const clean = fullPathOrSlug.replace(/^\/+|\/+$/g, "")
-  if (BILINGUAL_SERVICE_CATALOG[clean]) {
+export const LEGACY_SERVICE_ALIASES: Record<string, string> = {
+  // Substation
+  "substation-transformer-installation": "electrical-construction-installation/substation-mv-switchgear-installation",
+  "electrical-construction-installation/substation-transformer-installation": "electrical-construction-installation/substation-mv-switchgear-installation",
+
+  // LV Panels
+  "mv-lv-switchboard-assembly": "electrical-construction-installation/lv-distribution-panels-assembly",
+  "electrical-construction-installation/mv-lv-switchboard-assembly": "electrical-construction-installation/lv-distribution-panels-assembly",
+  "low-voltage-distribution-panels": "electrical-construction-installation/lv-distribution-panels-assembly",
+
+  // Cable
+  "cable-pulling-termination": "electrical-construction-installation/mv-lv-cable-installation-termination",
+  "electrical-construction-installation/cable-pulling-termination": "electrical-construction-installation/mv-lv-cable-installation-termination",
+
+  // Fire Alarm & Protection
+  "fire-alarm": "electrical-construction-installation/fire-alarm-system-installation",
+  "fire-alarm-services": "electrical-construction-installation/fire-alarm-system-installation",
+  "fire-alarm-systems": "electrical-construction-installation/fire-alarm-system-installation",
+  "fire-protection-sprinkler-hydrant": "electrical-construction-installation/fire-alarm-system-installation",
+  "electrical-construction-installation/fire-protection-sprinkler-hydrant": "electrical-construction-installation/fire-alarm-system-installation",
+
+  // Transformer
+  "transformer-maintenance-purification": "electrical-maintenance-service/transformer-oil-treatment-dga",
+  "transformer-oil-bdv-dga-testing": "electrical-maintenance-service/transformer-oil-treatment-dga",
+  "electrical-maintenance-service/transformer-maintenance-purification": "electrical-maintenance-service/transformer-oil-treatment-dga",
+  "electrical-maintenance-service/transformer-oil-bdv-dga-testing": "electrical-maintenance-service/transformer-oil-treatment-dga",
+
+  // MV Cubicle & Breaker
+  "mv-cubicle-switchgear-servicing": "electrical-maintenance-service/mv-cubicle-acb-maintenance",
+  "breaker-timing-contact-resistance": "electrical-maintenance-service/mv-cubicle-acb-maintenance",
+  "electrical-maintenance-service/mv-cubicle-switchgear-servicing": "electrical-maintenance-service/mv-cubicle-acb-maintenance",
+  "electrical-maintenance-service/breaker-timing-contact-resistance": "electrical-maintenance-service/mv-cubicle-acb-maintenance",
+
+  // Thermography
+  "infrared-thermography-inspection": "electrical-maintenance-service/thermography-predictive-maintenance",
+  "electrical-maintenance-service/infrared-thermography-inspection": "electrical-maintenance-service/thermography-predictive-maintenance",
+
+  // Shutdown & AMC
+  "annual-shutdown-maintenance": "electrical-maintenance-service/annual-maintenance-contracts",
+  "electrical-maintenance-service/annual-shutdown-maintenance": "electrical-maintenance-service/annual-maintenance-contracts",
+
+  // SCADA
+  "scada-process-automation": "automation-solutions-services/scada-hmi-process-monitoring",
+  "automation-solutions-services/scada-process-automation": "automation-solutions-services/scada-hmi-process-monitoring",
+
+  // Energy
+  "power-management-system-pme": "automation-solutions-services/energy-management-iso50001",
+  "automation-solutions-services/power-management-system-pme": "automation-solutions-services/energy-management-iso50001",
+
+  // PLC & VFD
+  "plc-dcs-programming": "automation-solutions-services/plc-vsd-system-integration",
+  "variable-speed-drive-vfd-solutions": "automation-solutions-services/plc-vsd-system-integration",
+  "automation-solutions-services/plc-dcs-programming": "automation-solutions-services/plc-vsd-system-integration",
+  "automation-solutions-services/variable-speed-drive-vfd-solutions": "automation-solutions-services/plc-vsd-system-integration",
+
+  // Testing & Commissioning
+  "relay-protection-calibration": "inspection-testing-commissioning/relay-protection-testing-commissioning",
+  "inspection-testing-commissioning/relay-protection-calibration": "inspection-testing-commissioning/relay-protection-testing-commissioning",
+  "hi-pot-insulation-resistance-test": "inspection-testing-commissioning/partial-discharge-pd-scan",
+  "inspection-testing-commissioning/hi-pot-insulation-resistance-test": "inspection-testing-commissioning/partial-discharge-pd-scan",
+
+  // Mechanical
+  "mechanical-services-general-supplies": "mechanical-services-supplies",
+  "chiller-hvac-mechanical-piping": "mechanical-services-supplies/industrial-mechanical-supplies-services",
+  "pump-valve-overhaul-alignment": "mechanical-services-supplies/industrial-mechanical-supplies-services",
+  "air-compressor-piping-installation": "mechanical-services-supplies/industrial-mechanical-supplies-services",
+  "exhaust-ventilation-ductwork": "mechanical-services-supplies/industrial-mechanical-supplies-services",
+  "mechanical-services-supplies/chiller-hvac-mechanical-piping": "mechanical-services-supplies/industrial-mechanical-supplies-services",
+  "mechanical-services-supplies/pump-valve-overhaul-alignment": "mechanical-services-supplies/industrial-mechanical-supplies-services",
+  "mechanical-services-supplies/air-compressor-piping-installation": "mechanical-services-supplies/industrial-mechanical-supplies-services",
+  "mechanical-services-supplies/exhaust-ventilation-ductwork": "mechanical-services-supplies/industrial-mechanical-supplies-services",
+
+  // Root level legacy
+  "electrical-services": "electrical-construction-installation",
+  "electrical-engineering": "electrical-construction-installation",
+  "maintenance": "electrical-maintenance-service",
+  "automation": "automation-solutions-services",
+  "industrial-automation": "automation-solutions-services",
+  "testing-measurement": "inspection-testing-commissioning",
+  "tools-testing-measurement": "inspection-testing-commissioning",
+}
+
+/**
+ * Finds the bilingual catalog entry for a service path, slug, or title.
+ */
+export function findBilingualServiceEntry(fullPathOrSlug: string, titleHint?: string): BilingualServiceEntry | undefined {
+  if (!fullPathOrSlug && !titleHint) return undefined
+  const clean = (fullPathOrSlug || "").replace(/^\/+|\/+$/g, "")
+  const slug = clean.split("/").pop() || clean
+
+  // 1. Direct path/slug match
+  if (clean && BILINGUAL_SERVICE_CATALOG[clean]) {
     return BILINGUAL_SERVICE_CATALOG[clean]
   }
-  const slug = clean.split("/").pop() || clean
-  if (BILINGUAL_SERVICE_CATALOG[slug]) {
+  if (slug && BILINGUAL_SERVICE_CATALOG[slug]) {
     return BILINGUAL_SERVICE_CATALOG[slug]
   }
-  return Object.values(BILINGUAL_SERVICE_CATALOG).find(
+
+  // 2. Alias resolution
+  const aliasTarget = LEGACY_SERVICE_ALIASES[clean] || LEGACY_SERVICE_ALIASES[slug]
+  if (aliasTarget && BILINGUAL_SERVICE_CATALOG[aliasTarget]) {
+    return BILINGUAL_SERVICE_CATALOG[aliasTarget]
+  }
+
+  // 3. Substring/suffix match in catalog
+  const match = Object.values(BILINGUAL_SERVICE_CATALOG).find(
     (entry) => entry.slug === slug || entry.fullPath === clean || entry.fullPath.endsWith(`/${slug}`)
   )
+  if (match) return match
+
+  // 4. Title match
+  if (titleHint) {
+    const extracted = extractBilingualText(titleHint)
+    const normEn = (extracted.en || titleHint).toLowerCase().trim()
+    const normId = (extracted.id || titleHint).toLowerCase().trim()
+    const titleMatch = Object.values(BILINGUAL_SERVICE_CATALOG).find((entry) => {
+      const entryEn = entry.title.en.toLowerCase()
+      const entryId = entry.title.id.toLowerCase()
+      return (
+        entryEn === normEn ||
+        entryId === normId ||
+        normEn.includes(entryEn) ||
+        normId.includes(entryId) ||
+        entryEn.includes(normEn)
+      )
+    })
+    if (titleMatch) return titleMatch
+  }
+
+  return undefined
 }
 
 /**
  * Enriches a service node with complete bilingual translations.
+ * Guarantees that neither ID nor EN title or summary is ever empty.
  */
 export function enrichServiceWithBilingual(
   node: ContentNode | null | undefined,
   fullPathOrSlug: string
 ): ContentNode | null {
-  const entry = findBilingualServiceEntry(fullPathOrSlug)
+  const entry = findBilingualServiceEntry(fullPathOrSlug, node?.title)
   if (!node && !entry) return null
 
   if (!entry) {
-    return node ?? null
+    if (!node) return null
+    // Fallback: extract and complete bilingual text from node itself
+    const titleExt = extractBilingualText(node.title)
+    const summaryExt = extractBilingualText(node.summary)
+    const finalTitle = combineBilingualText(titleExt) || node.title
+    const finalSummary = combineBilingualText(summaryExt) || (node.summary ?? "")
+
+    return {
+      ...node,
+      title: finalTitle,
+      summary: finalSummary,
+      content: node.content ?? {
+        bilingual: true,
+        id: { blocks: [{ type: "paragraph", text: finalSummary }] },
+        en: { blocks: [{ type: "paragraph", text: finalSummary }] },
+        blocks: [{ type: "paragraph", text: finalSummary }],
+      },
+    }
   }
 
   const baseNode: ContentNode = node ?? {
@@ -691,8 +982,28 @@ export function enrichServiceWithBilingual(
     children: [],
   }
 
-  const titleString = `EN: ${entry.title.en}\nID: ${entry.title.id}`
-  const summaryString = `EN: ${entry.summary.en}\nID: ${entry.summary.id}`
+  // Preserve any custom node bilingual translations ONLY if explicitly provided with bilingual markers
+  let titleString = `EN: ${entry.title.en}\nID: ${entry.title.id}`
+  if (node?.title) {
+    const hasExplicitBilingual = /(?:EN\s*:|\[EN\])/i.test(node.title) && /(?:ID\s*:|\[ID\])/i.test(node.title)
+    if (hasExplicitBilingual) {
+      const customTitle = extractBilingualText(node.title)
+      if (customTitle.id && customTitle.en) {
+        titleString = combineBilingualText(customTitle)
+      }
+    }
+  }
+
+  let summaryString = `EN: ${entry.summary.en}\nID: ${entry.summary.id}`
+  if (node?.summary) {
+    const hasExplicitBilingual = /(?:EN\s*:|\[EN\])/i.test(node.summary) && /(?:ID\s*:|\[ID\])/i.test(node.summary)
+    if (hasExplicitBilingual) {
+      const customSummary = extractBilingualText(node.summary)
+      if (customSummary.id && customSummary.en) {
+        summaryString = combineBilingualText(customSummary)
+      }
+    }
+  }
 
   return {
     ...baseNode,
@@ -716,6 +1027,7 @@ export function enrichServiceWithBilingual(
     },
   }
 }
+
 
 export const SERVICE_TREE_STRUCTURE: { root: string; children: string[] }[] = [
   {

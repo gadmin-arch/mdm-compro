@@ -119,7 +119,7 @@ export const DICTIONARY_EN_TO_ID: Record<string, string> = {
   "pd scan for predictive maintenance of mv switchgear, transformers, and medium-voltage cable.":
     "PD Scan untuk pemeliharaan prediktif switchgear MV, transformator, dan kabel tegangan menengah.",
 
-  // Services (Live Database)
+  // Services (Live Database & Hierarchy)
   "electrical construction & installation": "Konstruksi & Instalasi Elektrikal",
   "electrical maintenance & servicing": "Pemeliharaan & Servis Elektrikal",
   "automation solutions & services": "Solusi & Layanan Otomasi Industri",
@@ -127,27 +127,92 @@ export const DICTIONARY_EN_TO_ID: Record<string, string> = {
   "mechanical services & general supplies": "Layanan Mekanikal & Suplai Umum",
   "mechanical services & supplies": "Layanan Mekanikal & Suplai Umum",
   "substation & mv switchgear installation": "Instalasi Gardu Induk & Switchgear MV",
+  "substation & transformer installation": "Instalasi Gardu Induk & Transformator Daya",
   "lv panels assembly (mdp, sdp, ats & sync)": "Perakitan Panel LV (MDP, SDP, ATS & Sinkronisasi)",
+  "mv & lv switchboard panel assembly": "Perakitan Panel Switchboard MV & LV",
   "mv & lv cable installation & termination": "Instalasi & Terminasi Kabel MV & LV",
+  "cable pulling & termination": "Penarikan & Terminasi Kabel",
+  "cable pulling termination": "Penarikan & Terminasi Kabel",
+  "grounding & lightning protection system": "Sistem Pembumian & Proteksi Petir",
+  "grounding & lightning protection": "Sistem Pembumian & Proteksi Petir",
+  "busduct & canalis trunking installation": "Instalasi Busduct & Trunking Canalis",
+  "busduct & canalis installation": "Instalasi Busduct & Trunking Canalis",
   "transformer oil treatment & dga testing": "Treatment Oli Trafo & Pengujian DGA",
   "transformer oil treatment, bdv & dga": "Penanganan Minyak Trafo, Uji BDV & Analisis DGA",
+  "transformer maintenance & oil purification": "Pemeliharaan Trafo & Pemurnian Minyak",
+  "transformer maintenance purification": "Pemeliharaan Trafo & Pemurnian Minyak",
+  "transformer oil bdv & dga laboratory testing": "Uji Laboratorium BDV & DGA Minyak Trafo",
+  "transformer oil bdv & dga testing": "Uji BDV & DGA Minyak Trafo",
   "mv cubicle & acb maintenance": "Pemeliharaan Cubicle MV & ACB",
   "mv cubicle & acb maintenance (trip testing)": "Pemeliharaan Kubikel MV & ACB (Pengujian Trip)",
+  "mv cubicle & switchgear servicing": "Servis Kubikel & Switchgear Tegangan Menengah",
+  "breaker timing & contact resistance (ductor)": "Waktu Buka-Tutup Breaker & Resistansi Kontak (Ductor)",
+  "breaker timing & contact resistance": "Waktu Buka-Tutup Breaker & Resistansi Kontak",
+  "low voltage switchboard maintenance": "Pemeliharaan Papan Hubung Tegangan Rendah",
+  "industrial ups & battery bank maintenance": "Pemeliharaan UPS Industri & Bank Baterai",
+  "ups & battery bank maintenance": "Pemeliharaan UPS Industri & Bank Baterai",
   "partial discharge & ultrasound testing": "Pengujian Partial Discharge & Ultrasound",
   "partial discharge (pd) scan & insulation diagnostics": "Pemindaian Partial Discharge (PD) & Diagnostik Isolasi",
+  "hi-pot & insulation resistance diagnostics": "Uji Hi-Pot & Diagnostik Resistansi Isolasi",
+  "hi-pot insulation resistance test": "Pengujian Tahanan Isolasi Hi-Pot",
   "thermography & infrared inspection": "Inspeksi Termografi & Infrared",
   "infrared thermography & predictive maintenance": "Termografi Inframerah & Pemeliharaan Prediktif",
+  "infrared thermography electrical audit": "Audit Termografi Inframerah Sistem Elektrikal",
+  "infrared thermography inspection": "Inspeksi Termografi Inframerah",
   "annual maintenance contracts (amc) & 24/7 sla": "Kontrak Pemeliharaan Tahunan (AMC) & SLA Siaga 24/7",
+  "annual plant shutdown maintenance": "Pemeliharaan Berkala Shutdown Pabrik Tahunan",
+  "annual shutdown maintenance": "Pemeliharaan Berkala Shutdown Pabrik Tahunan",
   "scada systems, hmi & centralized telemetry": "Sistem SCADA, HMI & Telemetri Terpusat",
+  "scada & industrial process automation": "SCADA & Otomasi Proses Industri",
+  "scada & process automation": "SCADA & Otomasi Proses Industri",
+  "scada process automation": "SCADA & Otomasi Proses Industri",
   "energy management systems (ems & iso 50001)": "Sistem Manajemen Energi (EMS & ISO 50001)",
+  "power management system (schneider pme)": "Sistem Manajemen Daya Listrik (Schneider PME)",
+  "power management system": "Sistem Manajemen Daya Listrik (PME)",
   "plc programming & variable speed drive (vsd) integration": "Pemrograman PLC & Integrasi Variable Speed Drive (VSD)",
+  "plc & distributed control systems (dcs)": "Pemrograman PLC & Sistem Kontrol Terdistribusi (DCS)",
+  "plc & dcs programming": "Pemrograman PLC & Sistem Kontrol Terdistribusi (DCS)",
+  "building automation & hvac control (bas)": "Otomasi Gedung & Kontrol HVAC (BAS)",
+  "building automation system (bas)": "Sistem Otomasi Gedung (BAS)",
+  "variable speed drive (vfd) solutions": "Solusi Inverter & Variable Speed Drive (VFD)",
   "power quality analysis & harmonics study": "Analisis Kualitas Daya & Studi Harmonisa",
   "protection relay testing (secondary injection)": "Pengujian Relay Proteksi (Injeksi Sekunder)",
+  "relay protection calibration & coordination": "Kalibrasi Relay Proteksi & Studi Koordinasi",
+  "relay protection calibration": "Kalibrasi Relay Proteksi & Studi Koordinasi",
   "conveyor systems, magnetic separators & industrial supplies": "Sistem Konveyor, Separator Magnetik & Perlengkapan Industri",
+  "conveyor systems & magnetic separators": "Sistem Konveyor & Separator Magnetik",
+  "chiller plant & hvac mechanical piping": "Sistem Chiller Pabrik & Pemipaan Mekanikal HVAC",
+  "industrial pump & valve overhaul": "Overhaul Pompa & Katup Industri",
+  "pump & valve overhaul": "Overhaul Pompa & Katup",
+  "pump valve overhaul alignment": "Overhaul Pompa & Penyelarasan Katup",
+  "compressed air ring main installation": "Instalasi Jaringan Pemipaan Udara Bertekanan",
+  "air compressor piping installation": "Instalasi Pemipaan Kompresor Udara",
+  "fire protection sprinkler & hydrant system": "Sistem Sprinkler Proteksi Kebakaran & Hidran",
+  "fire protection sprinkler & hydrant": "Sistem Sprinkler & Hidran Kebakaran",
+  "industrial ventilation & exhaust ductwork": "Ventilasi Industri & Saluran Pembuangan Udara",
+  "exhaust ventilation ductwork": "Saluran Ventilasi & Pembuangan Udara",
   "motor & generator overhaul (insulation recoating & dynamic balancing)": "Overhaul Motor & Generator (Pelapisan Ulang Isolasi & Balancing Dinamis)",
+  "motor & generator servicing overhaul": "Overhaul & Servis Motor dan Generator",
+  "motor & generator overhaul": "Overhaul Motor & Generator",
   "electrical turnaround & shutdown services": "Layanan Turnaround & Shutdown Listrik Pabrik",
   "fire alarm system installation": "Instalasi Sistem Fire Alarm",
   "fire alarm system engineering & installation": "Rekayasa & Instalasi Sistem Fire Alarm",
+  "fire alarm systems": "Sistem Alarm Kebakaran",
+  "fire alarm services": "Layanan Sistem Fire Alarm",
+  "fire alarm": "Sistem Fire Alarm",
+  "electrical engineering": "Rekayasa Teknik Elektrikal",
+  "electrical engineering services": "Layanan Rekayasa Teknik Elektrikal",
+  "electrical services": "Layanan Teknik Elektrikal",
+  "automation": "Otomasi Industri",
+  "industrial automation": "Otomasi Industri",
+  "maintenance": "Pemeliharaan & Perawatan Industri",
+  "industrial maintenance": "Pemeliharaan Industri",
+  "testing & measurement": "Pengujian & Pengukuran Elektrikal",
+  "testing and measurement": "Pengujian & Pengukuran Elektrikal",
+  "tools & testing measurement": "Alat Uji & Pengukuran Elektrikal",
+  "tools, testing & measurement": "Peralatan, Pengujian & Pengukuran",
+  "mechanical services & industrial supplies": "Layanan Mekanikal & Pengadaan Industri",
+
 
   // Products (Live Database)
   "rittal authorized distributor": "Distributor Resmi Rittal",
@@ -198,9 +263,33 @@ export const DICTIONARY_EN_TO_ID: Record<string, string> = {
   "addressable fire alarm panels & detectors": "Panel Fire Alarm Addressable & Sensor Detektor",
 }
 
+function toTitleCase(str: string): string {
+  const acronyms: Record<string, string> = {
+    plc: "PLC", scada: "SCADA", hmi: "HMI", mv: "MV", lv: "LV",
+    vsd: "VSD", vfd: "VFD", dcs: "DCS", bdv: "BDV", dga: "DGA",
+    acb: "ACB", mccb: "MCCB", pd: "PD", thd: "THD", ems: "EMS",
+    pme: "PME", bas: "BAS", ats: "ATS", amf: "AMF", mdp: "MDP",
+    sdp: "SDP", mcc: "MCC", sla: "SLA", amc: "AMC", hvac: "HVAC",
+    it: "IT", pdu: "PDU", ese: "ESE", ups: "UPS", cwv: "CWV",
+    dx: "DX", led: "LED", atex: "ATEX", iecex: "IECEx",
+  }
+
+  return str
+    .split(/\s+/)
+    .map((word, index) => {
+      const lower = word.toLowerCase()
+      if (acronyms[lower]) return acronyms[lower]
+      if (index > 0 && /^(and|or|of|the|in|on|at|to|for|with|a|an)$/i.test(word)) {
+        return lower
+      }
+      return lower.charAt(0).toUpperCase() + lower.slice(1)
+    })
+    .join(" ")
+}
+
 export const DICTIONARY_ID_TO_EN: Record<string, string> = Object.entries(DICTIONARY_EN_TO_ID).reduce(
   (acc, [en, id]) => {
-    acc[id.toLowerCase()] = en
+    acc[id.toLowerCase()] = toTitleCase(en)
     return acc
   },
   {} as Record<string, string>
@@ -221,7 +310,7 @@ DICTIONARY_ID_TO_EN["hubungi pt multi daya mitra"] = "Contact PT Multi Daya Mitr
 DICTIONARY_ID_TO_EN["industri"] = "Industries"
 DICTIONARY_ID_TO_EN["navigasi"] = "Navigation"
 
-function lookupDictionary(text: string, lang: ContentLanguage): string | null {
+export function lookupDictionary(text: string, lang: ContentLanguage): string | null {
   const normalizedKey = text.toLowerCase().trim().replace(/\s+/g, " ")
   const strippedKey = normalizedKey.replace(/[.,:;!?]+$/, "").trim()
 
@@ -334,10 +423,16 @@ export function extractBilingualText(raw: string | undefined | null): { id: stri
   let result: { id: string; en: string }
 
   if (enMatch || idMatch) {
-    result = {
-      id: idMatch ? idMatch[1].trim() : "",
-      en: enMatch ? enMatch[1].trim() : "",
+    let idStr = idMatch ? idMatch[1].trim() : ""
+    let enStr = enMatch ? enMatch[1].trim() : ""
+    if (enStr && !idStr) {
+      const translated = lookupDictionary(enStr, "id")
+      idStr = translated || enStr
+    } else if (idStr && !enStr) {
+      const translated = lookupDictionary(idStr, "en")
+      enStr = translated || toTitleCase(idStr)
     }
+    result = { id: idStr, en: enStr }
   } else {
     const idText = filterBilingualText(trimmed, "id")
     const enText = filterBilingualText(trimmed, "en")
@@ -345,15 +440,23 @@ export function extractBilingualText(raw: string | undefined | null): { id: stri
     if (idText !== enText) {
       result = { id: idText, en: enText }
     } else {
-      const isId = /\b(dan|yang|untuk|dengan|pada|oleh|atau|ke|dari|tentang|dalam|adalah|sebagai|layanan|produk|berita|karir|perakitan|pengujian|keandalan|fasilitas|distribusi|pabrik|sistem)\b/i.test(trimmed)
-      const isEn = /\b(and|the|for|with|in|on|at|by|to|from|about|of|as|services?|products?|news|careers?|assembly|testing|reliable|facilities|distribution|plant|systems?)\b/i.test(trimmed)
-
-      if (isId && !isEn) {
-        result = { id: trimmed, en: "" }
-      } else if (isEn && !isId) {
-        result = { id: "", en: trimmed }
+      const dictId = lookupDictionary(trimmed, "id")
+      const dictEn = lookupDictionary(trimmed, "en")
+      if (dictId && dictId.toLowerCase() !== trimmed.toLowerCase()) {
+        result = { id: dictId, en: toTitleCase(trimmed) }
+      } else if (dictEn && dictEn.toLowerCase() !== trimmed.toLowerCase()) {
+        result = { id: trimmed, en: dictEn }
       } else {
-        result = { id: trimmed, en: trimmed }
+        const isId = /\b(dan|yang|untuk|dengan|pada|oleh|atau|ke|dari|tentang|dalam|adalah|sebagai|layanan|produk|berita|karir|perakitan|pengujian|keandalan|fasilitas|distribusi|pabrik|sistem)\b/i.test(trimmed)
+        const isEn = /\b(and|the|for|with|in|on|at|by|to|from|about|of|as|services?|products?|news|careers?|assembly|testing|reliable|facilities|distribution|plant|systems?)\b/i.test(trimmed)
+
+        if (isId && !isEn) {
+          result = { id: trimmed, en: dictEn || toTitleCase(trimmed) }
+        } else if (isEn && !isId) {
+          result = { id: dictId || trimmed, en: toTitleCase(trimmed) }
+        } else {
+          result = { id: trimmed, en: toTitleCase(trimmed) }
+        }
       }
     }
   }
@@ -380,8 +483,16 @@ export function getBilingualText(raw: string | undefined | null, lang: "id" | "e
  * "EN: <English>\nID: <Indonesian>"
  */
 export function combineBilingualText(values: { en?: string | null; id?: string | null }): string {
-  const en = (values.en ?? "").trim()
-  const id = (values.id ?? "").trim()
+  let en = (values.en ?? "").trim()
+  let id = (values.id ?? "").trim()
+
+  if (en && !id) {
+    const dictId = lookupDictionary(en, "id")
+    if (dictId) id = dictId
+  } else if (id && !en) {
+    const dictEn = lookupDictionary(id, "en")
+    if (dictEn) en = dictEn
+  }
 
   if (en && id) {
     if (en === id) return en
