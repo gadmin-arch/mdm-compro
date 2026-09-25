@@ -38,12 +38,12 @@ export default async function HomePage() {
       <WhyUs />
       <Industries />
       <CtaBanner
-        title="Ready to power your next project?"
-        description="Tell us about your facility — our engineers will respond with a tailored scope, approach, and quote."
+        title="EN: Ready to power your next project?\nID: Siap mewujudkan keandalan sistem kelistrikan proyek Anda?"
+        description="EN: Tell us about your facility — our engineers will respond with a tailored scope, approach, and quote.\nID: Ceritakan kebutuhan fasilitas Anda — tim insinyur kami siap memberikan ruang lingkup, pendekatan teknis, serta estimasi biaya yang disesuaikan."
         primaryHref="/contact"
-        primaryLabel="Get in Touch"
+        primaryLabel="EN: Get in Touch\nID: Hubungi Kami"
         secondaryHref="/services"
-        secondaryLabel="View Services"
+        secondaryLabel="EN: View Services\nID: Lihat Layanan"
       />
     </>
   )

@@ -35,15 +35,19 @@ export const DICTIONARY_EN_TO_ID: Record<string, string> = {
   home: "Beranda",
   "about us": "Tentang Kami",
   about: "Tentang Kami",
+  "about pt multi daya mitra": "Tentang PT Multi Daya Mitra",
   services: "Layanan",
   service: "Layanan",
   products: "Produk",
   product: "Produk",
   news: "Berita",
+  "news & insights": "Berita & Wawasan",
+  "news and insights": "Berita & Wawasan",
   careers: "Karir",
   career: "Karir",
   "contact us": "Hubungi Kami",
   contact: "Hubungi Kami",
+  "contact pt multi daya mitra": "Hubungi PT Multi Daya Mitra",
   industries: "Industri",
   industry: "Industri",
   navigation: "Navigasi",
@@ -205,11 +209,15 @@ export const DICTIONARY_ID_TO_EN: Record<string, string> = Object.entries(DICTIO
 // Add reverse mappings for typical Indonesian terms
 DICTIONARY_ID_TO_EN["beranda"] = "Home"
 DICTIONARY_ID_TO_EN["tentang kami"] = "About Us"
+DICTIONARY_ID_TO_EN["tentang pt multi daya mitra"] = "About PT Multi Daya Mitra"
 DICTIONARY_ID_TO_EN["layanan"] = "Services"
 DICTIONARY_ID_TO_EN["produk"] = "Products"
 DICTIONARY_ID_TO_EN["berita"] = "News"
+DICTIONARY_ID_TO_EN["berita & wawasan"] = "News & Insights"
+DICTIONARY_ID_TO_EN["berita dan wawasan"] = "News & Insights"
 DICTIONARY_ID_TO_EN["karir"] = "Careers"
 DICTIONARY_ID_TO_EN["hubungi kami"] = "Contact Us"
+DICTIONARY_ID_TO_EN["hubungi pt multi daya mitra"] = "Contact PT Multi Daya Mitra"
 DICTIONARY_ID_TO_EN["industri"] = "Industries"
 DICTIONARY_ID_TO_EN["navigasi"] = "Navigation"
 

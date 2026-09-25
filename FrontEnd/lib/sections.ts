@@ -708,12 +708,12 @@ export function homePresetSections(): Section[] {
   const cta = createSection("cta")
   cta.props = {
     ...cta.props,
-    title: "Ready to power your next project?",
+    title: "EN: Ready to power your next project?\nID: Siap mewujudkan keandalan sistem kelistrikan proyek Anda?",
     description:
-      "Tell us about your facility — our engineers will respond with a tailored scope, approach, and quote.",
-    primaryLabel: "Get in Touch",
+      "EN: Tell us about your facility — our engineers will respond with a tailored scope, approach, and quote.\nID: Ceritakan kebutuhan fasilitas Anda — tim insinyur kami siap memberikan ruang lingkup, pendekatan teknis, serta estimasi biaya yang disesuaikan.",
+    primaryLabel: "EN: Get in Touch\nID: Hubungi Kami",
     primaryHref: "/contact",
-    secondaryLabel: "View Services",
+    secondaryLabel: "EN: View Services\nID: Lihat Layanan",
     secondaryHref: "/services",
   }
   return [
@@ -728,10 +728,10 @@ export function homePresetSections(): Section[] {
 export function aboutPresetSections(content: Record<string, unknown> = {}): Section[] {
   const pageHero = createSection("pageHero")
   pageHero.props = {
-    eyebrow: "About Us",
-    title: "A team built for your most demanding electrical projects.",
+    eyebrow: "EN: About Us\nID: Tentang Kami",
+    title: "EN: A team built for your most demanding electrical projects.\nID: Tim ahli berpengalaman untuk proyek kelistrikan paling menantang.",
     description:
-      "Founded in 2012 by seasoned engineers, PT Multi Daya Mitra has grown into one of East Java's largest electrical service partners — delivering across Indonesia and selected overseas assignments.",
+      "EN: Founded in 2012 by seasoned engineers, PT Multi Daya Mitra has grown into one of East Java's largest electrical service partners — delivering across Indonesia and selected overseas assignments.\nID: Didirikan sejak tahun 2012 oleh para insinyur berpengalaman, PT Multi Daya Mitra telah berkembang menjadi salah satu mitra layanan elektrikal terdepan di Jawa Timur — melayani seluruh Indonesia dan proyek mancanegara.",
   }
 
   // Carry over whatever the legacy about page already stored.
@@ -746,10 +746,10 @@ export function aboutPresetSections(content: Record<string, unknown> = {}): Sect
   const cta = createSection("cta")
   cta.props = {
     ...cta.props,
-    title: "Want to know more about our work?",
+    title: "EN: Want to know more about our work?\nID: Ingin tahu lebih banyak tentang proyek kami?",
     description:
-      "Get in touch with our team to discuss your project, request company credentials, or schedule a site assessment.",
-    primaryLabel: "Contact Us",
+      "EN: Get in touch with our team to discuss your project, request company credentials, or schedule a site assessment.\nID: Hubungi tim kami untuk mendiskusikan kebutuhan proyek Anda, meminta profil perusahaan, atau menjadwalkan survei teknis.",
+    primaryLabel: "EN: Contact Us\nID: Hubungi Kami",
     primaryHref: "/contact",
     secondaryLabel: "",
     secondaryHref: "",
@@ -774,21 +774,21 @@ function listingSection(source: string): Section {
 export function servicesPresetSections(): Section[] {
   const pageHero = createSection("pageHero")
   pageHero.props = {
-    eyebrow: "Our Services",
-    title: "Three core services. One trusted engineering partner.",
+    eyebrow: "EN: Our Business Units\nID: Unit Bisnis & Layanan",
+    title: "EN: Integrated Electrical, Automation & Mechanical Services\nID: Layanan Terintegrasi Elektrikal, Otomasi & Mekanikal",
     description:
-      "From greenfield installation to long-term operation and maintenance, we deliver high-quality solutions tailored to each plant and facility.",
+      "EN: From turnkey substation construction and automation integration to predictive maintenance, testing & commissioning, and mechanical supplies across Indonesia.\nID: Dari konstruksi gardu induk dan integrasi otomasi hingga pemeliharaan prediktif, testing & commissioning, serta pasokan mekanikal di seluruh Indonesia.",
   }
   const cta = createSection("cta")
   cta.props = {
     ...cta.props,
-    title: "Have a specific scope in mind?",
+    title: "EN: Need an engineering assessment or service quotation?\nID: Butuh asesmen teknis atau penawaran layanan?",
     description:
-      "Share your facility details and we'll respond with engineering scope, timeline, and a tailored quotation.",
-    primaryLabel: "Request a Quote",
+      "EN: Share your plant or facility requirements and our engineering team will respond with scope, timeline, and execution plan.\nID: Sampaikan kebutuhan fasilitas pabrik Anda dan tim insinyur kami akan merespons dengan ruang lingkup, jadwal pelaksanaan, serta estimasi biaya yang komprehensif.",
+    primaryLabel: "EN: Consult with Engineers\nID: Konsultasi dengan Insinyur",
     primaryHref: "/contact",
-    secondaryLabel: "See Products",
-    secondaryHref: "/products",
+    secondaryLabel: "EN: WhatsApp Hotline\nID: Hotline WhatsApp",
+    secondaryHref: "https://wa.me/628118303250?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20would%20like%20to%20inquire%20about%20your%20engineering%20and%20maintenance%20services.",
   }
   return [
     pageHero,
@@ -802,21 +802,21 @@ export function servicesPresetSections(): Section[] {
 export function productsPresetSections(): Section[] {
   const pageHero = createSection("pageHero")
   pageHero.props = {
-    eyebrow: "Products",
-    title: "Industrial products for testing, protection, and instrumentation.",
+    eyebrow: "EN: Products & Strategic Partners\nID: Produk & Mitra Strategis",
+    title: "EN: Engineered electrical, automation & climate control products.\nID: Produk rekayasa elektrikal, otomasi & sistem kontrol iklim.",
     description:
-      "Explore CMS-managed product categories, datasheets, specifications, galleries, and product details.",
+      "EN: Official Authorized Distributor for Rittal, Certified System Integrator for Schneider Electric, and complete product lines for electrical distribution, automation, power quality & fire systems.\nID: Distributor Resmi Rittal, Certified System Integrator Schneider Electric, serta lini produk lengkap untuk distribusi daya, kontrol iklim, power quality, dan fire system.",
   }
   const cta = createSection("cta")
   cta.props = {
     ...cta.props,
-    title: "Need a specific product or datasheet?",
+    title: "EN: Need a specific product quotation or datasheet?\nID: Butuh penawaran harga produk atau lembar data teknis spesifik?",
     description:
-      "Tell us what you are sourcing and our team will respond with availability, specifications, and support options.",
-    primaryLabel: "Ask Our Team",
+      "EN: Tell our engineering team what you are sourcing — we provide genuine hardware availability, custom assembly, and warranty support.\nID: Sampaikan kebutuhan pengadaan fasilitas Anda kepada tim insinyur kami — kami menyediakan ketersediaan perangkat keras asli, perakitan kustom, dan jaminan purnajual resmi.",
+    primaryLabel: "EN: Request Quotation\nID: Minta Penawaran",
     primaryHref: "/contact",
-    secondaryLabel: "View Services",
-    secondaryHref: "/services",
+    secondaryLabel: "EN: WhatsApp Sales Hotline\nID: Hotline Sales WhatsApp",
+    secondaryHref: "https://wa.me/628118303250?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20would%20like%20to%20inquire%20about%20product%20pricing%20and%20availability.",
   }
   return [pageHero, listingSection("products"), cta]
 }
@@ -824,18 +824,18 @@ export function productsPresetSections(): Section[] {
 export function newsPresetSections(): Section[] {
   const pageHero = createSection("pageHero")
   pageHero.props = {
-    eyebrow: "News & Insights",
-    title: "Project milestones, company updates, and field-tested insights.",
+    eyebrow: "EN: News & Insights\nID: Berita & Wawasan",
+    title: "EN: Project milestones, company updates, and field-tested insights.\nID: Pencapaian proyek, kabar perusahaan, dan wawasan teknis industri.",
     description:
-      "Stay current on what our engineers are delivering across power, oil & gas, manufacturing, and infrastructure projects.",
+      "EN: Stay current on what our engineers are delivering across power, oil & gas, manufacturing, and infrastructure projects.\nID: Pantau kontribusi teknisi kami dalam menyukseskan proyek kelistrikan, migas, manufaktur, dan infrastruktur.",
   }
   const cta = createSection("cta")
   cta.props = {
     ...cta.props,
-    title: "Have a project worth talking about?",
+    title: "EN: Have a project worth talking about?\nID: Punya proyek yang ingin didiskusikan?",
     description:
-      "We work with industrial owners, EPC partners, and infrastructure operators across Indonesia. Let's talk about your next milestone.",
-    primaryLabel: "Contact Us",
+      "EN: We work with industrial owners, EPC partners, and infrastructure operators across Indonesia. Let's talk about your next milestone.\nID: Kami bekerja sama dengan pemilik industri, mitra EPC, dan operator infrastruktur di seluruh Indonesia. Mari diskusikan target pencapaian Anda berikutnya.",
+    primaryLabel: "EN: Contact Us\nID: Hubungi Kami",
     primaryHref: "/contact",
     secondaryLabel: "",
     secondaryHref: "",
@@ -846,18 +846,18 @@ export function newsPresetSections(): Section[] {
 export function careerPresetSections(): Section[] {
   const pageHero = createSection("pageHero")
   pageHero.props = {
-    eyebrow: "Career",
-    title: "Build your engineering career on real, large-scale projects.",
+    eyebrow: "EN: Career\nID: Karir",
+    title: "EN: Build your engineering career on real, large-scale projects.\nID: Bangun karir rekayasa teknik Anda dalam proyek-proyek industri nyata.",
     description:
-      "Join a team that designs, installs, and maintains the electrical and automation systems behind Indonesia's most demanding industries.",
+      "EN: Join a team that designs, installs, and maintains the electrical and automation systems behind Indonesia's most demanding industries.\nID: Bergabunglah bersama tim yang merancang, memasang, dan memelihara sistem kelistrikan dan otomasi industri paling menantang di Indonesia.",
   }
   const cta = createSection("cta")
   cta.props = {
     ...cta.props,
-    title: "Don't see the right role?",
+    title: "EN: Don't see the right role?\nID: Tidak menemukan posisi yang sesuai?",
     description:
-      "We're always interested in meeting talented engineers and operators. Send us your CV and we'll keep you in mind.",
-    primaryLabel: "Send Your CV",
+      "EN: We're always interested in meeting talented engineers and operators. Send us your CV and we'll keep you in mind.\nID: Kami selalu tertarik untuk bertemu dengan para insinyur dan tenaga profesional berbakat. Kirimkan CV Anda dan kami akan menghubungi Anda saat ada posisi yang relevan.",
+    primaryLabel: "EN: Send Your CV\nID: Kirimkan CV Anda",
     primaryHref: "mailto:hr@multidayamitra.co.id",
     secondaryLabel: "",
     secondaryHref: "",

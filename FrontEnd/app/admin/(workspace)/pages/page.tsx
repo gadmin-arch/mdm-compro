@@ -6,6 +6,7 @@ import { AdminApiError, adminFetch, type AdminPagesResponse } from "@/lib/admin-
 import { AdminPagination } from "@/components/admin/admin-pagination"
 import { PagesTable } from "@/components/admin/pages-table"
 import { ResourceToolbar } from "@/components/admin/resource-toolbar"
+import { enrichPageWithBilingual } from "@/lib/page-bilingual"
 
 export default async function AdminPagesPage({
   searchParams,
@@ -72,7 +73,7 @@ export default async function AdminPagesPage({
 
       <ResourceToolbar action="/admin/pages" q={q} status={status} />
 
-      <PagesTable pages={pages?.data ?? []} />
+      <PagesTable pages={(pages?.data ?? []).map((p) => enrichPageWithBilingual(p, p.key))} />
       {pages && (
         <AdminPagination
           basePath="/admin/pages"

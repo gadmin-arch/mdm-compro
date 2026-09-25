@@ -60,7 +60,7 @@ Catat 3 nilai ini untuk `DATABASE_URL` nanti: **nama db**, **user**, **password*
 
 cPanel → **phpPgAdmin** → pilih database `CPANELUSER_mdm` → tab **SQL** →
 - **Untuk database baru**: buka file [`schema-all.sql`](schema-all.sql), salin isinya, tempel, **Execute**.
-- **Untuk database yang sudah jalan (Update ke versi terbaru)**: buka file [`update-023-to-037.sql`](update-023-to-037.sql), salin isinya, tempel, **Execute**. Script ini meng-update semua news & articles, services & products ke format bilingual (ID & EN 100% lengkap), menambahkan produk Rittal terbaru, memperbaiki spesifikasi agar tidak duplikat, dan menyinkronkan status kelengkapan dwi-bahasa di Admin CMS.
+- **Untuk database yang sudah jalan (Update ke versi terbaru)**: buka file [`update-023-to-038.sql`](update-023-to-038.sql), salin isinya, tempel, **Execute**. Script ini meng-update semua pages, news & articles, services & products ke format bilingual (ID & EN 100% lengkap), menambahkan produk Rittal terbaru, memperbaiki spesifikasi agar tidak duplikat, dan menyinkronkan status kelengkapan dwi-bahasa di Admin CMS (termasuk halaman About & News yang sebelumnya berstatus ID Kosong serta Page Builder).
 
 > ⚠️ Jika baris pertama `CREATE EXTENSION ... pgcrypto` error "permission denied":
 > PostgreSQL 13+ sudah punya `gen_random_uuid()` bawaan. Hapus/beri komentar

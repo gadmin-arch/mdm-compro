@@ -2,6 +2,7 @@ import { enrichNewsWithBilingual, BILINGUAL_NEWS_CATALOG } from "@/lib/news-bili
 import { enrichCareerWithBilingual, BILINGUAL_CAREER_CATALOG } from "@/lib/career-bilingual"
 import { buildBilingualProductTree, enrichProductWithBilingual } from "@/lib/product-bilingual"
 import { buildBilingualServiceTree, enrichServiceWithBilingual } from "@/lib/service-bilingual"
+import { enrichPageWithBilingual } from "@/lib/page-bilingual"
 
 export type SEO = {
   title?: string
@@ -277,7 +278,7 @@ export const fallbackPages: Record<string, PageContent> = {
   contact: {
     id: "page-contact",
     key: "contact",
-    title: "Contact PT Multi Daya Mitra",
+    title: "EN: Contact PT Multi Daya Mitra\nID: Hubungi PT Multi Daya Mitra",
     status: "published",
     version: 1,
     content: {
@@ -375,7 +376,8 @@ export async function getNavigation() {
 }
 
 export async function getPage(key: string) {
-  return cmsFetch<PageContent | null>(`/pages/${key}`, fallbackPages[key] ?? null)
+  const page = await cmsFetch<PageContent | null>(`/pages/${key}`, fallbackPages[key] ?? null)
+  return page ? enrichPageWithBilingual(page, key) : null
 }
 
 // Global site document edited on the admin Site Settings page (backend
@@ -857,7 +859,11 @@ export async function getPages(filters?: PageFilters) {
       .includes(search)
   })
   const defaultFallback = paginateList(filteredPages, filters?.page ?? 1, filters?.limit ?? 10)
-  return cmsListFetch<PageContent>(path, defaultFallback)
+  const res = await cmsListFetch<PageContent>(path, defaultFallback)
+  return {
+    ...res,
+    data: res.data.map((page) => enrichPageWithBilingual(page, page.key)),
+  }
 }
 
 function searchContentNode(item: ContentNode, search: string) {
