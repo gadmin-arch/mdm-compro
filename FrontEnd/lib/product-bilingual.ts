@@ -1717,7 +1717,7 @@ export function enrichProductWithBilingual(
     title: titleString,
     summary: summaryString,
     imageUrl: baseNode.imageUrl || entry.imageUrl,
-    specs: entry.specs ? { ...entry.specs, ...(baseNode.specs || {}) } : baseNode.specs,
+    specs: entry.specs || baseNode.specs,
     content: {
       bilingual: true,
       id: {

@@ -82,7 +82,7 @@ export function ProductDetailView({
                 <Button asChild className="w-full" variant="outline">
                   <a href={product.datasheetUrl} rel="noreferrer" target="_blank">
                     <Download className="mr-2 h-4 w-4" />
-                    Download Datasheet
+                    {isIndonesian ? "Unduh Lembar Data" : "Download Datasheet"}
                   </a>
                 </Button>
               )}
@@ -104,12 +104,16 @@ export function ProductDetailView({
                 </span>
               </p>
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                <BilingualText text={product.title} /> {isIndonesian ? "Varian & Tipe" : "Products"}
+                {isIndonesian ? "Varian & Tipe " : ""}<BilingualText text={product.title} /> {!isIndonesian ? " Products" : ""}
               </h2>
             </div>
 
             <div className="mt-8">
-              <ContentList items={subProducts} basePath="/products" empty="No sub-products found." />
+              <ContentList
+                items={subProducts}
+                basePath="/products"
+                empty={isIndonesian ? "Belum ada produk terkait." : "No sub-products found."}
+              />
             </div>
           </div>
         </section>

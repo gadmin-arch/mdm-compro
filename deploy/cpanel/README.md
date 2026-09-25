@@ -59,7 +59,8 @@ Catat 3 nilai ini untuk `DATABASE_URL` nanti: **nama db**, **user**, **password*
 ## LANGKAH 3 — Import skema database
 
 cPanel → **phpPgAdmin** → pilih database `CPANELUSER_mdm` → tab **SQL** →
-buka file [`schema-all.sql`](schema-all.sql), salin seluruh isinya, tempel, **Execute**.
+- **Untuk database baru**: buka file [`schema-all.sql`](schema-all.sql), salin isinya, tempel, **Execute**.
+- **Untuk database yang sudah jalan (Update ke versi terbaru)**: buka file [`update-023-to-035.sql`](update-023-to-035.sql), salin isinya, tempel, **Execute**. Script ini meng-update semua services & products ke format bilingual (ID & EN 100% lengkap), menambahkan produk Rittal terbaru, memperbaiki spesifikasi agar tidak duplikat, dan mengoptimalkan performa index.
 
 > ⚠️ Jika baris pertama `CREATE EXTENSION ... pgcrypto` error "permission denied":
 > PostgreSQL 13+ sudah punya `gen_random_uuid()` bawaan. Hapus/beri komentar

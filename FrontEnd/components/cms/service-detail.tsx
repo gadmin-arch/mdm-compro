@@ -79,12 +79,16 @@ export function ServiceDetailView({
                 </span>
               </p>
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                <BilingualText text={service.title} /> {isIndonesian ? "Layanan" : "Services"}
+                {isIndonesian ? "Cakupan Layanan " : ""}<BilingualText text={service.title} /> {!isIndonesian ? " Services" : ""}
               </h2>
             </div>
 
             <div className="mt-8">
-              <ContentList items={subServices} basePath="/services" empty="No sub-services found." />
+              <ContentList
+                items={subServices}
+                basePath="/services"
+                empty={isIndonesian ? "Belum ada sub-layanan." : "No sub-services found."}
+              />
             </div>
           </div>
         </section>
