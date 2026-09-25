@@ -142,13 +142,17 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
   const isContactPage = key === "contact"
   const content = useMemo(() => {
     if (isContactPage) {
-      return {
+      const base: Record<string, unknown> = {
         email: contactEmail,
         phone: contactPhone,
         fax: contactFax,
         offices: contactOffices,
         blocks: [],
       }
+      if (sections.length > 0) {
+        base.sections = sections
+      }
+      return base
     }
     const base = buildContent(fields, blocks)
     if (sections.length > 0) {
@@ -388,23 +392,17 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
 
         <Tabs
           defaultValue={
-            isContactPage
-              ? "content"
-              : sections.length > 0 || (fields.length === 0 && blocks.length === 0)
-                ? "builder"
-                : "content"
+            sections.length > 0 || (fields.length === 0 && blocks.length === 0)
+              ? "builder"
+              : "content"
           }
           className="gap-4"
         >
-          <TabsList
-            className={`grid h-auto w-full rounded-md ${isContactPage ? "grid-cols-3" : "grid-cols-4"}`}
-          >
-            {!isContactPage && (
-              <TabsTrigger value="builder">
-                <LayoutTemplate className="h-4 w-4" />
-                Builder
-              </TabsTrigger>
-            )}
+          <TabsList className="grid h-auto w-full grid-cols-4 rounded-md">
+            <TabsTrigger value="builder">
+              <LayoutTemplate className="h-4 w-4" />
+              Builder
+            </TabsTrigger>
             <TabsTrigger value="content">
               <FileText className="h-4 w-4" />
               Content
@@ -419,11 +417,9 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
             </TabsTrigger>
           </TabsList>
 
-          {!isContactPage && (
-            <TabsContent value="builder">
-              <SectionBuilder sections={sections} onChange={setSections} />
-            </TabsContent>
-          )}
+          <TabsContent value="builder">
+            <SectionBuilder sections={sections} onChange={setSections} />
+          </TabsContent>
 
           <TabsContent value="content" className="space-y-6">
             {key === "contact" ? (
@@ -724,7 +720,7 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
           </TabsContent>
 
           <TabsContent value="preview">
-            {!isContactPage && sections.length > 0 ? (
+            {sections.length > 0 ? (
               <section className="overflow-hidden rounded-lg border border-border">
                 <div className="flex items-center justify-between border-b border-border bg-secondary/40 px-4 py-2">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
@@ -808,6 +804,27 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
                   </option>
                 ))}
               </select>
+              {status === "published" ? (
+                <div className="mt-2.5 rounded-md border border-emerald-500/30 bg-emerald-500/10 p-2.5 text-xs text-emerald-800 dark:text-emerald-300">
+                  <p className="font-semibold flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+                    Status: Terpublikasi (Published)
+                  </p>
+                  <p className="mt-1 text-[11px] leading-relaxed opacity-90">
+                    Hasil editan di Builder & Content akan langsung aktif di web publik saat disimpan.
+                  </p>
+                </div>
+              ) : (
+                <div className="mt-2.5 rounded-md border border-amber-500/30 bg-amber-500/10 p-2.5 text-xs text-amber-800 dark:text-amber-300">
+                  <p className="font-semibold flex items-center gap-1.5">
+                    <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
+                    Status: Draft / Belum Publik
+                  </p>
+                  <p className="mt-1 text-[11px] leading-relaxed opacity-90">
+                    Ubah status ke <strong>published</strong> agar editan tampil di website publik.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div>

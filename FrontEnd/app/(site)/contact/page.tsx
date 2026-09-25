@@ -3,7 +3,9 @@ import { Contact } from "@/components/contact"
 import { PageHero } from "@/components/page-hero"
 import { BilingualText } from "@/components/cms/content-language"
 import { buildBilingualMetadata } from "@/lib/bilingual"
-import { getPage } from "@/lib/cms"
+import { getPage, resolveSectionData } from "@/lib/cms"
+import { sectionsFromContent } from "@/lib/sections"
+import { SectionRenderer } from "@/components/cms/section-renderer"
 
 export const metadata: Metadata = buildBilingualMetadata({
   title: "Hubungi Kami\nContact PT Multi Daya Mitra",
@@ -14,6 +16,12 @@ export const metadata: Metadata = buildBilingualMetadata({
 
 export default async function ContactPage() {
   const page = await getPage("contact")
+  const sections = page?.status === "published" ? sectionsFromContent(page.content) : []
+
+  if (sections.length > 0) {
+    const data = await resolveSectionData(sections)
+    return <SectionRenderer sections={sections} data={data} />
+  }
 
   return (
     <>

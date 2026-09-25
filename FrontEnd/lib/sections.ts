@@ -261,6 +261,24 @@ export const sectionDefs: SectionDef[] = [
     },
   },
   {
+    type: "contact",
+    label: "Contact & Inquiry",
+    description: "Interactive inquiry form, quick contact channels, and office location details.",
+    icon: "mail",
+    fields: [
+      { kind: "text", name: "email", label: "Email", placeholder: "info@multidayamitra.co.id" },
+      { kind: "text", name: "phone", label: "General Phone", placeholder: "+62 31 592 1256" },
+      { kind: "text", name: "salesPhone", label: "Sales Hotline", placeholder: "+62 821-4007-4122" },
+      { kind: "text", name: "technicalPhone", label: "Technical Phone", placeholder: "+62 811-8303-250" },
+    ],
+    defaults: {
+      email: "info@multidayamitra.co.id",
+      phone: "+62 31 592 1256",
+      salesPhone: "+62 821-4007-4122",
+      technicalPhone: "+62 811-8303-250",
+    },
+  },
+  {
     type: "capabilities",
     label: "Capabilities Grid",
     description: "Compact icon tiles listing engineering capabilities.",
@@ -865,6 +883,30 @@ export function careerPresetSections(): Section[] {
   return [pageHero, listingSection("careers"), cta]
 }
 
+function contactPresetSections(content: Record<string, unknown> = {}): Section[] {
+  const pageHero = createSection("pageHero")
+  pageHero.props = {
+    ...pageHero.props,
+    eyebrow: "EN: Get in Touch\nID: Hubungi Kami",
+    title:
+      "EN: Plan your next electrical or automation project with us.\nID: Rencanakan proyek kelistrikan atau otomasi Anda bersama kami.",
+    description:
+      "EN: Tell us about your facility and the outcomes you're after — our engineers will respond with a tailored scope, approach, and quote.\nID: Sampaikan kebutuhan fasilitas Anda — tim insinyur kami siap memberikan rekomendasi teknis, lingkup kerja, dan penawaran terbaik.",
+  }
+  const contact = createSection("contact")
+  if (content.email || content.phone || content.offices) {
+    contact.props = {
+      ...contact.props,
+      email: content.email ?? contact.props.email,
+      phone: content.phone ?? contact.props.phone,
+      salesPhone: content.salesPhone ?? contact.props.salesPhone,
+      technicalPhone: content.technicalPhone ?? contact.props.technicalPhone,
+      offices: content.offices ?? contact.props.offices,
+    }
+  }
+  return [pageHero, contact]
+}
+
 // Sections to prefill the builder with when a built-in page has no sections
 // yet — so the admin edits the same design the public already sees.
 export function presetSectionsForKey(
@@ -876,6 +918,8 @@ export function presetSectionsForKey(
       return homePresetSections()
     case "about":
       return aboutPresetSections(content)
+    case "contact":
+      return contactPresetSections(content)
     case "services":
       return servicesPresetSections()
     case "products":
