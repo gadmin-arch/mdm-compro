@@ -1,3 +1,4 @@
+import { About } from "@/components/about"
 import { Capabilities } from "@/components/capabilities"
 import { Contact } from "@/components/contact"
 import { CtaBanner } from "@/components/cta-banner"
@@ -89,6 +90,8 @@ export function SectionView({
       )
     case "aboutIntro":
       return <AboutIntroSection props={props} />
+    case "about":
+      return <About page={{ content: props } as any} />
     case "contact":
       return <Contact page={{ content: props } as any} />
     case "offices":

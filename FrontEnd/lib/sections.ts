@@ -279,6 +279,70 @@ export const sectionDefs: SectionDef[] = [
     },
   },
   {
+    type: "about",
+    label: "About & Credentials",
+    description: "Company overview, IMPACT values, ISO certifications, licensed experts, testing fleet, and partnerships.",
+    icon: "building-2",
+    fields: [
+      { kind: "textarea", name: "overview", label: "Overview" },
+      { kind: "textarea", name: "vision", label: "Vision" },
+      { kind: "textarea", name: "mission", label: "Mission" },
+      { kind: "textarea", name: "tagline", label: "Tagline" },
+      { kind: "textarea", name: "culture", label: "Culture" },
+      { kind: "text", name: "established", label: "Established Year" },
+      { kind: "text", name: "experienceYears", label: "Experience Years" },
+      { kind: "text", name: "clientCount", label: "Client Count" },
+      { kind: "text", name: "teamCount", label: "Team Count" },
+      { kind: "lines", name: "licensedExperts", label: "Licensed Experts (one per line)" },
+      { kind: "lines", name: "certifications", label: "Certifications (one per line)" },
+      { kind: "lines", name: "testingTools", label: "Testing Tools (one per line)" },
+    ],
+    defaults: {
+      overview:
+        "EN: Established in 2012, PT Multi Daya Mitra delivers integrated electrical, industrial automation, and fire alarm solutions across Indonesia with 14+ years of industrial experience, 400+ corporate clients, and over 200 engineers and professionals.\nID: Didirikan pada tahun 2012, PT Multi Daya Mitra menghadirkan solusi terintegrasi di bidang kelistrikan, otomasi industri, dan proteksi kebakaran di seluruh Indonesia dengan pengalaman industri 14+ tahun, 400+ klien korporasi, serta lebih dari 200 insinyur dan tenaga profesional.",
+      vision:
+        "EN: Global Electrical, Automation and Fire Alarm Services Company.\nID: Perusahaan Jasa Layanan Kelistrikan, Otomasi, dan Sistem Fire Alarm Kelas Dunia.",
+      mission:
+        "EN: Mutual Partnership and Professionalism in delivering every engineering engagement.\nID: Menjalin Kemitraan Strategis dan Profesionalisme Tinggi dalam Setiap Layanan Rekayasa Teknik.",
+      tagline:
+        "EN: Always Make an IMPACT — Powering Solution, Creating Impact\nID: Always Make an IMPACT — Solusi Kelistrikan Andal, Menciptakan Dampak Nyata",
+      culture:
+        "EN: Our culture of disciplined engineering, safety commitment, and innovation is built around six foundational principles.\nID: Budaya disiplin rekayasa teknik, komitmen keselamatan, dan inovasi kami dibangun di atas enam prinsip dasar.",
+      established: "2012",
+      experienceYears: "14+",
+      clientCount: "400+",
+      teamCount: "200+",
+      licensedExperts: [
+        "AK3 Listrik (Ahli K3 Listrik Kemnaker)",
+        "AK3 Umum (Ahli K3 Umum)",
+        "AK3 Kebakaran (Kelas A, B, C, D)",
+        "Teknisi Kompetensi Tegangan Menengah ESDM",
+        "Licensed Mechanical & Termination Specialists",
+      ],
+      certifications: [
+        "ISO 9001:2015 (Quality Management - KAN)",
+        "ISO 14001:2015 (Environmental Management)",
+        "ISO 45001:2018 (Occupational Health & Safety - KAN)",
+        "Ecovadis Silver (Top 15% Global Sustainability)",
+        "Avetta Member",
+        "SBUJTL & IUJPTL ESDM",
+        "Sertifikat Kompetensi Level 6 Tegangan Menengah ESDM",
+        "SMK3 Kemenaker",
+        "NFPA Member",
+        "D&B Rating",
+      ],
+      testingTools: [
+        "Partial Discharge Analyzer & Scanner",
+        "Omicron Relay & CT/VT Analyzer",
+        "Megger Insulation & Earth Tester",
+        "Fluke Power Quality Analyzer",
+        "Transformer Oil Treatment, BDV & DGA",
+        "Breaker Analyzer & Contact Resistance Tester",
+        "Secondary Injection Test Sets & Load Bank",
+      ],
+    },
+  },
+  {
     type: "capabilities",
     label: "Capabilities Grid",
     description: "Compact icon tiles listing engineering capabilities.",
@@ -752,13 +816,10 @@ export function aboutPresetSections(content: Record<string, unknown> = {}): Sect
       "EN: Founded in 2012 by seasoned engineers, PT Multi Daya Mitra has grown into one of East Java's largest electrical service partners — delivering across Indonesia and selected overseas assignments.\nID: Didirikan sejak tahun 2012 oleh para insinyur berpengalaman, PT Multi Daya Mitra telah berkembang menjadi salah satu mitra layanan elektrikal terdepan di Jawa Timur — melayani seluruh Indonesia dan proyek mancanegara.",
   }
 
-  // Carry over whatever the legacy about page already stored.
-  const intro = createSection("aboutIntro")
-  for (const field of ["overview", "vision", "mission"] as const) {
-    const value = content[field]
-    if (typeof value === "string" && value.trim()) {
-      intro.props[field] = value
-    }
+  const aboutSection = createSection("about")
+  aboutSection.props = {
+    ...aboutSection.props,
+    ...content,
   }
 
   const cta = createSection("cta")
@@ -775,8 +836,7 @@ export function aboutPresetSections(content: Record<string, unknown> = {}): Sect
 
   return [
     pageHero,
-    intro,
-    createSection("offices"),
+    aboutSection,
     createSection("features"),
     createSection("capabilities"),
     cta,

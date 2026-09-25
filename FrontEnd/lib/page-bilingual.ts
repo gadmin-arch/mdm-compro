@@ -299,6 +299,16 @@ export function enrichPageWithBilingual<
       } else {
         enrichedContent.impactValues = DEFAULT_BILINGUAL_IMPACT_VALUES
       }
+
+      if (!Array.isArray(enrichedContent.licensedExperts) || enrichedContent.licensedExperts.length === 0) {
+        enrichedContent.licensedExperts = DEFAULT_LICENSED_EXPERTS
+      }
+      if (!Array.isArray(enrichedContent.testingTools) || enrichedContent.testingTools.length === 0) {
+        enrichedContent.testingTools = DEFAULT_TESTING_TOOLS
+      }
+      if (!Array.isArray(enrichedContent.partnerships) || enrichedContent.partnerships.length === 0) {
+        enrichedContent.partnerships = DEFAULT_PARTNERSHIPS
+      }
     }
   } else if (knownFields) {
     // If content is empty/undefined, initialize with known fields
@@ -308,6 +318,9 @@ export function enrichPageWithBilingual<
     }
     if (pageKey === "about") {
       enrichedContent.impactValues = DEFAULT_BILINGUAL_IMPACT_VALUES
+      enrichedContent.licensedExperts = DEFAULT_LICENSED_EXPERTS
+      enrichedContent.testingTools = DEFAULT_TESTING_TOOLS
+      enrichedContent.partnerships = DEFAULT_PARTNERSHIPS
     }
   }
 
@@ -318,6 +331,38 @@ export function enrichPageWithBilingual<
     content: enrichedContent,
   }
 }
+
+export const DEFAULT_LICENSED_EXPERTS = [
+  "AK3 Listrik (Ahli K3 Listrik Kemnaker)",
+  "AK3 Umum (Ahli K3 Umum)",
+  "AK3 Kebakaran (Kelas A, B, C, D)",
+  "Teknisi Kompetensi Tegangan Menengah ESDM",
+  "Licensed Mechanical & Termination Specialists",
+]
+
+export const DEFAULT_TESTING_TOOLS = [
+  "Partial Discharge Analyzer & Scanner",
+  "Omicron Relay & CT/VT Analyzer",
+  "Megger Insulation & Earth Tester",
+  "Fluke Power Quality Analyzer",
+  "Transformer Oil Treatment, BDV & DGA",
+  "Breaker Analyzer & Contact Resistance Tester",
+  "Secondary Injection Test Sets & Load Bank",
+]
+
+export const DEFAULT_PARTNERSHIPS = [
+  "Schneider Electric (Authorized Partner)",
+  "Rittal (Authorized Partner)",
+  "xArrow (Authorized Partner)",
+  "Bosch (Authorized Partner)",
+  "ABB",
+  "Siemens",
+  "Fluke",
+  "Megger",
+  "FLIR",
+  "Danfoss",
+  "Omron",
+]
 
 export const DEFAULT_BILINGUAL_IMPACT_VALUES = [
   {

@@ -186,12 +186,11 @@ const legalCertifications = [
 ]
 
 const licensedExperts = [
-  "EN: Certified Electrical Safety Specialist (K3 Listrik - Ministry of Manpower)\nID: Ahli K3 Spesialis Listrik Bersertifikasi (Kemenaker RI)",
-  "EN: Certified General Occupational Safety Specialist (K3 Umum)\nID: Ahli K3 Umum Bersertifikasi (Kemenaker RI)",
-  "EN: Certified Fire Protection Specialist (Class A, B, C, D)\nID: Spesialis Proteksi Kebakaran Bersertifikasi (Kelas A, B, C, D)",
-  "EN: ESDM Level 6 Certified Medium-Voltage Engineering Specialist\nID: Tenaga Ahli Teknik Tegangan Menengah Bersertifikat Level 6 ESDM",
-  "EN: Certified SCADA & Automation Engineers (Siemens / Schneider / Rockwell)\nID: Insinyur Otomasi & SCADA Bersertifikasi (Siemens / Schneider / Rockwell)",
-  "EN: Licensed High-Voltage & Medium-Voltage Termination Specialists\nID: Teknisi Berlisensi Terminasi Kabel Tegangan Menengah & Tinggi",
+  "AK3 Listrik (Ahli K3 Listrik Kemnaker)",
+  "AK3 Umum (Ahli K3 Umum)",
+  "AK3 Kebakaran (Kelas A, B, C, D)",
+  "Teknisi Kompetensi Tegangan Menengah ESDM",
+  "Licensed Mechanical & Termination Specialists",
 ]
 
 const testingToolsFleet = [
@@ -331,6 +330,102 @@ export function About({ page }: { page?: PageContent | null }) {
         }
       })
     : impactValues
+
+  const rawLicensedExperts = Array.isArray(content.licensedExperts)
+    ? content.licensedExperts
+    : typeof content.licensedExperts === "string"
+      ? content.licensedExperts.split("\n").map((s) => s.trim()).filter(Boolean)
+      : null
+
+  const resolvedLicensedExperts: string[] =
+    rawLicensedExperts && rawLicensedExperts.length > 0
+      ? rawLicensedExperts.map((item) => String(item))
+      : licensedExperts
+
+  const rawCertifications = Array.isArray(content.certifications)
+    ? content.certifications
+    : typeof content.certifications === "string"
+      ? content.certifications.split("\n").map((s) => s.trim()).filter(Boolean)
+      : null
+
+  const resolvedCertifications =
+    rawCertifications && rawCertifications.length > 0
+      ? rawCertifications.map((item, idx) => {
+          if (typeof item === "object" && item !== null) {
+            const obj = item as Record<string, unknown>
+            return {
+              title: String(obj.title || ""),
+              desc: String(obj.desc || ""),
+              badge: String(obj.badge || "Certified"),
+            }
+          }
+          const strItem = String(item)
+          const matched = legalCertifications.find(
+            (c) =>
+              c.title.toLowerCase() === strItem.toLowerCase() ||
+              strItem.toLowerCase().includes(c.title.toLowerCase())
+          )
+          if (matched) {
+            return {
+              ...matched,
+              title: strItem.includes("(") ? strItem.split("(")[0].trim() : matched.title,
+            }
+          }
+          const fallback = legalCertifications[idx % legalCertifications.length]
+          return {
+            title: strItem,
+            desc: fallback?.desc || strItem,
+            badge: fallback?.badge || "Certified",
+          }
+        })
+      : legalCertifications
+
+  const rawTestingTools = Array.isArray(content.testingTools)
+    ? content.testingTools
+    : typeof content.testingTools === "string"
+      ? content.testingTools.split("\n").map((s) => s.trim()).filter(Boolean)
+      : null
+
+  const resolvedTestingTools =
+    rawTestingTools && rawTestingTools.length > 0
+      ? rawTestingTools.map((item, idx) => {
+          if (typeof item === "object" && item !== null) {
+            const obj = item as Record<string, unknown>
+            return {
+              name: String(obj.name || ""),
+              category: String(obj.category || ""),
+              desc: String(obj.desc || ""),
+            }
+          }
+          const strItem = String(item)
+          const matched = testingToolsFleet.find(
+            (t) => t.name.toLowerCase() === strItem.toLowerCase()
+          )
+          if (matched) return matched
+          const fallback = testingToolsFleet[idx % testingToolsFleet.length]
+          return {
+            name: strItem,
+            category: fallback?.category || "EN: Diagnostic Tool\nID: Peralatan Diagnostik",
+            desc: fallback?.desc || strItem,
+          }
+        })
+      : testingToolsFleet
+
+  const rawPartnerships = Array.isArray(content.partnerships)
+    ? content.partnerships
+    : typeof content.partnerships === "string"
+      ? content.partnerships.split("\n").map((s) => s.trim()).filter(Boolean)
+      : null
+
+  const resolvedAuthorizedPartners =
+    Array.isArray(content.authorizedPartners) && content.authorizedPartners.length > 0
+      ? (content.authorizedPartners as typeof authorizedPartners)
+      : authorizedPartners
+
+  const resolvedExperiencedBrands =
+    rawPartnerships && rawPartnerships.length > 0
+      ? rawPartnerships.map((p) => String(p).replace(/\(.*\)/, "").trim()).filter(Boolean)
+      : experiencedBrands
 
   return (
     <>
@@ -657,9 +752,9 @@ export function About({ page }: { page?: PageContent | null }) {
 
           {/* Certifications Grid */}
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            {legalCertifications.map((cert) => (
+            {resolvedCertifications.map((cert, idx) => (
               <div
-                key={cert.title}
+                key={`${cert.title}-${idx}`}
                 className="flex flex-col justify-between rounded-xl border border-border bg-card p-4 shadow-xs transition-shadow hover:shadow-md"
               >
                 <div>
@@ -702,7 +797,7 @@ export function About({ page }: { page?: PageContent | null }) {
 
               <div className="lg:col-span-8">
                 <div className="grid gap-3 sm:grid-cols-2">
-                  {licensedExperts.map((expert, idx) => (
+                  {resolvedLicensedExperts.map((expert, idx) => (
                     <div
                       key={idx}
                       className="flex items-start gap-2.5 rounded-lg border border-border/80 bg-secondary/40 px-3.5 py-2.5 text-xs font-medium text-foreground"
@@ -740,8 +835,8 @@ export function About({ page }: { page?: PageContent | null }) {
           </div>
 
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {testingToolsFleet.map((tool) => (
-              <div key={tool.name} className="flex flex-col justify-between rounded-xl border border-border bg-card p-6 shadow-xs">
+            {resolvedTestingTools.map((tool, idx) => (
+              <div key={`${tool.name}-${idx}`} className="flex flex-col justify-between rounded-xl border border-border bg-card p-6 shadow-xs">
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="flex h-9 w-9 items-center justify-center rounded-md bg-secondary text-primary">
@@ -766,7 +861,7 @@ export function About({ page }: { page?: PageContent | null }) {
               <BilingualText text="EN: Authorized Partnership\nID: Kemitraan Resmi Principal" />
             </h3>
             <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {authorizedPartners.map((p) => (
+              {resolvedAuthorizedPartners.map((p) => (
                 <div
                   key={p.name}
                   className="group rounded-xl border border-border bg-secondary/20 p-4 text-center transition-all hover:border-primary/40 hover:bg-card hover:shadow-xs"
@@ -790,7 +885,7 @@ export function About({ page }: { page?: PageContent | null }) {
             <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-4">
               <BilingualText text="EN: Experienced Work With Brand\nID: Pengalaman Proyek Berbagai Brand" />
             </h3>
-            <BrandMarquee brands={experiencedBrands} />
+            <BrandMarquee brands={resolvedExperiencedBrands} />
           </div>
         </div>
       </section>
