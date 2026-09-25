@@ -40,7 +40,8 @@ import {
 import { isSystemPageKey, type PageContent, type SEO } from "@/lib/cms"
 import type { SaveAction } from "@/lib/save-result"
 import { presetSectionsForKey, sectionsFromContent, type Section } from "@/lib/sections"
-import { combineBilingualText, extractBilingualText } from "@/lib/bilingual"
+import { combineBilingualText, extractBilingualText, lookupDictionary } from "@/lib/bilingual"
+import { BILINGUAL_PAGE_FIELDS } from "@/lib/page-bilingual"
 
 type ContactOffice = {
   name: string
@@ -87,7 +88,7 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
   const [status, setStatus] = useState(page?.status ?? "draft")
   const [publishedAtInput, setPublishedAtInput] = useState(toDateTimeLocal(page?.publishedAt))
   const [seo, setSeo] = useState<SEO>(page?.seo ?? {})
-  const [fields, setFields] = useState<FieldRow[]>(() => contentToFields(initialContent))
+  const [fields, setFields] = useState<FieldRow[]>(() => contentToFields(initialContent, page?.key))
   const [blocks, setBlocks] = useState<BlockRow[]>(() => contentToBlocks(initialContent))
   const [sections, setSections] = useState<Section[]>(() => {
     const existing = sectionsFromContent(initialContent)
@@ -622,45 +623,15 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
 
                   <div className="mt-5 space-y-4">
                     {fields.map((field) => (
-                      <div
-                        className="grid gap-3 rounded-md border border-border bg-secondary/30 p-3 md:grid-cols-[180px_120px_minmax(0,1fr)_40px]"
+                      <BilingualPageFieldCard
+                        field={field}
                         key={field.id}
-                      >
-                        <Input
-                          aria-label="Field key"
-                          onChange={(event) => updateField(field.id, { key: slugifyField(event.target.value) })}
-                          placeholder="overview"
-                          value={field.key}
-                        />
-                        <select
-                          aria-label="Field type"
-                          className="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                          onChange={(event) => updateField(field.id, { type: event.target.value as FieldType })}
-                          value={field.type}
-                        >
-                          {fieldTypes.map((type) => (
-                            <option key={type} value={type}>
-                              {type}
-                            </option>
-                          ))}
-                        </select>
-                        <Textarea
-                          aria-label="Field value"
-                          className="min-h-20 bg-background"
-                          onChange={(event) => updateField(field.id, { value: event.target.value })}
-                          placeholder={field.type === "list" ? "One item per line" : "Content"}
-                          value={field.value}
-                        />
-                        <Button
-                          aria-label="Remove field"
-                          onClick={() => removeField(field.id)}
-                          size="icon"
-                          type="button"
-                          variant="ghost"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                        onRemove={() => removeField(field.id)}
+                        onUpdateKey={(nextKey) => updateField(field.id, { key: slugifyField(nextKey) })}
+                        onUpdateType={(nextType) => updateField(field.id, { type: nextType })}
+                        onUpdateValue={(nextValue) => updateField(field.id, { value: nextValue })}
+                        pageKey={key}
+                      />
                     ))}
 
                     {fields.length === 0 && (
@@ -997,15 +968,36 @@ function MobileActionBar({
   )
 }
 
-function contentToFields(content: Record<string, unknown>): FieldRow[] {
+function contentToFields(content: Record<string, unknown>, pageKey?: string): FieldRow[] {
+  const normalizedKey = (pageKey || "").toLowerCase().trim()
+  const knownFields = BILINGUAL_PAGE_FIELDS[normalizedKey]
+
   return Object.entries(content)
     .filter(([fieldKey]) => fieldKey !== "blocks" && fieldKey !== "sections")
-    .map(([fieldKey, value]) => ({
-      id: `field-${fieldKey}`,
-      key: fieldKey,
-      type: valueType(value),
-      value: valueToText(value),
-    }))
+    .map(([fieldKey, value]) => {
+      let textValue = valueToText(value)
+      if (typeof value === "string" && textValue.trim()) {
+        const { id: extId, en: extEn } = extractBilingualText(textValue)
+        let resolvedId = extId
+        let resolvedEn = extEn
+
+        const known = knownFields?.[fieldKey]
+        if (known) {
+          if (!resolvedId || resolvedId === resolvedEn) resolvedId = known.id
+          if (!resolvedEn) resolvedEn = known.en
+        }
+
+        if (resolvedId && resolvedEn && resolvedId !== resolvedEn) {
+          textValue = combineBilingualText({ id: resolvedId, en: resolvedEn })
+        }
+      }
+      return {
+        id: `field-${fieldKey}`,
+        key: fieldKey,
+        type: valueType(value),
+        value: textValue,
+      }
+    })
 }
 
 function contentToBlocks(content: Record<string, unknown>): BlockRow[] {
@@ -1192,4 +1184,211 @@ function toIsoDateTime(value: string) {
 
 function makeId(prefix: string) {
   return `${prefix}-${Math.random().toString(36).slice(2, 9)}`
+}
+
+function BilingualPageFieldCard({
+  field,
+  pageKey,
+  onUpdateKey,
+  onUpdateType,
+  onUpdateValue,
+  onRemove,
+}: {
+  field: FieldRow
+  pageKey: string
+  onUpdateKey: (key: string) => void
+  onUpdateType: (type: FieldType) => void
+  onUpdateValue: (value: string) => void
+  onRemove: () => void
+}) {
+  const [showRaw, setShowRaw] = useState(false)
+  const isText = field.type === "text"
+
+  const extracted = useMemo(() => {
+    return extractBilingualText(field.value)
+  }, [field.value])
+
+  let idVal = extracted.id
+  let enVal = extracted.en
+
+  const normalizedPageKey = (pageKey || "").toLowerCase().trim()
+  const known = BILINGUAL_PAGE_FIELDS[normalizedPageKey]?.[field.key]
+  if (known) {
+    if (!idVal || idVal === enVal) idVal = known.id
+    if (!enVal) enVal = known.en
+  } else {
+    if (!idVal && enVal) {
+      idVal = lookupDictionary(enVal, "id") || enVal
+    } else if (!enVal && idVal) {
+      enVal = lookupDictionary(idVal, "en") || idVal
+    }
+  }
+
+  function handleIdChange(newId: string) {
+    const combined = combineBilingualText({ id: newId, en: enVal })
+    onUpdateValue(combined)
+  }
+
+  function handleEnChange(newEn: string) {
+    const combined = combineBilingualText({ id: idVal, en: newEn })
+    onUpdateValue(combined)
+  }
+
+  const hasId = Boolean(idVal.trim())
+  const hasEn = Boolean(enVal.trim())
+
+  return (
+    <div className="rounded-lg border border-border bg-secondary/20 p-4 transition-all hover:border-border/80">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Field:</span>
+            <Input
+              aria-label="Field key"
+              className="h-8 w-44 bg-background font-mono text-xs font-semibold"
+              onChange={(event) => onUpdateKey(event.target.value)}
+              placeholder="field_key"
+              value={field.key}
+            />
+          </div>
+
+          <select
+            aria-label="Field type"
+            className="h-8 rounded-md border border-input bg-background px-2.5 text-xs shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[2px]"
+            onChange={(event) => onUpdateType(event.target.value as FieldType)}
+            value={field.type}
+          >
+            {fieldTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+
+          {isText && (
+            hasId && hasEn ? (
+              <span
+                title="Lengkap: Versi ID dan EN terisi"
+                className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
+              >
+                ✓ Lengkap (ID + EN)
+              </span>
+            ) : !hasId && hasEn ? (
+              <span
+                title="Peringatan: Versi Bahasa Indonesia kosong"
+                className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800"
+              >
+                ⚠️ ID Kosong
+              </span>
+            ) : hasId && !hasEn ? (
+              <span
+                title="Peringatan: Versi English kosong"
+                className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800"
+              >
+                ⚠️ EN Kosong
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border">
+                Kosong
+              </span>
+            )
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          {isText && (
+            <button
+              type="button"
+              onClick={() => setShowRaw(!showRaw)}
+              className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            >
+              {showRaw ? "Mode Dwi-Bahasa" : "Raw"}
+            </button>
+          )}
+          <Button
+            aria-label="Remove field"
+            className="h-8 w-8 text-destructive hover:bg-destructive/10"
+            onClick={onRemove}
+            size="icon"
+            type="button"
+            variant="ghost"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      <div className="pt-3">
+        {isText ? (
+          showRaw ? (
+            <Textarea
+              aria-label="Field raw value"
+              className="min-h-20 bg-background font-mono text-xs"
+              onChange={(event) => onUpdateValue(event.target.value)}
+              placeholder="EN: Content in English...\nID: Konten dalam Bahasa Indonesia..."
+              value={field.value}
+            />
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {/* Bahasa Indonesia (ID) */}
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
+                  <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+                  <span>Bahasa Indonesia (ID)</span>
+                </div>
+                <Textarea
+                  aria-label={`${field.key || "field"} dalam Bahasa Indonesia`}
+                  className="min-h-24 bg-background text-sm"
+                  onChange={(e) => handleIdChange(e.target.value)}
+                  placeholder={`[ID] Konten ${field.key || ""} dalam Bahasa Indonesia...`}
+                  value={idVal}
+                />
+              </div>
+
+              {/* English (EN) */}
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
+                  <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+                  <span>English (EN)</span>
+                </div>
+                <Textarea
+                  aria-label={`${field.key || "field"} in English`}
+                  className="min-h-24 bg-background text-sm"
+                  onChange={(e) => handleEnChange(e.target.value)}
+                  placeholder={`[EN] Content ${field.key || ""} in English...`}
+                  value={enVal}
+                />
+              </div>
+            </div>
+          )
+        ) : field.type === "list" ? (
+          <div className="space-y-1.5">
+            <p className="text-[11px] text-muted-foreground">
+              Satu item per baris. Mendukung format dwi-bahasa (contoh: <code className="text-foreground">EN: Item in English | ID: Item Bahasa Indonesia</code>).
+            </p>
+            <Textarea
+              aria-label="Field value list"
+              className="min-h-24 bg-background font-mono text-xs"
+              onChange={(event) => onUpdateValue(event.target.value)}
+              placeholder="One item per line"
+              value={field.value}
+            />
+          </div>
+        ) : (
+          <div className="space-y-1.5">
+            <p className="text-[11px] text-muted-foreground">
+              Data JSON valid (objek atau array).
+            </p>
+            <Textarea
+              aria-label="Field value JSON"
+              className="min-h-24 bg-background font-mono text-xs"
+              onChange={(event) => onUpdateValue(event.target.value)}
+              placeholder='{"key": "value"}'
+              value={field.value}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }

@@ -52,6 +52,40 @@ export const DICTIONARY_EN_TO_ID: Record<string, string> = {
   industry: "Industri",
   navigation: "Navigasi",
 
+  // Page Content Fields (About & System Pages)
+  "global electrical, automation and fire alarm services company":
+    "Perusahaan Jasa Layanan Kelistrikan, Otomasi, dan Sistem Fire Alarm Kelas Dunia",
+  "global electrical, automation and fire alarm services company.":
+    "Perusahaan Jasa Layanan Kelistrikan, Otomasi, dan Sistem Fire Alarm Kelas Dunia.",
+  "to become a global electrical, automation, and fire alarm services company":
+    "Menjadi Perusahaan Jasa Layanan Kelistrikan, Otomasi, dan Sistem Fire Alarm Kelas Dunia",
+  "to become a global electrical, automation, and fire alarm services company.":
+    "Menjadi Perusahaan Jasa Layanan Kelistrikan, Otomasi, dan Sistem Fire Alarm Kelas Dunia.",
+  "mutual partnership and professionalism in delivering every engineering engagement":
+    "Menjalin Kemitraan Strategis dan Profesionalisme Tinggi dalam Setiap Layanan Rekayasa Teknik",
+  "mutual partnership and professionalism in delivering every engineering engagement.":
+    "Menjalin Kemitraan Strategis dan Profesionalisme Tinggi dalam Setiap Layanan Rekayasa Teknik.",
+  "build mutual partnerships and deliver every engagement with professional excellence":
+    "Membangun Kemitraan Strategis dan Menyelesaikan Setiap Penugasan Rekayasa Teknik dengan Keunggulan Profesional",
+  "build mutual partnerships and deliver every engagement with professional excellence.":
+    "Membangun Kemitraan Strategis dan Menyelesaikan Setiap Penugasan Rekayasa Teknik dengan Keunggulan Profesional.",
+  "the company culture in a professional manner brings the company to move fast in achieving every step of its vision":
+    "Budaya perusahaan yang menjunjung tinggi profesionalisme mendorong gerak cepat perusahaan dalam mewujudkan setiap langkah visinya",
+  "the company culture in a professional manner brings the company to move fast in achieving every step of its vision.":
+    "Budaya perusahaan yang menjunjung tinggi profesionalisme mendorong gerak cepat perusahaan dalam mewujudkan setiap langkah visinya.",
+  "always make an impact - powering solution, creating impact":
+    "Always Make an IMPACT - Solusi Kelistrikan Andal, Menciptakan Dampak Nyata",
+  "always make an impact – powering solution, creating impact":
+    "Always Make an IMPACT - Solusi Kelistrikan Andal, Menciptakan Dampak Nyata",
+  "established in 2012, pt multi daya mitra delivers integrated electrical, industrial automation, and fire alarm solutions across indonesia with 14+ years of industrial experience, 400+ corporate clients, and over 200 engineers and professionals":
+    "Didirikan pada tahun 2012, PT Multi Daya Mitra menghadirkan solusi terintegrasi di bidang kelistrikan, otomasi industri, dan proteksi kebakaran di seluruh Indonesia dengan pengalaman industri 14+ tahun, 400+ klien korporasi, serta lebih dari 200 insinyur dan tenaga profesional",
+  "established in 2012, pt multi daya mitra delivers integrated electrical, industrial automation, and fire alarm solutions across indonesia with 14+ years of industrial experience, 400+ corporate clients, and over 200 engineers and professionals.":
+    "Didirikan pada tahun 2012, PT Multi Daya Mitra menghadirkan solusi terintegrasi di bidang kelistrikan, otomasi industri, dan proteksi kebakaran di seluruh Indonesia dengan pengalaman industri 14+ tahun, 400+ klien korporasi, serta lebih dari 200 insinyur dan tenaga profesional.",
+  "established in 2013, pt multi daya mitra delivers electrical, automation, and fire alarm solutions across indonesia":
+    "Didirikan pada tahun 2012, PT Multi Daya Mitra menghadirkan solusi kelistrikan, otomasi, dan sistem proteksi kebakaran di seluruh Indonesia",
+  "established in 2013, pt multi daya mitra delivers electrical, automation, and fire alarm solutions across indonesia.":
+    "Didirikan pada tahun 2012, PT Multi Daya Mitra menghadirkan solusi kelistrikan, otomasi, dan sistem proteksi kebakaran di seluruh Indonesia.",
+
   // Categories & Tags
   "product & technology": "Produk & Teknologi",
   "products & technology": "Produk & Teknologi",
@@ -309,6 +343,17 @@ DICTIONARY_ID_TO_EN["hubungi kami"] = "Contact Us"
 DICTIONARY_ID_TO_EN["hubungi pt multi daya mitra"] = "Contact PT Multi Daya Mitra"
 DICTIONARY_ID_TO_EN["industri"] = "Industries"
 DICTIONARY_ID_TO_EN["navigasi"] = "Navigation"
+DICTIONARY_ID_TO_EN["perusahaan jasa layanan kelistrikan, otomasi, dan sistem fire alarm kelas dunia"] = "Global Electrical, Automation and Fire Alarm Services Company"
+DICTIONARY_ID_TO_EN["perusahaan jasa layanan kelistrikan, otomasi, dan sistem fire alarm kelas dunia."] = "Global Electrical, Automation and Fire Alarm Services Company."
+DICTIONARY_ID_TO_EN["menjadi perusahaan jasa layanan kelistrikan, otomasi, dan sistem fire alarm kelas dunia"] = "To become a global electrical, automation, and fire alarm services company"
+DICTIONARY_ID_TO_EN["menjadi perusahaan jasa layanan kelistrikan, otomasi, dan sistem fire alarm kelas dunia."] = "To become a global electrical, automation, and fire alarm services company."
+DICTIONARY_ID_TO_EN["menjalin kemitraan strategis dan profesionalisme tinggi dalam setiap layanan rekayasa teknik"] = "Mutual Partnership and Professionalism in delivering every engineering engagement"
+DICTIONARY_ID_TO_EN["menjalin kemitraan strategis dan profesionalisme tinggi dalam setiap layanan rekayasa teknik."] = "Mutual Partnership and Professionalism in delivering every engineering engagement."
+DICTIONARY_ID_TO_EN["membangun kemitraan strategis dan menyelesaikan setiap penugasan rekayasa teknik dengan keunggulan profesional"] = "Build mutual partnerships and deliver every engagement with professional excellence"
+DICTIONARY_ID_TO_EN["membangun kemitraan strategis dan menyelesaikan setiap penugasan rekayasa teknik dengan keunggulan profesional."] = "Build mutual partnerships and deliver every engagement with professional excellence."
+DICTIONARY_ID_TO_EN["budaya perusahaan yang menjunjung tinggi profesionalisme mendorong gerak cepat perusahaan dalam mewujudkan setiap langkah visinya"] = "The company culture in a professional manner brings the company to move fast in achieving every step of its vision"
+DICTIONARY_ID_TO_EN["budaya perusahaan yang menjunjung tinggi profesionalisme mendorong gerak cepat perusahaan dalam mewujudkan setiap langkah visinya."] = "The company culture in a professional manner brings the company to move fast in achieving every step of its vision."
+DICTIONARY_ID_TO_EN["always make an impact - solusi kelistrikan andal, menciptakan dampak nyata"] = "Always Make an IMPACT - Powering Solution, Creating Impact"
 
 export function lookupDictionary(text: string, lang: ContentLanguage): string | null {
   const normalizedKey = text.toLowerCase().trim().replace(/\s+/g, " ")
