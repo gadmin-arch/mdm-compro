@@ -27,6 +27,7 @@ import {
   Award,
   BarChart3,
   Building2,
+  Check,
   CheckCircle2,
   ChevronDown,
   Compass,
@@ -54,6 +55,7 @@ import {
   Trash2,
   Users,
   Wrench,
+  X,
   type LucideIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -69,6 +71,21 @@ import {
   sectionDefsByType,
   type Section,
 } from "@/lib/sections"
+
+function decodeHtmlEntities(str: string): string {
+  if (!str) return ""
+  return str
+    .replace(/&ldquo;/gi, "“")
+    .replace(/&rdquo;/gi, "”")
+    .replace(/&lsquo;/gi, "‘")
+    .replace(/&rsquo;/gi, "’")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&nbsp;/gi, " ")
+}
 
 const paletteIcons: Record<string, LucideIcon> = {
   sparkles: Sparkles,
@@ -384,6 +401,18 @@ function SortableSectionCard({
   const typeBadge = def?.label ?? section.type
   const summary = sectionSummary(section)
 
+  const [isEditingInline, setIsEditingInline] = useState(false)
+  const [inlineTitle, setInlineTitle] = useState("")
+
+  function handleSaveInlineTitle() {
+    const trimmed = inlineTitle.trim()
+    onUpdate({
+      title: trimmed,
+      customTitle: trimmed,
+    })
+    setIsEditingInline(false)
+  }
+
   return (
     <div
       ref={setNodeRef}
@@ -407,25 +436,91 @@ function SortableSectionCard({
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-secondary text-muted-foreground">
           <Icon className="h-4 w-4" />
         </span>
-        <button type="button" onClick={onToggle} className="min-w-0 flex-1 text-left py-0.5">
-          <div className="flex items-center gap-2">
-            <span className="block truncate text-sm font-semibold text-foreground">
-              {displayLabel}
-            </span>
-            {cleanTitle && (
-              <span className="inline-flex shrink-0 items-center rounded-md bg-secondary/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/60">
-                {typeBadge}
-              </span>
-            )}
+
+        {isEditingInline ? (
+          <div className="min-w-0 flex-1 flex items-center gap-1.5 py-0.5">
+            <Input
+              autoFocus
+              className="h-8 text-xs font-semibold bg-background border-primary/50 shadow-xs"
+              value={inlineTitle}
+              placeholder={`Ubah judul elemen ${typeBadge}...`}
+              onChange={(e) => setInlineTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault()
+                  handleSaveInlineTitle()
+                } else if (e.key === "Escape") {
+                  setIsEditingInline(false)
+                }
+              }}
+            />
+            <Button
+              type="button"
+              size="icon"
+              className="h-8 w-8 shrink-0 bg-primary text-primary-foreground hover:bg-primary/90"
+              onClick={handleSaveInlineTitle}
+              title="Simpan Judul"
+            >
+              <Check className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-secondary"
+              onClick={() => setIsEditingInline(false)}
+              title="Batal"
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
           </div>
-          {rawTitle ? (
-            <span className="block truncate text-xs text-muted-foreground mt-0.5 font-mono">
-              {rawTitle.replace(/\n/g, " · ")}
-            </span>
-          ) : summary ? (
-            <span className="block truncate text-xs text-muted-foreground mt-0.5">{summary}</span>
-          ) : null}
-        </button>
+        ) : (
+          <div className="min-w-0 flex-1 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onToggle}
+              className="min-w-0 flex-1 text-left py-0.5 group"
+              title="Klik untuk membuka / menutup editor elemen ini"
+            >
+              <div className="flex items-center gap-2">
+                <span className="block truncate text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                  {decodeHtmlEntities(displayLabel)}
+                </span>
+                {cleanTitle && (
+                  <span className="inline-flex shrink-0 items-center rounded-md bg-secondary/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/60">
+                    {typeBadge}
+                  </span>
+                )}
+              </div>
+              {rawTitle ? (
+                <span className="block truncate text-xs text-muted-foreground mt-0.5 font-mono">
+                  {decodeHtmlEntities(rawTitle.replace(/\n/g, " · "))}
+                </span>
+              ) : summary ? (
+                <span className="block truncate text-xs text-muted-foreground mt-0.5">
+                  {decodeHtmlEntities(summary)}
+                </span>
+              ) : null}
+            </button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-7 px-2.5 text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-secondary shrink-0 gap-1.5 border-dashed border-border"
+              onClick={(e) => {
+                e.stopPropagation()
+                setInlineTitle(rawTitle || cleanTitle)
+                setIsEditingInline(true)
+              }}
+              title="Ubah judul elemen ini secara langsung tanpa perlu expand"
+            >
+              <Pencil className="h-3 w-3 text-primary" />
+              <span>Ganti Judul</span>
+            </Button>
+          </div>
+        )}
+
         <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={onDuplicate} aria-label="Duplicate section">
           <Copy className="h-4 w-4" />
         </Button>
@@ -446,6 +541,7 @@ function SortableSectionCard({
           className="h-8 w-8"
           onClick={onToggle}
           aria-label={expanded ? "Collapse section" : "Edit section"}
+          title={expanded ? "Tutup detail elemen" : "Buka detail elemen"}
         >
           <ChevronDown className={cn("h-4 w-4 transition-transform", expanded && "rotate-180")} />
         </Button>

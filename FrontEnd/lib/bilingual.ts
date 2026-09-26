@@ -378,8 +378,21 @@ export function lookupDictionary(text: string, lang: ContentLanguage): string | 
 export function filterBilingualText(text: string | undefined | null, lang: ContentLanguage): string {
   if (!text || typeof text !== "string") return ""
 
-  // Normalize literal escaped newlines and CRLF
-  const normalized = text.replace(/\\r\\n/g, "\n").replace(/\\n/g, "\n").trim()
+  // Normalize literal escaped newlines and CRLF, and decode HTML entities
+  const normalized = text
+    .replace(/\\r\\n/g, "\n")
+    .replace(/\\n/g, "\n")
+    .replace(/&ldquo;/gi, "“")
+    .replace(/&rdquo;/gi, "”")
+    .replace(/&lsquo;/gi, "‘")
+    .replace(/&rsquo;/gi, "’")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&nbsp;/gi, " ")
+    .trim()
   if (!normalized) return ""
 
   // 1. Explicit markers: EN: ... ID: ... or [EN] ... [ID] ...

@@ -423,7 +423,7 @@ export const sectionDefs: SectionDef[] = [
     ],
     defaults: {
       eyebrow: "EN: HSE & Safety Commitment\nID: Komitmen K3 & Keselamatan Kerja",
-      title: "EN: &ldquo;I Choose Safety&rdquo;\nID: &ldquo;Saya Pilih Selamat&rdquo;",
+      title: 'EN: "I Choose Safety"\nID: "Saya Pilih Selamat"',
       subtitle:
         "EN: Safe & Healthy at All Times · Think Safe, Work Safe, Go Home Safe\nID: Selamat & Sehat Setiap Saat · Pikirkan Selamat, Bekerja Selamat, Pulang Selamat",
       description:

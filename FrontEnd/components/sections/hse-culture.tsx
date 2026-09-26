@@ -53,7 +53,7 @@ const DEFAULT_HIGHLIGHTS = [
 
 export function HseCultureSection({ props }: { props: Record<string, unknown> }) {
   const eyebrow = str(props, "eyebrow", "EN: HSE & Safety Commitment\nID: Komitmen K3 & Keselamatan Kerja")
-  const title = str(props, "title", "EN: &ldquo;I Choose Safety&rdquo;\nID: &ldquo;Saya Pilih Selamat&rdquo;")
+  const title = str(props, "title", 'EN: "I Choose Safety"\nID: "Saya Pilih Selamat"')
   const subtitle = str(
     props,
     "subtitle",
