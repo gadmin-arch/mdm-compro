@@ -237,12 +237,12 @@ export function SectionBuilder({ sections, onChange }: SectionBuilderProps) {
 
 function SectionPalette({ onAdd }: { onAdd: (type: string) => void }) {
   return (
-    <aside className="rounded-lg border border-border bg-background p-3 lg:sticky lg:top-6 lg:self-start">
+    <aside className="w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-border bg-background p-3 lg:sticky lg:top-6 lg:self-start">
       <p className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         Sections
       </p>
       <p className="mt-1 px-1 text-xs text-muted-foreground">Click or drag into the page.</p>
-      <div className="mt-3 grid gap-1.5">
+      <div className="mt-3 flex flex-col gap-1.5 w-full min-w-0 overflow-hidden">
         {sectionDefs.map((def) => (
           <PaletteItem key={def.type} type={def.type} label={def.label} description={def.description} icon={def.icon} onAdd={onAdd} />
         ))}
@@ -276,7 +276,7 @@ function PaletteItem({
       title={description}
       onClick={() => onAdd(type)}
       className={cn(
-        "flex w-full cursor-grab items-center gap-2.5 rounded-md border border-transparent px-2 py-2 text-left text-sm transition-colors hover:border-border hover:bg-secondary",
+        "flex w-full min-w-0 max-w-full cursor-grab items-center gap-2.5 rounded-md border border-transparent px-2.5 py-2 text-left text-sm transition-colors hover:border-border hover:bg-secondary",
         isDragging && "opacity-50",
       )}
       {...attributes}
@@ -285,9 +285,9 @@ function PaletteItem({
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-secondary text-muted-foreground">
         <Icon className="h-4 w-4" />
       </span>
-      <span className="min-w-0">
-        <span className="block truncate font-medium text-foreground">{label}</span>
-      </span>
+      <div className="min-w-0 flex-1 overflow-hidden">
+        <span className="block truncate font-medium text-foreground" title={label}>{label}</span>
+      </div>
       <Plus className="ml-auto h-3.5 w-3.5 shrink-0 text-muted-foreground" />
     </button>
   )
