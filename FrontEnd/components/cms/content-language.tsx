@@ -48,7 +48,17 @@ function detectInitialLanguage(initialLang?: ContentLanguage): ContentLanguage {
 
   if (typeof window === "undefined") return "id"
 
-  // 1. URL parameter check (?lang=id or ?lang=en) — highest priority (e.g. from Google Search)
+  // 1. Subpath URL prefix check (/en or /en/...) — highest priority for SEO & direct links
+  try {
+    const pathname = window.location.pathname.toLowerCase()
+    if (pathname === "/en" || pathname.startsWith("/en/")) {
+      return "en"
+    }
+  } catch {
+    // ignore
+  }
+
+  // 2. URL parameter check (?lang=id or ?lang=en)
   try {
     const params = new URLSearchParams(window.location.search)
     const urlLang = params.get("lang")?.toLowerCase()
@@ -59,7 +69,7 @@ function detectInitialLanguage(initialLang?: ContentLanguage): ContentLanguage {
     // ignore
   }
 
-  // 2. LocalStorage user preference
+  // 3. LocalStorage user preference
   try {
     const stored = localStorage.getItem(STORAGE_KEY)?.toLowerCase()
     if (stored === "id" || stored === "en") {
@@ -69,13 +79,13 @@ function detectInitialLanguage(initialLang?: ContentLanguage): ContentLanguage {
     // ignore
   }
 
-  // 3. Cookie preference
+  // 4. Cookie preference
   const cookieLang = getCookie(COOKIE_KEY)?.toLowerCase()
   if (cookieLang === "id" || cookieLang === "en") {
     return cookieLang
   }
 
-  // 4. Browser / OS language detection
+  // 5. Browser / OS language detection
   try {
     const navLangs = navigator.languages || [navigator.language]
     for (const l of navLangs) {
@@ -101,7 +111,7 @@ export function ContentLanguageProvider({
   const [lang, setLangState] = useState<ContentLanguage>(() => detectInitialLanguage(initialLang))
   const [, startTransition] = useTransition()
 
-  // Sync if URL parameter was present or changed
+  // Sync if URL parameter or pathname changed
   useEffect(() => {
     const handleSync = () => {
       const detected = detectInitialLanguage()
@@ -127,11 +137,30 @@ export function ContentLanguageProvider({
       localStorage.setItem(STORAGE_KEY, newLang)
       setCookie(COOKIE_KEY, newLang)
 
-      // Update URL search param without re-fetching or jumping page
+      // Update URL subpath (/en/...) cleanly without reload
       if (typeof window !== "undefined") {
         const url = new URL(window.location.href)
-        url.searchParams.set("lang", newLang)
-        window.history.replaceState(window.history.state, "", url.toString())
+        const currentPath = url.pathname
+
+        // Do not alter /admin paths
+        if (!currentPath.startsWith("/admin")) {
+          if (newLang === "en") {
+            if (!currentPath.startsWith("/en")) {
+              url.pathname = currentPath === "/" ? "/en" : `/en${currentPath}`
+            }
+          } else {
+            if (currentPath === "/en") {
+              url.pathname = "/"
+            } else if (currentPath.startsWith("/en/")) {
+              url.pathname = currentPath.slice(3)
+            }
+          }
+          url.searchParams.delete("lang")
+          window.history.replaceState(window.history.state, "", url.toString())
+        } else {
+          url.searchParams.set("lang", newLang)
+          window.history.replaceState(window.history.state, "", url.toString())
+        }
       }
     } catch {
       // ignore

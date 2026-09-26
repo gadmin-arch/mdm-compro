@@ -128,6 +128,14 @@ const nextConfig = {
         source: '/api/v1/public/:path*',
         destination: `${process.env.CMS_API_BASE_URL || 'http://api:8080/api/v1/public'}/:path*`,
       },
+      {
+        source: '/en',
+        destination: '/?lang=en',
+      },
+      {
+        source: '/en/:path*',
+        destination: '/:path*?lang=en',
+      },
     ]
   },
   experimental: {
