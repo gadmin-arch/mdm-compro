@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react"
 import type { FormEvent } from "react"
 import { useEffect, useRef, useState } from "react"

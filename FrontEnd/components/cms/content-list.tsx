@@ -1,5 +1,5 @@
 import Image from "next/image"
-import Link from "next/link"
+import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ArrowUpRight } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { ContentNode } from "@/lib/cms"

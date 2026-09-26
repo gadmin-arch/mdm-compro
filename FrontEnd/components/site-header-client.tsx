@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import Link from "next/link"
+import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { usePathname } from "next/navigation"
 import { useLayoutEffect, useRef, useState } from "react"
 import { ChevronDown, ChevronRight, Menu, Search } from "lucide-react"
@@ -293,8 +293,11 @@ export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
   const { lang } = useContentLanguage()
   const entries = buildEntries(navigation, lang)
 
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/")
+  const isActive = (href: string) => {
+    const normPath = pathname?.replace(/^\/en(\/|$)/, "/") || "/"
+    const normHref = href.replace(/^\/en(\/|$)/, "/")
+    return normHref === "/" ? normPath === "/" : normPath === normHref || normPath.startsWith(normHref + "/")
+  }
 
   const closeMobileMenu = () => {
     setOpen(false)

@@ -1,5 +1,5 @@
 import Image from "next/image"
-import Link from "next/link"
+import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ArrowRight, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"

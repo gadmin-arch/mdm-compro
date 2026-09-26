@@ -254,3 +254,6 @@ export function BilingualText({
   if (!content) return null
   return <Component className={className}>{content}</Component>
 }
+
+export { LocalizedLink, localizeHref, useLocalizedHref } from "./localized-link"
+

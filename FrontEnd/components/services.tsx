@@ -1,5 +1,5 @@
 import { Activity, ArrowUpRight, Cpu, Settings, Wrench, Zap } from "lucide-react"
-import Link from "next/link"
+import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import {
   Card,
   CardContent,

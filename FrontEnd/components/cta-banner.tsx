@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import Link from "next/link"
+import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { container } from "@/lib/layout"

@@ -1,5 +1,5 @@
 import Image from "next/image"
-import Link from "next/link"
+import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ArrowRight } from "lucide-react"
 import type { ContentNode, NewsItem } from "@/lib/cms"
 import { formatDate } from "@/lib/cms"

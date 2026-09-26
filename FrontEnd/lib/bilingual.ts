@@ -1113,8 +1113,8 @@ export function buildBilingualMetadata(options: BilingualMetadataOptions): Metad
     alternates: {
       canonical: fullUrl,
       languages: {
-        "id-ID": `${fullUrl}?lang=id`,
-        "en-US": `${fullUrl}?lang=en`,
+        "id-ID": fullUrl,
+        "en-US": `${siteUrl}/en${cleanPath}`,
         "x-default": fullUrl,
       },
     },

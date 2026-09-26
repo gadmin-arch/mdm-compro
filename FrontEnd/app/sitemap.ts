@@ -10,6 +10,7 @@ function sitemapEntry(
   changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never',
   priority: number,
 ): MetadataRoute.Sitemap[number] {
+  const enUrl = url === baseUrl ? `${baseUrl}/en` : `${baseUrl}/en${url.replace(baseUrl, '')}`
   return {
     url,
     lastModified,
@@ -17,8 +18,9 @@ function sitemapEntry(
     priority,
     alternates: {
       languages: {
-        id: `${url}?lang=id`,
-        en: `${url}?lang=en`,
+        id: url,
+        en: enUrl,
+        'x-default': url,
       },
     },
   }

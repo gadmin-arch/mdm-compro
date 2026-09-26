@@ -16,19 +16,19 @@ export default function IndustriesPage() {
   return (
     <>
       <PageHero
-        eyebrow="Industries"
-        title="Trusted across heavy industry and critical infrastructure."
-        description="From power generation and oil & gas to pharmaceuticals and food processing, we deliver electrical and automation expertise where reliability matters most."
-        breadcrumbs={[{ label: "Home", href: "/" }, { label: "Industries" }]}
+        eyebrow="EN: Industries\nID: Sektor Industri"
+        title="EN: Trusted across heavy industry and critical infrastructure.\nID: Mitra terpercaya di berbagai industri berat dan infrastruktur strategis."
+        description="EN: From power generation and oil & gas to pharmaceuticals and food processing, we deliver electrical and automation expertise where reliability matters most.\nID: Mulai dari pembangkit listrik, migas, hingga farmasi dan pengolahan makanan, kami menghadirkan keahlian elektrikal dan otomasi di sektor yang membutuhkan keandalan tertinggi."
+        breadcrumbs={[{ label: "EN: Home\nID: Beranda", href: "/" }, { label: "EN: Industries\nID: Sektor Industri" }]}
       />
       <Industries />
       <CtaBanner
-        title="Working in a sector we serve?"
-        description="Talk to our engineering team about your facility — we'll align scope, standards, and operating requirements to your industry."
+        title="EN: Working in a sector we serve?\nID: Membutuhkan solusi untuk sektor industri Anda?"
+        description="EN: Talk to our engineering team about your facility — we'll align scope, standards, and operating requirements to your industry.\nID: Konsultasikan kebutuhan fasilitas Anda dengan tim insinyur kami — kami sesuaikan lingkup pekerjaan dan standar teknis dengan industri Anda."
         primaryHref="/contact"
-        primaryLabel="Start a Conversation"
+        primaryLabel="EN: Start a Conversation\nID: Mulai Konsultasi"
         secondaryHref="/services"
-        secondaryLabel="Browse Services"
+        secondaryLabel="EN: Browse Services\nID: Lihat Layanan"
       />
     </>
   )

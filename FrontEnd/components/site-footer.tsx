@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import Image from "next/image"
 import { Mail, MapPin, Phone } from "lucide-react"
 import { getSiteSettings } from "@/lib/cms"

@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ArrowRight, BookOpen, Briefcase, FileText, Layout, SearchIcon, Wrench } from "lucide-react"
 import { PageHero } from "@/components/page-hero"
 import { Badge } from "@/components/ui/badge"

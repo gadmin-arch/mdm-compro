@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import Link from "next/link"
+import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { sectionDefsByType, str, records } from "@/lib/sections"
