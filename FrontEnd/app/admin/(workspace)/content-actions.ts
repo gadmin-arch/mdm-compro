@@ -455,9 +455,19 @@ async function uploadFileURL(formData: FormData, field: string, nextPath: string
 }
 
 function seoPayload(formData: FormData) {
+  const titleId = String(formData.get("seoTitle_id") ?? "").trim()
+  const titleEn = String(formData.get("seoTitle_en") ?? "").trim()
+  const rawTitle = String(formData.get("seoTitle") ?? "")
+  const title = (titleId || titleEn) ? combineBilingualText({ id: titleId, en: titleEn }) : rawTitle
+
+  const descId = String(formData.get("seoDescription_id") ?? "").trim()
+  const descEn = String(formData.get("seoDescription_en") ?? "").trim()
+  const rawDesc = String(formData.get("seoDescription") ?? "")
+  const description = (descId || descEn) ? combineBilingualText({ id: descId, en: descEn }) : rawDesc
+
   return {
-    title: String(formData.get("seoTitle") ?? ""),
-    description: String(formData.get("seoDescription") ?? ""),
+    title,
+    description,
     canonical: String(formData.get("seoCanonical") ?? ""),
     noIndex: formData.get("seoNoIndex") === "on",
   }

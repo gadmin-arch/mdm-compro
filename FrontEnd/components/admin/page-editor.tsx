@@ -553,30 +553,7 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
             <h2 className="font-display text-lg font-semibold text-foreground">SEO</h2>
           </div>
           <div className="mt-4 space-y-4">
-            <div>
-              <label className="text-sm font-medium text-foreground" htmlFor="seoTitle">
-                SEO title
-              </label>
-              <Input
-                className="mt-2"
-                id="seoTitle"
-                onChange={(event) => setSeo((current) => ({ ...current, title: event.target.value }))}
-                value={seo.title ?? ""}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-foreground" htmlFor="seoDescription">
-                Description
-              </label>
-              <Textarea
-                className="mt-2 min-h-24"
-                id="seoDescription"
-                onChange={(event) =>
-                  setSeo((current) => ({ ...current, description: event.target.value }))
-                }
-                value={seo.description ?? ""}
-              />
-            </div>
+            <BilingualSeoEditor seo={seo} onChange={setSeo} />
             <div>
               <label className="text-sm font-medium text-foreground" htmlFor="seoCanonical">
                 Canonical URL
@@ -655,6 +632,187 @@ function SubmitButton({
     </Button>
   )
 }
+
+function BilingualSeoEditor({
+  seo,
+  onChange,
+}: {
+  seo: SEO
+  onChange: React.Dispatch<React.SetStateAction<SEO>>
+}) {
+  const [showRaw, setShowRaw] = useState(false)
+  const titleExt = extractBilingualText(seo.title)
+  const descExt = extractBilingualText(seo.description)
+
+  const hasTitleId = Boolean(titleExt.id.trim())
+  const hasTitleEn = Boolean(titleExt.en.trim())
+  const hasDescId = Boolean(descExt.id.trim())
+  const hasDescEn = Boolean(descExt.en.trim())
+
+  function handleTitleChange(lang: "id" | "en", val: string) {
+    const next = { ...titleExt, [lang]: val }
+    const combined = combineBilingualText(next)
+    onChange((curr) => ({ ...curr, title: combined }))
+  }
+
+  function handleDescChange(lang: "id" | "en", val: string) {
+    const next = { ...descExt, [lang]: val }
+    const combined = combineBilingualText(next)
+    onChange((curr) => ({ ...curr, description: combined }))
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+            Dwi-Bahasa
+          </span>
+          {hasTitleId && hasTitleEn && hasDescId && hasDescEn ? (
+            <span className="inline-flex items-center gap-1 rounded bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+              ✓ ID + EN Lengkap
+            </span>
+          ) : null}
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowRaw(!showRaw)}
+          className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+        >
+          {showRaw ? "Mode Dwi-Bahasa" : "Raw"}
+        </button>
+      </div>
+
+      {showRaw ? (
+        <>
+          <div>
+            <label className="text-sm font-medium text-foreground" htmlFor="seoTitle">
+              SEO title (Raw)
+            </label>
+            <Input
+              className="mt-2 font-mono text-xs"
+              id="seoTitle"
+              onChange={(event) =>
+                onChange((current) => ({ ...current, title: event.target.value }))
+              }
+              value={seo.title ?? ""}
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-foreground" htmlFor="seoDescription">
+              Description (Raw)
+            </label>
+            <Textarea
+              className="mt-2 min-h-24 font-mono text-xs"
+              id="seoDescription"
+              onChange={(event) =>
+                onChange((current) => ({ ...current, description: event.target.value }))
+              }
+              value={seo.description ?? ""}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          {/* SEO Title Bilingual */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              SEO Title
+            </label>
+            <div className="grid gap-2.5 sm:grid-cols-2">
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-1.5">
+                    <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+                    <span>Bahasa Indonesia (ID)</span>
+                  </div>
+                  {!hasTitleId && hasTitleEn && (
+                    <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                      (belum diisi)
+                    </span>
+                  )}
+                </div>
+                <Input
+                  className="text-xs h-9 bg-background"
+                  placeholder="Judul SEO Bahasa Indonesia..."
+                  value={titleExt.id}
+                  onChange={(e) => handleTitleChange("id", e.target.value)}
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-1.5">
+                    <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+                    <span>English (EN)</span>
+                  </div>
+                  {hasTitleId && !hasTitleEn && (
+                    <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                      (belum diisi)
+                    </span>
+                  )}
+                </div>
+                <Input
+                  className="text-xs h-9 bg-background"
+                  placeholder="SEO Title in English..."
+                  value={titleExt.en}
+                  onChange={(e) => handleTitleChange("en", e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* SEO Description Bilingual */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              SEO Description
+            </label>
+            <div className="grid gap-2.5 sm:grid-cols-2">
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-1.5">
+                    <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+                    <span>Bahasa Indonesia (ID)</span>
+                  </div>
+                  {!hasDescId && hasDescEn && (
+                    <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                      (belum diisi)
+                    </span>
+                  )}
+                </div>
+                <Textarea
+                  className="text-xs min-h-20 bg-background"
+                  placeholder="Deskripsi SEO Bahasa Indonesia..."
+                  value={descExt.id}
+                  onChange={(e) => handleDescChange("id", e.target.value)}
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-1.5">
+                    <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+                    <span>English (EN)</span>
+                  </div>
+                  {hasDescId && !hasDescEn && (
+                    <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                      (belum diisi)
+                    </span>
+                  )}
+                </div>
+                <Textarea
+                  className="text-xs min-h-20 bg-background"
+                  placeholder="SEO Description in English..."
+                  value={descExt.en}
+                  onChange={(e) => handleDescChange("en", e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 
 // Floating save bar for small screens, docked just above the bottom nav.
 function MobileActionBar({

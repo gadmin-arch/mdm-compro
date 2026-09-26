@@ -571,8 +571,25 @@ function SeoFields({ seo }: { seo?: { title?: string; description?: string; cano
   return (
     <div className="space-y-3 border-t border-border pt-4">
       <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">SEO Settings</h3>
-      <Field label="SEO title" name="seoTitle" defaultValue={seo?.title} />
-      <TextAreaField label="SEO description" name="seoDescription" rows={3} defaultValue={seo?.description} />
+      <BilingualField
+        label="SEO title"
+        nameId="seoTitle_id"
+        nameEn="seoTitle_en"
+        nameFallback="seoTitle"
+        defaultValue={seo?.title}
+        placeholderId="Judul SEO Bahasa Indonesia..."
+        placeholderEn="SEO Title in English..."
+      />
+      <BilingualTextAreaField
+        label="SEO description"
+        nameId="seoDescription_id"
+        nameEn="seoDescription_en"
+        nameFallback="seoDescription"
+        defaultValue={seo?.description}
+        placeholderId="Deskripsi SEO Bahasa Indonesia..."
+        placeholderEn="SEO Description in English..."
+        rows={3}
+      />
       <Field label="Canonical URL" name="seoCanonical" defaultValue={seo?.canonical} />
       <label className="flex items-center gap-3 rounded-lg border border-border px-3 py-2 text-xs font-medium cursor-pointer">
         <input defaultChecked={Boolean(seo?.noIndex)} name="seoNoIndex" type="checkbox" />

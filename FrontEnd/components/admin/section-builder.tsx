@@ -61,7 +61,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SectionFieldsEditor } from "@/components/admin/section-fields"
-import { filterBilingualText } from "@/lib/bilingual"
+import { combineBilingualText, extractBilingualText, filterBilingualText } from "@/lib/bilingual"
 import { cn } from "@/lib/utils"
 import {
   createSection,
@@ -550,37 +550,22 @@ function SortableSectionCard({
       {expanded && def && (
         <div className="border-t border-border bg-secondary/20 p-4 space-y-4">
           {/* Prominent Element Title / Judul Elemen */}
-          <div className="rounded-lg border border-primary/25 bg-background p-3.5 shadow-2xs">
-            <div className="flex items-center justify-between gap-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
-                <Pencil className="h-3.5 w-3.5" />
-                Judul Elemen / Section Title (Heading)
-              </label>
-              <span className="text-[10px] text-muted-foreground">Bisa diubah per elemen</span>
-            </div>
-            <div className="mt-2">
-              <Input
-                className="bg-background font-medium text-sm h-9"
-                placeholder={`Judul khusus untuk elemen ${typeBadge}...`}
-                value={
-                  typeof section.props.title === "string"
-                    ? section.props.title
-                    : typeof section.props.customTitle === "string"
-                      ? section.props.customTitle
-                      : ""
-                }
-                onChange={(e) => {
-                  onUpdate({
-                    title: e.target.value,
-                    customTitle: e.target.value,
-                  })
-                }}
-              />
-            </div>
-            <p className="mt-1 text-[11px] text-muted-foreground">
-              Ubah judul elemen ini (bukan judul halaman). Mendukung bilingual: <code>EN: Title in English \n ID: Judul Bahasa Indonesia</code>
-            </p>
-          </div>
+          <SectionHeadingEditor
+            rawTitle={
+              typeof section.props.title === "string"
+                ? section.props.title
+                : typeof section.props.customTitle === "string"
+                  ? section.props.customTitle
+                  : ""
+            }
+            typeBadge={typeBadge}
+            onChange={(newTitle) => {
+              onUpdate({
+                title: newTitle,
+                customTitle: newTitle,
+              })
+            }}
+          />
 
           <SectionFieldsEditor fields={def.fields} value={section.props} onChange={onUpdate} />
         </div>
@@ -597,3 +582,135 @@ function sectionSummary(section: Section): string {
   }
   return ""
 }
+
+function SectionHeadingEditor({
+  rawTitle,
+  typeBadge,
+  onChange,
+}: {
+  rawTitle: string
+  typeBadge: string
+  onChange: (newTitle: string) => void
+}) {
+  const [showRaw, setShowRaw] = useState(false)
+  const decoded = decodeHtmlEntities(rawTitle)
+  const { id, en } = extractBilingualText(decoded)
+  const hasId = Boolean(id.trim())
+  const hasEn = Boolean(en.trim())
+
+  function handleIdChange(newId: string) {
+    const combined = combineBilingualText({ id: newId, en })
+    onChange(combined)
+  }
+
+  function handleEnChange(newEn: string) {
+    const combined = combineBilingualText({ id, en: newEn })
+    onChange(combined)
+  }
+
+  return (
+    <div className="rounded-lg border border-primary/25 bg-background p-3.5 shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <label className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
+            <Pencil className="h-3.5 w-3.5" />
+            Judul Elemen / Section Title (Heading)
+          </label>
+          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+            Dwi-Bahasa
+          </span>
+          {hasId && hasEn ? (
+            <span
+              title="Lengkap: Versi ID dan EN terisi"
+              className="inline-flex items-center gap-1 rounded bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
+            >
+              ✓ ID + EN
+            </span>
+          ) : !hasId && hasEn ? (
+            <span
+              title="Peringatan: Versi Bahasa Indonesia kosong"
+              className="inline-flex items-center gap-1 rounded bg-amber-50 dark:bg-amber-950/60 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800"
+            >
+              ⚠️ ID Kosong
+            </span>
+          ) : hasId && !hasEn ? (
+            <span
+              title="Peringatan: Versi English kosong"
+              className="inline-flex items-center gap-1 rounded bg-amber-50 dark:bg-amber-950/60 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800"
+            >
+              ⚠️ EN Kosong
+            </span>
+          ) : null}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowRaw(!showRaw)}
+            className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          >
+            {showRaw ? "Mode Dwi-Bahasa" : "Raw"}
+          </button>
+        </div>
+      </div>
+
+      {showRaw ? (
+        <div className="mt-2.5">
+          <Input
+            className="bg-background font-mono text-xs h-9"
+            placeholder={`Judul khusus untuk elemen ${typeBadge}...`}
+            value={rawTitle}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        </div>
+      ) : (
+        <div className="mt-2.5 grid gap-2.5 sm:grid-cols-2">
+          {/* Bahasa Indonesia (ID) */}
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
+                <span>Bahasa Indonesia (ID)</span>
+              </div>
+              {!hasId && hasEn && (
+                <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                  (belum diisi)
+                </span>
+              )}
+            </div>
+            <Input
+              className="bg-background text-xs font-medium h-9"
+              placeholder={`Judul dalam Bahasa Indonesia untuk ${typeBadge}...`}
+              value={id}
+              onChange={(e) => handleIdChange(e.target.value)}
+            />
+          </div>
+
+          {/* English (EN) */}
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+              <div className="flex items-center gap-1.5">
+                <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
+                <span>English (EN)</span>
+              </div>
+              {hasId && !hasEn && (
+                <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                  (belum diisi)
+                </span>
+              )}
+            </div>
+            <Input
+              className="bg-background text-xs font-medium h-9"
+              placeholder={`Title in English for ${typeBadge}...`}
+              value={en}
+              onChange={(e) => handleEnChange(e.target.value)}
+            />
+          </div>
+        </div>
+      )}
+      <p className="mt-2 text-[11px] text-muted-foreground">
+        Ubah judul heading elemen ini secara terpisah untuk versi Bahasa Indonesia dan English.
+      </p>
+    </div>
+  )
+}
+
