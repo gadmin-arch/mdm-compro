@@ -1,6 +1,7 @@
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { adminLoginLocation, adminRefreshLocation } from "@/lib/admin-auth"
+import { generateDevAdminJwt } from "@/lib/dev-jwt"
 import type { Career, ContentNode, ListResponse, NewsItem, PageContent } from "@/lib/cms"
 
 const API_BASE =
@@ -579,6 +580,38 @@ function handleDevFallback<T>(path: string, init: RequestInit = {}): T | undefin
     return created as T
   }
 
+  if (path.startsWith("/analytics/dashboard")) {
+    return {
+      overview: { visitors: 1, uniqueVisitors: 1, sessions: 1, pageViews: 1, newVisitors: 1, returningVisitors: 0, avgSessionSec: 60, bounceRate: 0 },
+      previous: { visitors: 0, uniqueVisitors: 0, sessions: 0, pageViews: 0, newVisitors: 0, returningVisitors: 0, avgSessionSec: 0, bounceRate: 0 },
+      timeSeries: [{ bucket: new Date().toISOString().slice(0, 10), views: 1, sessions: 1, visitors: 1 }],
+      interval: "day",
+      breakdowns: { browser: [], city: [], country: [], device: [], language: [], os: [], screen: [], source: [] },
+      pages: [{ path: "/", views: 1, uniqueViews: 1, avgTimeSec: 60, avgScroll: 0, entries: 1, exits: 0, exitRate: 0, engagement: 100 }],
+      entryPages: [{ path: "/", sessions: 1 }],
+      exitPages: [],
+      events: null,
+      vitals: [{ metric: "TTFB", avg: 6.0, max: 6.1, samples: 1, rating: "good" }],
+      slowPages: null,
+      api: { requests: 1, errors: 0, avgMs: 5 },
+      clientErrors: 0,
+      from: new Date().toISOString(),
+      to: new Date().toISOString(),
+    } as T
+  }
+
+  if (path === "/analytics/realtime") {
+    return { activeVisitors: 1, pages: [{ path: "/", count: 1 }], events: [] } as T
+  }
+
+  if (path === "/analytics/admin-activity") {
+    return { data: [], total: 0 } as T
+  }
+
+  if (path === "/analytics/options") {
+    return { paths: ["/", "/about", "/services", "/products", "/contact"], countries: ["ID"] } as T
+  }
+
   return undefined
 }
 
@@ -590,17 +623,23 @@ export async function adminFetch<T>(
 ): Promise<T> {
   const cookieStore = await cookies()
   const token = cookieStore.get("cms_admin_token")?.value
-  if (!token) {
+  const isDev = process.env.NODE_ENV === "development" && !process.env.VERCEL
+
+  if (!token && !isDev) {
     const refreshToken = cookieStore.get("cms_refresh_token")?.value
     redirect(refreshToken ? adminRefreshLocation(nextPath) : adminLoginLocation(nextPath))
   }
 
-  const isDev = process.env.NODE_ENV === "development" && !process.env.VERCEL
-  const isDevBypass = isDev && token === "dev-bypass-admin-token"
+  let effectiveToken = token
+  if (isDev && (!token || token === "dev-bypass-admin-token")) {
+    effectiveToken = generateDevAdminJwt()
+  }
 
   const headers = new Headers(init.headers)
   headers.set("Accept", "application/json")
-  headers.set("Authorization", `Bearer ${token}`)
+  if (effectiveToken) {
+    headers.set("Authorization", `Bearer ${effectiveToken}`)
+  }
   if (init.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json")
   }
@@ -622,8 +661,8 @@ export async function adminFetch<T>(
     }
   }
 
-  // In local development, if Go backend is not reachable or returns 404/500 with dev bypass:
-  if (isDev && (networkFailed || isDevBypass || (response && (!response.ok && (response.status === 404 || response.status >= 500))))) {
+  // In local development, if Go backend is not reachable or returns error:
+  if (isDev && (networkFailed || (response && (!response.ok && (response.status === 401 || response.status === 404 || response.status >= 500))))) {
     const fallback = handleDevFallback<T>(path, init)
     if (fallback !== undefined) {
       return fallback
@@ -637,6 +676,12 @@ export async function adminFetch<T>(
   // Some endpoints use 401 for domain errors (e.g. wrong current password);
   // callers that expect that pass redirectOn401: false and handle it.
   if (response.status === 401 && opts.redirectOn401 !== false) {
+    if (isDev) {
+      const fallback = handleDevFallback<T>(path, init)
+      if (fallback !== undefined) {
+        return fallback
+      }
+    }
     const refreshToken = cookieStore.get("cms_refresh_token")?.value
     redirect(refreshToken ? adminRefreshLocation(nextPath) : adminLoginLocation(nextPath))
   }

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { cookies } from "next/headers"
+import { generateDevAdminJwt } from "@/lib/dev-jwt"
 
 const API_BASE =
   process.env.CMS_API_BASE_URL ??
@@ -23,16 +24,41 @@ export async function GET(
   }
 
   const cookieStore = await cookies()
-  const token = cookieStore.get("cms_admin_token")?.value
+  let token = cookieStore.get("cms_admin_token")?.value
+  const isDev = process.env.NODE_ENV === "development" && !process.env.VERCEL
+
+  if (isDev && (!token || token === "dev-bypass-admin-token")) {
+    token = generateDevAdminJwt()
+  }
+
   if (!token) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 })
   }
 
   const search = request.nextUrl.search
-  const response = await fetch(`${ADMIN_BASE}/analytics/${path.join("/")}${search}`, {
-    headers: { Accept: "*/*", Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  })
+  let response: Response | null = null
+
+  try {
+    response = await fetch(`${ADMIN_BASE}/analytics/${path.join("/")}${search}`, {
+      headers: { Accept: "*/*", Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    })
+  } catch (err) {
+    if (!isDev) throw err
+  }
+
+  if (isDev && (!response || !response.ok)) {
+    if (path[0] === "realtime") {
+      return NextResponse.json({ activeVisitors: 1, pages: [{ path: "/", count: 1 }], events: [] })
+    }
+    if (path[0] === "options") {
+      return NextResponse.json({ paths: ["/", "/about", "/services", "/products", "/contact"], countries: ["ID"] })
+    }
+  }
+
+  if (!response) {
+    return NextResponse.json({ error: "service_unavailable" }, { status: 503 })
+  }
 
   const headers = new Headers()
   for (const name of ["content-type", "content-disposition", "cache-control"]) {

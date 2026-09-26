@@ -11,7 +11,12 @@ const ADMIN_BASE = API_BASE.replace("/public", "/admin")
 export async function POST(request: NextRequest) {
   try {
     const cookieStore = await cookies()
-    const token = cookieStore.get("cms_admin_token")?.value
+    let token = cookieStore.get("cms_admin_token")?.value
+    const isDev = process.env.NODE_ENV === "development" && !process.env.VERCEL
+    if (isDev && (!token || token === "dev-bypass-admin-token")) {
+      const { generateDevAdminJwt } = await import("@/lib/dev-jwt")
+      token = generateDevAdminJwt()
+    }
 
     if (!token) {
       return NextResponse.json(
@@ -34,7 +39,6 @@ export async function POST(request: NextRequest) {
     forwardForm.set("file", file)
 
     let response: Response | null = null
-    const isDev = process.env.NODE_ENV === "development" && !process.env.VERCEL
 
     try {
       response = await fetch(`${ADMIN_BASE}/media/upload`, {
