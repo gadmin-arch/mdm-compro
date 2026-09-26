@@ -67,6 +67,7 @@ export function BrandPartnersSection({ props }: { props: Record<string, unknown>
     const obj = typeof p === "object" && p !== null ? (p as Record<string, unknown>) : {}
     return {
       name: String(obj.name || fallback?.name || ""),
+      logoUrl: String(obj.logoUrl || obj.logo || ""),
       role: String(obj.role || fallback?.role || ""),
       country: String(obj.country || fallback?.country || ""),
     }
@@ -97,17 +98,30 @@ export function BrandPartnersSection({ props }: { props: Record<string, unknown>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {partners.map((p) => (
+            {partners.map((p, pIdx) => (
               <div
-                key={p.name}
-                className="group rounded-xl border border-border bg-secondary/20 p-4 text-center transition-all hover:border-primary/40 hover:bg-card hover:shadow-xs"
+                key={`${p.name}-${pIdx}`}
+                className="group rounded-xl border border-border bg-secondary/20 p-4 text-center transition-all hover:border-primary/40 hover:bg-card hover:shadow-xs flex flex-col items-center justify-center"
               >
                 <div className="flex items-center justify-center h-12 w-full">
-                  <BrandLogo brand={p.name} className="transition-transform duration-300 group-hover:scale-105" />
+                  {p.logoUrl ? (
+                    <img
+                      src={p.logoUrl}
+                      alt={p.name}
+                      className="max-h-10 max-w-[130px] object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <BrandLogo brand={p.name} className="transition-transform duration-300 group-hover:scale-105" />
+                  )}
                 </div>
-                <p className="text-xs font-semibold text-primary mt-2">
-                  <BilingualText text={p.role} />
-                </p>
+                {p.name && (!p.logoUrl || !["rittal", "schneider electric", "schneider", "xarrow", "mundung"].includes(p.name.toLowerCase())) && (
+                  <p className="text-xs font-semibold text-foreground mt-2 line-clamp-1">{p.name}</p>
+                )}
+                {p.role && (
+                  <p className="text-xs font-medium text-primary mt-1">
+                    <BilingualText text={p.role} />
+                  </p>
+                )}
               </div>
             ))}
           </div>

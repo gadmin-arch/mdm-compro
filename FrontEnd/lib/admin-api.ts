@@ -332,6 +332,256 @@ export class AdminApiError extends Error {
   }
 }
 
+import {
+  aboutPresetSections,
+  presetSectionsForKey,
+} from "@/lib/sections"
+
+// In-memory dev store for local development when Go backend is offline
+let devPagesInitialized = false
+const devPagesMap = new Map<string, PageContent>()
+
+function initDevPages() {
+  if (devPagesInitialized) return
+  devPagesInitialized = true
+  try {
+    const pages: PageContent[] = [
+      {
+        id: "00000000-0000-0000-0000-000000000401",
+        key: "about",
+        title: "EN: About PT Multi Daya Mitra\nID: Tentang PT Multi Daya Mitra",
+        status: "published",
+        publishedAt: "2026-01-01T00:00:00Z",
+        version: 1,
+        content: { sections: aboutPresetSections() },
+      },
+      {
+        id: "00000000-0000-0000-0000-000000000403",
+        key: "home",
+        title: "EN: Home\nID: Beranda",
+        status: "published",
+        publishedAt: "2026-01-01T00:00:00Z",
+        version: 1,
+        content: { sections: presetSectionsForKey("home") ?? [] },
+      },
+      {
+        id: "00000000-0000-0000-0000-000000000404",
+        key: "services",
+        title: "EN: Services\nID: Layanan",
+        status: "published",
+        publishedAt: "2026-01-01T00:00:00Z",
+        version: 1,
+        content: { sections: presetSectionsForKey("services") ?? [] },
+      },
+      {
+        id: "00000000-0000-0000-0000-000000000405",
+        key: "products",
+        title: "EN: Products\nID: Produk",
+        status: "published",
+        publishedAt: "2026-01-01T00:00:00Z",
+        version: 1,
+        content: { sections: presetSectionsForKey("products") ?? [] },
+      },
+      {
+        id: "00000000-0000-0000-0000-000000000406",
+        key: "news",
+        title: "EN: News & Insights\nID: Berita & Artikel",
+        status: "published",
+        publishedAt: "2026-01-01T00:00:00Z",
+        version: 1,
+        content: { sections: presetSectionsForKey("news") ?? [] },
+      },
+      {
+        id: "00000000-0000-0000-0000-000000000407",
+        key: "career",
+        title: "EN: Careers\nID: Karir",
+        status: "published",
+        publishedAt: "2026-01-01T00:00:00Z",
+        version: 1,
+        content: { sections: presetSectionsForKey("career") ?? [] },
+      },
+      {
+        id: "00000000-0000-0000-0000-000000000402",
+        key: "contact",
+        title: "EN: Contact PT Multi Daya Mitra\nID: Hubungi PT Multi Daya Mitra",
+        status: "published",
+        publishedAt: "2026-01-01T00:00:00Z",
+        version: 1,
+        content: { sections: presetSectionsForKey("contact") ?? [] },
+      },
+    ]
+
+    for (const p of pages) {
+      devPagesMap.set(p.id, p)
+      devPagesMap.set(p.key, p)
+    }
+  } catch (e) {
+    console.error("Failed to initialize dev pages:", e)
+  }
+}
+
+function handleDevFallback<T>(path: string, init: RequestInit = {}): T | undefined {
+  initDevPages()
+
+  if (path === "/profile") {
+    return {
+      id: "00000000-0000-0000-0000-000000000301",
+      email: "irfanzuhdiabdillah@gmail.com",
+      name: "Irfan Zuhdi Abdillah (Dev)",
+      role: "owner",
+      isActive: true,
+      permissions: ["*"],
+      createdAt: "2026-01-01T00:00:00Z",
+    } as T
+  }
+
+  if (path === "/dashboard") {
+    return {
+      counts: { pages: 7, services: 3, products: 3, news: 2, careers: 2 },
+      statuses: { pages: { published: 7 } },
+    } as T
+  }
+
+  if (path === "/contacts" || path.startsWith("/contacts?")) {
+    return { data: [], pagination: { page: 1, perPage: 20, total: 0, totalPages: 0 } } as T
+  }
+
+  if (path === "/activity" || path.startsWith("/activity?")) {
+    return { data: [] } as T
+  }
+
+  if (path === "/users" || path.startsWith("/users?")) {
+    return {
+      data: [
+        {
+          id: "00000000-0000-0000-0000-000000000301",
+          email: "irfanzuhdiabdillah@gmail.com",
+          name: "Irfan Zuhdi Abdillah (Dev)",
+          role: "owner",
+          isActive: true,
+          permissions: ["*"],
+          createdAt: "2026-01-01T00:00:00Z",
+        },
+      ],
+      currentUserId: "00000000-0000-0000-0000-000000000301",
+      currentRole: "owner",
+    } as T
+  }
+
+  if (path === "/media" || path.startsWith("/media?")) {
+    return { data: [], pagination: { page: 1, perPage: 20, total: 0, totalPages: 0 } } as T
+  }
+
+  if (path.startsWith("/settings/")) {
+    const key = path.replace("/settings/", "")
+    return { id: `dev-${key}`, key, value: {}, version: 1 } as T
+  }
+
+  // Handling /pages
+  if (path === "/pages" || path.startsWith("/pages?")) {
+    const list = Array.from(
+      new Set(Array.from(devPagesMap.values()).map((p) => p.id)),
+    ).map((id) => devPagesMap.get(id)!)
+
+    return {
+      data: list,
+      pagination: {
+        page: 1,
+        perPage: 20,
+        total: list.length,
+        totalPages: 1,
+      },
+    } as T
+  }
+
+  // Handling /pages/[id]
+  const pageMatch = path.match(/^\/pages\/([^?]+)/)
+  if (pageMatch) {
+    const pageId = pageMatch[1]
+    const method = (init.method || "GET").toUpperCase()
+
+    if (method === "GET") {
+      const page = devPagesMap.get(pageId)
+      if (page) return page as T
+      // If not found by exact id, search by key
+      for (const p of devPagesMap.values()) {
+        if (p.key === pageId || p.id === pageId) return p as T
+      }
+      // Fallback dummy page
+      return {
+        id: pageId,
+        key: pageId,
+        title: pageId.charAt(0).toUpperCase() + pageId.slice(1),
+        status: "published",
+        publishedAt: new Date().toISOString(),
+        version: 1,
+        content: { sections: [] },
+      } as T
+    }
+
+    if (method === "PUT" || method === "PATCH") {
+      let payload: Partial<PageContent> = {}
+      try {
+        if (typeof init.body === "string") {
+          payload = JSON.parse(init.body)
+        }
+      } catch {}
+
+      const existing = devPagesMap.get(pageId) || {
+        id: pageId,
+        key: payload.key || pageId,
+        title: payload.title || "Page",
+        status: payload.status || "published",
+        publishedAt: payload.publishedAt || new Date().toISOString(),
+        version: 1,
+        content: payload.content || {},
+      }
+
+      const updated: PageContent = {
+        ...existing,
+        ...payload,
+        id: existing.id,
+        version: (existing.version || 1) + 1,
+      }
+
+      devPagesMap.set(updated.id, updated)
+      devPagesMap.set(updated.key, updated)
+      return updated as T
+    }
+
+    if (method === "DELETE") {
+      devPagesMap.delete(pageId)
+      return null as T
+    }
+  }
+
+  if (path === "/pages" && init.method === "POST") {
+    let payload: Partial<PageContent> = {}
+    try {
+      if (typeof init.body === "string") {
+        payload = JSON.parse(init.body)
+      }
+    } catch {}
+
+    const newId = `dev-page-${Date.now()}`
+    const created: PageContent = {
+      id: newId,
+      key: payload.key || `page-${Date.now()}`,
+      title: payload.title || "New Page",
+      status: payload.status || "draft",
+      publishedAt: payload.publishedAt || undefined,
+      version: 1,
+      content: payload.content || { sections: [] },
+    }
+
+    devPagesMap.set(created.id, created)
+    devPagesMap.set(created.key, created)
+    return created as T
+  }
+
+  return undefined
+}
+
 export async function adminFetch<T>(
   path: string,
   init: RequestInit = {},
@@ -345,6 +595,9 @@ export async function adminFetch<T>(
     redirect(refreshToken ? adminRefreshLocation(nextPath) : adminLoginLocation(nextPath))
   }
 
+  const isDev = process.env.NODE_ENV === "development" && !process.env.VERCEL
+  const isDevBypass = isDev && token === "dev-bypass-admin-token"
+
   const headers = new Headers(init.headers)
   headers.set("Accept", "application/json")
   headers.set("Authorization", `Bearer ${token}`)
@@ -352,11 +605,34 @@ export async function adminFetch<T>(
     headers.set("Content-Type", "application/json")
   }
 
-  const response = await fetch(`${ADMIN_BASE}${path}`, {
-    ...init,
-    headers,
-    cache: init.cache ?? "no-store",
-  })
+  let response: Response | null = null
+  let networkFailed = false
+
+  try {
+    response = await fetch(`${ADMIN_BASE}${path}`, {
+      ...init,
+      headers,
+      cache: init.cache ?? "no-store",
+    })
+  } catch (err) {
+    if (isDev) {
+      networkFailed = true
+    } else {
+      throw err
+    }
+  }
+
+  // In local development, if Go backend is not reachable or returns 404/500 with dev bypass:
+  if (isDev && (networkFailed || isDevBypass || (response && (!response.ok && (response.status === 404 || response.status >= 500))))) {
+    const fallback = handleDevFallback<T>(path, init)
+    if (fallback !== undefined) {
+      return fallback
+    }
+  }
+
+  if (!response) {
+    throw new AdminApiError(503, "Backend service unavailable")
+  }
 
   // Some endpoints use 401 for domain errors (e.g. wrong current password);
   // callers that expect that pass redirectOn401: false and handle it.

@@ -47,6 +47,7 @@ import {
   Plus,
   Shield,
   ShieldCheck,
+  Pencil,
   Sparkles,
   Target,
   Text,
@@ -56,7 +57,9 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { SectionFieldsEditor } from "@/components/admin/section-fields"
+import { filterBilingualText } from "@/lib/bilingual"
 import { cn } from "@/lib/utils"
 import {
   createSection,
@@ -366,6 +369,19 @@ function SortableSectionCard({
   })
   const def = sectionDefsByType[section.type]
   const Icon = paletteIcons[def?.icon ?? ""] ?? LayoutTemplate
+
+  const rawTitle =
+    typeof section.props?.customTitle === "string" && section.props.customTitle.trim()
+      ? section.props.customTitle
+      : typeof section.props?.title === "string" && section.props.title.trim()
+        ? section.props.title
+        : ""
+
+  const cleanTitle = rawTitle
+    ? filterBilingualText(rawTitle, "id") || filterBilingualText(rawTitle, "en") || rawTitle
+    : ""
+  const displayLabel = cleanTitle || def?.label || section.type
+  const typeBadge = def?.label ?? section.type
   const summary = sectionSummary(section)
 
   return (
@@ -373,8 +389,9 @@ function SortableSectionCard({
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(
-        "rounded-lg border border-border bg-background",
+        "rounded-lg border border-border bg-background transition-shadow",
         isDragging && "z-10 opacity-70 shadow-lg",
+        expanded && "border-primary/40 shadow-xs",
       )}
     >
       <div className="flex items-center gap-2 p-3">
@@ -390,9 +407,24 @@ function SortableSectionCard({
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-secondary text-muted-foreground">
           <Icon className="h-4 w-4" />
         </span>
-        <button type="button" onClick={onToggle} className="min-w-0 flex-1 text-left">
-          <span className="block text-sm font-medium text-foreground">{def?.label ?? section.type}</span>
-          {summary && <span className="block truncate text-xs text-muted-foreground">{summary}</span>}
+        <button type="button" onClick={onToggle} className="min-w-0 flex-1 text-left py-0.5">
+          <div className="flex items-center gap-2">
+            <span className="block truncate text-sm font-semibold text-foreground">
+              {displayLabel}
+            </span>
+            {cleanTitle && (
+              <span className="inline-flex shrink-0 items-center rounded-md bg-secondary/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground border border-border/60">
+                {typeBadge}
+              </span>
+            )}
+          </div>
+          {rawTitle ? (
+            <span className="block truncate text-xs text-muted-foreground mt-0.5 font-mono">
+              {rawTitle.replace(/\n/g, " · ")}
+            </span>
+          ) : summary ? (
+            <span className="block truncate text-xs text-muted-foreground mt-0.5">{summary}</span>
+          ) : null}
         </button>
         <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={onDuplicate} aria-label="Duplicate section">
           <Copy className="h-4 w-4" />
@@ -420,7 +452,40 @@ function SortableSectionCard({
       </div>
 
       {expanded && def && (
-        <div className="border-t border-border bg-secondary/20 p-4">
+        <div className="border-t border-border bg-secondary/20 p-4 space-y-4">
+          {/* Prominent Element Title / Judul Elemen */}
+          <div className="rounded-lg border border-primary/25 bg-background p-3.5 shadow-2xs">
+            <div className="flex items-center justify-between gap-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                <Pencil className="h-3.5 w-3.5" />
+                Judul Elemen / Section Title (Heading)
+              </label>
+              <span className="text-[10px] text-muted-foreground">Bisa diubah per elemen</span>
+            </div>
+            <div className="mt-2">
+              <Input
+                className="bg-background font-medium text-sm h-9"
+                placeholder={`Judul khusus untuk elemen ${typeBadge}...`}
+                value={
+                  typeof section.props.title === "string"
+                    ? section.props.title
+                    : typeof section.props.customTitle === "string"
+                      ? section.props.customTitle
+                      : ""
+                }
+                onChange={(e) => {
+                  onUpdate({
+                    title: e.target.value,
+                    customTitle: e.target.value,
+                  })
+                }}
+              />
+            </div>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Ubah judul elemen ini (bukan judul halaman). Mendukung bilingual: <code>EN: Title in English \n ID: Judul Bahasa Indonesia</code>
+            </p>
+          </div>
+
           <SectionFieldsEditor fields={def.fields} value={section.props} onChange={onUpdate} />
         </div>
       )}

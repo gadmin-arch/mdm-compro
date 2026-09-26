@@ -18,6 +18,7 @@ import { PageHero } from "@/components/page-hero"
 import { Services } from "@/components/services"
 import { WhyUs } from "@/components/why-us"
 import { RichText } from "@/components/cms/rich-text"
+import { BilingualText } from "@/components/cms/content-language"
 import { AboutIntroSection } from "@/components/sections/about-intro"
 import { ContentGridSection } from "@/components/sections/content-grid"
 import { EmbedSection } from "@/components/sections/embed"
@@ -129,6 +130,7 @@ export function SectionView({
     case "imageText":
       return <ImageTextSection props={props} />
     case "richText": {
+      const title = str(props, "title").trim()
       const html = str(props, "html").trim()
       const blocks: Array<{ type: string; text?: string; items?: string[]; html?: string }> =
         normalizeBlocks(props.blocks)
@@ -136,6 +138,11 @@ export function SectionView({
       return (
         <section className="border-b border-border/60 bg-background">
           <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+            {title && (
+              <h2 className="mb-6 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                <BilingualText text={title} />
+              </h2>
+            )}
             <RichText content={{ blocks }} />
           </div>
         </section>

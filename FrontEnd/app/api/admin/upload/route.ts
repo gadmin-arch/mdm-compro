@@ -33,15 +33,50 @@ export async function POST(request: NextRequest) {
     const forwardForm = new FormData()
     forwardForm.set("file", file)
 
-    const response = await fetch(`${ADMIN_BASE}/media/upload`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: forwardForm,
-      cache: "no-store",
-    })
+    let response: Response | null = null
+    const isDev = process.env.NODE_ENV === "development" && !process.env.VERCEL
+
+    try {
+      response = await fetch(`${ADMIN_BASE}/media/upload`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: forwardForm,
+        cache: "no-store",
+      })
+    } catch (err) {
+      if (!isDev) throw err
+    }
+
+    if (isDev && (!response || !response.ok)) {
+      try {
+        const bytes = await file.arrayBuffer()
+        const buffer = Buffer.from(bytes)
+        const fs = await import("fs/promises")
+        const path = await import("path")
+        const uploadsDir = path.join(process.cwd(), "public", "uploads")
+        await fs.mkdir(uploadsDir, { recursive: true })
+        const safeName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`
+        await fs.writeFile(path.join(uploadsDir, safeName), buffer)
+        return NextResponse.json(
+          {
+            url: `/uploads/${safeName}`,
+            fileName: file.name,
+            mimeType: file.type,
+            sizeBytes: file.size,
+          },
+          { status: 201 },
+        )
+      } catch (err) {
+        console.error("Local dev upload fallback failed:", err)
+      }
+    }
+
+    if (!response) {
+      return NextResponse.json({ error: "upload_failed", message: "Upload backend unreachable" }, { status: 503 })
+    }
 
     const data = await response.json().catch(() => null)
 

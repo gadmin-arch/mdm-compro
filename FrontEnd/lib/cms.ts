@@ -3,6 +3,7 @@ import { enrichCareerWithBilingual, BILINGUAL_CAREER_CATALOG } from "@/lib/caree
 import { buildBilingualProductTree, enrichProductWithBilingual } from "@/lib/product-bilingual"
 import { buildBilingualServiceTree, enrichServiceWithBilingual } from "@/lib/service-bilingual"
 import { enrichPageWithBilingual, DEFAULT_BILINGUAL_IMPACT_VALUES } from "@/lib/page-bilingual"
+import { aboutPresetSections } from "@/lib/sections"
 
 export type SEO = {
   title?: string
@@ -297,6 +298,7 @@ export const fallbackPages: Record<string, PageContent> = {
         "ABB", "Siemens", "Fluke", "Megger", "FLIR", "Danfoss", "Omron",
       ],
       impactValues: DEFAULT_BILINGUAL_IMPACT_VALUES,
+      sections: aboutPresetSections(),
     },
   },
   contact: {

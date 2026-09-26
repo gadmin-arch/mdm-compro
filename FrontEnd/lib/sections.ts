@@ -563,27 +563,39 @@ export const sectionDefs: SectionDef[] = [
         label: "Authorized Partners",
         itemLabel: "Partner",
         fields: [
-          { kind: "text", name: "name", label: "Brand Name" },
+          { kind: "text", name: "name", label: "Brand / Vendor Name" },
+          { kind: "image", name: "logoUrl", label: "Logo Vendor (Upload / Gambar)" },
           { kind: "text", name: "role", label: "Role / Status" },
           { kind: "text", name: "country", label: "Country" },
         ],
       },
       { kind: "text", name: "marqueeTitle", label: "Marquee Title" },
       { kind: "lines", name: "brands", label: "Experienced Brands (one per line)" },
+      {
+        kind: "list",
+        name: "brandLogos",
+        label: "Custom Brand Logos (Optional images for marquee/gallery)",
+        itemLabel: "Brand Logo",
+        fields: [
+          { kind: "text", name: "name", label: "Brand Name" },
+          { kind: "image", name: "logoUrl", label: "Brand Logo (Upload / Gambar)" },
+        ],
+      },
     ],
     defaults: {
       eyebrow: "EN: Authorized Partnership\nID: Kemitraan Resmi Principal",
       title: "EN: Strategic Alliances & Multi-Brand Engineering Experience\nID: Aliansi Strategis & Pengalaman Rekayasa Berbagai Brand",
       partners: [
-        { name: "Rittal", role: "EN: Authorized Distributor\nID: Distributor Resmi", country: "Germany" },
-        { name: "Schneider Electric", role: "EN: Certified System Integrator\nID: Certified System Integrator", country: "France / Global" },
-        { name: "xArrow", role: "EN: Authorized Solutions Partner\nID: Mitra Solusi Resmi", country: "Global" },
-        { name: "Mundung", role: "EN: Authorized Partner\nID: Mitra Resmi", country: "Global" },
+        { name: "Rittal", logoUrl: "", role: "EN: Authorized Distributor\nID: Distributor Resmi", country: "Germany" },
+        { name: "Schneider Electric", logoUrl: "", role: "EN: Certified System Integrator\nID: Certified System Integrator", country: "France / Global" },
+        { name: "xArrow", logoUrl: "", role: "EN: Authorized Solutions Partner\nID: Mitra Solusi Resmi", country: "Global" },
+        { name: "Mundung", logoUrl: "", role: "EN: Authorized Partner\nID: Mitra Resmi", country: "Global" },
       ],
       marqueeTitle: "EN: Experienced Work With Brand\nID: Pengalaman Proyek Berbagai Brand",
       brands: [
         "ABB", "Siemens", "Hitachi", "TRAFINDO", "B&D Transformer", "Raychem", "3M", "Legrand", "Socomec", "Autonics", "Omron", "CHINT", "MSA", "Honeywell", "Bosch", "Asenware", "Hooseki", "Simplex", "Hikvision", "Advantech", "Pepperl+Fuchs", "Moxa", "Phoenix Contact", "Weidmüller", "Supreme", "KMI Wire and Cable", "GE", "Danfoss", "GAE", "LS Electric", "Megger", "Fluke", "FLIR", "Huazheng"
       ],
+      brandLogos: [],
     },
   },
   {
@@ -714,6 +726,7 @@ export const sectionDefs: SectionDef[] = [
     description: "Visual editor with headings, lists, links, quotes, and images.",
     icon: "text",
     fields: [
+      { kind: "textarea", name: "title", label: "Judul Elemen / Heading (Optional)" },
       { kind: "richtext", name: "html", label: "Content" },
       {
         kind: "list",
@@ -1040,14 +1053,14 @@ export function unpackLegacySections(sections: Section[]): Section[] {
     if (sec.type === "about") {
       // Unpack monolithic about into modular individual sections
       const unpacked = aboutPresetSections(sec.props)
+      const hasPageHero = result.some((s) => s.type === "pageHero")
+      const hasCta = result.some((s) => s.type === "cta")
       result.push(
-        ...unpacked.filter(
-          (s) =>
-            s.type !== "pageHero" &&
-            s.type !== "cta" &&
-            s.type !== "features" &&
-            s.type !== "capabilities",
-        ),
+        ...unpacked.filter((s) => {
+          if (s.type === "pageHero" && hasPageHero) return false
+          if (s.type === "cta" && hasCta) return false
+          return true
+        }),
       )
     } else {
       result.push(sec)
@@ -1396,6 +1409,12 @@ export const pageTemplates: { key: string; label: string; description: string; s
     label: "Homepage (current design)",
     description: "Hero, services showcase, why-us, industries, and CTA — matches the live homepage.",
     sections: homePresetSections,
+  },
+  {
+    key: "about",
+    label: "About Us (Modular Elements)",
+    description: "Elemen modular lengkap: Header, Kisah Perusahaan, Nilai IMPACT, Milestone, K3, Sertifikasi, Mitra Principal, dan Kantor.",
+    sections: () => aboutPresetSections(),
   },
   {
     key: "profile",
