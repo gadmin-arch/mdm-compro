@@ -310,6 +310,7 @@ export function NavigationEditor({ action, initialItems, version, pageOptions, a
           </div>
 
           <DndContext
+            id="navigation-editor-dnd"
             collisionDetection={closestCenter}
             sensors={sensors}
             onDragStart={handleDragStart}

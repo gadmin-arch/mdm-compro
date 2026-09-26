@@ -205,6 +205,7 @@ export function SectionBuilder({ sections, onChange }: SectionBuilderProps) {
 
   return (
     <DndContext
+      id="section-builder-dnd"
       collisionDetection={closestCenter}
       sensors={sensors}
       onDragStart={handleDragStart}
