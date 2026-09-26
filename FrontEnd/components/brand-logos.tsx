@@ -75,8 +75,58 @@ const BRAND_ASSETS: Record<string, { src: string; width: number; height: number;
 }
 
 export function BrandLogo({ brand, className }: BrandLogoProps) {
-  const key = brand.toLowerCase().replace(/[^a-z0-9]/g, "")
-  const asset = BRAND_ASSETS[key]
+  if (!brand) return null
+
+  let cleanName = brand.trim()
+  let customLogoUrl = ""
+
+  // 1. If format is "Brand Name | http://..." or "Brand Name | /uploads/..."
+  if (cleanName.includes("|")) {
+    const parts = cleanName.split("|").map((p) => p.trim())
+    cleanName = parts[0]
+    customLogoUrl = parts[1]
+  }
+
+  // 2. If brand string is itself an image URL
+  if (/^(https?:\/\/|\/uploads\/|\/brands\/|data:image)/i.test(cleanName)) {
+    customLogoUrl = cleanName
+    cleanName = "Brand Logo"
+  }
+
+  // If a custom image URL was provided or uploaded, render it directly!
+  if (customLogoUrl) {
+    return (
+      <img
+        src={customLogoUrl}
+        alt={cleanName}
+        className={cn(
+          "h-7 sm:h-8 w-auto max-w-[130px] object-contain shrink-0 select-none transition-transform duration-300 group-hover:scale-105 pointer-events-none",
+          className
+        )}
+      />
+    )
+  }
+
+  // 3. Match against built-in assets
+  const key = cleanName.toLowerCase().replace(/[^a-z0-9]/g, "")
+  let asset = BRAND_ASSETS[key]
+
+  // If exact key not found, strip parenthetical qualifiers e.g. "Rittal (Authorized Partner)" -> "Rittal"
+  if (!asset) {
+    const stripped = cleanName.replace(/\s*\([^)]*\)/g, "").trim()
+    const strippedKey = stripped.toLowerCase().replace(/[^a-z0-9]/g, "")
+    asset = BRAND_ASSETS[strippedKey]
+  }
+
+  // If still not found, try prefix matching (e.g. "Schneider Electric Indonesia" -> "schneider")
+  if (!asset) {
+    for (const [k, v] of Object.entries(BRAND_ASSETS)) {
+      if (key.startsWith(k) || k.startsWith(key)) {
+        asset = v
+        break
+      }
+    }
+  }
 
   if (asset) {
     return (
@@ -97,7 +147,7 @@ export function BrandLogo({ brand, className }: BrandLogoProps) {
 
   return (
     <span className={cn("font-display text-sm font-bold text-foreground tracking-wide", className)}>
-      {brand}
+      {cleanName}
     </span>
   )
 }

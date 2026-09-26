@@ -75,7 +75,14 @@ export function BrandPartnersSection({ props }: { props: Record<string, unknown>
 
   const rawBrands = lines(props, "brands")
   const altBrands = lines(props, "partnerships")
-  const brands = rawBrands.length > 0 ? rawBrands : altBrands.length > 0 ? altBrands : DEFAULT_EXPERIENCED_BRANDS
+  const customBrandLogos = Array.isArray(props.brandLogos)
+    ? (props.brandLogos as Array<Record<string, unknown>>)
+        .filter((b) => b && (b.logoUrl || b.name))
+        .map((b) => (b.logoUrl ? `${String(b.name || "Brand")} | ${String(b.logoUrl)}` : String(b.name)))
+    : []
+
+  const baseBrands = rawBrands.length > 0 ? rawBrands : altBrands.length > 0 ? altBrands : DEFAULT_EXPERIENCED_BRANDS
+  const brands = [...customBrandLogos, ...baseBrands]
 
   return (
     <section className="border-b border-border/60 bg-background py-16">
