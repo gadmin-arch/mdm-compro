@@ -3,13 +3,20 @@ import { notFound, redirect } from "next/navigation"
 import { PageHero } from "@/components/page-hero"
 import { RichText } from "@/components/cms/rich-text"
 import { SectionRenderer } from "@/components/cms/section-renderer"
-import { getPage, resolveSectionData } from "@/lib/cms"
+import { getPage, getPages, resolveSectionData } from "@/lib/cms"
 import { buildBilingualMetadata } from "@/lib/bilingual"
 import { sectionsFromContent } from "@/lib/sections"
 import { container } from "@/lib/layout"
 
 type PageProps = {
   params: Promise<{ pageKey: string }>
+}
+
+export async function generateStaticParams() {
+  const res = await getPages({ limit: 100 }).catch(() => ({ data: [] }))
+  return (res.data || [])
+    .filter((p) => p.status === "published" && !["home", "cpanel", "webmail"].includes(p.key))
+    .map((p) => ({ pageKey: p.key }))
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

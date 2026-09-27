@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next'
-import { getServices, getProducts, getNews, getCareers, type ContentNode } from '@/lib/cms'
+import { getServices, getProducts, getNews, getCareers, getPages, type ContentNode } from '@/lib/cms'
+
+export const revalidate = 3600
 
 const rawUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://multidayamitra.co.id'
 const baseUrl = (rawUrl.includes('localhost') ? rawUrl : 'https://multidayamitra.co.id').replace(/\/$/, '')
@@ -38,11 +40,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     sitemapEntry(`${baseUrl}/industries`, new Date(), 'monthly', 0.7),
   ]
 
-  const [services, products, newsList, careersList] = await Promise.all([
+  const [services, products, newsList, careersList, pagesList] = await Promise.all([
     getServices().catch(() => []),
     getProducts().catch(() => []),
     getNews({ limit: 100 }).catch(() => ({ data: [] })),
     getCareers({ limit: 100 }).catch(() => ({ data: [] })),
+    getPages({ limit: 100 }).catch(() => ({ data: [] })),
   ])
 
   const flattenPaths = (nodes: ContentNode[], prefix: string): MetadataRoute.Sitemap => {
@@ -81,5 +84,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ),
   )
 
-  return [...staticRoutes, ...serviceRoutes, ...productRoutes, ...newsRoutes, ...careerRoutes]
+  const systemKeys = new Set(['home', 'cpanel', 'webmail', 'about', 'services', 'products', 'news', 'career', 'contact', 'industries'])
+  const customPageRoutes: MetadataRoute.Sitemap = (pagesList.data || [])
+    .filter((page) => page.status === 'published' && !systemKeys.has(page.key))
+    .map((page) =>
+      sitemapEntry(
+        `${baseUrl}/${page.key}`,
+        page.publishedAt ? new Date(page.publishedAt) : new Date(),
+        'monthly',
+        0.8,
+      ),
+    )
+
+  return [...staticRoutes, ...customPageRoutes, ...serviceRoutes, ...productRoutes, ...newsRoutes, ...careerRoutes]
 }

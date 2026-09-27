@@ -50,7 +50,7 @@ export interface NavGroup {
 
 export const NAV_GROUPS: NavGroup[] = [
   {
-    label: "Utama",
+    label: "Main",
     items: [
       { label: "Dashboard", href: "/admin", key: "dashboard", icon: Home, roles: ["owner", "admin", "user"] },
       { label: "Analytics", href: "/admin/analytics", key: "analytics", icon: BarChart3, roles: ["owner", "admin"] },
@@ -58,7 +58,7 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    label: "Kelola Konten",
+    label: "Content Management",
     items: [
       { label: "News & Articles", href: "/admin/news", key: "news", icon: Newspaper, roles: ["owner", "admin", "user"] },
       { label: "Career Openings", href: "/admin/careers", key: "careers", icon: Briefcase, roles: ["owner", "admin", "user"] },
@@ -69,7 +69,7 @@ export const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    label: "Sistem & Pengaturan",
+    label: "System & Settings",
     items: [
       { label: "Users & Roles", href: "/admin/users", key: "users", icon: Users, roles: ["owner", "admin"] },
       { label: "Short Links & QR", href: "/admin/redirects", key: "redirects", icon: Link2, roles: ["owner", "admin"] },
@@ -326,14 +326,14 @@ export function AdminNavSidebar({ user }: { user?: AdminUser | null }) {
           size="sm"
           onClick={toggleCollapsed}
           className="m-2 justify-center text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
-          aria-label={collapsed ? "Lebarkan menu" : "Ciutkan menu"}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? (
             <PanelLeft className="h-4 w-4" />
           ) : (
             <>
               <PanelLeftClose className="mr-2 h-4 w-4" />
-              <span className="text-xs font-semibold">Ciutkan</span>
+              <span className="text-xs font-semibold">Collapse</span>
             </>
           )}
         </Button>

@@ -108,13 +108,14 @@ export function ContentLanguageProvider({
   children: ReactNode
   initialLang?: ContentLanguage
 }) {
-  const [lang, setLangState] = useState<ContentLanguage>(() => detectInitialLanguage(initialLang))
+  // Always initialize with deterministic initialLang or "id" so server and client match 100% during initial hydration
+  const [lang, setLangState] = useState<ContentLanguage>(initialLang || "id")
   const [, startTransition] = useTransition()
 
-  // Sync if URL parameter or pathname changed
+  // Sync if URL parameter or pathname changed (runs on client only after hydration)
   useEffect(() => {
     const handleSync = () => {
-      const detected = detectInitialLanguage()
+      const detected = detectInitialLanguage(initialLang)
       setLangState((current) => (current !== detected ? detected : current))
     }
 
@@ -126,7 +127,7 @@ export function ContentLanguageProvider({
       window.removeEventListener("popstate", handleSync)
       window.removeEventListener("storage", handleSync)
     }
-  }, [])
+  }, [initialLang])
 
   const setLang = (newLang: ContentLanguage) => {
     startTransition(() => {

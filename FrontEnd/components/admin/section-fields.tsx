@@ -11,6 +11,8 @@ import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons
 import { Skeleton } from "@/components/ui/skeleton"
 import { SECTION_ICON_NAMES, type FieldDef } from "@/lib/sections"
 import { combineBilingualText, extractBilingualText } from "@/lib/bilingual"
+import { useContentLanguage } from "@/components/cms/content-language"
+import { cn } from "@/lib/utils"
 
 // TipTap loads only when a section actually renders a rich-text field.
 const RichTextEditor = dynamic(
@@ -464,6 +466,7 @@ function BilingualSectionField({
   value: unknown
   onChange: (value: string) => void
 }) {
+  const { lang } = useContentLanguage()
   const strValue = asString(value)
   const [showRaw, setShowRaw] = useState(false)
   const isTextarea = def.kind === "textarea"
@@ -546,52 +549,55 @@ function BilingualSectionField({
           />
         )
       ) : (
-        <div className="grid gap-2.5 sm:grid-cols-2">
-          {/* Bahasa Indonesia (ID) */}
-          <div className="space-y-1">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
-              <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-              <span>Bahasa Indonesia (ID)</span>
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+            <div className="flex items-center gap-1.5">
+              <span className={cn("inline-block h-2 w-2 rounded-full", lang === "id" ? "bg-red-500" : "bg-blue-500")} />
+              <span>{lang === "id" ? "Bahasa Indonesia (ID)" : "English (EN)"}</span>
             </div>
-            {isTextarea ? (
-              <Textarea
-                className="min-h-20 bg-background text-xs"
-                placeholder={def.placeholder ? `[ID] ${def.placeholder}` : `[ID] ${def.label}...`}
-                value={extractedId}
-                onChange={(e) => handleIdChange(e.target.value)}
-              />
-            ) : (
-              <Input
-                className="bg-background text-xs"
-                placeholder={def.placeholder ? `[ID] ${def.placeholder}` : `[ID] ${def.label}...`}
-                value={extractedId}
-                onChange={(e) => handleIdChange(e.target.value)}
-              />
-            )}
+            <span className="text-[10px] text-muted-foreground">
+              {lang === "id"
+                ? (hasEn ? "Versi EN: ✓" : "(Versi EN belum diisi)")
+                : (hasId ? `Versi ID: "${extractedId.slice(0, 30)}..."` : "(Versi ID belum diisi)")}
+            </span>
           </div>
-
-          {/* English (EN) */}
-          <div className="space-y-1">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
-              <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-              <span>English (EN)</span>
-            </div>
-            {isTextarea ? (
-              <Textarea
-                className="min-h-20 bg-background text-xs"
-                placeholder={def.placeholder ? `[EN] ${def.placeholder}` : `[EN] ${def.label}...`}
-                value={extractedEn}
-                onChange={(e) => handleEnChange(e.target.value)}
-              />
-            ) : (
-              <Input
-                className="bg-background text-xs"
-                placeholder={def.placeholder ? `[EN] ${def.placeholder}` : `[EN] ${def.label}...`}
-                value={extractedEn}
-                onChange={(e) => handleEnChange(e.target.value)}
-              />
-            )}
-          </div>
+          {isTextarea ? (
+            <Textarea
+              className="min-h-20 bg-background text-xs"
+              placeholder={
+                lang === "id"
+                  ? def.placeholder
+                    ? `[ID] ${def.placeholder}`
+                    : `[ID] ${def.label}...`
+                  : extractedId
+                    ? `[EN] Translation for: "${extractedId.slice(0, 35)}..."`
+                    : `[EN] ${def.label}...`
+              }
+              value={lang === "id" ? extractedId : extractedEn}
+              onChange={(e) => {
+                if (lang === "id") handleIdChange(e.target.value)
+                else handleEnChange(e.target.value)
+              }}
+            />
+          ) : (
+            <Input
+              className="bg-background text-xs"
+              placeholder={
+                lang === "id"
+                  ? def.placeholder
+                    ? `[ID] ${def.placeholder}`
+                    : `[ID] ${def.label}...`
+                  : extractedId
+                    ? `[EN] Translation for: "${extractedId.slice(0, 35)}..."`
+                    : `[EN] ${def.label}...`
+              }
+              value={lang === "id" ? extractedId : extractedEn}
+              onChange={(e) => {
+                if (lang === "id") handleIdChange(e.target.value)
+                else handleEnChange(e.target.value)
+              }}
+            />
+          )}
         </div>
       )}
     </div>

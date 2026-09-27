@@ -32,7 +32,25 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on',
+          },
+        ],
+      },
+      {
         source: '/uploads/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/:path*.(svg|jpg|jpeg|png|webp|avif|ico|woff|woff2)',
         headers: [
           {
             key: 'Cache-Control',
@@ -65,6 +83,31 @@ const nextConfig = {
       },
 
       // 2. Legacy SEO 301 Permanent Redirects (Fixes Google Sitelinks & 404s)
+      {
+        source: '/products/electrical-equipment/rittal-the-system',
+        destination: '/products/rittal-distributor',
+        permanent: true,
+      },
+      {
+        source: '/products/electrical-equipment/:path*',
+        destination: '/products/rittal-distributor',
+        permanent: true,
+      },
+      {
+        source: '/services/electrical-services/testing-measurement',
+        destination: '/services/inspection-testing-commissioning',
+        permanent: true,
+      },
+      {
+        source: '/services/electrical-services',
+        destination: '/services/electrical-construction-installation',
+        permanent: true,
+      },
+      {
+        source: '/services/electrical-services/:path*',
+        destination: '/services/electrical-construction-installation',
+        permanent: true,
+      },
       {
         source: '/about-us',
         destination: '/about',
@@ -142,7 +185,7 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '25mb',
     },
-    optimizePackageImports: ['lucide-react'],
+    optimizePackageImports: ['lucide-react', 'date-fns'],
   },
   turbopack: {
     root: __dirname,

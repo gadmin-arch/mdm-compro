@@ -100,6 +100,20 @@ export const metadata: Metadata = {
   },
 }
 
+const apiOrigin = (() => {
+  const url = process.env.CMS_API_BASE_URL || process.env.NEXT_PUBLIC_CMS_API_BASE_URL
+  if (!url) return null
+  try {
+    const parsed = new URL(url)
+    if (parsed.protocol.startsWith('http') && !parsed.hostname.includes('localhost') && !parsed.hostname.includes('127.0.0.1')) {
+      return parsed.origin
+    }
+  } catch {
+    return null
+  }
+  return null
+})()
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -114,6 +128,14 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <link rel="preconnect" href="https://vitals.vercel-insights.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
+        {apiOrigin && (
+          <>
+            <link rel="preconnect" href={apiOrigin} crossOrigin="anonymous" />
+            <link rel="dns-prefetch" href={apiOrigin} />
+          </>
+        )}
         <JsonLdSchema />
       </head>
       <body className="font-sans antialiased">

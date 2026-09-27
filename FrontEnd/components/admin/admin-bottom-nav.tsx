@@ -83,7 +83,7 @@ export function AdminBottomNav({ user }: { user?: AdminUser | null }) {
         </SheetTrigger>
         <SheetContent side="bottom" className="max-h-[85dvh] overflow-y-auto rounded-t-2xl px-0 dark:bg-[#0b0f17]">
           <SheetHeader className="border-b border-border px-4 pb-4 sm:px-6">
-            <SheetTitle className="font-display text-sm font-bold">Menu Navigasi</SheetTitle>
+            <SheetTitle className="font-display text-sm font-bold">Navigation Menu</SheetTitle>
           </SheetHeader>
           <div className="px-4 py-4 sm:px-6">
             <AdminNavItems role={role} onNavigate={() => setOpen(false)} />

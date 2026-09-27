@@ -21,6 +21,7 @@ import {
   zodFields,
 } from "@/lib/admin-schemas"
 import { combineBilingualText } from "@/lib/bilingual"
+import { notifySearchEngines } from "@/lib/seo-indexing"
 
 type Resource = "services" | "products" | "news" | "careers"
 
@@ -484,9 +485,11 @@ function revalidateResource(resource: Resource, ...slugs: string[]) {
   revalidatePath("/")
   revalidatePath(adminPath)
   revalidatePath(publicPath)
+  revalidatePath("/sitemap.xml")
   for (const slug of slugs) {
     if (slug) {
       revalidatePath(`${publicPath}/${slug}`)
+      notifySearchEngines(`${publicPath}/${slug}`)
     }
   }
 }

@@ -18,6 +18,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import type { ArchivedItem } from "@/lib/admin-api"
+import { useContentLanguage } from "@/components/cms/content-language"
+import { filterBilingualText } from "@/lib/bilingual"
+import { CleanAdminTitle } from "@/components/admin/bilingual-badge"
 import { restoreItemAction, hardDeleteItemAction } from "./actions"
 
 function formatDate(value: string) {
@@ -33,6 +36,7 @@ function formatDate(value: string) {
 }
 
 export function ArchiveTable({ items }: { items: ArchivedItem[] }) {
+  const { lang } = useContentLanguage()
   const [itemToRestore, setItemToRestore] = useState<ArchivedItem | null>(null)
   const [itemToDelete, setItemToDelete] = useState<ArchivedItem | null>(null)
   const [pending, startAction] = useTransition()
@@ -59,10 +63,11 @@ export function ArchiveTable({ items }: { items: ArchivedItem[] }) {
   const columns = useMemo<ColumnDef<ArchivedItem>[]>(
     () => [
       {
-        accessorKey: "title",
+        id: "title",
+        accessorFn: (row) => filterBilingualText(row.title, lang) || row.title,
         size: 300,
         header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
-        cell: ({ row }) => <span className="font-medium">{row.original.title}</span>,
+        cell: ({ row }) => <CleanAdminTitle title={row.original.title} />,
       },
       {
         accessorKey: "type",
@@ -106,7 +111,7 @@ export function ArchiveTable({ items }: { items: ArchivedItem[] }) {
         ),
       },
     ],
-    [],
+    [lang],
   )
 
   return (
@@ -122,7 +127,7 @@ export function ArchiveTable({ items }: { items: ArchivedItem[] }) {
         renderCard={(item) => (
           <AdminCard
             key={`${item.type}-${item.id}`}
-            title={item.title}
+            title={<CleanAdminTitle title={item.title} />}
             badges={
               <>
                 <Badge variant="outline" className="capitalize">
@@ -167,8 +172,9 @@ export function ArchiveTable({ items }: { items: ArchivedItem[] }) {
           <AlertDialogHeader>
             <AlertDialogTitle>Restore Archived Item?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to restore &ldquo;{itemToRestore?.title}&rdquo; (
-              {itemToRestore?.type})? It will return to the active lists.
+              Are you sure you want to restore &ldquo;
+              {filterBilingualText(itemToRestore?.title, lang) || itemToRestore?.title}
+              &rdquo; ({itemToRestore?.type})? It will return to the active lists.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -190,8 +196,9 @@ export function ArchiveTable({ items }: { items: ArchivedItem[] }) {
           <AlertDialogHeader>
             <AlertDialogTitle className="text-destructive">Permanently Delete Item?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to permanently delete &ldquo;{itemToDelete?.title}&rdquo; (
-              {itemToDelete?.type})? This action is irreversible and will delete all data related to
+              Are you sure you want to permanently delete &ldquo;
+              {filterBilingualText(itemToDelete?.title, lang) || itemToDelete?.title}
+              &rdquo; ({itemToDelete?.type})? This action is irreversible and will delete all data related to
               it.
             </AlertDialogDescription>
           </AlertDialogHeader>

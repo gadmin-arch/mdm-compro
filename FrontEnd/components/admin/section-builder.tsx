@@ -62,6 +62,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SectionFieldsEditor } from "@/components/admin/section-fields"
 import { combineBilingualText, extractBilingualText, filterBilingualText } from "@/lib/bilingual"
+import { useContentLanguage } from "@/components/cms/content-language"
 import { cn } from "@/lib/utils"
 import {
   createSection,
@@ -593,6 +594,7 @@ function SectionHeadingEditor({
   typeBadge: string
   onChange: (newTitle: string) => void
 }) {
+  const { lang } = useContentLanguage()
   const [showRaw, setShowRaw] = useState(false)
   const decoded = decodeHtmlEntities(rawTitle)
   const { id, en } = extractBilingualText(decoded)
@@ -609,6 +611,22 @@ function SectionHeadingEditor({
     onChange(combined)
   }
 
+  const activeValue = lang === "id" ? id : en
+  const activeLabel = lang === "id" ? "ID" : "EN"
+  const activePlaceholder =
+    lang === "id"
+      ? `Judul dalam Bahasa Indonesia untuk ${typeBadge}...`
+      : `Title in English for ${typeBadge}...`
+  const activeMissing = lang === "id" ? !hasId && hasEn : hasId && !hasEn
+
+  function handleActiveChange(val: string) {
+    if (lang === "id") {
+      handleIdChange(val)
+    } else {
+      handleEnChange(val)
+    }
+  }
+
   return (
     <div className="rounded-lg border border-primary/25 bg-background p-3.5 shadow-2xs">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -617,8 +635,8 @@ function SectionHeadingEditor({
             <Pencil className="h-3.5 w-3.5" />
             Judul Elemen / Section Title (Heading)
           </label>
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-            Dwi-Bahasa
+          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary">
+            {lang.toUpperCase()}
           </span>
           {hasId && hasEn ? (
             <span
@@ -664,52 +682,33 @@ function SectionHeadingEditor({
           />
         </div>
       ) : (
-        <div className="mt-2.5 grid gap-2.5 sm:grid-cols-2">
-          {/* Bahasa Indonesia (ID) */}
-          <div className="space-y-1">
-            <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-              <div className="flex items-center gap-1.5">
-                <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-                <span>Bahasa Indonesia (ID)</span>
-              </div>
-              {!hasId && hasEn && (
-                <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
-                  (belum diisi)
-                </span>
-              )}
+        <div className="mt-2.5 space-y-1">
+          <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+            <div className="flex items-center gap-1.5">
+              <span
+                className={cn(
+                  "inline-block h-2 w-2 rounded-full",
+                  lang === "id" ? "bg-red-500" : "bg-blue-500"
+                )}
+              />
+              <span>{activeLabel}</span>
             </div>
-            <Input
-              className="bg-background text-xs font-medium h-9"
-              placeholder={`Judul dalam Bahasa Indonesia untuk ${typeBadge}...`}
-              value={id}
-              onChange={(e) => handleIdChange(e.target.value)}
-            />
+            {activeMissing && (
+              <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                (belum diisi)
+              </span>
+            )}
           </div>
-
-          {/* English (EN) */}
-          <div className="space-y-1">
-            <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-              <div className="flex items-center gap-1.5">
-                <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-                <span>English (EN)</span>
-              </div>
-              {hasId && !hasEn && (
-                <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
-                  (belum diisi)
-                </span>
-              )}
-            </div>
-            <Input
-              className="bg-background text-xs font-medium h-9"
-              placeholder={`Title in English for ${typeBadge}...`}
-              value={en}
-              onChange={(e) => handleEnChange(e.target.value)}
-            />
-          </div>
+          <Input
+            className="bg-background text-xs font-medium h-9"
+            placeholder={activePlaceholder}
+            value={activeValue}
+            onChange={(e) => handleActiveChange(e.target.value)}
+          />
         </div>
       )}
       <p className="mt-2 text-[11px] text-muted-foreground">
-        Ubah judul heading elemen ini secara terpisah untuk versi Bahasa Indonesia dan English.
+        Ubah judul heading untuk bahasa aktif ({lang.toUpperCase()}). Gunakan switcher bahasa di menu atas admin untuk berpindah bahasa.
       </p>
     </div>
   )

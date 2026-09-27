@@ -21,8 +21,11 @@ import {
 import { isSystemPageKey, type PageContent } from "@/lib/cms"
 import { deletePageAction, duplicatePageAction } from "@/app/admin/(workspace)/pages/actions"
 import { BilingualStatusBadge, CleanAdminTitle } from "@/components/admin/bilingual-badge"
+import { useContentLanguage } from "@/components/cms/content-language"
+import { filterBilingualText } from "@/lib/bilingual"
 
 export function PagesTable({ pages }: { pages: PageContent[] }) {
+  const { lang } = useContentLanguage()
   const [rowToArchive, setRowToArchive] = useState<PageContent | null>(null)
   const [archiving, startArchive] = useTransition()
 
@@ -41,7 +44,8 @@ export function PagesTable({ pages }: { pages: PageContent[] }) {
   const columns = useMemo<ColumnDef<PageContent>[]>(
     () => [
       {
-        accessorKey: "title",
+        id: "title",
+        accessorFn: (row) => filterBilingualText(row.title, lang) || row.title,
         size: 260,
         header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
         cell: ({ row }) => (
@@ -118,7 +122,7 @@ export function PagesTable({ pages }: { pages: PageContent[] }) {
         ),
       },
     ],
-    [],
+    [lang],
   )
 
   return (
@@ -195,8 +199,9 @@ export function PagesTable({ pages }: { pages: PageContent[] }) {
           <AlertDialogHeader>
             <AlertDialogTitle>Archive Page?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to archive page &ldquo;{rowToArchive?.title}&rdquo;? You can
-              restore it later from the Archive folder.
+              Are you sure you want to archive page &ldquo;
+              {filterBilingualText(rowToArchive?.title, lang) || rowToArchive?.title}
+              &rdquo;? You can restore it later from the Archive folder.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -50,11 +50,20 @@ export function AnalyticsTracker({ config }: { config: AnalyticsTrackerConfig })
 
   useReportWebVitals((metric) => {
     if (!config.trackVitals || disabled.current) return
+    // Discard extreme outliers from backgrounded tabs or frozen webviews
+    // (e.g. INP of several minutes when the user switches apps on Android)
+    const val = metric.value
+    if (metric.name === "INP" && val > 10000) return
+    if (metric.name === "LCP" && val > 30000) return
+    if (metric.name === "FCP" && val > 30000) return
+    if (metric.name === "TTFB" && val > 20000) return
+    if (metric.name === "CLS" && val > 5) return
+
     push({
       type: "vital",
       name: metric.name,
       path: currentPath.current || window.location.pathname,
-      value: metric.value,
+      value: val,
       ts: Date.now(),
     })
   })
@@ -160,10 +169,19 @@ export function AnalyticsTracker({ config }: { config: AnalyticsTrackerConfig })
 
     const onError = (event: ErrorEvent) => {
       if (errorCount.current >= MAX_ERRORS_PER_PAGE) return
+      const msg = String(event.message ?? "error")
+      if (
+        msg.includes("ResizeObserver") ||
+        msg.includes("Script error") ||
+        msg.includes("chrome-extension://") ||
+        msg.includes("moz-extension://")
+      ) {
+        return
+      }
       errorCount.current += 1
       push({
         type: "error",
-        name: String(event.message ?? "error").slice(0, 80),
+        name: msg.slice(0, 80),
         path: window.location.pathname,
         ts: Date.now(),
       })

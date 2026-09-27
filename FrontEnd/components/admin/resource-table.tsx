@@ -19,7 +19,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
-import { BilingualStatusBadge, CleanAdminTitle } from "@/components/admin/bilingual-badge"
+import { useContentLanguage } from "@/components/cms/content-language"
+import { filterBilingualText } from "@/lib/bilingual"
+import { BilingualStatusBadge, CleanAdminTitle, CleanAdminText } from "@/components/admin/bilingual-badge"
 
 type Action = (formData: FormData) => void | Promise<void>
 
@@ -50,6 +52,7 @@ export function AdminResourceTable({
   resource,
   rows,
 }: AdminResourceTableProps) {
+  const { lang } = useContentLanguage()
   const [rowToArchive, setRowToArchive] = useState<AdminResourceRow | null>(null)
   const [archiving, startArchive] = useTransition()
 
@@ -69,7 +72,8 @@ export function AdminResourceTable({
   const columns = useMemo<ColumnDef<AdminResourceRow>[]>(
     () => [
       {
-        accessorKey: "title",
+        id: "title",
+        accessorFn: (row) => filterBilingualText(row.title, lang) || row.title,
         // Column sizes drive the fixed layout, so no cell can stretch the
         // table and push the action column out of view.
         size: 260,
@@ -105,11 +109,12 @@ export function AdminResourceTable({
         ),
       },
       {
-        accessorKey: "meta",
+        id: "meta",
+        accessorFn: (row) => filterBilingualText(row.meta ?? "", lang) || row.meta || "",
         size: 260,
         header: ({ column }) => <DataTableColumnHeader column={column} title="Info" />,
         cell: ({ row }) => (
-          <span className="line-clamp-2 text-muted-foreground">{row.original.meta ?? "-"}</span>
+          <CleanAdminText text={row.original.meta} className="line-clamp-2 text-muted-foreground" />
         ),
       },
       {
@@ -143,7 +148,7 @@ export function AdminResourceTable({
         ),
       },
     ],
-    [basePath, publicBasePath],
+    [basePath, publicBasePath, lang],
   )
 
   return (
@@ -172,7 +177,7 @@ export function AdminResourceTable({
             badges={
               <Badge variant={row.status === "published" ? "default" : "outline"}>{row.status}</Badge>
             }
-            meta={row.meta}
+            meta={<CleanAdminText text={row.meta} />}
             actions={
               <>
                 <Button asChild size="sm" variant="outline" className="min-h-11 flex-1">
@@ -207,8 +212,9 @@ export function AdminResourceTable({
           <AlertDialogHeader>
             <AlertDialogTitle>Archive Item?</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to archive &ldquo;{rowToArchive?.title}&rdquo;? You can restore it
-              later from the Archive folder.
+              Are you sure you want to archive &ldquo;
+              {filterBilingualText(rowToArchive?.title, lang) || rowToArchive?.title}
+              &rdquo;? You can restore it later from the Archive folder.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

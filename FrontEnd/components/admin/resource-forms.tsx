@@ -11,6 +11,7 @@ import {
   toDateTimeLocal,
 } from "@/lib/admin-content"
 import { extractBilingualText } from "@/lib/bilingual"
+import { useContentLanguage } from "@/components/cms/content-language"
 import { cn } from "@/lib/utils"
 import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
@@ -702,6 +703,7 @@ function BilingualField({
   placeholderId?: string
   placeholderEn?: string
 }) {
+  const { lang } = useContentLanguage()
   const extracted = extractBilingualText(defaultValue)
   const [idVal, setIdVal] = useState(extracted.id)
   const [enVal, setEnVal] = useState(extracted.en)
@@ -709,16 +711,32 @@ function BilingualField({
   const hasId = Boolean(idVal.trim())
   const hasEn = Boolean(enVal.trim())
 
+  const activeVal = lang === "id" ? idVal : enVal
+  const activeLabel = lang === "id" ? "ID" : "EN"
+  const activePlaceholder =
+    lang === "id"
+      ? placeholderId || "Judul dalam Bahasa Indonesia..."
+      : placeholderEn || "Title in English..."
+  const activeMissing = lang === "id" ? !hasId && hasEn : hasId && !hasEn
+
+  function handleActiveChange(val: string) {
+    if (lang === "id") {
+      setIdVal(val)
+    } else {
+      setEnVal(val)
+    }
+  }
+
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={nameId}>
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={lang === "id" ? nameId : nameEn}>
             {label}
             {required && <span className="ml-1 text-destructive">*</span>}
           </label>
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-            Dwi-Bahasa (Bilingual)
+          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary">
+            {lang.toUpperCase()}
           </span>
         </div>
         {hasId && hasEn ? (
@@ -735,7 +753,7 @@ function BilingualField({
           </span>
         ) : (
           <span className="text-[11px] text-muted-foreground">
-            🇮🇩 Bahasa Indonesia & 🇬🇧 English
+            {lang === "id" ? "Mode ID" : "Mode EN"}
           </span>
         )}
       </div>
@@ -746,7 +764,7 @@ function BilingualField({
           <div>
             <p className="font-semibold">Versi Bahasa Indonesia belum diisi</p>
             <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
-              Pengunjung berbahasa Indonesia akan melihat teks versi English sebagai fallback.
+              Pengunjung berbahasa Indonesia akan melihat teks versi English sebagai fallback. Ganti ke ID di menu atas untuk mengisi.
             </p>
           </div>
         </div>
@@ -758,48 +776,40 @@ function BilingualField({
           <div>
             <p className="font-semibold">Versi English belum diisi</p>
             <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
-              Pengunjung berbahasa English akan melihat teks versi Bahasa Indonesia sebagai fallback.
+              Pengunjung berbahasa English akan melihat teks versi Bahasa Indonesia sebagai fallback. Ganti ke EN di menu atas untuk mengisi.
             </p>
           </div>
         </div>
       )}
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-            <div className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-              <span>Bahasa Indonesia (ID)</span>
-            </div>
-            {!hasId && hasEn && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
-          </div>
-          <Input
-            id={nameId}
-            name={nameId}
-            value={idVal}
-            onChange={(e) => setIdVal(e.target.value)}
-            placeholder={placeholderId || "Judul dalam Bahasa Indonesia..."}
-            className={cn("bg-background text-xs", !hasId && hasEn && "border-amber-400/80 focus-visible:ring-amber-400/20")}
-          />
-        </div>
+      {/* Hidden inputs to guarantee both ID & EN are always submitted */}
+      {lang === "id" ? (
+        <input type="hidden" name={nameEn} value={enVal} />
+      ) : (
+        <input type="hidden" name={nameId} value={idVal} />
+      )}
 
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-            <div className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-              <span>English (EN)</span>
-            </div>
-            {hasId && !hasEn && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
+      <div className="space-y-1">
+        <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+          <div className="flex items-center gap-1.5">
+            <span
+              className={cn(
+                "inline-block h-2 w-2 rounded-full",
+                lang === "id" ? "bg-red-500" : "bg-blue-500"
+              )}
+            />
+            <span>{activeLabel}</span>
           </div>
-          <Input
-            id={nameEn}
-            name={nameEn}
-            value={enVal}
-            onChange={(e) => setEnVal(e.target.value)}
-            placeholder={placeholderEn || "Title in English..."}
-            className={cn("bg-background text-xs", hasId && !hasEn && "border-amber-400/80 focus-visible:ring-amber-400/20")}
-          />
+          {activeMissing && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
         </div>
+        <Input
+          id={lang === "id" ? nameId : nameEn}
+          name={lang === "id" ? nameId : nameEn}
+          value={activeVal}
+          onChange={(e) => handleActiveChange(e.target.value)}
+          placeholder={activePlaceholder}
+          className={cn("bg-background text-xs", activeMissing && "border-amber-400/80 focus-visible:ring-amber-400/20")}
+        />
       </div>
 
       {nameFallback && <input type="hidden" name={nameFallback} value={defaultValue ?? ""} />}
@@ -829,6 +839,7 @@ function BilingualTextAreaField({
   placeholderId?: string
   placeholderEn?: string
 }) {
+  const { lang } = useContentLanguage()
   const extracted = extractBilingualText(defaultValue)
   const [idVal, setIdVal] = useState(extracted.id)
   const [enVal, setEnVal] = useState(extracted.en)
@@ -836,15 +847,31 @@ function BilingualTextAreaField({
   const hasId = Boolean(idVal.trim())
   const hasEn = Boolean(enVal.trim())
 
+  const activeVal = lang === "id" ? idVal : enVal
+  const activeLabel = lang === "id" ? "ID" : "EN"
+  const activePlaceholder =
+    lang === "id"
+      ? placeholderId || "Ringkasan dalam Bahasa Indonesia..."
+      : placeholderEn || "Summary in English..."
+  const activeMissing = lang === "id" ? !hasId && hasEn : hasId && !hasEn
+
+  function handleActiveChange(val: string) {
+    if (lang === "id") {
+      setIdVal(val)
+    } else {
+      setEnVal(val)
+    }
+  }
+
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={nameId}>
+          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={lang === "id" ? nameId : nameEn}>
             {label}
           </label>
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-            Dwi-Bahasa (Bilingual)
+          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary">
+            {lang.toUpperCase()}
           </span>
         </div>
         {hasId && hasEn ? (
@@ -861,7 +888,7 @@ function BilingualTextAreaField({
           </span>
         ) : (
           <span className="text-[11px] text-muted-foreground">
-            🇮🇩 Bahasa Indonesia & 🇬🇧 English
+            {lang === "id" ? "Mode ID" : "Mode EN"}
           </span>
         )}
       </div>
@@ -872,7 +899,7 @@ function BilingualTextAreaField({
           <div>
             <p className="font-semibold">Ringkasan versi Bahasa Indonesia belum diisi</p>
             <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
-              Pengunjung berbahasa Indonesia akan melihat ringkasan versi English.
+              Pengunjung berbahasa Indonesia akan melihat ringkasan versi English. Ganti ke ID di menu atas untuk mengisi.
             </p>
           </div>
         </div>
@@ -884,50 +911,41 @@ function BilingualTextAreaField({
           <div>
             <p className="font-semibold">Ringkasan versi English belum diisi</p>
             <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
-              Pengunjung berbahasa English akan melihat ringkasan versi Bahasa Indonesia.
+              Pengunjung berbahasa English akan melihat ringkasan versi Bahasa Indonesia. Ganti ke EN di menu atas untuk mengisi.
             </p>
           </div>
         </div>
       )}
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-            <div className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-              <span>Bahasa Indonesia (ID)</span>
-            </div>
-            {!hasId && hasEn && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
-          </div>
-          <Textarea
-            id={nameId}
-            name={nameId}
-            rows={rows}
-            value={idVal}
-            onChange={(e) => setIdVal(e.target.value)}
-            placeholder={placeholderId || "Ringkasan dalam Bahasa Indonesia..."}
-            className={cn("bg-background text-xs", !hasId && hasEn && "border-amber-400/80 focus-visible:ring-amber-400/20")}
-          />
-        </div>
+      {/* Hidden inputs to guarantee both ID & EN are always submitted */}
+      {lang === "id" ? (
+        <input type="hidden" name={nameEn} value={enVal} />
+      ) : (
+        <input type="hidden" name={nameId} value={idVal} />
+      )}
 
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-            <div className="flex items-center gap-1.5">
-              <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-              <span>English (EN)</span>
-            </div>
-            {hasId && !hasEn && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
+      <div className="space-y-1">
+        <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+          <div className="flex items-center gap-1.5">
+            <span
+              className={cn(
+                "inline-block h-2 w-2 rounded-full",
+                lang === "id" ? "bg-red-500" : "bg-blue-500"
+              )}
+            />
+            <span>{activeLabel}</span>
           </div>
-          <Textarea
-            id={nameEn}
-            name={nameEn}
-            rows={rows}
-            value={enVal}
-            onChange={(e) => setEnVal(e.target.value)}
-            placeholder={placeholderEn || "Summary in English..."}
-            className={cn("bg-background text-xs", hasId && !hasEn && "border-amber-400/80 focus-visible:ring-amber-400/20")}
-          />
+          {activeMissing && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
         </div>
+        <Textarea
+          id={lang === "id" ? nameId : nameEn}
+          name={lang === "id" ? nameId : nameEn}
+          rows={rows}
+          value={activeVal}
+          onChange={(e) => handleActiveChange(e.target.value)}
+          placeholder={activePlaceholder}
+          className={cn("bg-background text-xs", activeMissing && "border-amber-400/80 focus-visible:ring-amber-400/20")}
+        />
       </div>
 
       {nameFallback && <input type="hidden" name={nameFallback} value={defaultValue ?? ""} />}

@@ -41,6 +41,9 @@ import type { SaveAction } from "@/lib/save-result"
 import { presetSectionsForKey, sectionsFromContent, type Section } from "@/lib/sections"
 import { combineBilingualText, extractBilingualText, lookupDictionary } from "@/lib/bilingual"
 import { BILINGUAL_PAGE_FIELDS, DEFAULT_BILINGUAL_IMPACT_VALUES } from "@/lib/page-bilingual"
+import { useContentLanguage } from "@/components/cms/content-language"
+import { BilingualStatusBadge } from "@/components/admin/bilingual-badge"
+import { cn } from "@/lib/utils"
 
 type ContactOffice = {
   name: string
@@ -78,6 +81,7 @@ type PageEditorProps = {
 }
 
 export function PageEditor({ action, mode, page, previewData }: PageEditorProps) {
+  const { lang, setLang } = useContentLanguage()
   const initialContent = page?.content ?? { blocks: [] }
   const extractedTitle = useMemo(() => extractBilingualText(page?.title), [page?.title])
   const [titleId, setTitleId] = useState(extractedTitle.id || (page?.title ?? ""))
@@ -280,27 +284,13 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
         <section className="rounded-lg border border-border bg-background p-5">
           <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_260px]">
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Page Title / Judul Halaman <span className="text-destructive">*</span>
-                </label>
-                {Boolean(titleId.trim()) && Boolean(titleEn.trim()) ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
-                    ✓ Lengkap (ID + EN)
-                  </span>
-                ) : !Boolean(titleId.trim()) && Boolean(titleEn.trim()) ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-                    ⚠️ Versi ID Belum Diisi
-                  </span>
-                ) : Boolean(titleId.trim()) && !Boolean(titleEn.trim()) ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-                    ⚠️ Versi EN Belum Diisi
-                  </span>
-                ) : (
-                  <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                    Dwi-Bahasa (Bilingual)
-                  </span>
-                )}
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Page Title / Judul Halaman <span className="text-destructive">*</span>
+                  </label>
+                  <BilingualStatusBadge title={combineBilingualText({ id: titleId, en: titleEn })} />
+                </div>
               </div>
 
               {!Boolean(titleId.trim()) && Boolean(titleEn.trim()) && (
@@ -326,37 +316,45 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
                   </div>
                 </div>
               )}
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
-                    <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-                    <span>Bahasa Indonesia (ID)</span>
+
+              {/* Single column input based on active language in top menu */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-medium text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-1.5">
+                    <span className={cn("inline-block h-2 w-2 rounded-full", lang === "id" ? "bg-red-500" : "bg-blue-500")} />
+                    <span className="font-semibold">
+                      {lang === "id" ? "Bahasa Indonesia (ID)" : "English (EN)"}
+                    </span>
                   </div>
+                  <span className="text-[11px] text-muted-foreground">
+                    {lang === "id"
+                      ? (titleEn ? `Versi EN: "${titleEn}"` : "(Versi EN belum diisi)")
+                      : (titleId ? `Versi ID: "${titleId}"` : "(Versi ID belum diisi)")}
+                  </span>
+                </div>
+                {lang === "id" ? (
                   <Input
                     className="h-10 text-sm font-semibold"
-                    id="title_id"
-                    name="title_id"
+                    id="title_id_active"
                     placeholder="Judul dalam Bahasa Indonesia..."
                     value={titleId}
                     onChange={(event) => handleTitleIdChange(event.target.value)}
                     required
                   />
-                </div>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
-                    <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-                    <span>English (EN)</span>
-                  </div>
+                ) : (
                   <Input
                     className="h-10 text-sm font-semibold"
-                    id="title_en"
-                    name="title_en"
-                    placeholder="Title in English..."
+                    id="title_en_active"
+                    placeholder={titleId ? `[EN] Title in English (ID: "${titleId}")...` : "Title in English..."}
                     value={titleEn}
                     onChange={(event) => handleTitleEnChange(event.target.value)}
                   />
-                </div>
+                )}
               </div>
+
+              {/* Hidden inputs to guarantee both title_id and title_en are always submitted to the form */}
+              <input type="hidden" name="title_id" value={titleId} />
+              <input type="hidden" name="title_en" value={titleEn} />
               <input
                 type="hidden"
                 name="title"
@@ -390,20 +388,22 @@ export function PageEditor({ action, mode, page, previewData }: PageEditorProps)
         </section>
 
         <Tabs defaultValue="builder" className="gap-4">
-          <TabsList className="grid h-auto w-full grid-cols-3 rounded-md">
-            <TabsTrigger value="builder">
-              <LayoutTemplate className="h-4 w-4" />
-              Builder
-            </TabsTrigger>
-            <TabsTrigger value="preview">
-              <Eye className="h-4 w-4" />
-              Preview
-            </TabsTrigger>
-            <TabsTrigger value="source">
-              <FileJson className="h-4 w-4" />
-              JSON
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <TabsList className="h-auto rounded-md">
+              <TabsTrigger value="builder">
+                <LayoutTemplate className="h-4 w-4" />
+                Builder
+              </TabsTrigger>
+              <TabsTrigger value="preview">
+                <Eye className="h-4 w-4" />
+                Preview
+              </TabsTrigger>
+              <TabsTrigger value="source">
+                <FileJson className="h-4 w-4" />
+                JSON
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="builder">
             <SectionBuilder sections={sections} onChange={setSections} />
@@ -640,6 +640,7 @@ function BilingualSeoEditor({
   seo: SEO
   onChange: React.Dispatch<React.SetStateAction<SEO>>
 }) {
+  const { lang } = useContentLanguage()
   const [showRaw, setShowRaw] = useState(false)
   const titleExt = extractBilingualText(seo.title)
   const descExt = extractBilingualText(seo.description)
@@ -649,14 +650,14 @@ function BilingualSeoEditor({
   const hasDescId = Boolean(descExt.id.trim())
   const hasDescEn = Boolean(descExt.en.trim())
 
-  function handleTitleChange(lang: "id" | "en", val: string) {
-    const next = { ...titleExt, [lang]: val }
+  function handleTitleChange(langKey: "id" | "en", val: string) {
+    const next = { ...titleExt, [langKey]: val }
     const combined = combineBilingualText(next)
     onChange((curr) => ({ ...curr, title: combined }))
   }
 
-  function handleDescChange(lang: "id" | "en", val: string) {
-    const next = { ...descExt, [lang]: val }
+  function handleDescChange(langKey: "id" | "en", val: string) {
+    const next = { ...descExt, [langKey]: val }
     const combined = combineBilingualText(next)
     onChange((curr) => ({ ...curr, description: combined }))
   }
@@ -714,98 +715,46 @@ function BilingualSeoEditor({
         </>
       ) : (
         <>
-          {/* SEO Title Bilingual */}
+          {/* SEO Title Single Field for active lang */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              SEO Title
-            </label>
-            <div className="grid gap-2.5 sm:grid-cols-2">
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-                  <div className="flex items-center gap-1.5">
-                    <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-                    <span>Bahasa Indonesia (ID)</span>
-                  </div>
-                  {!hasTitleId && hasTitleEn && (
-                    <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
-                      (belum diisi)
-                    </span>
-                  )}
-                </div>
-                <Input
-                  className="text-xs h-9 bg-background"
-                  placeholder="Judul SEO Bahasa Indonesia..."
-                  value={titleExt.id}
-                  onChange={(e) => handleTitleChange("id", e.target.value)}
-                />
+            <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+              <div className="flex items-center gap-1.5">
+                <span className={cn("inline-block h-2 w-2 rounded-full", lang === "id" ? "bg-red-500" : "bg-blue-500")} />
+                <span>SEO Title ({lang.toUpperCase()})</span>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-                  <div className="flex items-center gap-1.5">
-                    <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-                    <span>English (EN)</span>
-                  </div>
-                  {hasTitleId && !hasTitleEn && (
-                    <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
-                      (belum diisi)
-                    </span>
-                  )}
-                </div>
-                <Input
-                  className="text-xs h-9 bg-background"
-                  placeholder="SEO Title in English..."
-                  value={titleExt.en}
-                  onChange={(e) => handleTitleChange("en", e.target.value)}
-                />
-              </div>
+              <span className="text-[10px] text-muted-foreground">
+                {lang === "id"
+                  ? (hasTitleEn ? "EN: ✓" : "EN: kosong")
+                  : (hasTitleId ? "ID: ✓" : "ID: kosong")}
+              </span>
             </div>
+            <Input
+              className="text-xs h-9 bg-background"
+              placeholder={lang === "id" ? "Judul SEO Bahasa Indonesia..." : (titleExt.id ? `[EN] SEO Title (ID: "${titleExt.id}")...` : "SEO Title in English...")}
+              value={lang === "id" ? titleExt.id : titleExt.en}
+              onChange={(e) => handleTitleChange(lang, e.target.value)}
+            />
           </div>
 
-          {/* SEO Description Bilingual */}
+          {/* SEO Description Single Field for active lang */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              SEO Description
-            </label>
-            <div className="grid gap-2.5 sm:grid-cols-2">
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-                  <div className="flex items-center gap-1.5">
-                    <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-                    <span>Bahasa Indonesia (ID)</span>
-                  </div>
-                  {!hasDescId && hasDescEn && (
-                    <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
-                      (belum diisi)
-                    </span>
-                  )}
-                </div>
-                <Textarea
-                  className="text-xs min-h-20 bg-background"
-                  placeholder="Deskripsi SEO Bahasa Indonesia..."
-                  value={descExt.id}
-                  onChange={(e) => handleDescChange("id", e.target.value)}
-                />
+            <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+              <div className="flex items-center gap-1.5">
+                <span className={cn("inline-block h-2 w-2 rounded-full", lang === "id" ? "bg-red-500" : "bg-blue-500")} />
+                <span>SEO Description ({lang.toUpperCase()})</span>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-                  <div className="flex items-center gap-1.5">
-                    <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-                    <span>English (EN)</span>
-                  </div>
-                  {hasDescId && !hasDescEn && (
-                    <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">
-                      (belum diisi)
-                    </span>
-                  )}
-                </div>
-                <Textarea
-                  className="text-xs min-h-20 bg-background"
-                  placeholder="SEO Description in English..."
-                  value={descExt.en}
-                  onChange={(e) => handleDescChange("en", e.target.value)}
-                />
-              </div>
+              <span className="text-[10px] text-muted-foreground">
+                {lang === "id"
+                  ? (hasDescEn ? "EN: ✓" : "EN: kosong")
+                  : (hasDescId ? "ID: ✓" : "ID: kosong")}
+              </span>
             </div>
+            <Textarea
+              className="text-xs min-h-20 bg-background"
+              placeholder={lang === "id" ? "Deskripsi SEO Bahasa Indonesia..." : (descExt.id ? `[EN] Description (ID: "${descExt.id}")...` : "SEO Description in English...")}
+              value={lang === "id" ? descExt.id : descExt.en}
+              onChange={(e) => handleDescChange(lang, e.target.value)}
+            />
           </div>
         </>
       )}
@@ -1109,6 +1058,7 @@ function BilingualPageFieldCard({
   onUpdateValue: (value: string) => void
   onRemove: () => void
 }) {
+  const { lang } = useContentLanguage()
   const [showRaw, setShowRaw] = useState(false)
   const isText = field.type === "text"
 
@@ -1244,37 +1194,36 @@ function BilingualPageFieldCard({
               value={field.value}
             />
           ) : (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {/* Bahasa Indonesia (ID) */}
               <div className="space-y-1.5">
-                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
-                  <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-                  <span>Bahasa Indonesia (ID)</span>
+                <div className="flex items-center justify-between text-xs font-medium text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-1.5">
+                    <span className={cn("inline-block h-2 w-2 rounded-full", lang === "id" ? "bg-red-500" : "bg-blue-500")} />
+                    <span>{lang === "id" ? "Bahasa Indonesia (ID)" : "English (EN)"}</span>
+                  </div>
+                  <span className="text-[11px] text-muted-foreground">
+                    {lang === "id"
+                      ? (hasEn ? "Versi EN: ✓" : "(Versi EN belum diisi)")
+                      : (hasId ? `Versi ID: "${idVal.slice(0, 30)}..."` : "(Versi ID belum diisi)")}
+                  </span>
                 </div>
-                <Textarea
-                  aria-label={`${field.key || "field"} dalam Bahasa Indonesia`}
-                  className="min-h-24 bg-background text-sm"
-                  onChange={(e) => handleIdChange(e.target.value)}
-                  placeholder={`[ID] Konten ${field.key || ""} dalam Bahasa Indonesia...`}
-                  value={idVal}
-                />
+                {lang === "id" ? (
+                  <Textarea
+                    aria-label={`${field.key || "field"} dalam Bahasa Indonesia`}
+                    className="min-h-24 bg-background text-sm"
+                    onChange={(e) => handleIdChange(e.target.value)}
+                    placeholder={`[ID] Konten ${field.key || ""} dalam Bahasa Indonesia...`}
+                    value={idVal}
+                  />
+                ) : (
+                  <Textarea
+                    aria-label={`${field.key || "field"} in English`}
+                    className="min-h-24 bg-background text-sm"
+                    onChange={(e) => handleEnChange(e.target.value)}
+                    placeholder={idVal ? `[EN] Content ${field.key || ""} (ID: "${idVal.slice(0, 35)}...")...` : `[EN] Content ${field.key || ""} in English...`}
+                    value={enVal}
+                  />
+                )}
               </div>
-
-              {/* English (EN) */}
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300">
-                  <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-                  <span>English (EN)</span>
-                </div>
-                <Textarea
-                  aria-label={`${field.key || "field"} in English`}
-                  className="min-h-24 bg-background text-sm"
-                  onChange={(e) => handleEnChange(e.target.value)}
-                  placeholder={`[EN] Content ${field.key || ""} in English...`}
-                  value={enVal}
-                />
-              </div>
-            </div>
           )
         ) : field.type === "list" ? (
           <div className="space-y-1.5">
@@ -1317,11 +1266,12 @@ function ImpactValuesBilingualEditor({
   value: string
   onChange: (value: string) => void
 }) {
+  const { lang } = useContentLanguage()
   const items = useMemo(() => {
     try {
       const parsed = JSON.parse(value)
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed.map((item: any, idx: number) => {
+        return parsed.map((item: Record<string, unknown>, idx: number) => {
           const defaultItem = DEFAULT_BILINGUAL_IMPACT_VALUES[idx] || DEFAULT_BILINGUAL_IMPACT_VALUES[0]
           const letter = String(item.letter || defaultItem.letter || "")
 
@@ -1406,82 +1356,54 @@ function ImpactValuesBilingualEditor({
 
               {/* Title Section */}
               <div className="space-y-1">
-                <p className="text-[11px] font-semibold text-muted-foreground">Judul / Title</p>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {/* Title ID */}
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
-                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-500" />
-                      <span>Bahasa Indonesia (ID)</span>
-                    </div>
-                    <Input
-                      className="h-8 text-xs font-medium"
-                      placeholder="Judul dalam Bahasa Indonesia..."
-                      value={extTitle.id}
-                      onChange={(e) => {
-                        const newTitle = combineBilingualText({ id: e.target.value, en: extTitle.en })
-                        updateItem(idx, { title: newTitle })
-                      }}
-                    />
+                <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-1.5">
+                    <span className={cn("inline-block h-1.5 w-1.5 rounded-full", lang === "id" ? "bg-red-500" : "bg-blue-500")} />
+                    <span>Judul / Title ({lang.toUpperCase()})</span>
                   </div>
-
-                  {/* Title EN */}
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
-                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500" />
-                      <span>English (EN)</span>
-                    </div>
-                    <Input
-                      className="h-8 text-xs font-medium"
-                      placeholder="Title in English..."
-                      value={extTitle.en}
-                      onChange={(e) => {
-                        const newTitle = combineBilingualText({ id: extTitle.id, en: e.target.value })
-                        updateItem(idx, { title: newTitle })
-                      }}
-                    />
-                  </div>
+                  <span className="text-[10px] text-muted-foreground">
+                    {lang === "id"
+                      ? (extTitle.en ? "EN: ✓" : "EN kosong")
+                      : (extTitle.id ? `ID: "${extTitle.id}"` : "ID kosong")}
+                  </span>
                 </div>
+                <Input
+                  className="h-8 text-xs font-medium"
+                  placeholder={lang === "id" ? "Judul dalam Bahasa Indonesia..." : (extTitle.id ? `[EN] Title (ID: "${extTitle.id}")...` : "Title in English...")}
+                  value={lang === "id" ? extTitle.id : extTitle.en}
+                  onChange={(e) => {
+                    const newTitle = lang === "id"
+                      ? combineBilingualText({ id: e.target.value, en: extTitle.en })
+                      : combineBilingualText({ id: extTitle.id, en: e.target.value })
+                    updateItem(idx, { title: newTitle })
+                  }}
+                />
               </div>
 
               {/* Desc Section */}
               <div className="space-y-1">
-                <p className="text-[11px] font-semibold text-muted-foreground">Deskripsi / Description</p>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {/* Desc ID */}
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
-                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-500" />
-                      <span>Bahasa Indonesia (ID)</span>
-                    </div>
-                    <Textarea
-                      className="min-h-16 text-xs bg-background"
-                      placeholder="Deskripsi dalam Bahasa Indonesia..."
-                      value={extDesc.id}
-                      onChange={(e) => {
-                        const newDesc = combineBilingualText({ id: e.target.value, en: extDesc.en })
-                        updateItem(idx, { desc: newDesc })
-                      }}
-                    />
+                <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-1.5">
+                    <span className={cn("inline-block h-1.5 w-1.5 rounded-full", lang === "id" ? "bg-red-500" : "bg-blue-500")} />
+                    <span>Deskripsi / Description ({lang.toUpperCase()})</span>
                   </div>
-
-                  {/* Desc EN */}
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-300">
-                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500" />
-                      <span>English (EN)</span>
-                    </div>
-                    <Textarea
-                      className="min-h-16 text-xs bg-background"
-                      placeholder="Description in English..."
-                      value={extDesc.en}
-                      onChange={(e) => {
-                        const newDesc = combineBilingualText({ id: extDesc.id, en: e.target.value })
-                        updateItem(idx, { desc: newDesc })
-                      }}
-                    />
-                  </div>
+                  <span className="text-[10px] text-muted-foreground">
+                    {lang === "id"
+                      ? (extDesc.en ? "EN: ✓" : "EN kosong")
+                      : (extDesc.id ? `ID: "${extDesc.id.slice(0, 30)}..."` : "ID kosong")}
+                  </span>
                 </div>
+                <Textarea
+                  className="min-h-16 text-xs bg-background"
+                  placeholder={lang === "id" ? "Deskripsi dalam Bahasa Indonesia..." : (extDesc.id ? `[EN] Description (ID: "${extDesc.id.slice(0, 35)}...")...` : "Description in English...")}
+                  value={lang === "id" ? extDesc.id : extDesc.en}
+                  onChange={(e) => {
+                    const newDesc = lang === "id"
+                      ? combineBilingualText({ id: e.target.value, en: extDesc.en })
+                      : combineBilingualText({ id: extDesc.id, en: e.target.value })
+                    updateItem(idx, { desc: newDesc })
+                  }}
+                />
               </div>
             </div>
           )

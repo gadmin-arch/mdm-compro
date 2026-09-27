@@ -11,6 +11,7 @@ import {
 import type { PageContent } from "@/lib/cms"
 import type { SaveResult } from "@/lib/save-result"
 import { combineBilingualText } from "@/lib/bilingual"
+import { notifySearchEngines } from "@/lib/seo-indexing"
 
 function pagePayload(formData: FormData): PageCreatePayload {
   const contentText = String(formData.get("content") ?? '{"blocks":[]}')
@@ -73,10 +74,12 @@ function revalidatePagePaths(...keys: string[]) {
     if (key) {
       revalidatePath(`/${key}`, "page")
       revalidatePath(`/${key}`, "layout")
+      notifySearchEngines(`/${key}`)
     }
   }
   revalidatePath("/admin", "layout")
   revalidatePath("/admin/pages", "page")
+  revalidatePath("/sitemap.xml")
 }
 
 export async function createPageAction(formData: FormData): Promise<SaveResult | void> {

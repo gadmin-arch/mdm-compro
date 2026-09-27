@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { extractBilingualHtml } from "@/lib/bilingual"
+import { useContentLanguage } from "@/components/cms/content-language"
 
 type RichTextEditorProps = {
   value: string
@@ -578,7 +579,8 @@ export function BilingualRichTextField({
     ? extractBilingualHtml(rawDefaultValue)
     : { id: defaultIdValue, en: defaultEnValue }
 
-  const [activeTab, setActiveTab] = useState<"id" | "en">("id")
+  const { lang, setLang } = useContentLanguage()
+  const activeTab = lang
   const [htmlId, setHtmlId] = useState(extracted.id || defaultIdValue)
   const [htmlEn, setHtmlEn] = useState(extracted.en || defaultEnValue)
 
@@ -590,12 +592,12 @@ export function BilingualRichTextField({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</label>
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-            Dwi-Bahasa (Bilingual)
+          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary">
+            {lang.toUpperCase()}
           </span>
         </div>
         <span className="text-[11px] text-muted-foreground">
-          Gunakan 2 tab terpisah di bawah ini (tidak perlu mengetikkan tag EN/ID manual)
+          Bahasa tersinkron dengan menu atas ({lang.toUpperCase()})
         </span>
       </div>
 
@@ -603,18 +605,17 @@ export function BilingualRichTextField({
       <input type="hidden" name={nameEn} value={htmlEn} />
       {nameFallback && <input type="hidden" name={nameFallback} value={htmlId || htmlEn} />}
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "id" | "en")} className="w-full">
+      <Tabs value={activeTab} onValueChange={(v) => setLang(v as "id" | "en")} className="w-full">
         <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-slate-50/80 dark:bg-slate-900/60 p-1.5">
           <TabsList className="bg-muted/70 p-1 h-auto">
             <TabsTrigger
               value="id"
-              className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs"
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs"
             >
-              <span className="inline-block h-2 w-2 rounded-full bg-red-500" />
-              <span>Bahasa Indonesia (ID)</span>
+              <span>ID</span>
               {hasIdContent ? (
                 <span className="inline-flex items-center rounded-full bg-emerald-100 dark:bg-emerald-950 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300">
-                  Terisi
+                  ✓
                 </span>
               ) : (
                 <span className="text-[10px] text-muted-foreground">(kosong)</span>
@@ -622,13 +623,12 @@ export function BilingualRichTextField({
             </TabsTrigger>
             <TabsTrigger
               value="en"
-              className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs"
+              className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-xs"
             >
-              <span className="inline-block h-2 w-2 rounded-full bg-blue-500" />
-              <span>English (EN)</span>
+              <span>EN</span>
               {hasEnContent ? (
                 <span className="inline-flex items-center rounded-full bg-emerald-100 dark:bg-emerald-950 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300">
-                  Filled
+                  ✓
                 </span>
               ) : (
                 <span className="text-[10px] text-muted-foreground">(empty)</span>
@@ -637,7 +637,7 @@ export function BilingualRichTextField({
           </TabsList>
 
           <span className="text-[11px] text-muted-foreground pr-2 hidden sm:inline">
-            {activeTab === "id" ? "🇮🇩 Mengedit versi Bahasa Indonesia" : "🇬🇧 Editing English version"}
+            {activeTab === "id" ? "Mode ID" : "Mode EN"}
           </span>
         </div>
 

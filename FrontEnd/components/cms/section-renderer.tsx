@@ -27,7 +27,7 @@ import { GallerySection } from "@/components/sections/gallery"
 import { ImageTextSection } from "@/components/sections/image-text"
 import { OfficesSection } from "@/components/sections/offices"
 import { StatsSection } from "@/components/sections/stats"
-import type { ContentNode, NewsItem } from "@/lib/cms"
+import type { ContentNode, NewsItem, PageContent } from "@/lib/cms"
 import { str, type Section } from "@/lib/sections"
 
 // Dynamic sections (contentGrid) render from pre-resolved data so this
@@ -118,9 +118,9 @@ export function SectionView({
     case "brandPartners":
       return <BrandPartnersSection props={props} />
     case "about":
-      return <About page={{ content: props } as any} />
+      return <About page={{ content: props } as unknown as PageContent} />
     case "contact":
-      return <Contact page={{ content: props } as any} />
+      return <Contact page={{ content: props } as unknown as PageContent} />
     case "offices":
       return <OfficesSection props={props} />
     case "capabilities":

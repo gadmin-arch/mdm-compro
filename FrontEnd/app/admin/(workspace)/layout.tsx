@@ -4,6 +4,7 @@ import type { ReactNode } from "react"
 import { AdminNavSidebar } from "@/components/admin/admin-nav-menu"
 import { AdminBottomNav } from "@/components/admin/admin-bottom-nav"
 import { ThemeToggle } from "@/components/admin/theme-toggle"
+import { AdminTopBar, AdminLanguageToggle } from "@/components/admin/admin-top-bar"
 import { adminFetch, type AdminUser } from "@/lib/admin-api"
 
 export default async function AdminWorkspaceLayout({ children }: { children: ReactNode }) {
@@ -19,8 +20,8 @@ export default async function AdminWorkspaceLayout({ children }: { children: Rea
       </a>
 
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-40 flex h-14 items-center justify-between gap-3 border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur-md dark:border-slate-800 dark:bg-[#0b0f17]/95 sm:px-6 lg:hidden print:hidden shadow-xs">
-        <Link href="/admin" className="flex min-w-0 items-center gap-2.5">
+      <header className="sticky top-0 z-40 flex h-14 items-center justify-between gap-2 border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur-md dark:border-slate-800 dark:bg-[#0b0f17]/95 sm:px-6 lg:hidden print:hidden shadow-xs">
+        <Link href="/admin" className="flex min-w-0 items-center gap-2">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-900 shadow-2xs dark:bg-slate-800">
             <Image
               src="/Logo PT MDM.png"
@@ -37,14 +38,20 @@ export default async function AdminWorkspaceLayout({ children }: { children: Rea
             <span className="text-[9px] font-semibold text-slate-400">PT Multi Daya Mitra</span>
           </div>
         </Link>
-        <ThemeToggle />
+
+        {/* Mobile top menu language switcher & theme toggle */}
+        <div className="flex items-center gap-1.5">
+          <AdminLanguageToggle compact />
+          <ThemeToggle />
+        </div>
       </header>
 
       <div className="lg:flex">
         <AdminNavSidebar user={user} />
 
-        <div className="min-w-0 flex-1">
-          <div id="admin-content" className="px-4 pb-24 pt-6 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8 xl:px-10">
+        <div className="min-w-0 flex-1 flex flex-col">
+          <AdminTopBar user={user} />
+          <div id="admin-content" className="px-4 pb-24 pt-6 sm:px-6 lg:px-8 lg:pb-8 lg:pt-8 xl:px-10 flex-1">
             {children}
           </div>
         </div>

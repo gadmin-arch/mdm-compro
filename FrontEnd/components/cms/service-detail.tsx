@@ -56,6 +56,7 @@ export function ServiceDetailView({
                   src={service.imageUrl || "/uploads/hero-project.jpg"}
                   alt={getBilingualText(service.title, isIndonesian ? "id" : "en")}
                   fill
+                  priority
                   sizes="(min-width: 1024px) 50vw, 100vw"
                   className="object-cover"
                   unoptimized={unoptimizedImage}
