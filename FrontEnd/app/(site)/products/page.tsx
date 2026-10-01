@@ -114,13 +114,6 @@ const productCategories = [
     count: "PLCs & Inverters",
   },
   {
-    title: "EN: Enclosure & Climate Control\nID: Enclosure & Kontrol Iklim",
-    slug: "enclosure-climate-control",
-    desc: "EN: Heavy-duty IP55/IP66 industrial enclosures, Blue e+ cooling systems, server racks, and outdoor cabinets.\nID: Enclosure industri tangguh IP55/IP66, sistem pendingin Blue e+, rak server, dan lemari outdoor.",
-    icon: Layers,
-    count: "IP66 & Blue e+",
-  },
-  {
     title: "EN: Power Quality\nID: Kualitas Daya Listrik",
     slug: "power-quality",
     desc: "EN: Active Harmonic Filters (AHF), Static Var Generators (SVG), capacitor banks, and power quality analyzers.\nID: Active Harmonic Filter (AHF), Static Var Generator (SVG), bank kapasitor, dan penganalisis kualitas daya.",

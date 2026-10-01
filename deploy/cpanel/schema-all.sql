@@ -6112,5 +6112,17 @@ SET content = jsonb_build_object(
     updated_at = now()
 WHERE page_key = 'about' AND deleted_at IS NULL;
 
+-- Migration 041: Move enclosure-climate-control under Rittal Authorized Distributor
+UPDATE products
+SET 
+    parent_id = '00000000-0000-0000-0000-000000000701',
+    full_path = 'rittal-distributor/enclosure-climate-control',
+    depth = 1,
+    status = 'archived'
+WHERE slug = 'enclosure-climate-control';
+
+UPDATE products SET sort_order = 5 WHERE slug = 'power-quality' AND parent_id IS NULL;
+UPDATE products SET sort_order = 6 WHERE slug = 'fire-alarm-products' AND parent_id IS NULL;
+
 COMMIT;
 

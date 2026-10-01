@@ -35,7 +35,6 @@ const footerNav = [
       { label: "EN: Schneider Electric System Integrator\nID: System Integrator Schneider Electric", href: "/products/schneider-integrator" },
       { label: "EN: Electrical Distribution\nID: Distribusi Kelistrikan", href: "/products/electrical-distribution" },
       { label: "EN: Automation & Control\nID: Otomasi & Kontrol Industri", href: "/products/automation-control" },
-      { label: "EN: Enclosure & Climate Control Systems\nID: Sistem Enclosure & Kontrol Suhu Industri", href: "/products/enclosure-climate-control" },
       { label: "EN: Power Quality Systems & Active Filters\nID: Sistem Kualitas Daya & Filter Harmonisa Aktif", href: "/products/power-quality" },
       { label: "EN: Fire Alarm & Suppression Systems\nID: Sistem Fire Alarm & Pemadam Kebakaran", href: "/products/fire-alarm-products" },
     ],

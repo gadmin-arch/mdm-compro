@@ -84,6 +84,16 @@ const nextConfig = {
 
       // 2. Legacy SEO 301 Permanent Redirects (Fixes Google Sitelinks & 404s)
       {
+        source: '/products/enclosure-climate-control',
+        destination: '/products/rittal-distributor',
+        permanent: true,
+      },
+      {
+        source: '/products/enclosure-climate-control/:path*',
+        destination: '/products/rittal-distributor',
+        permanent: true,
+      },
+      {
         source: '/products/electrical-equipment/rittal-the-system',
         destination: '/products/rittal-distributor',
         permanent: true,
