@@ -2,7 +2,8 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { adminLoginLocation, adminRefreshLocation } from "@/lib/admin-auth"
 import { generateDevAdminJwt } from "@/lib/dev-jwt"
-import type { Career, ContentNode, ListResponse, NewsItem, PageContent } from "@/lib/cms"
+import { defaultMenuItems, type Career, type ContentNode, type ListResponse, type MenuItem, type NewsItem, type PageContent } from "@/lib/cms"
+
 
 const API_BASE =
   process.env.CMS_API_BASE_URL ??
@@ -337,10 +338,81 @@ import {
   aboutPresetSections,
   presetSectionsForKey,
 } from "@/lib/sections"
+import { BILINGUAL_PRODUCT_CATALOG, enrichProductWithBilingual } from "@/lib/product-bilingual"
+import { BILINGUAL_SERVICE_CATALOG, enrichServiceWithBilingual } from "@/lib/service-bilingual"
+import { BILINGUAL_NEWS_CATALOG, enrichNewsWithBilingual } from "@/lib/news-bilingual"
+import { BILINGUAL_CAREER_CATALOG, enrichCareerWithBilingual } from "@/lib/career-bilingual"
 
 // In-memory dev store for local development when Go backend is offline
 let devPagesInitialized = false
 const devPagesMap = new Map<string, PageContent>()
+
+let devCatalogInitialized = false
+const devProductsMap = new Map<string, ContentNode>()
+const devServicesMap = new Map<string, ContentNode>()
+const devNewsMap = new Map<string, NewsItem>()
+const devCareersMap = new Map<string, Career>()
+let devNavigationItems: MenuItem[] = [...defaultMenuItems]
+let devNavigationVersion = 1
+let devRedirectsList: Array<{
+  id: string
+  code: string
+  targetUrl: string
+  title?: string
+  status: string
+  createdAt: string
+  scanCount: number
+}> = []
+let devArchiveList: ArchivedItem[] = []
+
+
+function initDevCatalog() {
+  if (devCatalogInitialized) return
+  devCatalogInitialized = true
+  try {
+    for (const [key, entry] of Object.entries(BILINGUAL_PRODUCT_CATALOG)) {
+      const enriched = enrichProductWithBilingual(null, key)
+      if (enriched) {
+        const id = entry.id || enriched.id || key
+        const item: ContentNode = { ...enriched, id, version: 1 }
+        devProductsMap.set(id, item)
+        devProductsMap.set(entry.slug, item)
+      }
+    }
+
+    for (const [key, entry] of Object.entries(BILINGUAL_SERVICE_CATALOG)) {
+      const enriched = enrichServiceWithBilingual(null, key)
+      if (enriched) {
+        const id = entry.id || enriched.id || key
+        const item: ContentNode = { ...enriched, id, version: 1 }
+        devServicesMap.set(id, item)
+        devServicesMap.set(entry.slug, item)
+      }
+    }
+
+    for (const [key, entry] of Object.entries(BILINGUAL_NEWS_CATALOG)) {
+      const enriched = enrichNewsWithBilingual(null, key)
+      if (enriched) {
+        const id = entry.id || enriched.id || key
+        const item: NewsItem = { ...enriched, id, version: 1 }
+        devNewsMap.set(id, item)
+        devNewsMap.set(entry.slug, item)
+      }
+    }
+
+    for (const [key, entry] of Object.entries(BILINGUAL_CAREER_CATALOG)) {
+      const enriched = enrichCareerWithBilingual(null, key)
+      if (enriched) {
+        const id = entry.id || enriched.id || key
+        const item: Career = { ...enriched, id, version: 1 }
+        devCareersMap.set(id, item)
+        devCareersMap.set(entry.slug, item)
+      }
+    }
+  } catch (e) {
+    console.error("Failed to initialize dev catalog:", e)
+  }
+}
 
 function initDevPages() {
   if (devPagesInitialized) return
@@ -423,6 +495,7 @@ function initDevPages() {
 
 function handleDevFallback<T>(path: string, init: RequestInit = {}): T | undefined {
   initDevPages()
+  initDevCatalog()
 
   if (path === "/profile") {
     return {
@@ -476,6 +549,72 @@ function handleDevFallback<T>(path: string, init: RequestInit = {}): T | undefin
   if (path.startsWith("/settings/")) {
     const key = path.replace("/settings/", "")
     return { id: `dev-${key}`, key, value: {}, version: 1 } as T
+  }
+
+  if (path === "/navigation") {
+    const method = (init.method || "GET").toUpperCase()
+    if (method === "GET") {
+      return {
+        items: devNavigationItems,
+        version: devNavigationVersion,
+      } as T
+    }
+
+    if (method === "PUT" || method === "PATCH") {
+      let payload: { items?: MenuItem[]; version?: number } = {}
+      try {
+        if (typeof init.body === "string") payload = JSON.parse(init.body)
+      } catch {}
+      if (Array.isArray(payload.items)) {
+        devNavigationItems = payload.items
+      }
+      devNavigationVersion += 1
+      return {
+        items: devNavigationItems,
+        version: devNavigationVersion,
+      } as T
+    }
+  }
+
+  if (path === "/redirects" || path.startsWith("/redirects?")) {
+    return {
+      data: devRedirectsList,
+      pagination: { page: 1, perPage: 20, total: devRedirectsList.length, totalPages: 1 },
+    } as T
+  }
+
+  if (path === "/redirects/dashboard") {
+    return {
+      totalLinks: devRedirectsList.length,
+      activeLinks: devRedirectsList.filter((r) => r.status === "active").length,
+      totalScans: devRedirectsList.reduce((acc, curr) => acc + (curr.scanCount || 0), 0),
+      topLinks: [],
+      recentScans: [],
+      trend: [],
+    } as T
+  }
+
+  if (path === "/archive" || path.startsWith("/archive?")) {
+    const searchParams = new URL(path, "http://localhost").searchParams
+    const q = (searchParams.get("q") ?? "").toLowerCase().trim()
+    const filtered = q
+      ? devArchiveList.filter((item) => item.title.toLowerCase().includes(q))
+      : devArchiveList
+    return { data: filtered } as T
+  }
+
+  const archiveRestoreMatch = path.match(/^\/archive\/([^/]+)\/([^/]+)\/restore$/)
+  if (archiveRestoreMatch && (init.method || "GET").toUpperCase() === "POST") {
+    const [, itemType, itemId] = archiveRestoreMatch
+    devArchiveList = devArchiveList.filter((item) => item.id !== itemId)
+    return { ok: true } as T
+  }
+
+  const archiveDeleteMatch = path.match(/^\/archive\/([^/]+)\/([^/]+)$/)
+  if (archiveDeleteMatch && (init.method || "GET").toUpperCase() === "DELETE") {
+    const [, itemType, itemId] = archiveDeleteMatch
+    devArchiveList = devArchiveList.filter((item) => item.id !== itemId)
+    return { ok: true } as T
   }
 
   // Handling /pages
@@ -577,6 +716,294 @@ function handleDevFallback<T>(path: string, init: RequestInit = {}): T | undefin
 
     devPagesMap.set(created.id, created)
     devPagesMap.set(created.key, created)
+    return created as T
+  }
+
+  // Handling /products
+  if (path === "/products" || path.startsWith("/products?")) {
+    const list = Array.from(new Set(Array.from(devProductsMap.values()).map((p) => p.id))).map((id) => devProductsMap.get(id)!)
+    return {
+      data: list,
+      pagination: {
+        page: 1,
+        perPage: 100,
+        total: list.length,
+        totalPages: 1,
+      },
+    } as T
+  }
+
+  const productMatch = path.match(/^\/products\/([^?]+)/)
+  if (productMatch) {
+    const productId = productMatch[1]
+    const method = (init.method || "GET").toUpperCase()
+
+    if (method === "GET") {
+      const item = devProductsMap.get(productId) || Array.from(devProductsMap.values()).find((p) => p.slug === productId || p.id === productId)
+      if (item) return item as T
+      return undefined
+    }
+
+    if (method === "PUT" || method === "PATCH") {
+      let payload: any = {}
+      try {
+        if (typeof init.body === "string") payload = JSON.parse(init.body)
+      } catch {}
+
+      const existing = devProductsMap.get(productId) || Array.from(devProductsMap.values()).find((p) => p.slug === productId || p.id === productId)
+      const updated: ContentNode = {
+        ...(existing || {}),
+        ...payload,
+        id: existing?.id || productId,
+        version: ((existing?.version ?? 0) || 1) + 1,
+      }
+      devProductsMap.set(updated.id, updated)
+      devProductsMap.set(updated.slug, updated)
+      return updated as T
+    }
+
+    if (method === "DELETE") {
+      devProductsMap.delete(productId)
+      return null as T
+    }
+  }
+
+  if (path === "/products" && init.method === "POST") {
+    let payload: any = {}
+    try {
+      if (typeof init.body === "string") payload = JSON.parse(init.body)
+    } catch {}
+    const newId = `dev-prod-${Date.now()}`
+    const created: ContentNode = {
+      id: newId,
+      slug: payload.slug || `prod-${Date.now()}`,
+      fullPath: payload.fullPath || payload.slug || `prod-${Date.now()}`,
+      title: payload.title || "New Product",
+      summary: payload.summary || "",
+      status: payload.status || "draft",
+      sortOrder: payload.sortOrder || 1,
+      depth: 0,
+      version: 1,
+      children: [],
+      ...payload,
+    }
+    devProductsMap.set(created.id, created)
+    devProductsMap.set(created.slug, created)
+    return created as T
+  }
+
+  // Handling /services
+  if (path === "/services" || path.startsWith("/services?")) {
+    const list = Array.from(new Set(Array.from(devServicesMap.values()).map((p) => p.id))).map((id) => devServicesMap.get(id)!)
+    return {
+      data: list,
+      pagination: {
+        page: 1,
+        perPage: 100,
+        total: list.length,
+        totalPages: 1,
+      },
+    } as T
+  }
+
+  const serviceMatch = path.match(/^\/services\/([^?]+)/)
+  if (serviceMatch) {
+    const serviceId = serviceMatch[1]
+    const method = (init.method || "GET").toUpperCase()
+
+    if (method === "GET") {
+      const item = devServicesMap.get(serviceId) || Array.from(devServicesMap.values()).find((p) => p.slug === serviceId || p.id === serviceId)
+      if (item) return item as T
+      return undefined
+    }
+
+    if (method === "PUT" || method === "PATCH") {
+      let payload: any = {}
+      try {
+        if (typeof init.body === "string") payload = JSON.parse(init.body)
+      } catch {}
+
+      const existing = devServicesMap.get(serviceId) || Array.from(devServicesMap.values()).find((p) => p.slug === serviceId || p.id === serviceId)
+      const updated: ContentNode = {
+        ...(existing || {}),
+        ...payload,
+        id: existing?.id || serviceId,
+        version: ((existing?.version ?? 0) || 1) + 1,
+      }
+      devServicesMap.set(updated.id, updated)
+      devServicesMap.set(updated.slug, updated)
+      return updated as T
+    }
+
+    if (method === "DELETE") {
+      devServicesMap.delete(serviceId)
+      return null as T
+    }
+  }
+
+  if (path === "/services" && init.method === "POST") {
+    let payload: any = {}
+    try {
+      if (typeof init.body === "string") payload = JSON.parse(init.body)
+    } catch {}
+    const newId = `dev-serv-${Date.now()}`
+    const created: ContentNode = {
+      id: newId,
+      slug: payload.slug || `serv-${Date.now()}`,
+      fullPath: payload.fullPath || payload.slug || `serv-${Date.now()}`,
+      title: payload.title || "New Service",
+      summary: payload.summary || "",
+      status: payload.status || "draft",
+      sortOrder: payload.sortOrder || 1,
+      depth: 0,
+      version: 1,
+      children: [],
+      ...payload,
+    }
+    devServicesMap.set(created.id, created)
+    devServicesMap.set(created.slug, created)
+    return created as T
+  }
+
+  // Handling /news
+  if (path === "/news" || path.startsWith("/news?")) {
+    const list = Array.from(new Set(Array.from(devNewsMap.values()).map((p) => p.id))).map((id) => devNewsMap.get(id)!)
+    return {
+      data: list,
+      pagination: {
+        page: 1,
+        perPage: 50,
+        total: list.length,
+        totalPages: 1,
+      },
+    } as T
+  }
+
+  const newsMatch = path.match(/^\/news\/([^?]+)/)
+  if (newsMatch) {
+    const newsId = newsMatch[1]
+    const method = (init.method || "GET").toUpperCase()
+
+    if (method === "GET") {
+      const item = devNewsMap.get(newsId) || Array.from(devNewsMap.values()).find((p) => p.slug === newsId || p.id === newsId)
+      if (item) return item as T
+      return undefined
+    }
+
+    if (method === "PUT" || method === "PATCH") {
+      let payload: any = {}
+      try {
+        if (typeof init.body === "string") payload = JSON.parse(init.body)
+      } catch {}
+
+      const existing = devNewsMap.get(newsId) || Array.from(devNewsMap.values()).find((p) => p.slug === newsId || p.id === newsId)
+      const updated: NewsItem = {
+        ...(existing || {}),
+        ...payload,
+        id: existing?.id || newsId,
+        version: ((existing?.version ?? 0) || 1) + 1,
+      }
+      devNewsMap.set(updated.id, updated)
+      devNewsMap.set(updated.slug, updated)
+      return updated as T
+    }
+
+    if (method === "DELETE") {
+      devNewsMap.delete(newsId)
+      return null as T
+    }
+  }
+
+  if (path === "/news" && init.method === "POST") {
+    let payload: any = {}
+    try {
+      if (typeof init.body === "string") payload = JSON.parse(init.body)
+    } catch {}
+    const newId = `dev-news-${Date.now()}`
+    const created: NewsItem = {
+      id: newId,
+      slug: payload.slug || `news-${Date.now()}`,
+      title: payload.title || "New Article",
+      excerpt: payload.excerpt || "",
+      category: payload.category || "Company",
+      status: payload.status || "draft",
+      version: 1,
+      ...payload,
+    }
+    devNewsMap.set(created.id, created)
+    devNewsMap.set(created.slug, created)
+    return created as T
+  }
+
+  // Handling /careers
+  if (path === "/careers" || path.startsWith("/careers?")) {
+    const list = Array.from(new Set(Array.from(devCareersMap.values()).map((p) => p.id))).map((id) => devCareersMap.get(id)!)
+    return {
+      data: list,
+      pagination: {
+        page: 1,
+        perPage: 50,
+        total: list.length,
+        totalPages: 1,
+      },
+    } as T
+  }
+
+  const careerMatch = path.match(/^\/careers\/([^?]+)/)
+  if (careerMatch) {
+    const careerId = careerMatch[1]
+    const method = (init.method || "GET").toUpperCase()
+
+    if (method === "GET") {
+      const item = devCareersMap.get(careerId) || Array.from(devCareersMap.values()).find((p) => p.slug === careerId || p.id === careerId)
+      if (item) return item as T
+      return undefined
+    }
+
+    if (method === "PUT" || method === "PATCH") {
+      let payload: any = {}
+      try {
+        if (typeof init.body === "string") payload = JSON.parse(init.body)
+      } catch {}
+
+      const existing = devCareersMap.get(careerId) || Array.from(devCareersMap.values()).find((p) => p.slug === careerId || p.id === careerId)
+      const updated: Career = {
+        ...(existing || {}),
+        ...payload,
+        id: existing?.id || careerId,
+        version: ((existing?.version ?? 0) || 1) + 1,
+      }
+      devCareersMap.set(updated.id, updated)
+      devCareersMap.set(updated.slug, updated)
+      return updated as T
+    }
+
+    if (method === "DELETE") {
+      devCareersMap.delete(careerId)
+      return null as T
+    }
+  }
+
+  if (path === "/careers" && init.method === "POST") {
+    let payload: any = {}
+    try {
+      if (typeof init.body === "string") payload = JSON.parse(init.body)
+    } catch {}
+    const newId = `dev-career-${Date.now()}`
+    const created: Career = {
+      id: newId,
+      slug: payload.slug || `career-${Date.now()}`,
+      title: payload.title || "New Position",
+      summary: payload.summary || "",
+      department: payload.department || "Engineering",
+      location: payload.location || "Surabaya, East Java",
+      employmentType: payload.employmentType || "full_time",
+      status: payload.status || "draft",
+      version: 1,
+      ...payload,
+    }
+    devCareersMap.set(created.id, created)
+    devCareersMap.set(created.slug, created)
     return created as T
   }
 

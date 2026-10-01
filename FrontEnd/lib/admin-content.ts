@@ -81,15 +81,26 @@ export function slugify(value: string) {
     .replace(/^-+|-+$/g, "")
 }
 
+function normalizeSpecBilingual(text: string): string {
+  if (!text) return ""
+  const normalized = text.replace(/\\r?\\n/g, "\n").trim()
+  const enIdMatch = normalized.match(/^(?:EN\s*:|\[EN\])\s*([\s\S]+?)\s*(?:\r?\n|\s*[\/|]\s*)\s*(?:ID\s*:|\[ID\])\s*([\s\S]+)$/i)
+  if (enIdMatch) {
+    return `${enIdMatch[1].trim()} / ${enIdMatch[2].trim()}`
+  }
+  return normalized.replace(/\r?\n+/g, " / ").replace(/\s{2,}/g, " ").trim()
+}
+
 export function specsFromText(value: string) {
   return value
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean)
     .reduce<Record<string, string>>((specs, line) => {
-      const [rawKey, ...rest] = line.split(":")
-      const key = rawKey?.trim()
-      const specValue = rest.join(":").trim()
+      const colonIdx = line.indexOf(":")
+      if (colonIdx === -1) return specs
+      const key = line.slice(0, colonIdx).trim()
+      const specValue = line.slice(colonIdx + 1).trim()
       if (key && specValue) specs[key] = specValue
       return specs
     }, {})
@@ -97,9 +108,14 @@ export function specsFromText(value: string) {
 
 export function specsToText(value?: Record<string, string>) {
   return Object.entries(value ?? {})
-    .map(([key, specValue]) => `${key}: ${specValue}`)
+    .map(([key, specValue]) => {
+      const cleanKey = normalizeSpecBilingual(key)
+      const cleanVal = normalizeSpecBilingual(specValue)
+      return `${cleanKey}: ${cleanVal}`
+    })
     .join("\n")
 }
+
 
 export function toDateTimeLocal(value?: string | null) {
   if (!value) return ""

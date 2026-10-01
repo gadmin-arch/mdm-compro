@@ -979,6 +979,7 @@ export function enrichServiceWithBilingual(
     status: entry.status ?? "published",
     sortOrder: entry.sortOrder ?? 1,
     depth: entry.depth ?? 0,
+    version: 1,
     children: [],
   }
 
@@ -1007,6 +1008,7 @@ export function enrichServiceWithBilingual(
 
   return {
     ...baseNode,
+    version: baseNode.version ?? 1,
     title: titleString,
     summary: summaryString,
     imageUrl: baseNode.imageUrl || entry.imageUrl,

@@ -31,10 +31,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Distributor Resmi untuk sistem enclosure industri Rittal, sistem pendingin & climate control, serta distribusi daya tegangan rendah.",
     },
     specs: {
-      "EN: Brand\nID: Merek": "Rittal",
-      "EN: Origin\nID: Asal Negara": "EN: Germany\nID: Jerman",
-      "EN: Partnership\nID: Kemitraan": "EN: Authorized Distributor\nID: Distributor Resmi",
-      "EN: Warranty\nID: Garansi": "EN: Official Manufacturer Warranty\nID: Garansi Resmi Pabrikan",
+      "Brand / Merek": "Rittal",
+      "Origin / Asal Negara": "Germany / Jerman",
+      "Partnership / Kemitraan": "Authorized Distributor / Distributor Resmi",
+      "Warranty / Garansi": "Official Manufacturer Warranty / Garansi Resmi Pabrikan",
     },
     content: {
       en: `<h3>Rittal Authorized Distribution in Indonesia</h3>
@@ -62,10 +62,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "System Integrator & Solutions Partner tersertifikasi penyedia otomasi industri, pemantauan energi, dan distribusi elektrikal terpadu.",
     },
     specs: {
-      "EN: Brand\nID: Merek": "Schneider Electric",
-      "EN: Partnership\nID: Kemitraan": "Certified System Integrator",
-      "EN: Ecosystem\nID: Ekosistem": "EcoStruxure Partner",
-      "EN: Origin\nID: Asal Negara": "France / Global",
+      "Brand / Merek": "Schneider Electric",
+      "Partnership / Kemitraan": "Certified System Integrator",
+      "Ecosystem / Ekosistem": "EcoStruxure Partner",
+      "Origin / Asal Negara": "France / Global",
     },
     content: {
       en: `<h3>Certified Schneider Electric System Integrator</h3>
@@ -93,8 +93,8 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Peralatan tegangan menengah dan rendah, switchboard, transformator, solusi kualitas daya, sinkronisasi generator, sistem proteksi, dan otomasi gardu induk—didukung layanan engineering, pengadaan, integrasi, pengujian, komisioning, serta pemeliharaan.",
     },
     specs: {
-      "EN: Category\nID: Kategori": "EN: Electrical Distribution\nID: Distribusi Kelistrikan",
-      "EN: Voltage Levels\nID: Tingkat Tegangan": "EN: MV up to 36kV, LV up to 1000V\nID: TM hingga 36kV, TR hingga 1000V",
+      "Category / Kategori": "Electrical Distribution / Distribusi Kelistrikan",
+      "Voltage Levels / Tingkat Tegangan": "MV up to 36kV, LV up to 1000V / TM hingga 36kV, TR hingga 1000V",
     },
     content: {
       en: `<h3>Complete Electrical Distribution Solutions</h3>
@@ -122,8 +122,8 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Otomasi industri, sistem PLC, visualisasi proses SCADA / HMI, dan penggerak motor (inverter/VSD).",
     },
     specs: {
-      "EN: Category\nID: Kategori": "EN: Automation & Control\nID: Otomasi & Kontrol",
-      "EN: Platforms\nID: Platform": "Schneider EcoStruxure, xArrow SCADA, Siemens, Rockwell",
+      "Category / Kategori": "Automation & Control / Otomasi & Kontrol",
+      "Platforms / Platform": "Schneider EcoStruxure, xArrow SCADA, Siemens, Rockwell",
     },
     content: {
       en: `<h3>Industrial Automation & Centralized Control</h3>
@@ -147,20 +147,34 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Enclosure & Manajemen Suhu Industri",
     },
     summary: {
-      en: "Industrial enclosures, server racks, climate control, and cooling systems for harsh manufacturing environments.",
-      id: "Enclosure industri, rak server, kontrol iklim (climate control), dan sistem pendingin untuk lingkungan operasional ekstrem.",
+      en: "Industrial enclosures, modular baying cabinets, precision climate control, cooling units, and server racks for demanding manufacturing environments.",
+      id: "Sistem enclosure industri tugas berat, kabinet modular, unit kontrol iklim (climate control), sistem pendingin presisi, dan rak server untuk lingkungan operasional ekstrem.",
     },
     specs: {
-      "EN: Category\nID: Kategori": "EN: Enclosure & Climate Control\nID: Enclosure & Kontrol Iklim",
-      "EN: Protection Rating\nID: Tingkat Proteksi": "IP55 - IP66 / NEMA 4X",
+      "Category / Kategori": "Enclosure & Climate Control / Enclosure & Manajemen Suhu",
+      "Protection Rating / Tingkat Proteksi": "IP55 - IP66 / NEMA 4X / IK10",
+      "Cooling Technology / Teknologi Pendingin": "Hybrid Heat Pipe (Blue e+) / Unit Pendingin Tertutup",
+      "Cabinet Material / Material Boks": "Sheet Steel RAL 7035 / Stainless Steel AISI 304 & 316L",
+      "Mounting Type / Tipe Pemasangan": "Wall-Mounted & Floor-Standing Bayable / Dinding & Berdiri",
+      "Operating Temperature / Rentang Suhu Kerja": "-20°C to +60°C / -20°C hingga +60°C",
+      "Certifications / Sertifikasi": "IEC 62208, IEC 60529, UL 508A, CE, RoHS",
+      "Target Applications / Aplikasi Utama": "LV Switchboards, MCC Panels, Automation Cabinets, IT Server Racks",
     },
     content: {
       en: `<h3>Industrial Enclosures & Climate Protection</h3>
 <p>Heavy-duty industrial enclosure and climate control products engineered to protect sensitive electrical and automation equipment against heat, dust, corrosive chemicals, and outdoor elements.</p>
-<p>Combining world-leading Rittal enclosures with precision cooling units, filter fans, and smart IoT thermostats, our solutions prevent component degradation, thermal tripping, and costly unscheduled downtime.</p>`,
+<p>Combining world-leading Rittal enclosures with precision cooling units, filter fans, and smart IoT thermostats, our solutions prevent component degradation, thermal tripping, and costly unscheduled downtime.</p>
+<h3>Modular Enclosure Systems</h3>
+<p>From compact wall-mounted junction boxes to full-scale bayable modular switchboard enclosures, our systems provide high structural rigidity, seismic resistance, and flexible 25 mm DIN pitch interior mounting configurations.</p>
+<h3>Precision Climate Control & Cooling</h3>
+<p>Equipped with cutting-edge hybrid heat pipe technology and speed-regulated inverter components, our cooling units deliver up to 75% energy savings while maintaining stable internal temperatures in ambient conditions up to 60°C.</p>`,
       id: `<h3>Enclosure Industri & Proteksi Suhu</h3>
 <p>Produk box panel (enclosure) industri tugas berat dan pengatur suhu yang dirancang untuk melindungi peralatan elektrikal dan otomasi sensitif dari panas, debu, zat kimia korosif, dan cuaca ekstrem.</p>
-<p>Memadukan enclosure Rittal berkelas dunia dengan unit pendingin presisi, filter fan, dan termostat pintar berbasis IoT, solusi kami mencegah penurunan kinerja komponen, trip akibat suhu berlebih, serta downtime produksi yang merugikan.</p>`,
+<p>Memadukan enclosure Rittal berkelas dunia dengan unit pendingin presisi, filter fan, dan termostat pintar berbasis IoT, solusi kami mencegah penurunan kinerja komponen, trip akibat suhu berlebih, serta downtime produksi yang merugikan.</p>
+<h3>Sistem Enclosure Modular</h3>
+<p>Mulai dari junction box dinding yang kompak hingga enclosure switchboard modular berskala besar, sistem kami menghadirkan kekakuan struktural tinggi, ketahanan seismik, serta fleksibilitas tata letak interior berbasis pola kisi 25 mm DIN.</p>
+<h3>Kontrol Iklim & Pendinginan Presisi</h3>
+<p>Dilengkapi teknologi heat pipe hibrida canggih dan inverter pengatur kecepatan kompresor, unit pendingin kami mampu menghemat energi hingga 75% sekaligus mempertahankan suhu internal yang stabil pada temperatur ruang hingga 60°C.</p>`,
     },
   },
 
@@ -180,8 +194,8 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Filter harmonisa aktif (AHF), kompensasi faktor daya, kapasitor bank, dan penganalisis kualitas daya listrik.",
     },
     specs: {
-      "EN: Category\nID: Kategori": "EN: Power Quality Solutions\nID: Solusi Kualitas Daya",
-      "EN: Mitigation\nID: Mitigasi": "THDi < 3%, Stepless Cos Phi 1.0",
+      "Category / Kategori": "Power Quality Solutions / Solusi Kualitas Daya",
+      "Mitigation / Mitigasi": "THDi < 3%, Stepless Cos Phi 1.0",
     },
     content: {
       en: `<h3>Advanced Power Quality Management</h3>
@@ -209,8 +223,8 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Panel fire alarm addressable industri, sensor detektor cerdas, perangkat notifikasi, dan solusi pemadam kebakaran terintegrasi.",
     },
     specs: {
-      "EN: Category\nID: Kategori": "EN: Fire Alarm & Suppression\nID: Fire Alarm & Proteksi Kebakaran",
-      "EN: Standards\nID: Standar": "NFPA 72, NFPA 2001, EN54, UL/FM",
+      "Category / Kategori": "Fire Alarm & Suppression / Fire Alarm & Proteksi Kebakaran",
+      "Standards / Standar": "NFPA 72, NFPA 2001, EN54, UL/FM",
     },
     content: {
       en: `<h3>Certified Industrial Fire Alarm & Suppression</h3>
@@ -238,12 +252,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Sistem enclosure besar baying resmi Rittal (VX25), enclosure kompak (AX), kotak terminal kecil (KX), dan rak server IT outdoor.",
     },
     specs: {
-      "EN: Series\nID: Seri Produk": "VX25, AX, KX, CS Toptec, IT Network Racks",
-      "EN: Frame Pitch\nID: Pola Kisi Rangka": "25 mm DIN standard symmetrical grid",
-      "EN: Protection Rating\nID: Tingkat Proteksi": "IP55 / IP66 / NEMA 4X / NEMA 12",
-      "EN: Material & Finish\nID: Material & Lapisan": "Sheet steel RAL 7035 / Stainless steel AISI 304 & 316L",
-      "EN: Certifications\nID: Sertifikasi": "IEC 62208, UL 508A, DNV-GL, CE, RoHS",
-      "EN: Target Applications\nID: Aplikasi Utama": "LV Switchboards, MCC Panels, Automation Control, IT Server Racks",
+      "Series / Seri Produk": "VX25, AX, KX, CS Toptec, IT Network Racks",
+      "Frame Pitch / Pola Kisi Rangka": "25 mm DIN standard symmetrical grid",
+      "Protection Rating / Tingkat Proteksi": "IP55 / IP66 / NEMA 4X / NEMA 12",
+      "Material & Finish / Material & Lapisan": "Sheet steel RAL 7035 / Stainless steel AISI 304 & 316L",
+      "Certifications / Sertifikasi": "IEC 62208, UL 508A, DNV-GL, CE, RoHS",
+      "Target Applications / Aplikasi Utama": "LV Switchboards, MCC Panels, Automation Control, IT Server Racks",
     },
     content: {
       en: `<h3>Rittal Modular Enclosure Architecture</h3>
@@ -277,12 +291,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Unit pendingin hibrida inovatif, thermoelectric cooler, dan penukar panas air-ke-udara hemat energi hingga 75% dengan pemantauan IoT digital.",
     },
     specs: {
-      "EN: Cooling Capacity\nID: Kapasitas Pendingin": "300 W to 5,500 W (Blue e+ & Blue e+ S)",
-      "EN: Energy Savings\nID: Penghematan Energi": "EN: Up to 75% via patented hybrid heat pipe technology\nID: Hingga 75% melalui teknologi pipa panas hibrida berpaten",
-      "EN: Refrigerant\nID: Refrigeran": "Eco-friendly R-513A / R-134a (GWP compliant)",
-      "EN: IoT Protocols\nID: Protokol IoT": "Modbus TCP, SNMP, OPC-UA, Profinet, Ethernet/IP",
-      "EN: Operating Temp\nID: Rentang Suhu Kerja": "-20°C to +60°C ambient",
-      "EN: Mounting Options\nID: Opsi Pemasangan": "Wall-mounted, roof-mounted, partial or full internal",
+      "Cooling Capacity / Kapasitas Pendingin": "300 W to 5,500 W (Blue e+ & Blue e+ S)",
+      "Energy Savings / Penghematan Energi": "Up to 75% via patented hybrid heat pipe technology / Hingga 75% melalui teknologi pipa panas hibrida berpaten",
+      "Refrigerant / Refrigeran": "Eco-friendly R-513A / R-134a (GWP compliant)",
+      "IoT Protocols / Protokol IoT": "Modbus TCP, SNMP, OPC-UA, Profinet, Ethernet/IP",
+      "Operating Temp / Rentang Suhu Kerja": "-20°C to +60°C ambient",
+      "Mounting Options / Opsi Pemasangan": "Wall-mounted, roof-mounted, partial or full internal",
     },
     content: {
       en: `<h3>Next-Generation Industrial Cooling Technology</h3>
@@ -316,11 +330,11 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Sistem distribusi daya busbar dan switchgear tegangan rendah teruji tipe (type-tested) hingga 6300A sesuai standar IEC 61439-1/-2.",
     },
     specs: {
-      "EN: Rated Current (In)\nID: Arus Pengenal (In)": "Up to 6,300 A (Ri4Power) / 2,100 A (RiLine)",
-      "EN: Short-Circuit Rating (Icw)\nID: Ketahanan Hubung Singkat": "Up to 120 kA (1s withstand)",
-      "EN: Internal Separation\nID: Pemisahan Internal": "Form 1, Form 2b, Form 3b, Form 4a, Form 4b",
-      "EN: Busbar Centers\nID: Jarak Pusat Busbar": "60 mm & 185 mm drill-free mounting systems",
-      "EN: Standards\nID: Standar": "IEC 61439-1, IEC 61439-2, DIN EN 61439",
+      "Rated Current (In) / Arus Pengenal (In)": "Up to 6,300 A (Ri4Power) / 2,100 A (RiLine)",
+      "Short-Circuit Rating (Icw) / Ketahanan Hubung Singkat": "Up to 120 kA (1s withstand)",
+      "Internal Separation / Pemisahan Internal": "Form 1, Form 2b, Form 3b, Form 4a, Form 4b",
+      "Busbar Centers / Jarak Pusat Busbar": "60 mm & 185 mm drill-free mounting systems",
+      "Standards / Standar": "IEC 61439-1, IEC 61439-2, DIN EN 61439",
     },
     content: {
       en: `<h3>Tested Power Distribution Systems</h3>
@@ -354,12 +368,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Sistem rak IT modular terstandarisasi, rak jaringan TX CableNet, Edge Data Center, dan manajemen daya Smart PDU untuk ruang IT enterprise yang andal dan terukur.",
     },
     specs: {
-      "EN: System Architecture\nID: Arsitektur Sistem": "Rittal VX IT & TX CableNet modular server & network racks",
-      "EN: Load Capacity\nID: Kapasitas Beban": "Static load up to 18,000 N (1,800 kg) / Dynamic up to 15,000 N",
-      "EN: Height & Dimensions\nID: Ketinggian & Dimensi": "15U, 24U, 42U, 47U, 52U (Width 600/800 mm, Depth 800/1000/1200 mm)",
-      "EN: Protection Rating\nID: Tingkat Proteksi": "IP20 (vented perforated doors) / IP55 (solid sheet steel doors)",
-      "EN: Cooling & Thermal\nID: Sistem Pendinginan": "LCP (Liquid Cooling Package) up to 55 kW per rack, smart cold/hot aisle containment",
-      "EN: Power & Monitoring\nID: Daya & Pemantauan": "Smart PDU (Metered/Switched/Managed) & CMC III IoT monitoring platform",
+      "System Architecture / Arsitektur Sistem": "Rittal VX IT & TX CableNet modular server & network racks",
+      "Load Capacity / Kapasitas Beban": "Static load up to 18,000 N (1,800 kg) / Dynamic up to 15,000 N",
+      "Height & Dimensions / Ketinggian & Dimensi": "15U, 24U, 42U, 47U, 52U (Width 600/800 mm, Depth 800/1000/1200 mm)",
+      "Protection Rating / Tingkat Proteksi": "IP20 (vented perforated doors) / IP55 (solid sheet steel doors)",
+      "Cooling & Thermal / Sistem Pendinginan": "LCP (Liquid Cooling Package) up to 55 kW per rack, smart cold/hot aisle containment",
+      "Power & Monitoring / Daya & Pemantauan": "Smart PDU (Metered/Switched/Managed) & CMC III IoT monitoring platform",
     },
     content: {
       en: `<h3>Rittal VX IT: The Global Platform for Modern Data Centers</h3>
@@ -397,12 +411,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Enclosure outdoor aluminium dinding ganda tahan cuaca ekstrem yang dirancang untuk telekomunikasi 5G, perkeretaapian, dan infrastruktur lalu lintas cerdas.",
     },
     specs: {
-      "EN: Enclosure Series\nID: Seri Enclosure": "CS Toptec (bayable modular) & CS New Basic (single-wall / twin-wall)",
-      "EN: Material & Finish\nID: Material & Lapisan": "AlMg3 corrosion-resistant aluminium alloy with pure polyester UV powder coating (RAL 7035)",
-      "EN: Protection Rating\nID: Tingkat Proteksi": "IP55 / IP66 according to IEC 60529, NEMA 3R / 4 / 4X",
-      "EN: Impact Resistance\nID: Ketahanan Benturan": "IK10 according to DIN EN 50102 / IEC 62262",
-      "EN: Thermal Insulation\nID: Isolasi Termal": "Twin-wall technology (chimney effect) reducing solar radiation heat transfer by > 60%",
-      "EN: Operating Range\nID: Suhu Operasi": "-33°C to +65°C ambient operating temperature",
+      "Enclosure Series / Seri Enclosure": "CS Toptec (bayable modular) & CS New Basic (single-wall / twin-wall)",
+      "Material & Finish / Material & Lapisan": "AlMg3 corrosion-resistant aluminium alloy with pure polyester UV powder coating (RAL 7035)",
+      "Protection Rating / Tingkat Proteksi": "IP55 / IP66 according to IEC 60529, NEMA 3R / 4 / 4X",
+      "Impact Resistance / Ketahanan Benturan": "IK10 according to DIN EN 50102 / IEC 62262",
+      "Thermal Insulation / Isolasi Termal": "Twin-wall technology (chimney effect) reducing solar radiation heat transfer by > 60%",
+      "Operating Range / Suhu Operasi": "-33°C to +65°C ambient operating temperature",
     },
     content: {
       en: `<h3>Engineered for Harsh Outdoor Environments</h3>
@@ -440,12 +454,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Pusat permesinan CNC digital, mesin pemotong otomatis, dan pemrosesan kabel terotomasi yang mempercepat perakitan panel switchgear hingga 85%.",
     },
     specs: {
-      "EN: Machine Range\nID: Lini Mesin": "Perforex MT 107/2101/2201 CNC Milling, Secarex AC 15 Cutting Center, Wire Terminal WT",
-      "EN: Machining Capabilities\nID: Kemampuan Permesinan": "Milling, drilling, thread tapping, deburring, and laser cutting (flat parts & fully welded enclosures)",
-      "EN: Workpiece Compatibility\nID: Kompatibilitas Benda Kerja": "Sheet steel, stainless steel AISI 304/316, aluminium, copper busbars, and plastics",
-      "EN: Software Integration\nID: Integrasi Perangkat Lunak": "Direct seamless import from Eplan Pro Panel, DXF/DWG, and 3D CAD step files",
-      "EN: Productivity Gain\nID: Peningkatan Produktivitas": "Up to 85% faster enclosure panel machining with zero manual marking errors",
-      "EN: Max Clamping Area\nID: Bidang Cekam Maksimum": "Up to 3,800 mm x 2,300 mm (Perforex MT 2201)",
+      "Machine Range / Lini Mesin": "Perforex MT 107/2101/2201 CNC Milling, Secarex AC 15 Cutting Center, Wire Terminal WT",
+      "Machining Capabilities / Kemampuan Permesinan": "Milling, drilling, thread tapping, deburring, and laser cutting (flat parts & fully welded enclosures)",
+      "Workpiece Compatibility / Kompatibilitas Benda Kerja": "Sheet steel, stainless steel AISI 304/316, aluminium, copper busbars, and plastics",
+      "Software Integration / Integrasi Perangkat Lunak": "Direct seamless import from Eplan Pro Panel, DXF/DWG, and 3D CAD step files",
+      "Productivity Gain / Peningkatan Produktivitas": "Up to 85% faster enclosure panel machining with zero manual marking errors",
+      "Max Clamping Area / Bidang Cekam Maksimum": "Up to 3,800 mm x 2,300 mm (Perforex MT 2201)",
     },
     content: {
       en: `<h3>Digitalized Switchgear Manufacturing & Panel Building 4.0</h3>
@@ -483,12 +497,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Enclosure stainless steel ultra-higienis dengan atap miring 30°, gasket silikon tanpa celah, dan proteksi IP66 / IP69K khusus untuk industri makanan, minuman, dan farmasi.",
     },
     specs: {
-      "EN: Material\nID: Material": "Stainless steel AISI 304 (1.4301) / AISI 316L (1.4404), brushed grain size 400, Ra < 0.8 µm",
-      "EN: Protection Category\nID: Kategori Proteksi": "IP66 and IP69K to IEC 60529 / DIN 40050-9 (high-pressure steam washdown)",
-      "EN: Hygiene Design Standard\nID: Standar Desain Higienis": "EHEDG compliant, DGUV tested, FDA compliant blue silicone seal (FDA 21 CFR 177.2600)",
-      "EN: Roof Incline\nID: Kemiringan Atap": "Integrated 30° forward slope prevents liquid accumulation and allows quick visual cleanliness inspections",
-      "EN: Locking Mechanism\nID: Mekanisme Penguncian": "Stainless steel HD cam lock with external hex drive; internal hinges prevent microbial traps",
-      "EN: Gasket Seal\nID: Segel Gasket": "All-round joint-free blue silicone seal, easily replaceable during sanitation cycles",
+      "Material / Material": "Stainless steel AISI 304 (1.4301) / AISI 316L (1.4404), brushed grain size 400, Ra < 0.8 µm",
+      "Protection Category / Kategori Proteksi": "IP66 and IP69K to IEC 60529 / DIN 40050-9 (high-pressure steam washdown)",
+      "Hygiene Design Standard / Standar Desain Higienis": "EHEDG compliant, DGUV tested, FDA compliant blue silicone seal (FDA 21 CFR 177.2600)",
+      "Roof Incline / Kemiringan Atap": "Integrated 30° forward slope prevents liquid accumulation and allows quick visual cleanliness inspections",
+      "Locking Mechanism / Mekanisme Penguncian": "Stainless steel HD cam lock with external hex drive; internal hinges prevent microbial traps",
+      "Gasket Seal / Segel Gasket": "All-round joint-free blue silicone seal, easily replaceable during sanitation cycles",
     },
     content: {
       en: `<h3>Ultimate Hygiene for Food, Beverage, and Pharmaceutical Production</h3>
@@ -526,12 +540,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Kotak terminal dan kabinet kontrol bersertifikasi tahan ledakan standar ATEX/IECEx Zona 1, 2, 21, dan 22 untuk lingkungan industri kimia, migas, dan kilang lepas pantai.",
     },
     specs: {
-      "EN: Explosion Protection\nID: Proteksi Ledakan": "ATEX II 2 G Ex e IIC Gb / II 2 D Ex tb IIIC Db, IECEx certified to EN 60079-0/-7/-31",
-      "EN: Hazardous Zones\nID: Zona Berbahaya": "Gas: Zone 1 and Zone 2 | Dust: Zone 21 and Zone 22",
-      "EN: Protection Category\nID: Kategori Proteksi": "IP66 to IEC 60529 (Type 4X, 12 to UL 50E)",
-      "EN: Material Options\nID: Pilihan Material": "AISI 316L stainless steel (1.4404) or electrophoretic dipcoat-primed sheet steel with powder coating",
-      "EN: Operating Temperature\nID: Suhu Operasional": "-30°C to +80°C with silicone/foamed PU seals engineered for harsh climates",
-      "EN: Gland Plates & Accessories\nID: Pelat Kelenjar & Aksesori": "Integrated brass/stainless steel ATEX gland plates, earth studs, and Ex-approved viewing windows",
+      "Explosion Protection / Proteksi Ledakan": "ATEX II 2 G Ex e IIC Gb / II 2 D Ex tb IIIC Db, IECEx certified to EN 60079-0/-7/-31",
+      "Hazardous Zones / Zona Berbahaya": "Gas: Zone 1 and Zone 2 | Dust: Zone 21 and Zone 22",
+      "Protection Category / Kategori Proteksi": "IP66 to IEC 60529 (Type 4X, 12 to UL 50E)",
+      "Material Options / Pilihan Material": "AISI 316L stainless steel (1.4404) or electrophoretic dipcoat-primed sheet steel with powder coating",
+      "Operating Temperature / Suhu Operasional": "-30°C to +80°C with silicone/foamed PU seals engineered for harsh climates",
+      "Gland Plates & Accessories / Pelat Kelenjar & Aksesori": "Integrated brass/stainless steel ATEX gland plates, earth studs, and Ex-approved viewing windows",
     },
     content: {
       en: `<h3>Certified Safety in Potentially Explosive Atmospheres</h3>
@@ -569,12 +583,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Housing panel kontrol operator ergonomis (Comfort Panel, Optipanel) dan sistem lengan penyangga modular untuk interaksi mesin-operator optimal di lantai produksi.",
     },
     specs: {
-      "EN: Housing Types\nID: Tipe Housing": "Comfort Panel, Optipanel, Compact Panel, and Command Panels with custom front foil cutouts",
-      "EN: Support Arm System\nID: Sistem Lengan Penyangga": "CP 60 (up to 40 kg), CP 120 (up to 120 kg), and CP 180 (heavy-duty up to 180 kg) modular aluminum profiles",
-      "EN: Rotation & Ergonomics\nID: Rotasi & Ergonomi": "Integrated swivel angles up to 310° with adjustable rotation stops and tilt adapters (±45°)",
-      "EN: Cable Management\nID: Manajemen Kabel": "Spacious internal cable routing channel with removable clip covers for pre-terminated HDMI/Ethernet connectors",
-      "EN: Protection Rating\nID: Tingkat Proteksi": "IP65 to IEC 60529 between housing and support arm connection",
-      "EN: Material & Finish\nID: Material & Lapisan": "Extruded aluminium enclosure profiles with die-cast zinc corner caps, powder-coated in RAL 7035 / RAL 7024",
+      "Housing Types / Tipe Housing": "Comfort Panel, Optipanel, Compact Panel, and Command Panels with custom front foil cutouts",
+      "Support Arm System / Sistem Lengan Penyangga": "CP 60 (up to 40 kg), CP 120 (up to 120 kg), and CP 180 (heavy-duty up to 180 kg) modular aluminum profiles",
+      "Rotation & Ergonomics / Rotasi & Ergonomi": "Integrated swivel angles up to 310° with adjustable rotation stops and tilt adapters (±45°)",
+      "Cable Management / Manajemen Kabel": "Spacious internal cable routing channel with removable clip covers for pre-terminated HDMI/Ethernet connectors",
+      "Protection Rating / Tingkat Proteksi": "IP65 to IEC 60529 between housing and support arm connection",
+      "Material & Finish / Material & Lapisan": "Extruded aluminium enclosure profiles with die-cast zinc corner caps, powder-coated in RAL 7035 / RAL 7024",
     },
     content: {
       en: `<h3>Ergonomic Human-Machine Interface at the Heart of Production</h3>
@@ -612,12 +626,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Sistem papan busbar ultra-kompak dengan proteksi sentuh aman IP2X dan koneksi snap-on tanpa perkakas, dirancang untuk kabinet kontrol ringkas dan sub-distribusi terdesentralisasi.",
     },
     specs: {
-      "EN: Rated Operating Current (Ie)\nID: Arus Operasional Pengenal (Ie)": "Up to 125 A (690 V AC / 1500 V DC)",
-      "EN: Short-Circuit Withstand (Ipk)\nID: Ketahanan Hubung Singkat (Ipk)": "Up to 25 kA (surge withstand strength)",
-      "EN: Touch Protection\nID: Proteksi Sentuh Aman": "IP2XB touch-safe shrouding across all board slots to IEC 60529",
-      "EN: Mounting & Connection\nID: Pemasangan & Koneksi": "Push-in clamp connection technology, drill-free snap-on mounting onto 35 mm DIN rails or mounting plates",
-      "EN: Pitch & Widths\nID: Jarak Pitch & Lebar": "Standard 4.5 mm pitch grid (Board widths: 225 mm, 405 mm, 675 mm, 855 mm)",
-      "EN: Component Adapters\nID: Adaptor Komponen": "Adapters for motor circuit breakers, contactors, and miniature circuit breakers (MCB) from 16 A to 63 A",
+      "Rated Operating Current (Ie) / Arus Operasional Pengenal (Ie)": "Up to 125 A (690 V AC / 1500 V DC)",
+      "Short-Circuit Withstand (Ipk) / Ketahanan Hubung Singkat (Ipk)": "Up to 25 kA (surge withstand strength)",
+      "Touch Protection / Proteksi Sentuh Aman": "IP2XB touch-safe shrouding across all board slots to IEC 60529",
+      "Mounting & Connection / Pemasangan & Koneksi": "Push-in clamp connection technology, drill-free snap-on mounting onto 35 mm DIN rails or mounting plates",
+      "Pitch & Widths / Jarak Pitch & Lebar": "Standard 4.5 mm pitch grid (Board widths: 225 mm, 405 mm, 675 mm, 855 mm)",
+      "Component Adapters / Adaptor Komponen": "Adapters for motor circuit breakers, contactors, and miniature circuit breakers (MCB) from 16 A to 63 A",
     },
     content: {
       en: `<h3>Maximum Power Density in Minimal Space</h3>
@@ -655,12 +669,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Platform busbar standar jarak 60 mm dan 185 mm dengan adaptor komponen OM bebas bor, penutup aman sentuh, dan sakelar pemutus sekring NH hingga 1600 A.",
     },
     specs: {
-      "EN: Busbar Center Distances\nID: Jarak Pusat Busbar": "60 mm system (up to 1600 A) and 185 mm system (up to 2100 A)",
-      "EN: Busbar Profiles Supported\nID: Profil Busbar Didukung": "Flat copper bars (12x5 mm up to 30x10 mm) and special Rittal PLS 800/1600 profiled copper bars",
-      "EN: Rated Short-Time Withstand (Icw)\nID: Ketahanan Arus Hubung Singkat (Icw)": "Up to 50 kA (1s withstand) to IEC 61439-1",
-      "EN: Component Adapters\nID: Adaptor Komponen": "OM adapters with tension spring clamps, CB circuit breaker adapters up to 630 A, connection adaptors up to 800 A",
-      "EN: Fuse-Switch Disconnectors\nID: Sakelar Pemutus Sekring": "RiLine NH slimline fuse-switch disconnectors size 000, 00, 1, 2, and 3 with electronic fuse monitoring",
-      "EN: Degree of Protection\nID: Derajat Proteksi": "IP2X touch protection with base trays, top cover profiles, and end covers",
+      "Busbar Center Distances / Jarak Pusat Busbar": "60 mm system (up to 1600 A) and 185 mm system (up to 2100 A)",
+      "Busbar Profiles Supported / Profil Busbar Didukung": "Flat copper bars (12x5 mm up to 30x10 mm) and special Rittal PLS 800/1600 profiled copper bars",
+      "Rated Short-Time Withstand (Icw) / Ketahanan Arus Hubung Singkat (Icw)": "Up to 50 kA (1s withstand) to IEC 61439-1",
+      "Component Adapters / Adaptor Komponen": "OM adapters with tension spring clamps, CB circuit breaker adapters up to 630 A, connection adaptors up to 800 A",
+      "Fuse-Switch Disconnectors / Sakelar Pemutus Sekring": "RiLine NH slimline fuse-switch disconnectors size 000, 00, 1, 2, and 3 with electronic fuse monitoring",
+      "Degree of Protection / Derajat Proteksi": "IP2X touch protection with base trays, top cover profiles, and end covers",
     },
     content: {
       en: `<h3>The Global Standard for Industrial Motor Control and Power Panels</h3>
@@ -698,12 +712,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Platform busbar utama arus tinggi untuk switchgear VX25 Ri4Power, memberikan ketahanan hubung singkat tersertifikasi hingga 120 kA (1s) dan kapasitas arus hingga 6300 A.",
     },
     specs: {
-      "EN: Rated Current (In)\nID: Arus Pengenal (In)": "Maxi-PLS: 1600 A to 4000 A | Flat-PLS: 2500 A up to 6300 A",
-      "EN: Rated Short-Time Withstand (Icw)\nID: Ketahanan Arus Hubung Singkat (Icw)": "Up to 120 kA (1 s) / Peak short-circuit withstand (Ipk) up to 264 kA",
-      "EN: Busbar Profile Engineering\nID: Rekayasa Profil Busbar": "Maxi-PLS specially contoured E-Cu profile with T-grooves; Flat-PLS up to 4x 120x10 mm laminated copper bars",
-      "EN: Switchgear Enclosure Integration\nID: Integrasi Kabinet Switchgear": "Designed for VX25 Ri4Power low-voltage switchgear assemblies (Form 1 to Form 4b to IEC 61439-1/-2)",
-      "EN: Busbar Locations\nID: Lokasi Pemasangan Busbar": "Top roof section, rear upper/lower section, or vertical distribution busbar zone",
-      "EN: Connection Technology\nID: Teknologi Sambungan": "Drill-free T-head bolts for Maxi-PLS; heavy-duty clamping claw brackets for Flat-PLS with calibrated torque indicators",
+      "Rated Current (In) / Arus Pengenal (In)": "Maxi-PLS: 1600 A to 4000 A | Flat-PLS: 2500 A up to 6300 A",
+      "Rated Short-Time Withstand (Icw) / Ketahanan Arus Hubung Singkat (Icw)": "Up to 120 kA (1 s) / Peak short-circuit withstand (Ipk) up to 264 kA",
+      "Busbar Profile Engineering / Rekayasa Profil Busbar": "Maxi-PLS specially contoured E-Cu profile with T-grooves; Flat-PLS up to 4x 120x10 mm laminated copper bars",
+      "Switchgear Enclosure Integration / Integrasi Kabinet Switchgear": "Designed for VX25 Ri4Power low-voltage switchgear assemblies (Form 1 to Form 4b to IEC 61439-1/-2)",
+      "Busbar Locations / Lokasi Pemasangan Busbar": "Top roof section, rear upper/lower section, or vertical distribution busbar zone",
+      "Connection Technology / Teknologi Sambungan": "Drill-free T-head bolts for Maxi-PLS; heavy-duty clamping claw brackets for Flat-PLS with calibrated torque indicators",
     },
     content: {
       en: `<h3>High-Performance Main Busbar Architecture for Heavy Industry</h3>
@@ -741,12 +755,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Kipas filter enclosure berefisiensi tinggi dengan teknologi aliran diagonal, instalasi snap-in tanpa alat, dan proteksi partikel halus hingga IP55 / NEMA 12.",
     },
     specs: {
-      "EN: Air Throughput (Unimpeded)\nID: Laju Aliran Udara Bebas": "20 m³/h up to 900 m³/h (Diagonal fan motor technology)",
-      "EN: Protection Category\nID: Kategori Proteksi": "IP54 standard / IP55 with fine filter mat (to IEC 60529 / UL Type 12)",
-      "EN: Motor Technology\nID: Teknologi Motor Kipas": "Energy-efficient EC motor with speed regulation (0-10V / PWM) and DC/AC shaded pole motors",
-      "EN: Installation & Maintenance\nID: Pemasangan & Pemeliharaan": "Tool-free snap-in latching mechanism and hinged louvred grille for 10-second filter mat replacement",
-      "EN: Available Variants\nID: Varian Tersedia": "Standard RAL 7035, EMC shielded RF versions, Hose-proof hoods (IP56), Roof-mounted extraction fans",
-      "EN: Operating Temperatures\nID: Rentang Suhu Operasi": "-30°C to +55°C ambient temperature rating",
+      "Air Throughput (Unimpeded) / Laju Aliran Udara Bebas": "20 m³/h up to 900 m³/h (Diagonal fan motor technology)",
+      "Protection Category / Kategori Proteksi": "IP54 standard / IP55 with fine filter mat (to IEC 60529 / UL Type 12)",
+      "Motor Technology / Teknologi Motor Kipas": "Energy-efficient EC motor with speed regulation (0-10V / PWM) and DC/AC shaded pole motors",
+      "Installation & Maintenance / Pemasangan & Pemeliharaan": "Tool-free snap-in latching mechanism and hinged louvred grille for 10-second filter mat replacement",
+      "Available Variants / Varian Tersedia": "Standard RAL 7035, EMC shielded RF versions, Hose-proof hoods (IP56), Roof-mounted extraction fans",
+      "Operating Temperatures / Rentang Suhu Operasi": "-30°C to +55°C ambient temperature rating",
     },
     content: {
       en: `<h3>High-Performance Forced Air Circulation with Diagonal Fan Technology</h3>
@@ -784,12 +798,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Solusi pendinginan sirkuit tertutup berbasis cairan untuk lingkungan ekstrem hingga +70°C, debu pekat, uap oli mesin, dan beban termal tinggi 300 W hingga 40 kW.",
     },
     specs: {
-      "EN: Cooling Capacity\nID: Kapasitas Pendinginan": "Heat Exchangers: 300 W to 10,000 W | Blue e+ Chillers: 1 kW up to 40 kW",
-      "EN: Max Ambient Temperature\nID: Suhu Lingkungan Maksimum": "Up to +70°C ambient operation without performance de-rating",
-      "EN: Water Circuit Connections\nID: Sambungan Sirkuit Air": "G 3/8\" to G 1\" stainless steel / brass quick-connect threaded fittings",
-      "EN: Enclosure Protection\nID: Proteksi Enclosure": "Maintains IP55 hermetic seal to IEC 60529 (no ambient factory air enters cabinet)",
-      "EN: Chiller Compressor & Inverter\nID: Kompresor Chiller & Inverter": "Speed-regulated DC inverter compressor and electronic expansion valve (EEV)",
-      "EN: Digital Interfaces\nID: Antarmuka Digital": "Comfort Controller with digital display, Modbus TCP, OPC-UA, and NFC diagnostics",
+      "Cooling Capacity / Kapasitas Pendinginan": "Heat Exchangers: 300 W to 10,000 W | Blue e+ Chillers: 1 kW up to 40 kW",
+      "Max Ambient Temperature / Suhu Lingkungan Maksimum": "Up to +70°C ambient operation without performance de-rating",
+      "Water Circuit Connections / Sambungan Sirkuit Air": "G 3/8\" to G 1\" stainless steel / brass quick-connect threaded fittings",
+      "Enclosure Protection / Proteksi Enclosure": "Maintains IP55 hermetic seal to IEC 60529 (no ambient factory air enters cabinet)",
+      "Chiller Compressor & Inverter / Kompresor Chiller & Inverter": "Speed-regulated DC inverter compressor and electronic expansion valve (EEV)",
+      "Digital Interfaces / Antarmuka Digital": "Comfort Controller with digital display, Modbus TCP, OPC-UA, and NFC diagnostics",
     },
     content: {
       en: `<h3>Extreme Climate Control for Severe Industrial Environments</h3>
@@ -827,12 +841,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Pemanas konveksi PTC otomatis, pemanas fan, dan higrostat digital presisi untuk mencegah tetesan air kondensasi dan korosi fatal di dalam panel listrik.",
     },
     specs: {
-      "EN: Heating Output\nID: Kapasitas Pemanasan": "Continuous heating from 10 W to 800 W (PTC natural convection and fan-assisted heating)",
-      "EN: Heating Technology\nID: Teknologi Elemen Pemanas": "Self-regulating Positive Temperature Coefficient (PTC) ceramic heating elements in extruded aluminum heatsinks",
-      "EN: Relative Humidity Control\nID: Pengendalian Kelembaban Relatif": "Digital/mechanical hygrostats adjustable from 40% to 90% RH with dew-point tracking",
-      "EN: Temperature Control\nID: Pengendalian Suhu": "Bimetallic snap-action thermostats (NO/NC) and dual electronic thermostat-hygrostat combos (-20°C to +80°C)",
-      "EN: Mounting & Connection\nID: Pemasangan & Koneksi": "Snap-on mounting onto 35 mm DIN rails (EN 60715) with spring-loaded push-in wiring terminals",
-      "EN: Electrical Certifications\nID: Sertifikasi Elektrikal": "VDE, UL Listed, CE, EAC, RoHS compliant with touch-safe insulated plastic casing",
+      "Heating Output / Kapasitas Pemanasan": "Continuous heating from 10 W to 800 W (PTC natural convection and fan-assisted heating)",
+      "Heating Technology / Teknologi Elemen Pemanas": "Self-regulating Positive Temperature Coefficient (PTC) ceramic heating elements in extruded aluminum heatsinks",
+      "Relative Humidity Control / Pengendalian Kelembaban Relatif": "Digital/mechanical hygrostats adjustable from 40% to 90% RH with dew-point tracking",
+      "Temperature Control / Pengendalian Suhu": "Bimetallic snap-action thermostats (NO/NC) and dual electronic thermostat-hygrostat combos (-20°C to +80°C)",
+      "Mounting & Connection / Pemasangan & Koneksi": "Snap-on mounting onto 35 mm DIN rails (EN 60715) with spring-loaded push-in wiring terminals",
+      "Electrical Certifications / Sertifikasi Elektrikal": "VDE, UL Listed, CE, EAC, RoHS compliant with touch-safe insulated plastic casing",
     },
     content: {
       en: `<h3>Preventing Destructive Dew-Point Condensation in Industrial Enclosures</h3>
@@ -870,12 +884,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Pusat permesinan laser 3D mutakhir untuk pemotongan cepat tanpa geram (burr-free) dan tanpa kontak pada panel lembaran maupun kubikal utuh berbahan stainless steel, baja, dan aluminium.",
     },
     specs: {
-      "EN: Machining Capability\nID: Kapabilitas Permesinan": "3D contactless cutting of cubic enclosures and flat parts (doors, side panels, mounting plates)",
-      "EN: Supported Materials\nID: Material yang Didukung": "Stainless steel (1.4301 / AISI 304, AISI 316), sheet steel, aluminum, powder-coated enclosures, and plastics",
-      "EN: Workpiece Dimensions (WxHxD)\nID: Dimensi Benda Kerja (PxTxL)": "Enclosures up to 1,270 x 2,250 x 800 mm; flat parts up to 2,800 x 1,250 mm",
-      "EN: Laser Source & Quality\nID: Sumber Laser & Kualitas": "Fiber laser up to 3 kW with automatic focus control and narrow cutting kerf (<0.2 mm)",
-      "EN: Surface Finish Quality\nID: Kualitas Permukaan Hasil Potong": "100% burr-free cut edges without paint flaking, thermal deformation, or tarnishing on stainless steel",
-      "EN: CAD/CAM & Software Integration\nID: Integrasi Perangkat Lunak & CAD/CAM": "Direct native import from EPLAN Pro Panel, RiPanel Processing, standard DXF and DWG formats",
+      "Machining Capability / Kapabilitas Permesinan": "3D contactless cutting of cubic enclosures and flat parts (doors, side panels, mounting plates)",
+      "Supported Materials / Material yang Didukung": "Stainless steel (1.4301 / AISI 304, AISI 316), sheet steel, aluminum, powder-coated enclosures, and plastics",
+      "Workpiece Dimensions (WxHxD) / Dimensi Benda Kerja (PxTxL)": "Enclosures up to 1,270 x 2,250 x 800 mm; flat parts up to 2,800 x 1,250 mm",
+      "Laser Source & Quality / Sumber Laser & Kualitas": "Fiber laser up to 3 kW with automatic focus control and narrow cutting kerf (<0.2 mm)",
+      "Surface Finish Quality / Kualitas Permukaan Hasil Potong": "100% burr-free cut edges without paint flaking, thermal deformation, or tarnishing on stainless steel",
+      "CAD/CAM & Software Integration / Integrasi Perangkat Lunak & CAD/CAM": "Direct native import from EPLAN Pro Panel, RiPanel Processing, standard DXF and DWG formats",
     },
     content: {
       en: `<h3>Next-Generation 3D Laser Enclosure Machining for Switchgear Manufacturing</h3>
@@ -913,12 +927,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Mesin perakitan kawat otomatis kompak yang melakukan pemotongan presisi, pengupasan isolasi, crimping ferrule, dan pencetakan inkjet hingga 8 kali lebih cepat dibanding metode manual.",
     },
     specs: {
-      "EN: Processing Capability\nID: Kapabilitas Pemrosesan": "Automated wire feeding, cutting to length, stripping, ultrasonic/ferrule crimping, and dual inkjet printing",
-      "EN: Wire Cross-Sections\nID: Penampang Kawat yang Didukung": "0.5 mm² to 6.0 mm² (AWG 20 to AWG 10) single-core flexible conductors",
-      "EN: Wire Processing Speed\nID: Kecepatan Pemrosesan Kawat": "Up to 8x faster than manual wiring; produces up to 36 different wire types sequentially",
-      "EN: Wire Sorting & Storage\nID: Sistem Penyortiran & Rak Penampung": "13-track rail lift storage magazines sorting finished wires by order, destination, or wiring sequence",
-      "EN: Identification & Marking\nID: Identifikasi & Penandaan": "White and black thermo-inkjet wire printing on insulation with source/target and terminal designation",
-      "EN: Software & CAE Integration\nID: Integrasi Perangkat Lunak & CAE": "Direct digital connectivity with EPLAN Smart Wiring, EPLAN Pro Panel, and CSV/XML wire lists",
+      "Processing Capability / Kapabilitas Pemrosesan": "Automated wire feeding, cutting to length, stripping, ultrasonic/ferrule crimping, and dual inkjet printing",
+      "Wire Cross-Sections / Penampang Kawat yang Didukung": "0.5 mm² to 6.0 mm² (AWG 20 to AWG 10) single-core flexible conductors",
+      "Wire Processing Speed / Kecepatan Pemrosesan Kawat": "Up to 8x faster than manual wiring; produces up to 36 different wire types sequentially",
+      "Wire Sorting & Storage / Sistem Penyortiran & Rak Penampung": "13-track rail lift storage magazines sorting finished wires by order, destination, or wiring sequence",
+      "Identification & Marking / Identifikasi & Penandaan": "White and black thermo-inkjet wire printing on insulation with source/target and terminal designation",
+      "Software & CAE Integration / Integrasi Perangkat Lunak & CAE": "Direct digital connectivity with EPLAN Smart Wiring, EPLAN Pro Panel, and CSV/XML wire lists",
     },
     content: {
       en: `<h3>Accelerating Control Panel Enclosure Wiring by Up to Eight Times</h3>
@@ -956,12 +970,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Meja kerja elektro-hidrolik ergonomis dan mobile untuk pembengkokan presisi, pelubangan hidrolik, dan pemotongan busbar tembaga serta aluminium padat hingga ukuran 120 x 12 mm.",
     },
     specs: {
-      "EN: Machining Operations\nID: Operasi Permesinan": "Precision cutting, hydraulic hole punching, and angle bending on a single ergonomic station",
-      "EN: Max. Busbar Dimensions\nID: Dimensi Maksimum Busbar": "Up to 120 mm width and 12 mm thickness (copper Cu and aluminum Al busbars)",
-      "EN: Punching Capabilities\nID: Kapabilitas Pelubangan (Punching)": "Round punches Ø 6.6 mm to Ø 21.5 mm, slotted hole punches up to 21 x 18 mm with laser centering pointer",
-      "EN: Bending Accuracy & Features\nID: Akurasi & Fitur Pembengkokan": "Bending angle 0° to 90° with digital electronic angle measurement and automatic springback compensation",
-      "EN: Hydraulic Drive System\nID: Sistem Penggerak Hidrolik": "Integrated 230 V / 400 V electro-hydraulic power pack generating up to 700 bar operating pressure",
-      "EN: Mobility & Ergonomics\nID: Mobilitas & Ergonomi": "Heavy-duty industrial casters with swivel brakes, pull-out side roller supports, and built-in waste collection drawers",
+      "Machining Operations / Operasi Permesinan": "Precision cutting, hydraulic hole punching, and angle bending on a single ergonomic station",
+      "Max. Busbar Dimensions / Dimensi Maksimum Busbar": "Up to 120 mm width and 12 mm thickness (copper Cu and aluminum Al busbars)",
+      "Punching Capabilities / Kapabilitas Pelubangan (Punching)": "Round punches Ø 6.6 mm to Ø 21.5 mm, slotted hole punches up to 21 x 18 mm with laser centering pointer",
+      "Bending Accuracy & Features / Akurasi & Fitur Pembengkokan": "Bending angle 0° to 90° with digital electronic angle measurement and automatic springback compensation",
+      "Hydraulic Drive System / Sistem Penggerak Hidrolik": "Integrated 230 V / 400 V electro-hydraulic power pack generating up to 700 bar operating pressure",
+      "Mobility & Ergonomics / Mobilitas & Ergonomi": "Heavy-duty industrial casters with swivel brakes, pull-out side roller supports, and built-in waste collection drawers",
     },
     content: {
       en: `<h3>Professional Solid Copper Busbar Fabrication for Power Distribution Enclosures</h3>
@@ -999,12 +1013,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Rak jaringan dan server IT dengan konsep perutean kabel atap 'waterfall' berpaten, menjaga radius lekukan kabel fiber optik dan tembaga dengan instalasi interior cepat tanpa perkakas.",
     },
     specs: {
-      "EN: System Architecture\nID: Arsitektur Sistem": "Welded torsion-free steel frame with dynamic 'waterfall' cable routing over the roof plate",
-      "EN: Load Capacity\nID: Kapasitas Beban": "Static load capacity up to 15,000 N (1,500 kg); dynamic load up to 10,000 N",
-      "EN: Dimensions & Form Factors\nID: Dimensi & Pilihan Ukuran": "Heights: 24U, 42U, 47U | Widths: 600 mm & 800 mm | Depths: 800 mm & 1,000 mm",
-      "EN: Door Configurations\nID: Konfigurasi Pintu": "Glazed front door with 3 mm toughened safety glass or 78% vented perforated sheet steel door for airflow",
-      "EN: Cable Routing Concept\nID: Konsep Manajemen Kabel": "Moulded plastic waterfall arches ensure compliance with minimum cable bending radius (copper & fiber)",
-      "EN: Standards & Protection\nID: Standar & Kategori Proteksi": "IP20 to IEC 60529, EIA-310-E, DIN EN 61587-1, RoHs and UL 2416 compliant",
+      "System Architecture / Arsitektur Sistem": "Welded torsion-free steel frame with dynamic 'waterfall' cable routing over the roof plate",
+      "Load Capacity / Kapasitas Beban": "Static load capacity up to 15,000 N (1,500 kg); dynamic load up to 10,000 N",
+      "Dimensions & Form Factors / Dimensi & Pilihan Ukuran": "Heights: 24U, 42U, 47U | Widths: 600 mm & 800 mm | Depths: 800 mm & 1,000 mm",
+      "Door Configurations / Konfigurasi Pintu": "Glazed front door with 3 mm toughened safety glass or 78% vented perforated sheet steel door for airflow",
+      "Cable Routing Concept / Konsep Manajemen Kabel": "Moulded plastic waterfall arches ensure compliance with minimum cable bending radius (copper & fiber)",
+      "Standards & Protection / Standar & Kategori Proteksi": "IP20 to IEC 60529, EIA-310-E, DIN EN 61587-1, RoHs and UL 2416 compliant",
     },
     content: {
       en: `<h3>Next-Level Network Infrastructure with Patented 'Waterfall' Cable Management</h3>
@@ -1042,12 +1056,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Unit distribusi daya cerdas untuk rak server zero-U dengan pengukuran energi kelas billing (EN 62053-21 Kelas 1), remote switching per-outlet, proteksi RCM Tipe B, dan konektivitas IoT CMC III.",
     },
     specs: {
-      "EN: PDU Variant Portfolio\nID: Varian Portofolio PDU": "Basic, Metered (phase-infeed), Metered Plus (per-outlet), Switched (remote toggle), Managed (metered + switched)",
-      "EN: Form Factor & Mounting\nID: Faktor Bentuk & Pemasangan": "Slim aluminum profile for tool-free vertical zero-U mounting in VX IT and TX CableNet server racks",
-      "EN: Socket Configurations\nID: Konfigurasi Soket Outlet": "Combinations of IEC 60320 C13 (10 A) and C19 (16 A) with patented dual mechanical locking mechanism",
-      "EN: Metering & Accuracy\nID: Pengukuran & Akurasi Energi": "Billing-grade measurement accuracy Class 1 (±1%) compliant with EN 62053-21 (kWh, kW, V, A, PF, THD)",
-      "EN: Safety & Residual Current\nID: Fitur Keamanan & Arus Sisa": "Integrated AC/DC sensitive Residual Current Monitoring (RCM Type B) and Type 3 surge arresters",
-      "EN: Network & IoT Protocols\nID: Protokol Jaringan & IoT": "Gigabit Ethernet, SNMPv1/v2c/v3, Modbus TCP, OPC-UA, IPv6, RESTful API, and CAN-bus sensor connectivity",
+      "PDU Variant Portfolio / Varian Portofolio PDU": "Basic, Metered (phase-infeed), Metered Plus (per-outlet), Switched (remote toggle), Managed (metered + switched)",
+      "Form Factor & Mounting / Faktor Bentuk & Pemasangan": "Slim aluminum profile for tool-free vertical zero-U mounting in VX IT and TX CableNet server racks",
+      "Socket Configurations / Konfigurasi Soket Outlet": "Combinations of IEC 60320 C13 (10 A) and C19 (16 A) with patented dual mechanical locking mechanism",
+      "Metering & Accuracy / Pengukuran & Akurasi Energi": "Billing-grade measurement accuracy Class 1 (±1%) compliant with EN 62053-21 (kWh, kW, V, A, PF, THD)",
+      "Safety & Residual Current / Fitur Keamanan & Arus Sisa": "Integrated AC/DC sensitive Residual Current Monitoring (RCM Type B) and Type 3 surge arresters",
+      "Network & IoT Protocols / Protokol Jaringan & IoT": "Gigabit Ethernet, SNMPv1/v2c/v3, Modbus TCP, OPC-UA, IPv6, RESTful API, and CAN-bus sensor connectivity",
     },
     content: {
       en: `<h3>Intelligent Power Management for Mission-Critical Data Center Enclosures</h3>
@@ -1085,12 +1099,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Sistem pendingin cair berdensitas tinggi berbasis rak dan deret (row-based) berdaya hingga 55 kW per rak server menggunakan air dingin (CW) atau refrigeran (DX) tanpa jejak panas ke ruangan.",
     },
     specs: {
-      "EN: Cooling Output\nID: Kapasitas Pendinginan": "From 12 kW up to 55 kW per rack (LCP Rack CW/DX, LCP Inline CW/DX, and LCP Rear Door CW)",
-      "EN: Cooling Media & Technology\nID: Media Pendingin & Teknologi": "Chilled water (CW) closed circuit or direct expansion refrigerant (DX) with inverter-driven scroll compressor",
-      "EN: Airflow Configuration\nID: Konfigurasi Aliran Udara": "Closed-loop rack cooling (LCP Rack) or open hot/cold aisle containment row cooling (LCP Inline)",
-      "EN: Fan Architecture\nID: Arsitektur Kipas": "Redundant EC fans with N+1 hot-swappable replacement during live IT operations",
-      "EN: Temperature Regulation\nID: Regulasi Suhu": "Continuous server intake temperature monitoring with stepless 0-10 V EC fan & motorized water valve control",
-      "EN: Monitoring & Safety\nID: Pemantauan & Keamanan": "Integrated optical/conductive water leak detection, condensate drip tray with float switch, SNMP/Modbus/BACnet",
+      "Cooling Output / Kapasitas Pendinginan": "From 12 kW up to 55 kW per rack (LCP Rack CW/DX, LCP Inline CW/DX, and LCP Rear Door CW)",
+      "Cooling Media & Technology / Media Pendingin & Teknologi": "Chilled water (CW) closed circuit or direct expansion refrigerant (DX) with inverter-driven scroll compressor",
+      "Airflow Configuration / Konfigurasi Aliran Udara": "Closed-loop rack cooling (LCP Rack) or open hot/cold aisle containment row cooling (LCP Inline)",
+      "Fan Architecture / Arsitektur Kipas": "Redundant EC fans with N+1 hot-swappable replacement during live IT operations",
+      "Temperature Regulation / Regulasi Suhu": "Continuous server intake temperature monitoring with stepless 0-10 V EC fan & motorized water valve control",
+      "Monitoring & Safety / Pemantauan & Keamanan": "Integrated optical/conductive water leak detection, condensate drip tray with float switch, SNMP/Modbus/BACnet",
     },
     content: {
       en: `<h3>High-Density Liquid Cooling for AI, HPC, and Mission-Critical Server Racks</h3>
@@ -1132,12 +1146,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Lampu LED sistem enclosure inovatif dengan lensa optik Fresnel untuk penerangan panel terarah (400 hingga 1200 lm), konektor putar universal, sensor gerak terintegrasi, dan opsi pemasangan magnetik.",
     },
     specs: {
-      "EN: Luminous Flux\nID: Fluks Cahaya": "400 lm, 600 lm, 900 lm, up to 1,200 lm (high-efficacy daylight white 4000 K)",
-      "EN: Optical Light Distribution\nID: Distribusi Cahaya Optik": "Fresnel optical lens directing 100% of light onto the mounting plate and bottom enclosure area",
-      "EN: Operating Voltage\nID: Tegangan Operasi": "Wide-range 100 V – 240 V AC (50/60 Hz) or extra-low voltage 24 V DC",
-      "EN: Switching & Automation\nID: Metode Pengaktifan & Otomasi": "Integrated 90° PIR motion detector, door-operated switch, or continuous on/off push button",
-      "EN: Mounting Flexibility\nID: Fleksibilitas Pemasangan": "Direct clip-in onto 25 mm system pitch, magnetic clamp attachment, or screw-fastened onto frame",
-      "EN: Wiring & Daisy-Chaining\nID: Pengkabelan & Seri": "90° rotatable plug-in connection; supports through-wiring of up to 15 lights in a bayed suite",
+      "Luminous Flux / Fluks Cahaya": "400 lm, 600 lm, 900 lm, up to 1,200 lm (high-efficacy daylight white 4000 K)",
+      "Optical Light Distribution / Distribusi Cahaya Optik": "Fresnel optical lens directing 100% of light onto the mounting plate and bottom enclosure area",
+      "Operating Voltage / Tegangan Operasi": "Wide-range 100 V – 240 V AC (50/60 Hz) or extra-low voltage 24 V DC",
+      "Switching & Automation / Metode Pengaktifan & Otomasi": "Integrated 90° PIR motion detector, door-operated switch, or continuous on/off push button",
+      "Mounting Flexibility / Fleksibilitas Pemasangan": "Direct clip-in onto 25 mm system pitch, magnetic clamp attachment, or screw-fastened onto frame",
+      "Wiring & Daisy-Chaining / Pengkabelan & Seri": "90° rotatable plug-in connection; supports through-wiring of up to 15 lights in a bayed suite",
     },
     content: {
       en: `<h3>Targeted Enclosure Illumination with Innovative Fresnel Optical Lenses</h3>
@@ -1175,12 +1189,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Sistem pondasi plinth modular beban berat untuk panel VX25, VX SE, dan TS yang memberikan stabilitas mekanis tinggi, panel penutup snap-in tanpa baut, dan ruang tata kabel terintegrasi.",
     },
     specs: {
-      "EN: Material & Finish\nID: Material & Lapisan Akhir": "Sheet steel RAL 7022 (umbra grey) or high-grade stainless steel 1.4301 (AISI 304) with brushed finish",
-      "EN: System Heights\nID: Ketinggian Sistem": "100 mm and 200 mm modular heights (stackable for custom elevation up to 400 mm)",
-      "EN: Corner Piece Architecture\nID: Arsitektur Sudut Plinth": "Heavy-duty cast corner pieces capable of supporting full cabinet load during forklift transport",
-      "EN: Trim Panel Variants\nID: Varian Panel Penutup": "Solid sheet steel, vented trim panels with filter mats, and panels with brush strips for cable entry",
-      "EN: Cable Management Integration\nID: Integrasi Tata Kabel": "C-rails and cable clamp rails mount directly inside the base without requiring drilling",
-      "EN: Baying & Seismic Security\nID: Penggabungan & Ketahanan Gempa": "Integrated baying brackets for multi-bay suites; tested for seismic zones 1 to 4 to Telcordia GR-63-CORE",
+      "Material & Finish / Material & Lapisan Akhir": "Sheet steel RAL 7022 (umbra grey) or high-grade stainless steel 1.4301 (AISI 304) with brushed finish",
+      "System Heights / Ketinggian Sistem": "100 mm and 200 mm modular heights (stackable for custom elevation up to 400 mm)",
+      "Corner Piece Architecture / Arsitektur Sudut Plinth": "Heavy-duty cast corner pieces capable of supporting full cabinet load during forklift transport",
+      "Trim Panel Variants / Varian Panel Penutup": "Solid sheet steel, vented trim panels with filter mats, and panels with brush strips for cable entry",
+      "Cable Management Integration / Integrasi Tata Kabel": "C-rails and cable clamp rails mount directly inside the base without requiring drilling",
+      "Baying & Seismic Security / Penggabungan & Ketahanan Gempa": "Integrated baying brackets for multi-bay suites; tested for seismic zones 1 to 4 to Telcordia GR-63-CORE",
     },
     content: {
       en: `<h3>The Modular Foundation for Modern Industrial and Power Distribution Switchgear</h3>
@@ -1218,12 +1232,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Pelat masukan kabel modular dan sistem gland split untuk pemasangan kabel berdensitas tinggi dengan konektor terpasang, peredam tarikan mekanis, dan penyegelan rapat berstandar IP66 / NEMA 4X.",
     },
     specs: {
-      "EN: Ingress Protection\nID: Kategori Proteksi Ingress": "Up to IP66 / IP68 and NEMA 4X / NEMA 12 compliant to IEC 60529",
-      "EN: Cable Insertion Concept\nID: Konsep Pemasangan Kabel": "Split modular frame system allowing pre-terminated cables (with RJ45, USB, industrial multi-pole plugs) without voiding warranty",
-      "EN: Sealing Grommet Range\nID: Rentang Grommet Penyegel": "Elastomer slit sealing inserts for cable diameters from Ø 2 mm to Ø 35 mm (single and multi-hole)",
-      "EN: Strain Relief\nID: Peredam Tarikan Mekanis (Strain Relief)": "Integrated mechanical cable clamping to DIN EN 62444 with vibration-proof grip",
-      "EN: Material & Temperature\nID: Material & Suhu Operasi": "Halogen-free polyamide (PA6) and stainless steel gland plates rated from -40°C to +100°C (UL 94-V0)",
-      "EN: Compatibility\nID: Kompatibilitas Panel": "Direct fit into standard cutouts for 16-pin / 24-pin industrial connectors, AX gland plates, and VX base openings",
+      "Ingress Protection / Kategori Proteksi Ingress": "Up to IP66 / IP68 and NEMA 4X / NEMA 12 compliant to IEC 60529",
+      "Cable Insertion Concept / Konsep Pemasangan Kabel": "Split modular frame system allowing pre-terminated cables (with RJ45, USB, industrial multi-pole plugs) without voiding warranty",
+      "Sealing Grommet Range / Rentang Grommet Penyegel": "Elastomer slit sealing inserts for cable diameters from Ø 2 mm to Ø 35 mm (single and multi-hole)",
+      "Strain Relief / Peredam Tarikan Mekanis (Strain Relief)": "Integrated mechanical cable clamping to DIN EN 62444 with vibration-proof grip",
+      "Material & Temperature / Material & Suhu Operasi": "Halogen-free polyamide (PA6) and stainless steel gland plates rated from -40°C to +100°C (UL 94-V0)",
+      "Compatibility / Kompatibilitas Panel": "Direct fit into standard cutouts for 16-pin / 24-pin industrial connectors, AX gland plates, and VX base openings",
     },
     content: {
       en: `<h3>High-Density Cable Entry for Pre-Assembled Cables and Harsh Industrial Environments</h3>
@@ -1263,12 +1277,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Sistem otomasi PLC/PAC lengkap beranggotakan Schneider Modicon M340, M580 ePAC, Magelis HMI, dan arsitektur EcoStruxure Plant.",
     },
     specs: {
-      "EN: PLC Families\nID: Lini PLC": "Modicon M580 ePAC, Modicon M340, Modicon M241/M251",
-      "EN: High Availability\nID: Ketersediaan Tinggi": "EN: Hot-standby redundant CPU architectures (M580)\nID: Arsitektur CPU redundan Hot-Standby (M580)",
-      "EN: Cybersecurity\nID: Keamanan Siber": "Achilles Level 2 & ISA/IEC 62443 certified embedded security",
-      "EN: Software\nID: Perangkat Lunak": "EcoStruxure Control Expert (formerly Unity Pro)",
-      "EN: Communication\nID: Komunikasi": "Ethernet/IP, Modbus TCP, Profinet, CANopen, OPC-UA",
-      "EN: Architecture\nID: Arsitektur": "Schneider EcoStruxure Plant & Machine Expert",
+      "PLC Families / Lini PLC": "Modicon M580 ePAC, Modicon M340, Modicon M241/M251",
+      "High Availability / Ketersediaan Tinggi": "Hot-standby redundant CPU architectures (M580) / Arsitektur CPU redundan Hot-Standby (M580)",
+      "Cybersecurity / Keamanan Siber": "Achilles Level 2 & ISA/IEC 62443 certified embedded security",
+      "Software / Perangkat Lunak": "EcoStruxure Control Expert (formerly Unity Pro)",
+      "Communication / Komunikasi": "Ethernet/IP, Modbus TCP, Profinet, CANopen, OPC-UA",
+      "Architecture / Arsitektur": "Schneider EcoStruxure Plant & Machine Expert",
     },
     content: {
       en: `<h3>Schneider Industrial Automation & Control</h3>
@@ -1302,11 +1316,11 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Power meter digital Schneider PowerLogic, ION meter, dan perangkat lunak EcoStruxure Power Monitoring Expert (PME).",
     },
     specs: {
-      "EN: Platform\nID: Platform Perangkat Lunak": "EcoStruxure Power Monitoring Expert (PME) / Power Operation (PO)",
-      "EN: Power Meters\nID: Meteran Listrik Digital": "PowerLogic PM8000, PM5000 series, ION9000, ION7400",
-      "EN: Compliance\nID: Kepatuhan Standar": "IEC 61000-4-30 Class A precision power quality compliance",
-      "EN: Analytics\nID: Analitik & Pemantauan": "EN: Harmonic analysis, voltage sag/swell capture, EN 50160 compliance\nID: Analisis harmonisa, tangkapan sag/swell tegangan, kepatuhan EN 50160",
-      "EN: Reporting\nID: Laporan Otomatis": "EN: Automated energy billing, cost allocation, carbon footprint tracking\nID: Penagihan energi otomatis, alokasi biaya, pelacakan jejak karbon ESG",
+      "Platform / Platform Perangkat Lunak": "EcoStruxure Power Monitoring Expert (PME) / Power Operation (PO)",
+      "Power Meters / Meteran Listrik Digital": "PowerLogic PM8000, PM5000 series, ION9000, ION7400",
+      "Compliance / Kepatuhan Standar": "IEC 61000-4-30 Class A precision power quality compliance",
+      "Analytics / Analitik & Pemantauan": "Harmonic analysis, voltage sag/swell capture, EN 50160 compliance / Analisis harmonisa, tangkapan sag/swell tegangan, kepatuhan EN 50160",
+      "Reporting / Laporan Otomatis": "Automated energy billing, cost allocation, carbon footprint tracking / Penagihan energi otomatis, alokasi biaya, pelacakan jejak karbon ESG",
     },
     content: {
       en: `<h3>EcoStruxure Power Monitoring Expert (PME)</h3>
@@ -1340,11 +1354,11 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Circuit breaker udara MasterPact MTZ/NW, pemutus sirkuit cetak Compact NSX, dan integrasi switchboard type-tested Prisma.",
     },
     specs: {
-      "EN: Circuit Breakers\nID: Pemutus Sirkuit": "MasterPact MTZ (up to 6300A), Compact NSX/NSXm (16-630A)",
-      "EN: Trip Units\nID: Unit Trip Kontrol": "MicroLogic X with integrated Class 1 active energy measurement",
-      "EN: Enclosure System\nID: Sistem Enclosure": "Schneider PrismaSeT G & P type-tested modular switchboards",
-      "EN: Connectivity\nID: Konektivitas": "Embedded Bluetooth, NFC, Ethernet Modbus TCP communications",
-      "EN: Standards\nID: Standar": "IEC 60947-2, IEC 61439-1/-2, UL 489",
+      "Circuit Breakers / Pemutus Sirkuit": "MasterPact MTZ (up to 6300A), Compact NSX/NSXm (16-630A)",
+      "Trip Units / Unit Trip Kontrol": "MicroLogic X with integrated Class 1 active energy measurement",
+      "Enclosure System / Sistem Enclosure": "Schneider PrismaSeT G & P type-tested modular switchboards",
+      "Connectivity / Konektivitas": "Embedded Bluetooth, NFC, Ethernet Modbus TCP communications",
+      "Standards / Standar": "IEC 60947-2, IEC 61439-1/-2, UL 489",
     },
     content: {
       en: `<h3>Integrated Low Voltage Power Distribution</h3>
@@ -1378,10 +1392,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Factory acceptance testing (FAT), site acceptance testing (SAT), koordinasi proteksi relay, dan komisioning bertegangan.",
     },
     specs: {
-      "EN: Certification\nID: Sertifikasi": "EN: Certified Schneider System Integrator & ESDM Level 6 accredited\nID: System Integrator Schneider Tersertifikasi & Terakreditasi ESDM Level 6",
-      "EN: Testing Fleet\nID: Armada Alat Uji": "Omicron CMC 356, Megger S1-568, Fluke 1777, FLIR E76",
-      "EN: Scope\nID: Cakupan Layanan": "EN: FAT & SAT verification, relay parameterization, breaker trip testing\nID: Verifikasi FAT & SAT, parameterisasi relay, pengujian trip breaker",
-      "EN: Standards\nID: Standar": "IEEE 1584 Arc Flash, IEC 60255 Protection Relays, NETA Acceptance",
+      "Certification / Sertifikasi": "Certified Schneider System Integrator & ESDM Level 6 accredited / System Integrator Schneider Tersertifikasi & Terakreditasi ESDM Level 6",
+      "Testing Fleet / Armada Alat Uji": "Omicron CMC 356, Megger S1-568, Fluke 1777, FLIR E76",
+      "Scope / Cakupan Layanan": "FAT & SAT verification, relay parameterization, breaker trip testing / Verifikasi FAT & SAT, parameterisasi relay, pengujian trip breaker",
+      "Standards / Standar": "IEEE 1584 Arc Flash, IEC 60255 Protection Relays, NETA Acceptance",
     },
     content: {
       en: `<h3>Comprehensive Engineering & On-Site Commissioning</h3>
@@ -1415,11 +1429,11 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Switchgear tegangan menengah, ring main unit (RMU), dan panel distribusi TM.",
     },
     specs: {
-      "EN: Rated Voltage\nID: Tegangan Pengenal": "12 kV / 24 kV / 36 kV",
-      "EN: Rated Current\nID: Arus Pengenal": "630A - 3150A",
-      "EN: Breaking Capacity\nID: Kapasitas Pemutusan": "Up to 31.5 kA / 3s",
-      "EN: Technology\nID: Teknologi": "Vacuum Circuit Breaker (VCB) & SF6 Gas-Insulated RMU",
-      "EN: Standards\nID: Standar Acuan": "IEC 62271-200, IEC 62271-100, SPLN",
+      "Rated Voltage / Tegangan Pengenal": "12 kV / 24 kV / 36 kV",
+      "Rated Current / Arus Pengenal": "630A - 3150A",
+      "Breaking Capacity / Kapasitas Pemutusan": "Up to 31.5 kA / 3s",
+      "Technology / Teknologi": "Vacuum Circuit Breaker (VCB) & SF6 Gas-Insulated RMU",
+      "Standards / Standar Acuan": "IEC 62271-200, IEC 62271-100, SPLN",
     },
     content: {
       en: `<h3>Medium Voltage Switchgear & Ring Main Units (RMU)</h3>
@@ -1453,11 +1467,11 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Transformator daya dan distribusi, mencakup tipe terendam minyak dan tipe kering (cast-resin).",
     },
     specs: {
-      "EN: Capacity Range\nID: Rentang Kapasitas": "100 kVA to 50 MVA",
-      "EN: Primary Voltage\nID: Tegangan Primer": "Up to 36 kV / 70 kV / 150 kV",
-      "EN: Cooling Types\nID: Metode Pendinginan": "ONAN / ONAF / AN / AF",
-      "EN: Insulation Types\nID: Jenis Insulasi": "Mineral Oil / Ester Fluid / Cast Resin Epoxy (Class F/H)",
-      "EN: Standards\nID: Standar Acuan": "IEC 60076, SPLN D3.002-1, IEEE C57",
+      "Capacity Range / Rentang Kapasitas": "100 kVA to 50 MVA",
+      "Primary Voltage / Tegangan Primer": "Up to 36 kV / 70 kV / 150 kV",
+      "Cooling Types / Metode Pendinginan": "ONAN / ONAF / AN / AF",
+      "Insulation Types / Jenis Insulasi": "Mineral Oil / Ester Fluid / Cast Resin Epoxy (Class F/H)",
+      "Standards / Standar Acuan": "IEC 60076, SPLN D3.002-1, IEEE C57",
     },
     content: {
       en: `<h3>Power & Distribution Transformers</h3>
@@ -1491,11 +1505,11 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Panel distribusi utama dan sub-distribusi, motor control center (MCC), panel starter motor, dan panel VFD.",
     },
     specs: {
-      "EN: Rated Current\nID: Arus Pengenal": "Up to 6300A (99.9% Cu-ETP Busbar)",
-      "EN: Rated Voltage\nID: Tegangan Pengenal": "380V / 400V / 415V / 690V AC",
-      "EN: Short-Circuit Rating\nID: Ketahanan Hubung Singkat": "Up to 100 kA / 1s",
-      "EN: Internal Segregation\nID: Bentuk Pemisahan": "Form 2b, Form 3b, Form 4a, Form 4b",
-      "EN: Standards\nID: Standar Acuan": "IEC 61439-1/2, SNI",
+      "Rated Current / Arus Pengenal": "Up to 6300A (99.9% Cu-ETP Busbar)",
+      "Rated Voltage / Tegangan Pengenal": "380V / 400V / 415V / 690V AC",
+      "Short-Circuit Rating / Ketahanan Hubung Singkat": "Up to 100 kA / 1s",
+      "Internal Segregation / Bentuk Pemisahan": "Form 2b, Form 3b, Form 4a, Form 4b",
+      "Standards / Standar Acuan": "IEC 61439-1/2, SNI",
     },
     content: {
       en: `<h3>Low Voltage Switchboards & Motor Control Centers (MCC)</h3>
@@ -1529,10 +1543,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Sakelar transfer otomatis (ATS), panel kegagalan jala-jala otomatis (AMF), kontrol generator, dan panel sinkronisasi.",
     },
     specs: {
-      "EN: Configurations\nID: Konfigurasi": "Mains-to-Gen, Gen-to-Gen, Multi-Gen Parallel & Island Mode",
-      "EN: Transfer Modes\nID: Mode Transfer": "Open Transition / Closed Transition (Bumpless 0ms)",
-      "EN: Controller Brands\nID: Merek Kontroler": "Deep Sea (DSE), ComAp, Deif, Woodward",
-      "EN: Current Rating\nID: Kapasitas Arus": "100A to 5000A",
+      "Configurations / Konfigurasi": "Mains-to-Gen, Gen-to-Gen, Multi-Gen Parallel & Island Mode",
+      "Transfer Modes / Mode Transfer": "Open Transition / Closed Transition (Bumpless 0ms)",
+      "Controller Brands / Merek Kontroler": "Deep Sea (DSE), ComAp, Deif, Woodward",
+      "Current Rating / Kapasitas Arus": "100A to 5000A",
     },
     content: {
       en: `<h3>ATS, AMF & Generator Synchronization Systems</h3>
@@ -1566,10 +1580,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Pembagian beban generator, pelepasan beban berbasis prioritas (load shedding), pemulihan beban otomatis, dan kontrol beban.",
     },
     specs: {
-      "EN: System Architecture\nID: Arsitektur Sistem": "Redundant PLC / Microprocessor Controller Architecture",
-      "EN: Response Time\nID: Waktu Respons": "< 50 ms Fast Contingency Load Shedding",
-      "EN: Communication\nID: Protokol Komunikasi": "IEC 61850, Modbus TCP/IP, Ethernet/IP, Profinet",
-      "EN: Priority Levels\nID: Tingkat Prioritas": "Up to 16 configurable priority shedding matrices",
+      "System Architecture / Arsitektur Sistem": "Redundant PLC / Microprocessor Controller Architecture",
+      "Response Time / Waktu Respons": "< 50 ms Fast Contingency Load Shedding",
+      "Communication / Protokol Komunikasi": "IEC 61850, Modbus TCP/IP, Ethernet/IP, Profinet",
+      "Priority Levels / Tingkat Prioritas": "Up to 16 configurable priority shedding matrices",
     },
     content: {
       en: `<h3>Industrial Power Management & Automated Load Control</h3>
@@ -1603,10 +1617,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Panel perbaikan faktor daya, kapasitor bank berreaktor detuned, filter harmonisa aktif, dan regulator tegangan otomatis/stabilizer.",
     },
     specs: {
-      "EN: Power Factor\nID: Faktor Daya": "Target Cos Phi 0.98 - 1.0",
-      "EN: Harmonic Compensation\nID: Kompensasi Harmonisa": "THDi < 3% with Active Harmonic Filter (AHF)",
-      "EN: Detuned Reactors\nID: Reaktor Detuned": "5.67%, 7%, 14% anti-resonance tuning",
-      "EN: Voltage Stabilization\nID: Stabilisasi Tegangan": "AVR servo/solid-state up to 2000 kVA (±1% accuracy)",
+      "Power Factor / Faktor Daya": "Target Cos Phi 0.98 - 1.0",
+      "Harmonic Compensation / Kompensasi Harmonisa": "THDi < 3% with Active Harmonic Filter (AHF)",
+      "Detuned Reactors / Reaktor Detuned": "5.67%, 7%, 14% anti-resonance tuning",
+      "Voltage Stabilization / Stabilisasi Tegangan": "AVR servo/solid-state up to 2000 kVA (±1% accuracy)",
     },
     content: {
       en: `<h3>Power Quality Solutions & Voltage Regulation</h3>
@@ -1640,10 +1654,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Uninterruptible power supply (UPS), bank baterai, charger/rectifier baterai, dan panel distribusi DC untuk sistem proteksi dan kontrol.",
     },
     specs: {
-      "EN: DC System Voltages\nID: Tegangan Sistem DC": "24V, 48V, 110V, 220V DC Auxiliary Supply",
-      "EN: UPS Technology\nID: Teknologi UPS": "True Online Double-Conversion with Galvanic Isolation",
-      "EN: Battery Chemistries\nID: Tipe Baterai": "VRLA AGM/Gel, Nickel-Cadmium (Ni-Cd), Lithium Iron Phosphate (LiFePO4)",
-      "EN: Charger Topology\nID: Topologi Charger": "Industrial Thyristor/SCR & High-Frequency Switch Mode Rectifiers",
+      "DC System Voltages / Tegangan Sistem DC": "24V, 48V, 110V, 220V DC Auxiliary Supply",
+      "UPS Technology / Teknologi UPS": "True Online Double-Conversion with Galvanic Isolation",
+      "Battery Chemistries / Tipe Baterai": "VRLA AGM/Gel, Nickel-Cadmium (Ni-Cd), Lithium Iron Phosphate (LiFePO4)",
+      "Charger Topology / Topologi Charger": "Industrial Thyristor/SCR & High-Frequency Switch Mode Rectifiers",
     },
     content: {
       en: `<h3>Industrial UPS & DC Auxiliary Power Systems</h3>
@@ -1677,10 +1691,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Konverter frekuensi pasokan, koneksi listrik dermaga ke kapal (shore power), transformator, switchgear, manajemen kabel, konektor, dan sistem kontrol serta interlocking terkait.",
     },
     specs: {
-      "EN: Frequency Conversion\nID: Konversi Frekuensi": "50 Hz to 60 Hz / 60 Hz to 50 Hz Bi-directional Static Converters",
-      "EN: Standards\nID: Standar Acuan": "IEC/IEEE 80005-1 High Voltage Shore Connection (HVSC)",
-      "EN: Capacity\nID: Kapasitas Daya": "500 kVA to 10 MVA Shore Power Substations",
-      "EN: Safety Features\nID: Fitur Keselamatan": "Galvanic isolation, pilot wire interlocking, automated cable reels",
+      "Frequency Conversion / Konversi Frekuensi": "50 Hz to 60 Hz / 60 Hz to 50 Hz Bi-directional Static Converters",
+      "Standards / Standar Acuan": "IEC/IEEE 80005-1 High Voltage Shore Connection (HVSC)",
+      "Capacity / Kapasitas Daya": "500 kVA to 10 MVA Shore Power Substations",
+      "Safety Features / Fitur Keselamatan": "Galvanic isolation, pilot wire interlocking, automated cable reels",
     },
     content: {
       en: `<h3>Frequency Conversion & Shore-to-Ship Power (Cold Ironing)</h3>
@@ -1714,10 +1728,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Relai proteksi, transformator arus dan tegangan (CT/VT), power meter, neutral grounding resistor (NGR), dan sistem pemantauan terkait.",
     },
     specs: {
-      "EN: Protection Functions\nID: Fungsi Proteksi": "Overcurrent (50/51), Earth Fault (50N/51N), Differential (87), Arc Flash",
-      "EN: Instrument Transformers\nID: Trafo Instrumen": "Cast Resin CT & VT Class 0.2S / 0.5 / 5P20 up to 36 kV",
-      "EN: NGR Ratings\nID: Kapasitas NGR": "6.6 kV, 11 kV, 20 kV, 22 kV up to 1000A (10s / 30s / continuous)",
-      "EN: Resistor Material\nID: Material Resistor": "Stainless Steel / Nickel-Chromium high-temperature alloy",
+      "Protection Functions / Fungsi Proteksi": "Overcurrent (50/51), Earth Fault (50N/51N), Differential (87), Arc Flash",
+      "Instrument Transformers / Trafo Instrumen": "Cast Resin CT & VT Class 0.2S / 0.5 / 5P20 up to 36 kV",
+      "NGR Ratings / Kapasitas NGR": "6.6 kV, 11 kV, 20 kV, 22 kV up to 1000A (10s / 30s / continuous)",
+      "Resistor Material / Material Resistor": "Stainless Steel / Nickel-Chromium high-temperature alloy",
     },
     content: {
       en: `<h3>Power Protection, Metering & Neutral Grounding Resistors</h3>
@@ -1751,10 +1765,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Sistem otomasi gardu induk (SAS), RTU, gateway komunikasi, HMI, integrasi IED, serta kontrol dan pemantauan jarak jauh.",
     },
     specs: {
-      "EN: Protocols\nID: Protokol": "IEC 61850 (GOOSE, MMS, SV), IEC 60870-5-101/104, Modbus TCP, DNP3",
-      "EN: Redundancy\nID: Redundansi Jaringan": "PRP (Parallel Redundancy Protocol) & HSR (High-availability Seamless Ring)",
-      "EN: Hardware\nID: Perangkat Keras": "Industrial Ruggedized Substation Computers, Managed Fiber Switches, GPS Time Sync",
-      "EN: Visualization\nID: Visualisasi HMI": "Dynamic Single Line Diagrams (SLD), SOE Event Logging, Disturbance Recording",
+      "Protocols / Protokol": "IEC 61850 (GOOSE, MMS, SV), IEC 60870-5-101/104, Modbus TCP, DNP3",
+      "Redundancy / Redundansi Jaringan": "PRP (Parallel Redundancy Protocol) & HSR (High-availability Seamless Ring)",
+      "Hardware / Perangkat Keras": "Industrial Ruggedized Substation Computers, Managed Fiber Switches, GPS Time Sync",
+      "Visualization / Visualisasi HMI": "Dynamic Single Line Diagrams (SLD), SOE Event Logging, Disturbance Recording",
     },
     content: {
       en: `<h3>Substation Automation Systems (SAS) & Electrical SCADA</h3>
@@ -1788,8 +1802,8 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Switchgear tegangan menengah, ring main unit (RMU), dan panel distribusi TM.",
     },
     specs: {
-      "EN: Rated Voltage\nID: Tingkat Tegangan": "12 kV / 24 kV / 36 kV",
-      "EN: Standards\nID: Standar Acuan": "IEC 62271-200, SPLN",
+      "Rated Voltage / Tingkat Tegangan": "12 kV / 24 kV / 36 kV",
+      "Standards / Standar Acuan": "IEC 62271-200, SPLN",
     },
     content: {
       en: `<p>Medium-voltage switchgear, ring main units, and MV distribution panels.</p>`,
@@ -1813,8 +1827,8 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Panel distribusi utama dan sub-distribusi, motor control center (MCC), panel starter motor, dan panel VFD.",
     },
     specs: {
-      "EN: Rated Current\nID: Arus Pengenal": "Up to 6300A",
-      "EN: Standards\nID: Standar Acuan": "IEC 61439-1/2",
+      "Rated Current / Arus Pengenal": "Up to 6300A",
+      "Standards / Standar Acuan": "IEC 61439-1/2",
     },
     content: {
       en: `<p>Main and sub-distribution boards, motor control centers, motor starter panels, and VFD panels.</p>`,
@@ -1838,10 +1852,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Perangkat lunak SCADA berkinerja tinggi, telemetri real-time, manajemen alarm, grafik tren historis, dan dashboard IoT industri.",
     },
     specs: {
-      "EN: Software\nID: Perangkat Lunak": "xArrow SCADA Industrial Edition",
-      "EN: Architecture\nID: Arsitektur": "Client-Server / Web-Based / Cloud-Ready",
-      "EN: Protocols\nID: Protokol Komunikasi": "OPC UA, Modbus TCP/RTU, MQTT, REST API",
-      "EN: Tags Capacity\nID: Kapasitas Tag": "Unlimited I/O Tag Packages",
+      "Software / Perangkat Lunak": "xArrow SCADA Industrial Edition",
+      "Architecture / Arsitektur": "Client-Server / Web-Based / Cloud-Ready",
+      "Protocols / Protokol Komunikasi": "OPC UA, Modbus TCP/RTU, MQTT, REST API",
+      "Tags Capacity / Kapasitas Tag": "Unlimited I/O Tag Packages",
     },
     content: {
       en: `<h3>Centralized Industrial Process Supervision</h3>
@@ -1875,10 +1889,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Panel VSD dan soft starter rekayasa khusus untuk pompa, kompresor, blower, mesin ekstrusi, dan konveyor industri.",
     },
     specs: {
-      "EN: Power Range\nID: Rentang Daya": "0.75 kW to 1200 kW",
-      "EN: Supported Brands\nID: Merek Didukung": "Schneider, Danfoss, ABB, Siemens",
-      "EN: Control Modes\nID: Mode Kontrol": "V/f, Open/Closed Vector Control, Torque Control",
-      "EN: Enclosure\nID: Enclosure": "Rittal Industrial IP55 / IP56",
+      "Power Range / Rentang Daya": "0.75 kW to 1200 kW",
+      "Supported Brands / Merek Didukung": "Schneider, Danfoss, ABB, Siemens",
+      "Control Modes / Mode Kontrol": "V/f, Open/Closed Vector Control, Torque Control",
+      "Enclosure / Enclosure": "Rittal Industrial IP55 / IP56",
     },
     content: {
       en: `<h3>Precision Motor Control & Energy Efficiency</h3>
@@ -1912,10 +1926,10 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Kompensasi harmonisa aktif dinamis hingga orde ke-50 disertai perbaikan faktor daya reaktif tanpa jeda (stepless).",
     },
     specs: {
-      "EN: Harmonic Range\nID: Rentang Harmonisa": "2nd to 50th Order",
-      "EN: Modular Capacity\nID: Kapasitas Modular": "50A to 600A modular rack-mount / wall-mount",
-      "EN: Response Time\nID: Waktu Respons": "< 5 milliseconds",
-      "EN: Target THDi\nID: Target Reduksi THDi": "< 3% at rated capacity",
+      "Harmonic Range / Rentang Harmonisa": "2nd to 50th Order",
+      "Modular Capacity / Kapasitas Modular": "50A to 600A modular rack-mount / wall-mount",
+      "Response Time / Waktu Respons": "< 5 milliseconds",
+      "Target THDi / Target Reduksi THDi": "< 3% at rated capacity",
     },
     content: {
       en: `<h3>Active Harmonic Mitigation & Clean Power Networks</h3>
@@ -1949,9 +1963,9 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
       id: "Panel kontrol alarm kebakaran addressable cerdas, detektor asap optik & panas multi-kriteria, serta aktivator pemadam gas.",
     },
     specs: {
-      "EN: Capacity\nID: Kapasitas Titik": "1 to 8 Loops (up to 2000+ addressable points)",
-      "EN: Detectors\nID: Tipe Sensor Detektor": "Optical Smoke, Thermal, Multi-Criteria, Flame",
-      "EN: Standards\nID: Standar Keselamatan": "NFPA 72, EN54, UL Listed, FM Approved",
+      "Capacity / Kapasitas Titik": "1 to 8 Loops (up to 2000+ addressable points)",
+      "Detectors / Tipe Sensor Detektor": "Optical Smoke, Thermal, Multi-Criteria, Flame",
+      "Standards / Standar Keselamatan": "NFPA 72, EN54, UL Listed, FM Approved",
     },
     content: {
       en: `<h3>Intelligent Addressable Fire Safety Architecture</h3>
@@ -2055,6 +2069,7 @@ export function enrichProductWithBilingual(
     status: entry.status ?? "published",
     sortOrder: entry.sortOrder ?? 1,
     depth: entry.depth ?? 0,
+    version: 1,
     children: [],
   }
 
@@ -2063,6 +2078,7 @@ export function enrichProductWithBilingual(
 
   return {
     ...baseNode,
+    version: baseNode.version ?? 1,
     title: titleString,
     summary: summaryString,
     imageUrl: baseNode.imageUrl || entry.imageUrl,
@@ -2145,6 +2161,10 @@ export const PRODUCT_TREE_STRUCTURE: { root: string; children: string[] }[] = [
       "automation-control/scada-xarrow-telemetry",
       "automation-control/vsd-inverter-panels",
     ],
+  },
+  {
+    root: "enclosure-climate-control",
+    children: [],
   },
   {
     root: "power-quality",

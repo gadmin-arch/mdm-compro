@@ -397,8 +397,39 @@ async function cmsListFetch<T>(path: string, fallback: ListResponse<T>, revalida
   }
 }
 
-export async function getNavigation() {
-  return cmsFetch<Navigation>("/navigation", fallbackNavigation)
+export async function getNavigation(): Promise<Navigation> {
+  const nav = await cmsFetch<Navigation>("/navigation", fallbackNavigation)
+
+  // Synchronize product tree to always conform to the authoritative catalog hierarchy
+  const productRoots = fallbackProducts.map((fbRoot) => {
+    const dbRoot = nav.products?.find((p) => p.slug === fbRoot.slug)
+    const enriched = dbRoot ? enrichProductWithBilingual(dbRoot, fbRoot.slug) || fbRoot : fbRoot
+    return {
+      ...enriched,
+      title: fbRoot.title,
+      summary: fbRoot.summary,
+      children: fbRoot.children,
+    }
+  })
+
+  // Synchronize service tree
+  const serviceRoots = fallbackServices.map((fbRoot) => {
+    const dbRoot = nav.services?.find((s) => s.slug === fbRoot.slug)
+    const enriched = dbRoot ? enrichServiceWithBilingual(dbRoot, fbRoot.slug) || fbRoot : fbRoot
+    return {
+      ...enriched,
+      title: fbRoot.title,
+      summary: fbRoot.summary,
+      children: fbRoot.children?.length ? fbRoot.children : enriched.children,
+    }
+  })
+
+  return {
+    ...nav,
+    products: productRoots,
+    services: serviceRoots,
+    menu: nav.menu && nav.menu.length > 0 ? nav.menu : defaultMenuItems,
+  }
 }
 
 export async function getPage(key: string) {
@@ -619,6 +650,17 @@ function enrichProductTree(node: ContentNode): ContentNode {
   const path = node.fullPath || node.slug
   const fallbackNode = findByPath(fallbackProducts, path)
 
+  if (fallbackNode) {
+    enriched.title = fallbackNode.title
+    enriched.summary = fallbackNode.summary
+    if (fallbackNode.children && fallbackNode.children.length > 0) {
+      return {
+        ...enriched,
+        children: fallbackNode.children,
+      }
+    }
+  }
+
   const existingChildren = (enriched.children || []).map(enrichProductTree)
   const existingSlugs = new Set(existingChildren.map((c) => c.slug))
   const extraChildren = (fallbackNode?.children || []).filter((c) => !existingSlugs.has(c.slug))
@@ -634,10 +676,17 @@ export async function getProducts(filters: PageFilters): Promise<ListResponse<Co
 export async function getProducts(filters?: PageFilters): Promise<ContentNode[] | ListResponse<ContentNode>> {
   if (!filters) {
     const res = await cmsFetch<ContentNode[]>("/products", fallbackProducts)
-    const list = Array.isArray(res) ? res.map(enrichProductTree) : fallbackProducts
-    const existingSlugs = new Set(list.map((r) => r.slug))
-    const missingRoots = fallbackProducts.filter((fb) => !existingSlugs.has(fb.slug))
-    return [...list, ...missingRoots]
+    // Synchronize roots with fallbackProducts to guarantee clean category listing
+    return fallbackProducts.map((fbRoot) => {
+      const dbNode = Array.isArray(res) ? res.find((r) => r.slug === fbRoot.slug) : null
+      const enriched = dbNode ? enrichProductWithBilingual(dbNode, fbRoot.slug) || fbRoot : fbRoot
+      return {
+        ...enriched,
+        title: fbRoot.title,
+        summary: fbRoot.summary,
+        children: fbRoot.children,
+      }
+    })
   }
   const query = new URLSearchParams()
   if (filters.search) query.set("search", filters.search)

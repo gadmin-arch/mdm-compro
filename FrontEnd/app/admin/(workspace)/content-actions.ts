@@ -64,7 +64,7 @@ export async function updateContentItemAction(formData: FormData): Promise<SaveR
   const id = String(formData.get("id") ?? "")
   const oldPath = String(formData.get("oldPath") ?? "")
   const version = Number(formData.get("version") ?? 0)
-  if (!id) return { error: "save_failed" }
+  if (!id) return { error: "save_failed", message: "Missing resource ID." }
 
   let payload: ContentItemPayload
   try {
@@ -141,7 +141,7 @@ export async function updateNewsAction(formData: FormData): Promise<SaveResult |
   const id = String(formData.get("id") ?? "")
   const oldSlug = String(formData.get("oldSlug") ?? "")
   const version = Number(formData.get("version") ?? 0)
-  if (!id) return { error: "save_failed" }
+  if (!id) return { error: "save_failed", message: "Missing news ID." }
 
   let payload: NewsPayload
   try {
@@ -212,7 +212,7 @@ export async function updateCareerAction(formData: FormData): Promise<SaveResult
   const id = String(formData.get("id") ?? "")
   const oldSlug = String(formData.get("oldSlug") ?? "")
   const version = Number(formData.get("version") ?? 0)
-  if (!id) return { error: "save_failed" }
+  if (!id) return { error: "save_failed", message: "Missing career ID." }
 
   let payload: CareerPayload
   try {
@@ -520,19 +520,19 @@ function errorCode(error: AdminApiError) {
 // Failures while building the payload: schema violations surface inline,
 // upload errors (image/datasheet fields) as a banner.
 function payloadError(error: unknown): SaveResult {
-  if (error instanceof FieldValidationError) return { error: "validation", fields: error.fields }
-  if (error instanceof AdminApiError) return { error: "upload_failed" }
-  return { error: "save_failed" }
+  if (error instanceof FieldValidationError) return { error: "validation", fields: error.fields, message: "Please check the highlighted fields below." }
+  if (error instanceof AdminApiError) return { error: "upload_failed", message: error.message }
+  return { error: "save_failed", message: error instanceof Error ? error.message : "Failed to process form data." }
 }
 
 const duplicateSlugFields = { slug: "This slug is already in use." }
 
 // On create, a version_conflict can only mean the slug is already taken.
 function createError(error: AdminApiError): SaveResult {
-  if (error.code === "version_conflict") return { error: "duplicate", fields: duplicateSlugFields }
-  if (error.code === "validation_error") return { error: "validation", fields: error.fields }
-  if (error.status === 403) return { error: "forbidden" }
-  return { error: "save_failed" }
+  if (error.code === "version_conflict") return { error: "duplicate", fields: duplicateSlugFields, message: "This slug is already in use." }
+  if (error.code === "validation_error") return { error: "validation", fields: error.fields, message: error.message }
+  if (error.status === 403) return { error: "forbidden", message: error.message }
+  return { error: "save_failed", message: error.message }
 }
 
 // On update, stale version and duplicate slug both surface as
@@ -545,11 +545,11 @@ async function updateError(
   if (error.code === "version_conflict") {
     const current = await fetchCurrent().catch(() => null)
     if (current?.version && current.version !== sentVersion) {
-      return { error: "conflict", serverVersion: current.version }
+      return { error: "conflict", serverVersion: current.version, message: error.message }
     }
-    return { error: "duplicate", fields: duplicateSlugFields }
+    return { error: "duplicate", fields: duplicateSlugFields, message: "A resource with this slug already exists." }
   }
-  if (error.code === "validation_error") return { error: "validation", fields: error.fields }
-  if (error.status === 403) return { error: "forbidden" }
-  return { error: "save_failed" }
+  if (error.code === "validation_error") return { error: "validation", fields: error.fields, message: error.message }
+  if (error.status === 403) return { error: "forbidden", message: error.message }
+  return { error: "save_failed", message: error.message }
 }

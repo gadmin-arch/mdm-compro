@@ -75,12 +75,13 @@ export function SaveErrorBanner({
       role="alert"
       className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
     >
-      {errorMessage(result.error, entity)}
+      {errorMessage(result.error, entity, result.message)}
     </div>
   )
 }
 
-function errorMessage(code: SaveResult["error"], entity: string) {
+function errorMessage(code: SaveResult["error"], entity: string, customMessage?: string) {
+  if (customMessage) return customMessage
   switch (code) {
     case "duplicate":
       return `A ${entity} with this slug already exists. Choose a different slug and save again.`

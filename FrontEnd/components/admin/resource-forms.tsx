@@ -118,7 +118,7 @@ export function ContentItemForm({ action, item, mode, parentOptions = [], resour
       {mode === "edit" && item && (
         <>
           <input name="id" type="hidden" value={item.id} />
-          <input name="version" type="hidden" value={item.version ?? 0} />
+          <input name="version" type="hidden" value={Math.max(item.version ?? 1, 1)} />
           <input name="oldPath" type="hidden" value={item.fullPath} />
         </>
       )}

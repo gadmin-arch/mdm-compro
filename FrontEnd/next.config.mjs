@@ -183,13 +183,35 @@ const nextConfig = {
         destination: '/',
         permanent: true,
       },
+      {
+        source: '/id',
+        destination: '/',
+        permanent: false,
+      },
+      {
+        source: '/id/:path*',
+        destination: '/:path*',
+        permanent: false,
+      },
     ]
   },
   async rewrites() {
+    const publicApiBase = process.env.CMS_API_BASE_URL || 'http://api:8080/api/v1/public'
+    const adminApiBase = publicApiBase.replace(/\/public$/, '/admin')
+    const authApiBase = publicApiBase.replace(/\/public$/, '/auth')
+
     return [
       {
         source: '/api/v1/public/:path*',
-        destination: `${process.env.CMS_API_BASE_URL || 'http://api:8080/api/v1/public'}/:path*`,
+        destination: `${publicApiBase}/:path*`,
+      },
+      {
+        source: '/api/v1/admin/:path*',
+        destination: `${adminApiBase}/:path*`,
+      },
+      {
+        source: '/api/v1/auth/:path*',
+        destination: `${authApiBase}/:path*`,
       },
       {
         source: '/en',

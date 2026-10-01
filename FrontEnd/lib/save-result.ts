@@ -8,6 +8,8 @@ export type SaveResult = {
   serverVersion?: number
   // Per-field messages (keyed by input name) rendered inline under fields.
   fields?: Record<string, string>
+  // User-facing error message describing what went wrong.
+  message?: string
 }
 
 export type SaveAction = (formData: FormData) => Promise<SaveResult | void>
