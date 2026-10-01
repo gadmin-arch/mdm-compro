@@ -85,12 +85,12 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
     sortOrder: 3,
     imageUrl: "/uploads/mdm/circuit-breaker.jpg",
     title: {
-      en: "Electrical Distribution",
-      id: "Distribusi Kelistrikan",
+      en: "Electrical Distribution & Power Systems",
+      id: "Distribusi Kelistrikan & Sistem Daya",
     },
     summary: {
-      en: "Medium & Low Voltage electrical distribution equipment, switchboards, transformers, and protection systems.",
-      id: "Peralatan distribusi kelistrikan tegangan menengah & rendah, panel switchboard, transformator, dan sistem proteksi daya.",
+      en: "Medium- and low-voltage equipment, switchboards, transformers, power quality solutions, generator synchronization, protection systems, and substation automation—with engineering, supply, integration, testing, commissioning, and maintenance support.",
+      id: "Peralatan tegangan menengah dan rendah, switchboard, transformator, solusi kualitas daya, sinkronisasi generator, sistem proteksi, dan otomasi gardu induk—didukung layanan engineering, pengadaan, integrasi, pengujian, komisioning, serta pemeliharaan.",
     },
     specs: {
       "EN: Category\nID: Kategori": "EN: Electrical Distribution\nID: Distribusi Kelistrikan",

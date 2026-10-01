@@ -33,7 +33,7 @@ const footerNav = [
     links: [
       { label: "EN: Rittal Authorized Distributor\nID: Distributor Resmi Rittal", href: "/products/rittal-distributor" },
       { label: "EN: Schneider Electric System Integrator\nID: System Integrator Schneider Electric", href: "/products/schneider-integrator" },
-      { label: "EN: Electrical Distribution\nID: Distribusi Kelistrikan", href: "/products/electrical-distribution" },
+      { label: "EN: Electrical Distribution & Power Systems\nID: Distribusi Kelistrikan & Sistem Daya", href: "/products/electrical-distribution" },
       { label: "EN: Automation & Control\nID: Otomasi & Kontrol Industri", href: "/products/automation-control" },
       { label: "EN: Power Quality Systems & Active Filters\nID: Sistem Kualitas Daya & Filter Harmonisa Aktif", href: "/products/power-quality" },
       { label: "EN: Fire Alarm & Suppression Systems\nID: Sistem Fire Alarm & Pemadam Kebakaran", href: "/products/fire-alarm-products" },

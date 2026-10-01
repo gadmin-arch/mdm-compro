@@ -100,9 +100,9 @@ const schneiderPillars = [
 
 const productCategories = [
   {
-    title: "EN: Electrical Distribution\nID: Distribusi Kelistrikan",
+    title: "EN: Electrical Distribution & Power Systems\nID: Distribusi Kelistrikan & Sistem Daya",
     slug: "electrical-distribution",
-    desc: "EN: Medium & Low Voltage switchgear, transformers, MDP/SDP distribution panels, ATS/AMF sync, and busbars.\nID: Switchgear tegangan menengah & rendah, transformator, panel distribusi MDP/SDP, sinkronisasi ATS/AMF, dan busbar.",
+    desc: "EN: Medium- and low-voltage equipment, switchboards, transformers, power quality solutions, generator synchronization, and protection systems.\nID: Peralatan tegangan menengah dan rendah, switchboard, transformator, solusi kualitas daya, sinkronisasi generator, dan sistem proteksi.",
     icon: Zap,
     count: "MV & LV Systems",
   },
