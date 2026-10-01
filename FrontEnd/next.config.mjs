@@ -94,6 +94,16 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/products/electrical-distribution/medium-voltage-substation',
+        destination: '/products/electrical-distribution/medium-voltage-switchgear-rmu',
+        permanent: true,
+      },
+      {
+        source: '/products/electrical-distribution/low-voltage-distribution-panels',
+        destination: '/products/electrical-distribution/low-voltage-switchboards-mcc',
+        permanent: true,
+      },
+      {
         source: '/products/electrical-equipment/rittal-the-system',
         destination: '/products/rittal-distributor',
         permanent: true,

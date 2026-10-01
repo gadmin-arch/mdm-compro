@@ -1399,40 +1399,401 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
     },
   },
 
+  "electrical-distribution/medium-voltage-switchgear-rmu": {
+    id: "00000000-0000-0000-0000-000000000731",
+    slug: "medium-voltage-switchgear-rmu",
+    fullPath: "electrical-distribution/medium-voltage-switchgear-rmu",
+    depth: 1,
+    sortOrder: 1,
+    imageUrl: "/uploads/mdm/circuit-breaker.jpg",
+    title: {
+      en: "Medium Voltage Switchgear & RMU",
+      id: "Switchgear Tegangan Menengah & RMU",
+    },
+    summary: {
+      en: "Medium-voltage switchgear, ring main units, and MV distribution panels.",
+      id: "Switchgear tegangan menengah, ring main unit (RMU), dan panel distribusi TM.",
+    },
+    specs: {
+      "EN: Rated Voltage\nID: Tegangan Pengenal": "12 kV / 24 kV / 36 kV",
+      "EN: Rated Current\nID: Arus Pengenal": "630A - 3150A",
+      "EN: Breaking Capacity\nID: Kapasitas Pemutusan": "Up to 31.5 kA / 3s",
+      "EN: Technology\nID: Teknologi": "Vacuum Circuit Breaker (VCB) & SF6 Gas-Insulated RMU",
+      "EN: Standards\nID: Standar Acuan": "IEC 62271-200, IEC 62271-100, SPLN",
+    },
+    content: {
+      en: `<h3>Medium Voltage Switchgear & Ring Main Units (RMU)</h3>
+<p>PT Multi Daya Mitra engineers, supplies, and commissions medium-voltage switchgear, gas-insulated ring main units (RMU), and MV distribution panels for industrial plants, utility substations, and critical commercial facilities up to 36 kV.</p>
+<h3>Air-Insulated & Gas-Insulated MV Switchgear</h3>
+<p>Equipped with high-performance Vacuum Circuit Breakers (VCB), motorized rack-in mechanisms, comprehensive mechanical interlocks, and digital protection relays. Designed with internal arc containment (IAC AFLR) to ensure maximum operator safety under short-circuit conditions.</p>
+<h3>Compact Ring Main Units (RMU)</h3>
+<p>Hermetically sealed stainless steel tanks provide complete environmental immunity against moisture, dust, and flooding in compact distribution substations and industrial ring networks.</p>`,
+      id: `<h3>Switchgear Tegangan Menengah & Ring Main Unit (RMU)</h3>
+<p>PT Multi Daya Mitra merancang, memasok, dan mengomisioning switchgear tegangan menengah (TM), gas-insulated ring main unit (RMU), serta panel distribusi TM untuk kawasan industri, gardu distribusi PLN/utilitas, dan fasilitas komersial hingga 36 kV.</p>
+<h3>Switchgear TM Berisolasi Udara & Gas</h3>
+<p>Dilengkapi Vacuum Circuit Breaker (VCB) andal, mekanisme rack-in bermotor, interlocking mekanis komprehensif, dan relai proteksi digital. Memenuhi klasifikasi ketahanan busur api internal (IAC AFLR) guna menjamin keselamatan operator saat terjadi gangguan hubung singkat.</p>
+<h3>Ring Main Unit (RMU) Kompak</h3>
+<p>Tangki baja antikarat kedap udara (hermetically sealed) memberikan perlindungan total terhadap kelembapan, debu, dan korosi untuk gardu distribusi ring dan jaringan industri kompak.</p>`,
+    },
+  },
+
+  "electrical-distribution/power-distribution-transformers": {
+    id: "00000000-0000-0000-0000-000000000732",
+    slug: "power-distribution-transformers",
+    fullPath: "electrical-distribution/power-distribution-transformers",
+    depth: 1,
+    sortOrder: 2,
+    imageUrl: "/uploads/mdm/construction-installation.jpg",
+    title: {
+      en: "Power & Distribution Transformers",
+      id: "Transformator Daya & Distribusi",
+    },
+    summary: {
+      en: "Power and distribution transformers, including oil-immersed and dry-type/cast-resin transformers.",
+      id: "Transformator daya dan distribusi, mencakup tipe terendam minyak dan tipe kering (cast-resin).",
+    },
+    specs: {
+      "EN: Capacity Range\nID: Rentang Kapasitas": "100 kVA to 50 MVA",
+      "EN: Primary Voltage\nID: Tegangan Primer": "Up to 36 kV / 70 kV / 150 kV",
+      "EN: Cooling Types\nID: Metode Pendinginan": "ONAN / ONAF / AN / AF",
+      "EN: Insulation Types\nID: Jenis Insulasi": "Mineral Oil / Ester Fluid / Cast Resin Epoxy (Class F/H)",
+      "EN: Standards\nID: Standar Acuan": "IEC 60076, SPLN D3.002-1, IEEE C57",
+    },
+    content: {
+      en: `<h3>Power & Distribution Transformers</h3>
+<p>We supply, install, and test high-efficiency power and distribution transformers engineered to withstand heavy cyclic loading, harmonic heating, and harsh industrial environments with minimal losses.</p>
+<h3>Oil-Immersed Transformers (Hermetically Sealed & Conservator)</h3>
+<p>Rugged mineral oil or synthetic ester insulated transformers featuring corrugated tanks or external detachable radiators, equipped with Buchholz relays, pressure relief valves, and oil temperature gauges.</p>
+<h3>Cast-Resin Dry-Type Transformers</h3>
+<p>Flame-retardant epoxy cast-resin transformers engineered for indoor installations, hospitals, high-rise buildings, and underground substations where fire safety, environmental protection, and zero oil leakage are mandatory.</p>`,
+      id: `<h3>Transformator Daya & Distribusi</h3>
+<p>Kami memasok, memasang, dan menguji transformator daya dan distribusi berefisiensi tinggi yang dirancang untuk menahan beban siklik berat, pemanasan harmonisa, dan lingkungan industri ekstrem dengan rugi-daya minimal.</p>
+<h3>Trafo Terendam Minyak (Hermetically Sealed & Konservator)</h3>
+<p>Trafo berinsulasi minyak mineral atau fluida ester sintetis dengan tangki bergelombang atau radiator eksternal, dilengkapi relai Buchholz, katup pelepas tekanan (pressure relief valve), dan termometer suhu minyak.</p>
+<h3>Trafo Kering Cast-Resin (Dry-Type)</h3>
+<p>Transformator resin cor epoksi tahan api untuk instalasi dalam gedung, rumah sakit, gedung bertingkat, dan gardu bawah tanah yang mengutamakan keselamatan kebakaran tinggi dan bebas risiko kebocoran oli.</p>`,
+    },
+  },
+
+  "electrical-distribution/low-voltage-switchboards-mcc": {
+    id: "00000000-0000-0000-0000-000000000733",
+    slug: "low-voltage-switchboards-mcc",
+    fullPath: "electrical-distribution/low-voltage-switchboards-mcc",
+    depth: 1,
+    sortOrder: 3,
+    imageUrl: "/uploads/mdm/distribution-panel.jpg",
+    title: {
+      en: "Low Voltage Switchboards & Motor Control Centers",
+      id: "Panel Distribusi Tegangan Rendah & Motor Control Center",
+    },
+    summary: {
+      en: "Main and sub-distribution boards, motor control centers, motor starter panels, and VFD panels.",
+      id: "Panel distribusi utama dan sub-distribusi, motor control center (MCC), panel starter motor, dan panel VFD.",
+    },
+    specs: {
+      "EN: Rated Current\nID: Arus Pengenal": "Up to 6300A (99.9% Cu-ETP Busbar)",
+      "EN: Rated Voltage\nID: Tegangan Pengenal": "380V / 400V / 415V / 690V AC",
+      "EN: Short-Circuit Rating\nID: Ketahanan Hubung Singkat": "Up to 100 kA / 1s",
+      "EN: Internal Segregation\nID: Bentuk Pemisahan": "Form 2b, Form 3b, Form 4a, Form 4b",
+      "EN: Standards\nID: Standar Acuan": "IEC 61439-1/2, SNI",
+    },
+    content: {
+      en: `<h3>Low Voltage Switchboards & Motor Control Centers (MCC)</h3>
+<p>Custom-built Low Voltage Main Distribution Panels (LVMDP), sub-distribution switchboards, and intelligent Motor Control Centers (MCC) delivering reliable power distribution and motor management across industrial plants.</p>
+<h3>Main & Sub-Distribution Switchboards</h3>
+<p>Configured with Air Circuit Breakers (ACB) and Moulded Case Circuit Breakers (MCCB) up to 6300A, digital energy monitoring, modular Form 4b compartmentation, and integrated surge protection.</p>
+<h3>Motor Control Centers & VFD Panels</h3>
+<p>Fixed and withdrawable motor starter panels incorporating Direct-On-Line (DOL), Star-Delta, Soft Starters, and Variable Frequency Drives (VFD) with complete thermal overload and short-circuit coordination.</p>`,
+      id: `<h3>Panel Distribusi Tegangan Rendah & Motor Control Center (MCC)</h3>
+<p>Low Voltage Main Distribution Panel (LVMDP), panel sub-distribusi, serta Motor Control Center (MCC) cerdas yang dirakit khusus untuk penyaluran daya andal dan manajemen motor listrik di pabrik industri.</p>
+<h3>Panel Distribusi Utama (LVMDP) & Sub-Distribusi</h3>
+<p>Dikonfigurasi dengan Air Circuit Breaker (ACB) dan MCCB hingga 6300A, pemantauan energi digital, pemisahan modular Form 4b, serta proteksi surja petir (SPD) terintegrasi.</p>
+<h3>Motor Control Center (MCC) & Panel Inverter VFD</h3>
+<p>Panel starter motor tipe fixed dan withdrawable yang mengintegrasikan starter Direct-On-Line (DOL), Star-Delta, Soft Starter, dan inverter Variable Frequency Drive (VFD) dengan koordinasi proteksi beban lebih presisi.</p>`,
+    },
+  },
+
+  "electrical-distribution/ats-amf-generator-synchronization": {
+    id: "00000000-0000-0000-0000-000000000734",
+    slug: "ats-amf-generator-synchronization",
+    fullPath: "electrical-distribution/ats-amf-generator-synchronization",
+    depth: 1,
+    sortOrder: 4,
+    imageUrl: "/uploads/mdm/preventive-maintenance.jpg",
+    title: {
+      en: "ATS, AMF & Generator Synchronization",
+      id: "ATS, AMF & Sinkronisasi Genset",
+    },
+    summary: {
+      en: "Automatic transfer switches, automatic mains failure panels, generator control, and synchronization panels.",
+      id: "Sakelar transfer otomatis (ATS), panel kegagalan jala-jala otomatis (AMF), kontrol generator, dan panel sinkronisasi.",
+    },
+    specs: {
+      "EN: Configurations\nID: Konfigurasi": "Mains-to-Gen, Gen-to-Gen, Multi-Gen Parallel & Island Mode",
+      "EN: Transfer Modes\nID: Mode Transfer": "Open Transition / Closed Transition (Bumpless 0ms)",
+      "EN: Controller Brands\nID: Merek Kontroler": "Deep Sea (DSE), ComAp, Deif, Woodward",
+      "EN: Current Rating\nID: Kapasitas Arus": "100A to 5000A",
+    },
+    content: {
+      en: `<h3>ATS, AMF & Generator Synchronization Systems</h3>
+<p>Engineered to ensure uninterrupted power availability during mains failure. Automatically manages standby diesel or gas generators and synchronizes multiple power sources with zero interruption to mission-critical operations.</p>
+<h3>Automatic Transfer Switch (ATS) & AMF Panels</h3>
+<p>Equipped with intelligent microprocessors and motorized transfer switches that continuously monitor mains voltage and frequency, automatically initiating generator startup and load transfer within seconds of utility loss.</p>
+<h3>Multi-Generator Paralleling & Synchronization</h3>
+<p>Automated multi-generator paralleling with automatic kW and kVAr load sharing, load-dependent start/stop scheduling, and closed-transition return to utility power without momentary blackouts.</p>`,
+      id: `<h3>Sistem ATS, AMF & Sinkronisasi Genset</h3>
+<p>Dirancang untuk memastikan pasokan daya berkelanjutan saat suplai PLN terputus. Mengatur genset diesel/gas secara otomatis dan menyinkronkan beberapa sumber daya tanpa mengganggu operasional fasilitas penting.</p>
+<h3>Panel Automatic Transfer Switch (ATS) & AMF</h3>
+<p>Dilengkapi mikroprosesor cerdas dan sakelar transfer bermotor yang terus memantau tegangan dan frekuensi PLN, secara otomatis menyalakan genset dan mengalihkan beban dalam hitungan detik saat terjadi pemadaman.</p>
+<h3>Sinkronisasi & Paralel Multi-Genset Otomatis</h3>
+<p>Sinkronisasi multi-genset otomatis dengan pembagian beban aktif (kW) dan reaktif (kVAr), penjadwalan start/stop sesuai kebutuhan beban, serta transisi tertutup kembali ke PLN tanpa kedipan daya.</p>`,
+    },
+  },
+
+  "electrical-distribution/power-management-load-control": {
+    id: "00000000-0000-0000-0000-000000000735",
+    slug: "power-management-load-control",
+    fullPath: "electrical-distribution/power-management-load-control",
+    depth: 1,
+    sortOrder: 5,
+    imageUrl: "/uploads/products-schneider-automation.jpg",
+    title: {
+      en: "Power Management & Load Control",
+      id: "Manajemen Daya & Kontrol Beban",
+    },
+    summary: {
+      en: "Generator load sharing, priority-based load shedding, automatic load restoration, and demand control.",
+      id: "Pembagian beban generator, pelepasan beban berbasis prioritas (load shedding), pemulihan beban otomatis, dan kontrol beban.",
+    },
+    specs: {
+      "EN: System Architecture\nID: Arsitektur Sistem": "Redundant PLC / Microprocessor Controller Architecture",
+      "EN: Response Time\nID: Waktu Respons": "< 50 ms Fast Contingency Load Shedding",
+      "EN: Communication\nID: Protokol Komunikasi": "IEC 61850, Modbus TCP/IP, Ethernet/IP, Profinet",
+      "EN: Priority Levels\nID: Tingkat Prioritas": "Up to 16 configurable priority shedding matrices",
+    },
+    content: {
+      en: `<h3>Industrial Power Management & Automated Load Control</h3>
+<p>PT Multi Daya Mitra implements intelligent Power Management Systems (PMS) that safeguard islanded or grid-connected power networks from total blackouts during unexpected generation losses or sudden peak overloads.</p>
+<h3>Generator Load Sharing & Demand Management</h3>
+<p>Optimizes fuel economy and engine operating hours by distributing plant electrical load proportionally across running generators, with automatic peak shaving during high tariff periods.</p>
+<h3>Priority-Based Load Shedding & Sequential Restoration</h3>
+<p>When generating capacity drops, high-speed contingency algorithms instantly shed non-critical feeders within milliseconds to preserve frequency and voltage stability for essential production processes, sequentially reconnecting loads once power reserves recover.</p>`,
+      id: `<h3>Manajemen Daya Industri & Kontrol Beban Otomatis</h3>
+<p>PT Multi Daya Mitra menerapkan Power Management System (PMS) cerdas untuk melindungi jaringan listrik mandiri (island) maupun terhubung PLN dari risiko blackout total saat terjadi gangguan genset atau lonjakan beban tiba-tiba.</p>
+<h3>Pembagian Beban Generator (Load Sharing) & Manajemen Kebutuhan</h3>
+<p>Mengoptimalkan efisiensi bahan bakar dan jam kerja mesin dengan mendistribusikan beban listrik secara proporsional di antara genset yang beroperasi, didukung fitur peak shaving saat tarif listrik puncak.</p>
+<h3>Pelepasan Beban Berbasis Prioritas (Load Shedding) & Pemulihan Bertahap</h3>
+<p>Jika kapasitas daya turun mendadak, algoritma cepat melepaskan beban non-kritis dalam hitungan milidetik guna mempertahankan stabilitas frekuensi bagi proses produksi utama, lalu menyambungkan kembali beban secara berurutan saat pasokan daya telah aman.</p>`,
+    },
+  },
+
+  "electrical-distribution/power-quality-voltage-regulation": {
+    id: "00000000-0000-0000-0000-000000000736",
+    slug: "power-quality-voltage-regulation",
+    fullPath: "electrical-distribution/power-quality-voltage-regulation",
+    depth: 1,
+    sortOrder: 6,
+    imageUrl: "/uploads/mdm/power-quality.jpg",
+    title: {
+      en: "Power Quality & Voltage Regulation",
+      id: "Kualitas Daya & Regulasi Tegangan",
+    },
+    summary: {
+      en: "Power factor correction panels, detuned capacitor banks, active harmonic filters, and automatic voltage regulators/voltage stabilizers.",
+      id: "Panel perbaikan faktor daya, kapasitor bank berreaktor detuned, filter harmonisa aktif, dan regulator tegangan otomatis/stabilizer.",
+    },
+    specs: {
+      "EN: Power Factor\nID: Faktor Daya": "Target Cos Phi 0.98 - 1.0",
+      "EN: Harmonic Compensation\nID: Kompensasi Harmonisa": "THDi < 3% with Active Harmonic Filter (AHF)",
+      "EN: Detuned Reactors\nID: Reaktor Detuned": "5.67%, 7%, 14% anti-resonance tuning",
+      "EN: Voltage Stabilization\nID: Stabilisasi Tegangan": "AVR servo/solid-state up to 2000 kVA (±1% accuracy)",
+    },
+    content: {
+      en: `<h3>Power Quality Solutions & Voltage Regulation</h3>
+<p>Eliminate costly utility power factor penalties, suppress harmful electrical harmonics, and stabilize plant line voltage to prolong equipment operational life and reduce maintenance downtime.</p>
+<h3>Automatic Power Factor Correction (APFC) & Detuned Capacitor Banks</h3>
+<p>Microprocessor-controlled capacitor banks with heavy-duty detuned iron-core reactors that prevent electrical resonance and protect capacitor cells from harmonic overvoltage.</p>
+<h3>Active Harmonic Filters (AHF) & Industrial Voltage Stabilizers</h3>
+<p>Ultra-fast IGBT active filters dynamically inject counter-phase harmonic currents from the 2nd to 50th order, paired with high-capacity Automatic Voltage Regulators (AVR) for sensitive industrial manufacturing machinery.</p>`,
+      id: `<h3>Solusi Kualitas Daya & Regulasi Tegangan</h3>
+<p>Meniadakan denda kelebihan pemakaian kVARh dari PLN, meredam gelombang harmonisa yang merusak, dan menstabilkan tegangan suplai guna memperpanjang umur peralatan serta mencegah downtime produksi.</p>
+<h3>Automatic Power Factor Correction (APFC) & Kapasitor Bank Detuned</h3>
+<p>Kapasitor bank otomatis terkontrol mikroprosesor dengan reaktor besi detuned tugas berat yang mencegah resonansi harmonisa dan melindungi kapasitor dari tegangan lebih.</p>
+<h3>Active Harmonic Filter (AHF) & Stabilizer Tegangan Industri</h3>
+<p>Filter aktif berkecepatan tinggi berbasis IGBT yang menginjeksi arus penyeimbang harmonisa orde 2 hingga 50 secara dinamis, dipadukan dengan Automatic Voltage Regulator (AVR) berkapasitas besar untuk mesin industri sensitif.</p>`,
+    },
+  },
+
+  "electrical-distribution/ups-dc-power-systems": {
+    id: "00000000-0000-0000-0000-000000000737",
+    slug: "ups-dc-power-systems",
+    fullPath: "electrical-distribution/ups-dc-power-systems",
+    depth: 1,
+    sortOrder: 7,
+    imageUrl: "/uploads/mdm/electrical-equipment.jpg",
+    title: {
+      en: "UPS & DC Power Systems",
+      id: "Sistem UPS & Catu Daya DC",
+    },
+    summary: {
+      en: "Uninterruptible power supplies, battery banks, battery chargers/rectifiers, and DC distribution panels for protection and control systems.",
+      id: "Uninterruptible power supply (UPS), bank baterai, charger/rectifier baterai, dan panel distribusi DC untuk sistem proteksi dan kontrol.",
+    },
+    specs: {
+      "EN: DC System Voltages\nID: Tegangan Sistem DC": "24V, 48V, 110V, 220V DC Auxiliary Supply",
+      "EN: UPS Technology\nID: Teknologi UPS": "True Online Double-Conversion with Galvanic Isolation",
+      "EN: Battery Chemistries\nID: Tipe Baterai": "VRLA AGM/Gel, Nickel-Cadmium (Ni-Cd), Lithium Iron Phosphate (LiFePO4)",
+      "EN: Charger Topology\nID: Topologi Charger": "Industrial Thyristor/SCR & High-Frequency Switch Mode Rectifiers",
+    },
+    content: {
+      en: `<h3>Industrial UPS & DC Auxiliary Power Systems</h3>
+<p>Critical substations, power plants, and chemical process facilities require 100% reliable continuous DC power to operate protection relays, trip circuit breakers, emergency lubrication pumps, and SCADA monitoring nodes during total blackout conditions.</p>
+<h3>Battery Chargers & Industrial DC Distribution Boards</h3>
+<p>Thyristor-controlled industrial battery chargers and DC distribution panels with float/boost charging profiles, ground fault detection, battery temperature compensation, and dual redundant rectifier configurations.</p>
+<h3>Online Industrial Uninterruptible Power Supplies (UPS)</h3>
+<p>Heavy-duty industrial online double-conversion UPS systems featuring internal inverter isolation transformers to protect sensitive instrumentation, PLC cabinets, and DCS servers from grid disturbances.</p>`,
+      id: `<h3>Sistem UPS Industri & Catu Daya DC Bantu</h3>
+<p>Gardu induk, pembangkit tenaga listrik, dan fasilitas kimia membutuhkan catu daya DC tanpa henti untuk mengoperasikan relai proteksi, koil trip pemutus sirkuit, pompa oli darurat, serta pemantauan SCADA saat terjadi pemadaman listrik total.</p>
+<h3>Charger Baterai & Panel Distribusi DC Industri</h3>
+<p>Pengisi daya baterai industri berbasis thyristor dan panel distribusi DC dengan mode pengisian float/boost, deteksi gangguan hubung tanah, kompensasi suhu baterai, serta konfigurasi redundant ganda.</p>
+<h3>Uninterruptible Power Supply (UPS) Online Industri</h3>
+<p>Sistem UPS online double-conversion tugas berat dengan transformator isolasi inverter internal untuk melindungi instrumen sensitif, kabinet PLC, dan server DCS dari segala bentuk gangguan tegangan.</p>`,
+    },
+  },
+
+  "electrical-distribution/frequency-conversion-shore-power": {
+    id: "00000000-0000-0000-0000-000000000738",
+    slug: "frequency-conversion-shore-power",
+    fullPath: "electrical-distribution/frequency-conversion-shore-power",
+    depth: 1,
+    sortOrder: 8,
+    imageUrl: "/uploads/mdm/medium-voltage-equipment.jpg",
+    title: {
+      en: "Frequency Conversion & Shore Power Systems",
+      id: "Konversi Frekuensi & Sistem Shore Power",
+    },
+    summary: {
+      en: "Supply-frequency converters, shore-to-ship power connections, transformers, switchgear, cable management, connectors, and associated control and interlocking systems.",
+      id: "Konverter frekuensi pasokan, koneksi listrik dermaga ke kapal (shore power), transformator, switchgear, manajemen kabel, konektor, dan sistem kontrol serta interlocking terkait.",
+    },
+    specs: {
+      "EN: Frequency Conversion\nID: Konversi Frekuensi": "50 Hz to 60 Hz / 60 Hz to 50 Hz Bi-directional Static Converters",
+      "EN: Standards\nID: Standar Acuan": "IEC/IEEE 80005-1 High Voltage Shore Connection (HVSC)",
+      "EN: Capacity\nID: Kapasitas Daya": "500 kVA to 10 MVA Shore Power Substations",
+      "EN: Safety Features\nID: Fitur Keselamatan": "Galvanic isolation, pilot wire interlocking, automated cable reels",
+    },
+    content: {
+      en: `<h3>Frequency Conversion & Shore-to-Ship Power (Cold Ironing)</h3>
+<p>PT Multi Daya Mitra delivers turnkey shore power supply systems (Alternative Maritime Power - AMP) and static frequency converters that allow marine vessels, shipyards, and offshore platforms to run on clean shoreside grid power.</p>
+<h3>Static Frequency Converters (50 Hz / 60 Hz)</h3>
+<p>High-efficiency solid-state static frequency converters seamlessly bridge the gap between 50 Hz national grid power and 60 Hz shipboard or imported plant machinery with precise voltage and frequency regulation.</p>
+<h3>Shore Connection Substations & Cable Management</h3>
+<p>Comprehensive marine shore connection infrastructure including medium-voltage transformers, switchgear, motorized cable handling reels, safety interlock control, and explosion-protected maritime sockets compliant with IEC/IEEE 80005-1.</p>`,
+      id: `<h3>Konversi Frekuensi & Catu Daya Dermaga ke Kapal (Shore Power)</h3>
+<p>PT Multi Daya Mitra menghadirkan sistem catu daya dermaga siap pakai (Alternative Maritime Power - AMP / Cold Ironing) dan konverter frekuensi statis yang memungkinkan kapal, galangan, dan platform lepas pantai memanfaatkan listrik dermaga yang ramah lingkungan.</p>
+<h3>Konverter Frekuensi Statis (50 Hz / 60 Hz)</h3>
+<p>Konverter frekuensi solid-state berefisiensi tinggi yang menjembatani perbedaan antara frekuensi listrik PLN (50 Hz) dengan sistem kelistrikan kapal atau mesin impor berstandar 60 Hz secara presisi.</p>
+<h3>Gardu Sambungan Dermaga & Manajemen Kabel</h3>
+<p>Infrastruktur sambungan listrik pelabuhan lengkap mencakup transformator TM, switchgear distribusi, gulungan kabel bermotor (cable reel), pengaman interlocking, dan konektor maritim berstandar internasional IEC/IEEE 80005-1.</p>`,
+    },
+  },
+
+  "electrical-distribution/protection-metering-neutral-grounding": {
+    id: "00000000-0000-0000-0000-000000000739",
+    slug: "protection-metering-neutral-grounding",
+    fullPath: "electrical-distribution/protection-metering-neutral-grounding",
+    depth: 1,
+    sortOrder: 9,
+    imageUrl: "/uploads/mdm/micrologic-test.jpg",
+    title: {
+      en: "Protection, Metering & Neutral Grounding",
+      id: "Proteksi, Metering & Neutral Grounding",
+    },
+    summary: {
+      en: "Protection relays, current and voltage transformers, power meters, neutral grounding resistors, and associated monitoring systems.",
+      id: "Relai proteksi, transformator arus dan tegangan (CT/VT), power meter, neutral grounding resistor (NGR), dan sistem pemantauan terkait.",
+    },
+    specs: {
+      "EN: Protection Functions\nID: Fungsi Proteksi": "Overcurrent (50/51), Earth Fault (50N/51N), Differential (87), Arc Flash",
+      "EN: Instrument Transformers\nID: Trafo Instrumen": "Cast Resin CT & VT Class 0.2S / 0.5 / 5P20 up to 36 kV",
+      "EN: NGR Ratings\nID: Kapasitas NGR": "6.6 kV, 11 kV, 20 kV, 22 kV up to 1000A (10s / 30s / continuous)",
+      "EN: Resistor Material\nID: Material Resistor": "Stainless Steel / Nickel-Chromium high-temperature alloy",
+    },
+    content: {
+      en: `<h3>Power Protection, Metering & Neutral Grounding Resistors</h3>
+<p>Protect valuable capital assets against electrical damage, minimize thermal stress during earth faults, and capture revenue-grade energy metrics with coordinated numerical protection and instrument transformers.</p>
+<h3>Numerical Protection Relays & Instrument Transformers (CT/VT)</h3>
+<p>Advanced digital protection relays for feeders, transformers, generators, and busbars with high-accuracy Current and Voltage Transformers (CT/VT) supporting IEC 61850 communications and optical arc flash protection.</p>
+<h3>Neutral Grounding Resistors (NGR) & Monitoring</h3>
+<p>Stainless steel grid Neutral Grounding Resistors designed to limit ground-fault currents to safe levels, protecting transformer windings and generators while ensuring reliable tripping, supported by continuous NGR health monitors.</p>`,
+      id: `<h3>Proteksi Daya, Pengukuran & Neutral Grounding Resistor (NGR)</h3>
+<p>Melindungi aset bernilai tinggi dari kerusakan kelistrikan, meminimalkan tegangan termal saat gangguan hubung tanah, dan menghasilkan data pengukuran daya akurat melalui koordinasi relai numerik dan transformator instrumen.</p>
+<h3>Relai Proteksi Numerik & Trafo Instrumen (CT/VT)</h3>
+<p>Relai proteksi digital canggih untuk penyulang, transformator, generator, dan busbar, didukung Current & Voltage Transformer (CT/VT) berakurasi tinggi dengan protokol IEC 61850 serta proteksi busur api optik.</p>
+<h3>Neutral Grounding Resistor (NGR) & Pemantauan Kontinu</h3>
+<p>Neutral Grounding Resistor berpelat baja antikarat yang dirancang untuk membatasi arus gangguan tanah ke tingkat aman, melindungi belitan trafo dan generator dari kerusakan fatal, dilengkapi pemantau kontinuitas NGR otomatis.</p>`,
+    },
+  },
+
+  "electrical-distribution/substation-automation-scada": {
+    id: "00000000-0000-0000-0000-000000000740",
+    slug: "substation-automation-scada",
+    fullPath: "electrical-distribution/substation-automation-scada",
+    depth: 1,
+    sortOrder: 10,
+    imageUrl: "/uploads/products-schneider-automation.jpg",
+    title: {
+      en: "Substation Automation & SCADA",
+      id: "Otomasi Gardu Induk & SCADA",
+    },
+    summary: {
+      en: "Substation automation systems, RTUs, communication gateways, HMIs, IED integration, and remote monitoring and control.",
+      id: "Sistem otomasi gardu induk (SAS), RTU, gateway komunikasi, HMI, integrasi IED, serta kontrol dan pemantauan jarak jauh.",
+    },
+    specs: {
+      "EN: Protocols\nID: Protokol": "IEC 61850 (GOOSE, MMS, SV), IEC 60870-5-101/104, Modbus TCP, DNP3",
+      "EN: Redundancy\nID: Redundansi Jaringan": "PRP (Parallel Redundancy Protocol) & HSR (High-availability Seamless Ring)",
+      "EN: Hardware\nID: Perangkat Keras": "Industrial Ruggedized Substation Computers, Managed Fiber Switches, GPS Time Sync",
+      "EN: Visualization\nID: Visualisasi HMI": "Dynamic Single Line Diagrams (SLD), SOE Event Logging, Disturbance Recording",
+    },
+    content: {
+      en: `<h3>Substation Automation Systems (SAS) & Electrical SCADA</h3>
+<p>Transform conventional electrical substations into modern, digitalized, and cyber-secure automated hubs with complete real-time telemetry, automated interlocking, and remote control capabilities.</p>
+<h3>IEC 61850 Digital Substation Integration</h3>
+<p>Connects Intelligent Electronic Devices (IEDs), protection relays, energy meters, and tap changer controllers across redundant station-bus fiber optic rings using standardized GOOSE and MMS protocols.</p>
+<h3>Remote Terminal Units (RTU) & Central Dispatch Gateways</h3>
+<p>Provides substation-hardened RTUs and communication gateways that interface local switchgear with national utility grid dispatchers (PLN SCADA) or centralized industrial factory control rooms (DCS).</p>`,
+      id: `<h3>Sistem Otomasi Gardu Induk (SAS) & SCADA Kelistrikan</h3>
+<p>Mentransformasi gardu induk konvensional menjadi gardu digital modern yang aman, dilengkapi telemetri real-time komprehensif, interlocking otomatis, dan kontrol operasional jarak jauh.</p>
+<h3>Integrasi Gardu Digital Berstandar IEC 61850</h3>
+<p>Menghubungkan Intelligent Electronic Device (IED), relai proteksi, meter energi, dan kontrol tap changer melalui jaringan serat optik redundan berstandar GOOSE dan MMS tanpa jeda.</p>
+<h3>Remote Terminal Unit (RTU) & Gateway Dispatch Pusat</h3>
+<p>Menyediakan RTU berstandar industri dan gateway komunikasi untuk menghubungkan switchgear gardu dengan pusat kontrol penyulang (PLN SCADA) maupun ruang kontrol terpusat pabrik (DCS).</p>`,
+    },
+  },
+
   "electrical-distribution/medium-voltage-substation": {
     id: "00000000-0000-0000-0000-000000000715",
     slug: "medium-voltage-substation",
     fullPath: "electrical-distribution/medium-voltage-substation",
     depth: 1,
-    sortOrder: 1,
+    sortOrder: 11,
     imageUrl: "/uploads/mdm/circuit-breaker.jpg",
     title: {
-      en: "Medium Voltage Substation & Transformers",
-      id: "Gardu Induk Tegangan Menengah & Transformator",
+      en: "Medium Voltage Switchgear & RMU",
+      id: "Switchgear Tegangan Menengah & RMU",
     },
     summary: {
-      en: "MV Metal-Clad Switchgear up to 24kV/36kV, Oil-Immersed & Cast Resin Dry-Type Transformers, and Vacuum Circuit Breakers.",
-      id: "Switchgear Metal-Clad TM hingga 24kV/36kV, Transformator Tipe Minyak & Dry-Type Cast Resin, serta Vacuum Circuit Breaker.",
+      en: "Medium-voltage switchgear, ring main units, and MV distribution panels.",
+      id: "Switchgear tegangan menengah, ring main unit (RMU), dan panel distribusi TM.",
     },
     specs: {
-      "EN: Voltage Level\nID: Tingkat Tegangan": "EN: Up to 36 kV\nID: Hingga 36 kV",
-      "EN: Transformer Capacity\nID: Kapasitas Transformator": "EN: Up to 20 MVA\nID: Hingga 20 MVA",
-      "EN: Insulation\nID: Jenis Insulasi": "EN: Oil-Immersed / Cast Resin Dry Type\nID: Tipe Minyak / Cast Resin Dry Type",
-      "EN: Standards\nID: Standar Acuan": "IEC 62271-200, SPLN, IEEE C37",
+      "EN: Rated Voltage\nID: Tingkat Tegangan": "12 kV / 24 kV / 36 kV",
+      "EN: Standards\nID: Standar Acuan": "IEC 62271-200, SPLN",
     },
     content: {
-      en: `<h3>Medium Voltage Substation Infrastructure</h3>
-<p>Turnkey medium voltage substation equipment engineered for utility substations, heavy industrial plants, and captive power plants up to 36 kV. Built to withstand high short-circuit levels and demanding environmental conditions.</p>
-<h3>MV Metal-Clad Switchgear & Ring Main Units (RMU)</h3>
-<p>Supplied with high-performance Vacuum Circuit Breakers (VCB) or SF6 gas-insulated breakers, digital protection relays, and arc flash detection sensors in strict compliance with IEC 62271-200 and SPLN standards.</p>
-<h3>Oil-Immersed & Dry-Type Transformers</h3>
-<p>Distribution and power transformers up to 20 MVA capacity, featuring low-loss magnetic cores, cast resin flame-retardant insulation for indoor safety, or hermetically sealed oil tanks for outdoor industrial durability.</p>`,
-      id: `<h3>Infrastruktur Gardu Induk Tegangan Menengah</h3>
-<p>Peralatan gardu induk tegangan menengah siap pakai (turnkey) yang dirancang untuk gardu distribusi PLN/utilitas, pabrik industri berat, dan pembangkit listrik internal (captive power) hingga 36 kV. Dibuat kokoh untuk menahan beban hubung singkat tinggi dan kondisi lingkungan yang menantang.</p>
-<h3>Switchgear Metal-Clad TM & Ring Main Unit (RMU)</h3>
-<p>Dilengkapi Vacuum Circuit Breaker (VCB) berkinerja tinggi atau pemutus berinsulasi gas SF6, relai proteksi digital, dan sensor deteksi arc flash sesuai standar IEC 62271-200 dan SPLN.</p>
-<h3>Transformator Distribusi Tipe Minyak & Dry-Type Cast Resin</h3>
-<p>Transformator daya dan distribusi berkapasitas hingga 20 MVA, mengadopsi inti magnetik rugi-daya rendah (low-loss), insulasi resin tahan api untuk keselamatan dalam ruangan, atau tangki minyak kedap udara (hermetically sealed) untuk ketahanan luar ruangan.</p>`,
+      en: `<p>Medium-voltage switchgear, ring main units, and MV distribution panels.</p>`,
+      id: `<p>Switchgear tegangan menengah, ring main unit (RMU), dan panel distribusi TM.</p>`,
     },
   },
 
@@ -1441,35 +1802,23 @@ export const BILINGUAL_PRODUCT_CATALOG: Record<string, BilingualProductEntry> = 
     slug: "low-voltage-distribution-panels",
     fullPath: "electrical-distribution/low-voltage-distribution-panels",
     depth: 1,
-    sortOrder: 2,
+    sortOrder: 12,
     imageUrl: "/uploads/mdm/distribution-panel.jpg",
     title: {
-      en: "Low Voltage Panels (MDP, SDP, ATS & Sync)",
-      id: "Panel Tegangan Rendah (MDP, SDP, ATS & Sinkronisasi)",
+      en: "Low Voltage Switchboards & Motor Control Centers",
+      id: "Panel Distribusi Tegangan Rendah & Motor Control Center",
     },
     summary: {
-      en: "Main Distribution Panels (MDP), Sub-Distribution Panels (SDP), ATS/AMF Generator Sync Panels, and Motor Control Centers (MCC).",
-      id: "Panel Distribusi Utama (MDP), Sub-Distribusi (SDP), Panel Sinkronisasi Genset ATS/AMF, dan Motor Control Center (MCC).",
+      en: "Main and sub-distribution boards, motor control centers, motor starter panels, and VFD panels.",
+      id: "Panel distribusi utama dan sub-distribusi, motor control center (MCC), panel starter motor, dan panel VFD.",
     },
     specs: {
-      "EN: Busbar Rating\nID: Kapasitas Busbar": "Up to 6300A (99.9% Cu-ETP)",
-      "EN: Rated Voltage\nID: Tegangan Pengenal": "380V / 400V / 690V",
-      "EN: Operation\nID: Mode Operasi": "EN: Manual / Auto Sync ATS\nID: Manual / Auto Sync ATS",
-      "EN: Enclosure Protection\nID: Proteksi Enclosure": "IP42 to IP65",
+      "EN: Rated Current\nID: Arus Pengenal": "Up to 6300A",
+      "EN: Standards\nID: Standar Acuan": "IEC 61439-1/2",
     },
     content: {
-      en: `<h3>Custom Low Voltage Distribution Switchboards</h3>
-<p>Custom assembled low voltage distribution boards built with premium 99.9% Cu-ETP copper busbars, type-tested enclosures, and intelligent circuit breakers for seamless power routing and high operational safety up to 6300A.</p>
-<h3>Main Distribution Panels (MDP) & Sub-Panels (SDP)</h3>
-<p>Equipped with ACB/MCCB protection, digital metering, surge protective devices (SPD), and modular segregation up to Form 4b to safeguard personnel and simplify ongoing maintenance.</p>
-<h3>Automatic Transfer Switch (ATS) & Generator Synchronization</h3>
-<p>Engineered with automatic mains failure (AMF) controllers and motorized changeover switches for seamless power transition between grid power and emergency generators without voltage drops.</p>`,
-      id: `<h3>Panel Distribusi Daya Tegangan Rendah Kustom</h3>
-<p>Panel distribusi tegangan rendah yang dirakit khusus menggunakan busbar tembaga murni 99,9% Cu-ETP, boks panel berstandar type-tested, dan circuit breaker cerdas untuk penyaluran tenaga listrik tanpa hambatan serta tingkat keamanan operasional tinggi hingga 6300A.</p>
-<h3>Main Distribution Panel (MDP) & Sub-Distribution Panel (SDP)</h3>
-<p>Dilengkapi proteksi ACB/MCCB, power meter digital, perangkat proteksi petir/surge (SPD), serta pemisahan modular hingga Form 4b untuk melindungi teknisi dan mempermudah pemeliharaan berkala.</p>
-<h3>Automatic Transfer Switch (ATS) & Sinkronisasi Genset</h3>
-<p>Dirancang dengan kontroler Automatic Mains Failure (AMF) dan motorized changeover switch untuk transisi suplai daya mulus antara listrik PLN dan genset darurat tanpa lonjakan atau pemadaman berkepanjangan.</p>`,
+      en: `<p>Main and sub-distribution boards, motor control centers, motor starter panels, and VFD panels.</p>`,
+      id: `<p>Panel distribusi utama dan sub-distribusi, motor control center (MCC), panel starter motor, dan panel VFD.</p>`,
     },
   },
 
@@ -1778,8 +2127,16 @@ export const PRODUCT_TREE_STRUCTURE: { root: string; children: string[] }[] = [
   {
     root: "electrical-distribution",
     children: [
-      "electrical-distribution/medium-voltage-substation",
-      "electrical-distribution/low-voltage-distribution-panels",
+      "electrical-distribution/medium-voltage-switchgear-rmu",
+      "electrical-distribution/power-distribution-transformers",
+      "electrical-distribution/low-voltage-switchboards-mcc",
+      "electrical-distribution/ats-amf-generator-synchronization",
+      "electrical-distribution/power-management-load-control",
+      "electrical-distribution/power-quality-voltage-regulation",
+      "electrical-distribution/ups-dc-power-systems",
+      "electrical-distribution/frequency-conversion-shore-power",
+      "electrical-distribution/protection-metering-neutral-grounding",
+      "electrical-distribution/substation-automation-scada",
     ],
   },
   {
