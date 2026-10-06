@@ -71,13 +71,15 @@ function menuNode(item: MenuItem, lang: ContentLanguage = "id"): NavNode {
 }
 
 function contentNodes(nodes: ContentNode[], basePath: string, lang: ContentLanguage = "id"): NavNode[] {
-  return nodes.map((node) => ({
-    id: node.id,
-    label: filterBilingualText(node.title, lang) || node.title,
-    href: `${basePath}/${node.fullPath}`,
-    summary: filterBilingualText(node.summary, lang) || node.summary,
-    children: contentNodes(node.children ?? [], basePath, lang),
-  }))
+  return nodes
+    .filter((node) => node.slug !== "enclosure-climate-control")
+    .map((node) => ({
+      id: node.id,
+      label: filterBilingualText(node.title, lang) || node.title,
+      href: `${basePath}/${node.fullPath}`,
+      summary: filterBilingualText(node.summary, lang) || node.summary,
+      children: contentNodes(node.children ?? [], basePath, lang),
+    }))
 }
 
 function DesktopNavItem({ entry, active }: { entry: NavNode; active: boolean }) {

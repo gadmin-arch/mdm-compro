@@ -2163,10 +2163,6 @@ export const PRODUCT_TREE_STRUCTURE: { root: string; children: string[] }[] = [
     ],
   },
   {
-    root: "enclosure-climate-control",
-    children: [],
-  },
-  {
     root: "power-quality",
     children: [
       "power-quality/active-harmonic-filters",

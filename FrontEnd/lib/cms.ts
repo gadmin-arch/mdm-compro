@@ -401,7 +401,9 @@ export async function getNavigation(): Promise<Navigation> {
   const nav = await cmsFetch<Navigation>("/navigation", fallbackNavigation)
 
   // Synchronize product tree to always conform to the authoritative catalog hierarchy
-  const productRoots = fallbackProducts.map((fbRoot) => {
+  const productRoots = fallbackProducts
+    .filter((fbRoot) => fbRoot.slug !== "enclosure-climate-control")
+    .map((fbRoot) => {
     const dbRoot = nav.products?.find((p) => p.slug === fbRoot.slug)
     const enriched = dbRoot ? enrichProductWithBilingual(dbRoot, fbRoot.slug) || fbRoot : fbRoot
     return {
@@ -677,7 +679,9 @@ export async function getProducts(filters?: PageFilters): Promise<ContentNode[] 
   if (!filters) {
     const res = await cmsFetch<ContentNode[]>("/products", fallbackProducts)
     // Synchronize roots with fallbackProducts to guarantee clean category listing
-    return fallbackProducts.map((fbRoot) => {
+    return fallbackProducts
+      .filter((fbRoot) => fbRoot.slug !== "enclosure-climate-control")
+      .map((fbRoot) => {
       const dbNode = Array.isArray(res) ? res.find((r) => r.slug === fbRoot.slug) : null
       const enriched = dbNode ? enrichProductWithBilingual(dbNode, fbRoot.slug) || fbRoot : fbRoot
       return {
