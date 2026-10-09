@@ -212,20 +212,40 @@ const nextConfig = {
       // goes to its on-demand <listing>/~list route instead. These run before
       // the file system so "/en/products?page=2" doesn't get the prerendered
       // "/en/products".
-      beforeFiles: Object.entries(listingQueries).flatMap(([listing, keys]) =>
-        keys.flatMap((key) => [
-          {
-            source: `/${listing}`,
-            has: [{ type: 'query', key }],
-            destination: `/id/${listing}/~list`,
-          },
-          {
-            source: `/en/${listing}`,
-            has: [{ type: 'query', key }],
-            destination: `/en/${listing}/~list`,
-          },
-        ]),
-      ),
+      beforeFiles: [
+        ...Object.entries(listingQueries).flatMap(([listing, keys]) =>
+          keys.flatMap((key) => [
+            {
+              source: `/${listing}`,
+              has: [{ type: 'query', key }],
+              destination: `/id/${listing}/~list`,
+            },
+            {
+              source: `/en/${listing}`,
+              has: [{ type: 'query', key }],
+              destination: `/en/${listing}/~list`,
+            },
+          ]),
+        ),
+        // Indonesian is the unprefixed default: "/about" renders
+        // app/[lang]/about with lang "id" while the browser keeps the clean
+        // URL; "/en/about" matches app/[lang] as is. As static rules Vercel
+        // applies them on its CDN — a proxy.ts rewrite would invoke a function
+        // before every cached page view and prefetch. They must run before the
+        // file system: there Vercel resolves client navigations ("/career"
+        // with an RSC header) to the prerendered "/[lang]" page, lang
+        // "career". Paths already under /id come from the rules above
+        // (visitors' /id/… URLs are redirected first); paths with a dot are
+        // files.
+        {
+          source: '/',
+          destination: '/id',
+        },
+        {
+          source: '/:path((?!(?:en|id|admin|api)(?:/|$)|_next/|_vercel/|__|.*\\.).+)',
+          destination: '/id/:path',
+        },
+      ],
       afterFiles: [
         {
           source: '/api/v1/public/:path*',
@@ -238,22 +258,6 @@ const nextConfig = {
         {
           source: '/api/v1/auth/:path*',
           destination: `${authApiBase}/:path*`,
-        },
-        // Indonesian is the unprefixed default: "/about" renders
-        // app/[lang]/about with lang "id" while the browser keeps the clean
-        // URL; "/en/about" matches app/[lang] as is. These run after public
-        // files and app routes (/admin, /api, robots.txt…), and as static rules
-        // Vercel applies them on its CDN — a proxy.ts rewrite would invoke a
-        // function before every cached page view and prefetch. Paths already
-        // under /id come from the rewrites above (visitors' /id/… URLs are
-        // redirected first).
-        {
-          source: '/',
-          destination: '/id',
-        },
-        {
-          source: '/:path((?!(?:en|id|admin|api)(?:/|$)|_next/|_vercel/|__|.*\\.).+)',
-          destination: '/id/:path',
         },
       ],
     }
