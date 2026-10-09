@@ -96,5 +96,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ),
     )
 
-  return [...staticRoutes, ...customPageRoutes, ...serviceRoutes, ...productRoutes, ...newsRoutes, ...careerRoutes]
+  const entries = [...staticRoutes, ...customPageRoutes, ...serviceRoutes, ...productRoutes, ...newsRoutes, ...careerRoutes]
+  // Every language version is listed as a URL of its own, with the same
+  // alternates, as search engines expect for hreflang in sitemaps.
+  return entries.flatMap((entry) => [entry, { ...entry, url: entry.alternates?.languages?.en ?? entry.url }])
 }

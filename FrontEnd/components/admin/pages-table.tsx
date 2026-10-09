@@ -18,7 +18,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { isSystemPageKey, type PageContent } from "@/lib/cms"
+import { isSystemPageKey } from "@/lib/cms-shared"
+import type { PageContent } from "@/lib/cms"
 import { deletePageAction, duplicatePageAction } from "@/app/admin/(workspace)/pages/actions"
 import { BilingualStatusBadge, CleanAdminTitle } from "@/components/admin/bilingual-badge"
 import { useContentLanguage } from "@/components/cms/content-language"

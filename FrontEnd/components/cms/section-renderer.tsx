@@ -18,7 +18,6 @@ import { PageHero } from "@/components/page-hero"
 import { Services } from "@/components/services"
 import { WhyUs } from "@/components/why-us"
 import { RichText } from "@/components/cms/rich-text"
-import { BilingualText } from "@/components/cms/content-language"
 import { AboutIntroSection } from "@/components/sections/about-intro"
 import { ContentGridSection } from "@/components/sections/content-grid"
 import { EmbedSection } from "@/components/sections/embed"
@@ -28,7 +27,9 @@ import { ImageTextSection } from "@/components/sections/image-text"
 import { OfficesSection } from "@/components/sections/offices"
 import { StatsSection } from "@/components/sections/stats"
 import type { ContentNode, NewsItem, PageContent } from "@/lib/cms"
-import { str, type Section } from "@/lib/sections"
+import { hasText, resolveHtml, resolveText } from "@/lib/localized"
+import { isLocalizedText, type Locale, type LocalizedText } from "@/lib/i18n"
+import { prop, str, visibleSections, type Section } from "@/lib/sections"
 
 // Dynamic sections (contentGrid) render from pre-resolved data so this
 // component stays usable in Server Components and the admin live preview.
@@ -43,10 +44,14 @@ export const emptySectionData: SectionData = { services: [], products: [], news:
 export function SectionRenderer({
   sections,
   data = emptySectionData,
+  lang,
   listingPlaceholder = false,
 }: {
   sections: Section[]
   data?: SectionData
+  // Language of the page being rendered (the URL's on the public site, the
+  // preview toggle in the admin builder).
+  lang: Locale
   // Admin preview only: draw a placeholder box where the automatic listing
   // will render. On the public site the marker renders nothing (the landing
   // route injects the real listing at that spot).
@@ -54,8 +59,14 @@ export function SectionRenderer({
 }) {
   return (
     <>
-      {sections.map((section) => (
-        <SectionView key={section.id} section={section} data={data} listingPlaceholder={listingPlaceholder} />
+      {visibleSections(sections).map((section) => (
+        <SectionView
+          key={section.id}
+          section={section}
+          data={data}
+          lang={lang}
+          listingPlaceholder={listingPlaceholder}
+        />
       ))}
     </>
   )
@@ -64,10 +75,12 @@ export function SectionRenderer({
 export function SectionView({
   section,
   data,
+  lang,
   listingPlaceholder = false,
 }: {
   section: Section
   data: SectionData
+  lang: Locale
   listingPlaceholder?: boolean
 }) {
   const props = section.props ?? {}
@@ -84,95 +97,104 @@ export function SectionView({
         </div>
       )
     case "hero":
-      return <Hero props={props} />
+      return <Hero props={props} lang={lang} />
     case "pageHero":
       return (
+        // Raw values on purpose: PageHero resolves them once for the page
+        // language (resolving here too would run plain text through the
+        // legacy " / " and two-line heuristics a second time).
         <PageHero
-          eyebrow={str(props, "eyebrow")}
-          title={str(props, "title")}
-          description={str(props, "description") || undefined}
+          eyebrow={copy(props.eyebrow)}
+          title={copy(props.title)}
+          description={hasText(props.description) ? copy(props.description) : undefined}
           // The eyebrow ("About Us") makes a usable breadcrumb; the title is
           // a full headline and would overflow the trail.
           breadcrumbs={[
-            { label: "Home", href: "/" },
-            { label: str(props, "eyebrow") || str(props, "title") },
+            { label: { id: "Beranda", en: "Home" }, href: "/" },
+            { label: copy(hasText(props.eyebrow) ? props.eyebrow : props.title) },
           ]}
         />
       )
     case "aboutIntro":
-      return <AboutIntroSection props={props} />
+      return <AboutIntroSection props={props} lang={lang} />
     case "aboutStory":
-      return <AboutStorySection props={props} />
+      return <AboutStorySection props={props} lang={lang} />
     case "impactValues":
-      return <ImpactValuesSection props={props} />
+      return <ImpactValuesSection props={props} lang={lang} />
     case "milestones":
-      return <MilestonesSection props={props} />
+      return <MilestonesSection props={props} lang={lang} />
     case "hseCulture":
-      return <HseCultureSection props={props} />
+      return <HseCultureSection props={props} lang={lang} />
     case "certifications":
-      return <CertificationsSection props={props} />
+      return <CertificationsSection props={props} lang={lang} />
     case "licensedExperts":
-      return <LicensedExpertsSection props={props} />
+      return <LicensedExpertsSection props={props} lang={lang} />
     case "testingEquipment":
-      return <TestingEquipmentSection props={props} />
+      return <TestingEquipmentSection props={props} lang={lang} />
     case "brandPartners":
-      return <BrandPartnersSection props={props} />
+      return <BrandPartnersSection props={props} lang={lang} />
     case "about":
-      return <About page={{ content: props } as unknown as PageContent} />
+      return <About page={{ content: props } as unknown as PageContent} lang={lang} />
     case "contact":
-      return <Contact page={{ content: props } as unknown as PageContent} />
+      return <Contact props={props} lang={lang} />
     case "offices":
-      return <OfficesSection props={props} />
+      return <OfficesSection props={props} lang={lang} />
     case "capabilities":
-      return <Capabilities props={props} />
+      return <Capabilities props={props} lang={lang} />
     case "servicesShowcase":
-      return <Services services={data.services.length > 0 ? data.services : undefined} props={props} />
+      return <Services services={data.services.length > 0 ? data.services : undefined} props={props} lang={lang} />
     case "imageText":
-      return <ImageTextSection props={props} />
+      return <ImageTextSection props={props} lang={lang} />
     case "richText": {
-      const title = str(props, "title").trim()
-      const html = str(props, "html").trim()
-      const blocks: Array<{ type: string; text?: string; items?: string[]; html?: string }> =
-        normalizeBlocks(props.blocks)
-      if (html) blocks.unshift({ type: "html", html })
+      const title = resolveText(props.title, lang).trim()
+      // Per-language HTML renders as written; only legacy single-string HTML
+      // still goes through the old EN:/ID: marker filter.
+      const { html, legacy } = resolveHtml(props.html, lang)
+      const blocks = normalizeBlocks(props.blocks, lang)
       return (
         <section className="border-b border-border/60 bg-background">
           <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
             {title && (
               <h2 className="mb-6 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                <BilingualText text={title} />
+                {title}
               </h2>
             )}
-            <RichText content={{ blocks }} />
+            {html.trim() && (
+              <RichText content={{ blocks: [{ type: "html", html: html.trim() }] }} lang={lang} resolved={!legacy} />
+            )}
+            {blocks.length > 0 && <RichText content={{ blocks }} lang={lang} resolved />}
+            {!html.trim() && blocks.length === 0 && <RichText content={{ blocks: [] }} lang={lang} />}
           </div>
         </section>
       )
     }
     case "features":
-      return <WhyUs props={props} />
+      return <WhyUs props={props} lang={lang} />
     case "stats":
-      return <StatsSection props={props} />
+      return <StatsSection props={props} lang={lang} />
     case "contentGrid":
-      return <ContentGridSection props={props} data={data} />
+      return <ContentGridSection props={props} data={data} lang={lang} />
     case "industries":
-      return <Industries props={props} />
+      return <Industries props={props} lang={lang} />
     case "gallery":
-      return <GallerySection props={props} />
+      return <GallerySection props={props} lang={lang} />
     case "faq":
-      return <FaqSection props={props} />
+      return <FaqSection props={props} lang={lang} />
     case "cta":
       return (
         <CtaBanner
-          title={str(props, "title")}
-          description={str(props, "description")}
-          primaryLabel={str(props, "primaryLabel") || undefined}
+          title={copy(props.title)}
+          description={copy(props.description)}
+          // A label the admin emptied removes its button; one never set keeps
+          // the banner's default.
+          primaryLabel={prop(props, "primaryLabel") === undefined ? undefined : copy(props.primaryLabel)}
           primaryHref={str(props, "primaryHref") || undefined}
-          secondaryLabel={str(props, "secondaryLabel") || undefined}
+          secondaryLabel={copy(props.secondaryLabel)}
           secondaryHref={str(props, "secondaryHref") || undefined}
         />
       )
     case "embed":
-      return <EmbedSection props={props} />
+      return <EmbedSection props={props} lang={lang} />
     default:
       return null
   }
@@ -180,13 +202,13 @@ export function SectionView({
 
 // Blocks authored in the builder store list items as newline-separated text;
 // RichText expects { type, text, items } blocks.
-function normalizeBlocks(value: unknown): Array<{ type: string; text?: string; items?: string[] }> {
+function normalizeBlocks(value: unknown, lang: Locale): Array<{ type: string; text?: string; items?: string[] }> {
   if (!Array.isArray(value)) return []
   return value
     .filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === "object")
     .map((item) => {
       const type = typeof item.type === "string" ? item.type : "paragraph"
-      const text = typeof item.text === "string" ? item.text : ""
+      const text = resolveText(item.text, lang)
       if (type === "list") {
         const items = Array.isArray(item.items)
           ? item.items.map((entry) => String(entry)).filter(Boolean)
@@ -199,4 +221,11 @@ function normalizeBlocks(value: unknown): Array<{ type: string; text?: string; i
       return { type, text }
     })
     .filter((block) => (block.type === "list" ? (block.items?.length ?? 0) > 0 : Boolean(block.text)))
+}
+
+// Section copy handed to components that resolve it themselves: a
+// LocalizedText or a legacy marker string, never an already-resolved string.
+function copy(value: unknown): string | LocalizedText {
+  if (typeof value === "string" || isLocalizedText(value)) return value
+  return ""
 }

@@ -6,6 +6,7 @@ import { ContentItemForm } from "@/components/admin/resource-forms"
 import { Button } from "@/components/ui/button"
 import { AdminApiError, adminFetch, type AdminContentResponse } from "@/lib/admin-api"
 import type { ContentNode } from "@/lib/cms"
+import { resolveText } from "@/lib/localized"
 import { enrichServiceWithBilingual } from "@/lib/service-bilingual"
 import { updateContentItemAction } from "../../content-actions"
 
@@ -35,7 +36,7 @@ export default async function AdminEditServicePage({
       <AdminPageHeader
       breadcrumbs={[{ label: "Services", href: "/admin/services" }, { label: "Edit" }]}
       eyebrow="Catalog"
-      title={item?.title ?? "Edit Service"}
+      title={resolveText(item?.title, "id") || "Edit Service"}
       actions={
         <>
           {item && (

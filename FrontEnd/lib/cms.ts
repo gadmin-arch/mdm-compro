@@ -4,6 +4,18 @@ import { buildBilingualProductTree, enrichProductWithBilingual } from "@/lib/pro
 import { buildBilingualServiceTree, enrichServiceWithBilingual } from "@/lib/service-bilingual"
 import { enrichPageWithBilingual, DEFAULT_BILINGUAL_IMPACT_VALUES } from "@/lib/page-bilingual"
 import { aboutPresetSections } from "@/lib/sections"
+import { defaultMenuItems } from "@/lib/cms-shared"
+
+// Server code keeps importing these from here; client components must use
+// lib/cms-shared directly (see the note there).
+export {
+  defaultMenuItems,
+  employmentTypeLabel,
+  formatDate,
+  isCareerClosed,
+  isSystemPageKey,
+  systemPageKeys,
+} from "@/lib/cms-shared"
 
 export type SEO = {
   title?: string
@@ -100,25 +112,6 @@ export type Navigation = {
   products: ContentNode[]
   menu?: MenuItem[]
 }
-
-// Mirrors model.SystemPageKeys in the backend: pages the public site routes
-// to directly. Their slugs are fixed and they cannot be archived.
-export const systemPageKeys = ["home", "about", "contact", "services", "products", "news", "career"]
-
-export function isSystemPageKey(key: string): boolean {
-  return systemPageKeys.includes(key)
-}
-
-// Mirrors model.DefaultMenuItems in the backend.
-export const defaultMenuItems: MenuItem[] = [
-  { id: "home", label: "EN: Home\nID: Beranda", href: "/", kind: "system", visible: true },
-  { id: "about", label: "EN: About Us\nID: Tentang Kami", href: "/about", kind: "system", visible: true },
-  { id: "services", label: "EN: Services\nID: Layanan", href: "/services", kind: "system", auto: "services", visible: true },
-  { id: "products", label: "EN: Products\nID: Produk", href: "/products", kind: "system", auto: "products", visible: true },
-  { id: "news", label: "EN: News\nID: Berita", href: "/news", kind: "system", visible: true },
-  { id: "career", label: "EN: Careers\nID: Karir", href: "/career", kind: "system", visible: true },
-  { id: "contact", label: "EN: Contact Us\nID: Hubungi Kami", href: "/contact", kind: "system", visible: true },
-]
 
 export type ListResponse<T> = {
   data: T[]
@@ -400,38 +393,32 @@ async function cmsListFetch<T>(path: string, fallback: ListResponse<T>, revalida
 export async function getNavigation(): Promise<Navigation> {
   const nav = await cmsFetch<Navigation>("/navigation", fallbackNavigation)
 
-  // Synchronize product tree to always conform to the authoritative catalog hierarchy
-  const productRoots = fallbackProducts
-    .filter((fbRoot) => fbRoot.slug !== "enclosure-climate-control")
-    .map((fbRoot) => {
-    const dbRoot = nav.products?.find((p) => p.slug === fbRoot.slug)
-    const enriched = dbRoot ? enrichProductWithBilingual(dbRoot, fbRoot.slug) || fbRoot : fbRoot
-    return {
-      ...enriched,
-      title: fbRoot.title,
-      summary: fbRoot.summary,
-      children: fbRoot.children,
-    }
-  })
-
-  // Synchronize service tree
-  const serviceRoots = fallbackServices.map((fbRoot) => {
-    const dbRoot = nav.services?.find((s) => s.slug === fbRoot.slug)
-    const enriched = dbRoot ? enrichServiceWithBilingual(dbRoot, fbRoot.slug) || fbRoot : fbRoot
-    return {
-      ...enriched,
-      title: fbRoot.title,
-      summary: fbRoot.summary,
-      children: fbRoot.children?.length ? fbRoot.children : enriched.children,
-    }
-  })
+  const products = mergeWithCatalog(nav.products, fallbackProducts, enrichProductWithBilingual)
+  const services = mergeWithCatalog(nav.services, fallbackServices, enrichServiceWithBilingual)
 
   return {
     ...nav,
-    products: productRoots,
-    services: serviceRoots,
+    products: menuTree(withoutRetiredProducts(products)),
+    services: menuTree(services),
     menu: nav.menu && nav.menu.length > 0 ? nav.menu : defaultMenuItems,
   }
+}
+
+// The header menu shows titles, summaries and links only. Full nodes would
+// carry every product's and service's content and specs into the payload of
+// every page (~500 KB).
+function menuTree(nodes: ContentNode[]): ContentNode[] {
+  return nodes.map(({ id, slug, fullPath, title, summary, status, sortOrder, depth, children }) => ({
+    id,
+    slug,
+    fullPath,
+    title,
+    summary,
+    status,
+    sortOrder,
+    depth,
+    children: menuTree(children ?? []),
+  }))
 }
 
 export async function getPage(key: string) {
@@ -485,15 +472,9 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   const response = await cmsFetch<{ site?: Partial<SiteSettings> } | null>("/settings", null)
   const site = response?.site ?? {}
 
-  let tagline = site.tagline ?? fallbackSiteSettings.tagline
-  if (tagline && !tagline.includes("ID:") && !tagline.includes("EN:")) {
-    tagline = `EN: ${tagline}\nID: Elektrikal · Otomasi · Sistem Fire Alarm`
-  }
-
-  let footerDescription = site.footerDescription ?? fallbackSiteSettings.footerDescription
-  if (footerDescription && !footerDescription.includes("ID:") && !footerDescription.includes("EN:")) {
-    footerDescription = `EN: ${footerDescription}\nID: Perusahaan layanan rekayasa elektrikal, otomasi industri, dan sistem fire alarm terkemuka di Indonesia — menghadirkan solusi andal untuk sektor ketenagalistrikan, migas, manufaktur, dan infrastruktur sejak 2012.`
-  }
+  // Shown exactly as saved in Site Settings (both languages are edited there).
+  const tagline = site.tagline || fallbackSiteSettings.tagline
+  const footerDescription = site.footerDescription || fallbackSiteSettings.footerDescription
 
   return {
     tagline,
@@ -566,22 +547,9 @@ export async function getServices(filters: PageFilters): Promise<ListResponse<Co
 export async function getServices(filters?: PageFilters): Promise<ContentNode[] | ListResponse<ContentNode>> {
   if (!filters) {
     const res = await cmsFetch<ContentNode[]>("/services", fallbackServices)
-    return Array.isArray(res) ? res.map(enrichServiceTree) : fallbackServices
+    return mergeWithCatalog(res, fallbackServices, enrichServiceWithBilingual)
   }
-  const query = new URLSearchParams()
-  if (filters.search) query.set("search", filters.search)
-  if (filters.category) query.set("category", filters.category)
-  if (filters.sort) query.set("sort", filters.sort)
-  if (filters.page) query.set("page", filters.page.toString())
-  if (filters.limit) query.set("limit", filters.limit.toString())
-
-  const queryString = query.toString()
-  const path = queryString ? `/services?${queryString}` : "/services"
-  const response = await cmsListFetch<ContentNode>(path, createContentFallback(fallbackServices, filters))
-  if (response && Array.isArray(response.data)) {
-    response.data = response.data.map((item) => enrichServiceWithBilingual(item, item.fullPath || item.slug) || item)
-  }
-  return response
+  return listContent("services", fallbackServices, filters, enrichServiceWithBilingual)
 }
 
 export async function getService(path: string) {
@@ -589,6 +557,37 @@ export async function getService(path: string) {
   const item = await cmsFetch<ContentNode | null>(`/services/${path}`, fallback)
   if (!item) return null
   return enrichServiceTree(item)
+}
+
+// Listing pages: every database row matching the filters plus the catalog
+// entries the database lacks, paginated together so each page holds `limit`
+// items. These sets are small, so all matching rows are fetched (the API
+// caps a page at 100).
+async function listContent(
+  resource: "products" | "services",
+  catalog: ContentNode[],
+  filters: PageFilters,
+  enrich: (node: ContentNode, path: string) => ContentNode | null,
+  keep: (node: ContentNode) => boolean = () => true,
+): Promise<ListResponse<ContentNode>> {
+  const rows: ContentNode[] = []
+  for (let apiPage = 1; ; apiPage++) {
+    const query = new URLSearchParams({ page: String(apiPage), limit: "100" })
+    if (filters.search) query.set("search", filters.search)
+    if (filters.category) query.set("category", filters.category)
+    if (filters.sort) query.set("sort", filters.sort)
+    const response = await cmsFetch<ListResponse<ContentNode> | null>(`/${resource}?${query}`, null)
+    // API unreachable: the catalog alone.
+    if (!response || !Array.isArray(response.data)) return createContentFallback(catalog, filters)
+    rows.push(...response.data)
+    if (apiPage >= (response.pagination?.totalPages ?? 1)) break
+  }
+  const listed = rows.filter(keep).map((item) => enrich(item, item.fullPath || item.slug) || item)
+  const extra = (await catalogOnly(resource, catalog, filters)).filter(keep)
+  // Without an explicit sort the database order stands and catalog entries
+  // follow; with one, both are ordered together.
+  const combined = filters.sort ? sortContent([...listed, ...extra], filters.sort) : [...listed, ...extra]
+  return paginateList(combined, filters.page ?? 1, filters.limit ?? 10)
 }
 
 function paginateList<T>(data: T[], page = 1, perPage = 10): ListResponse<T> {
@@ -614,7 +613,7 @@ function createContentFallback(items: ContentNode[], filters?: PageFilters): Lis
   const page = filters?.page ?? 1
   const perPage = filters?.limit ?? 10
 
-  let data = flattenContent(items).filter((item) => {
+  const data = flattenContent(items).filter((item) => {
     if (category) {
       const itemCategory = item.specs?.category?.toLowerCase()
       const matchesCategory =
@@ -629,47 +628,111 @@ function createContentFallback(items: ContentNode[], filters?: PageFilters): Lis
     return searchContentNode(item, search)
   })
 
-  switch (filters?.sort) {
-    case "oldest":
-      data = [...data].sort((a, b) => (a.publishedAt ?? "").localeCompare(b.publishedAt ?? ""))
-      break
-    case "alpha_asc":
-      data = [...data].sort((a, b) => a.title.localeCompare(b.title))
-      break
-    case "alpha_desc":
-      data = [...data].sort((a, b) => b.title.localeCompare(a.title))
-      break
-    default:
-      data = [...data].sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""))
-      break
-  }
+  return paginateList(sortContent(data, filters?.sort), page, perPage)
+}
 
-  return paginateList(data, page, perPage)
+function sortContent(items: ContentNode[], sort?: string): ContentNode[] {
+  switch (sort) {
+    case "oldest":
+      return [...items].sort((a, b) => (a.publishedAt ?? "").localeCompare(b.publishedAt ?? ""))
+    case "alpha_asc":
+      return [...items].sort((a, b) => a.title.localeCompare(b.title))
+    case "alpha_desc":
+      return [...items].sort((a, b) => b.title.localeCompare(a.title))
+    default:
+      return [...items].sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""))
+  }
+}
+
+// CMS trees win: every node the CMS has renders with its stored values (the
+// catalog only fills empty fields). Catalog entries the database does not
+// have yet are appended so they stay listed until they are imported — see
+// lib/product-bilingual.ts and lib/service-bilingual.ts.
+export function mergeWithCatalog(
+  cmsNodes: ContentNode[] | null | undefined,
+  catalog: ContentNode[],
+  enrich: (node: ContentNode, path: string) => ContentNode | null,
+): ContentNode[] {
+  if (!Array.isArray(cmsNodes) || cmsNodes.length === 0) return catalog
+  const storedIds = new Set(flattenContent(cmsNodes).map((node) => node.id))
+  return mergeLevel(cmsNodes, catalog, enrich, storedIds)
+}
+
+function mergeLevel(
+  cmsNodes: ContentNode[],
+  catalog: ContentNode[],
+  enrich: (node: ContentNode, path: string) => ContentNode | null,
+  storedIds: Set<string>,
+): ContentNode[] {
+  const pathOf = (node: ContentNode) => node.fullPath || node.slug
+  const stored = new Set(cmsNodes.map(pathOf))
+  const merged = cmsNodes.map((node) => {
+    const catalogNode = catalog.find((entry) => pathOf(entry) === pathOf(node))
+    const enriched = enrich(node, pathOf(node)) ?? node
+    return {
+      ...enriched,
+      children: mergeLevel(node.children ?? [], catalogNode?.children ?? [], enrich, storedIds),
+    }
+  })
+  const extra = catalog
+    .filter((entry) => !stored.has(pathOf(entry)))
+    .map((entry) => withCatalogIds(entry, storedIds))
+  return [...merged, ...extra]
+}
+
+// Catalog ids are made up, and some reuse the id of an older database row
+// (migration 043 gave the new Electrical Distribution products the ids of the
+// two they replace). Sharing an id with a stored row breaks React keys and
+// menu selection, so a catalog-only node gets an id from its path instead.
+function withCatalogIds(node: ContentNode, storedIds: Set<string>): ContentNode {
+  return {
+    ...node,
+    id: storedIds.has(node.id) ? `catalog:${node.fullPath || node.slug}` : node.id,
+    children: (node.children ?? []).map((child) => withCatalogIds(child, storedIds)),
+  }
+}
+
+// Product paths that next.config.mjs permanently redirects to their
+// replacements. Rows still published under them stay out of menus and
+// listings so nothing links to a page that only redirects.
+const RETIRED_PRODUCT_PATHS = [
+  "enclosure-climate-control",
+  "electrical-equipment",
+  "electrical-distribution/medium-voltage-substation",
+  "electrical-distribution/low-voltage-distribution-panels",
+]
+
+export function isRetiredProductPath(path: string): boolean {
+  return RETIRED_PRODUCT_PATHS.some((retired) => path === retired || path.startsWith(`${retired}/`))
+}
+
+function withoutRetiredProducts(nodes: ContentNode[]): ContentNode[] {
+  return nodes
+    .filter((node) => !isRetiredProductPath(node.fullPath || node.slug))
+    .map((node) => ({ ...node, children: withoutRetiredProducts(node.children ?? []) }))
+}
+
+// Catalog entries (matching the listing filters) that the database has no
+// published row for. Compared against the whole CMS tree, not the current
+// page, so nothing is listed twice.
+async function catalogOnly(
+  resource: "products" | "services",
+  catalog: ContentNode[],
+  filters: PageFilters,
+): Promise<ContentNode[]> {
+  const tree = await cmsFetch<ContentNode[] | null>(`/${resource}`, null)
+  if (!Array.isArray(tree) || tree.length === 0) return []
+  const stored = new Set(flattenContent(tree).map((item) => item.fullPath || item.slug))
+  return createContentFallback(catalog, { ...filters, page: 1, limit: 10_000 }).data.filter(
+    (item) => !stored.has(item.fullPath || item.slug),
+  )
 }
 
 function enrichProductTree(node: ContentNode): ContentNode {
   const enriched = enrichProductWithBilingual(node, node.fullPath || node.slug) || node
-  const path = node.fullPath || node.slug
-  const fallbackNode = findByPath(fallbackProducts, path)
-
-  if (fallbackNode) {
-    enriched.title = fallbackNode.title
-    enriched.summary = fallbackNode.summary
-    if (fallbackNode.children && fallbackNode.children.length > 0) {
-      return {
-        ...enriched,
-        children: fallbackNode.children,
-      }
-    }
-  }
-
-  const existingChildren = (enriched.children || []).map(enrichProductTree)
-  const existingSlugs = new Set(existingChildren.map((c) => c.slug))
-  const extraChildren = (fallbackNode?.children || []).filter((c) => !existingSlugs.has(c.slug))
-
   return {
     ...enriched,
-    children: [...existingChildren, ...extraChildren],
+    children: (enriched.children ?? []).map(enrichProductTree),
   }
 }
 
@@ -678,45 +741,17 @@ export async function getProducts(filters: PageFilters): Promise<ListResponse<Co
 export async function getProducts(filters?: PageFilters): Promise<ContentNode[] | ListResponse<ContentNode>> {
   if (!filters) {
     const res = await cmsFetch<ContentNode[]>("/products", fallbackProducts)
-    // Synchronize roots with fallbackProducts to guarantee clean category listing
-    return fallbackProducts
-      .filter((fbRoot) => fbRoot.slug !== "enclosure-climate-control")
-      .map((fbRoot) => {
-      const dbNode = Array.isArray(res) ? res.find((r) => r.slug === fbRoot.slug) : null
-      const enriched = dbNode ? enrichProductWithBilingual(dbNode, fbRoot.slug) || fbRoot : fbRoot
-      return {
-        ...enriched,
-        title: fbRoot.title,
-        summary: fbRoot.summary,
-        children: fbRoot.children,
-      }
-    })
+    return withoutRetiredProducts(mergeWithCatalog(res, fallbackProducts, enrichProductWithBilingual))
   }
-  const query = new URLSearchParams()
-  if (filters.search) query.set("search", filters.search)
-  if (filters.category) query.set("category", filters.category)
-  if (filters.sort) query.set("sort", filters.sort)
-  if (filters.page) query.set("page", filters.page.toString())
-  if (filters.limit) query.set("limit", filters.limit.toString())
-
-  const queryString = query.toString()
-  const path = queryString ? `/products?${queryString}` : "/products"
-  const response = await cmsListFetch<ContentNode>(path, createContentFallback(fallbackProducts, filters))
-  if (response && Array.isArray(response.data)) {
-    const enrichedData = response.data.map((item) => enrichProductWithBilingual(item, item.fullPath || item.slug) || item)
-    const existingPaths = new Set(enrichedData.map((d) => d.fullPath || d.slug))
-    const fallbackList = createContentFallback(fallbackProducts, filters).data
-    const missingFallback = fallbackList.filter((fb) => !existingPaths.has(fb.fullPath || fb.slug))
-    response.data = [...enrichedData, ...missingFallback]
-  }
-  return response
+  return listContent("products", fallbackProducts, filters, enrichProductWithBilingual, (item) =>
+    !isRetiredProductPath(item.fullPath || item.slug),
+  )
 }
 
 export async function getProduct(path: string) {
   const fallback = findByPath(fallbackProducts, path)
   const item = await cmsFetch<ContentNode | null>(`/products/${path}`, fallback)
-  if (!item) return fallback ? enrichProductTree(fallback) : null
-  return enrichProductTree(item)
+  return item ? enrichProductTree(item) : null
 }
 
 
@@ -1058,37 +1093,6 @@ export function binarySearchByPath(sortedNodes: ContentNode[], targetPath: strin
   }
 
   return null
-}
-
-export function formatDate(value?: string) {
-  if (!value) return "Unscheduled"
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return "Unscheduled"
-  return new Intl.DateTimeFormat("en-GB", {
-    dateStyle: "medium",
-    timeZone: "Asia/Jakarta",
-  }).format(date)
-}
-
-export function isCareerClosed(career?: Career | null): boolean {
-  if (!career) return false
-  if (career.status === "archived" || career.status === "closed") return true
-  if (career.deadline) {
-    const deadlineTime = new Date(career.deadline).getTime()
-    if (!Number.isNaN(deadlineTime) && deadlineTime < Date.now()) {
-      return true
-    }
-  }
-  return false
-}
-
-export function employmentTypeLabel(value: string) {
-  const normalized = value.toLowerCase().replace(/[- ]/g, "_")
-  if (normalized === "full_time") return "EN: Full Time\nID: Penuh Waktu"
-  if (normalized === "part_time") return "EN: Part Time\nID: Paruh Waktu"
-  if (normalized === "contract") return "EN: Contract\nID: Kontrak"
-  if (normalized === "internship") return "EN: Internship\nID: Magang"
-  return value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase())
 }
 
 export function findNodeInTree(items: ContentNode[], path: string): ContentNode | null {

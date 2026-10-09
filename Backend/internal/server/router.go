@@ -48,6 +48,9 @@ func NewRouter(cfg config.Config, logger *slog.Logger, pool *pgxpool.Pool, colle
 	r.Use(middleware.CleanPath)
 	r.Use(middleware.Timeout(60 * time.Second))
 	r.Use(secureHeaders)
+	// JSON lists run to hundreds of KB (navigation, products); gzip cuts what
+	// the frontend's server-side fetches and the Vercel proxy have to move.
+	r.Use(middleware.Compress(5, "application/json"))
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   cfg.FrontendOrigins,
 		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},

@@ -1,29 +1,20 @@
 import { CheckCircle2, Users } from "lucide-react"
 import { container } from "@/lib/layout"
-import { BilingualText } from "@/components/cms/content-language"
-import { lines, str } from "@/lib/sections"
+import { LICENSED_EXPERTS } from "@/lib/page-bilingual"
+import { prop } from "@/lib/sections"
+import type { Locale } from "@/lib/i18n"
+import { resolveText, resolveTextList } from "@/lib/localized"
 
-export const DEFAULT_LICENSED_EXPERTS = [
-  "AK3 Listrik (Ahli K3 Listrik Kemnaker)",
-  "AK3 Umum (Ahli K3 Umum)",
-  "AK3 Kebakaran (Kelas A, B, C, D)",
-  "Teknisi Kompetensi Tegangan Menengah ESDM",
-  "Licensed Mechanical & Termination Specialists",
-]
+export function LicensedExpertsSection({ props, lang }: { props: Record<string, unknown>; lang: Locale }) {
+  const eyebrow = resolveText(prop(props, "eyebrow", "EN: Certified Engineering Team\nID: Tim Insinyur Bersertifikasi"), lang)
+  const title = resolveText(prop(props, "title", "EN: Competent & Licensed Workforce\nID: Tenaga Kerja Kompeten & Berlisensi"), lang)
+  const description = resolveText(prop(props, "description", "EN: All field operations and site assessments are led by licensed engineering specialists certified by the Ministry of Manpower, Ministry of Energy and Mineral Resources (ESDM), and global automation principals.\nID: Seluruh operasional lapangan dan asesmen teknis dipimpin oleh tenaga ahli bersertifikasi dari Kementerian Ketenagakerjaan, Kementerian ESDM, dan prinsipal otomasi global."), lang)
 
-export function LicensedExpertsSection({ props }: { props: Record<string, unknown> }) {
-  const eyebrow = str(props, "eyebrow", "EN: Certified Engineering Team\nID: Tim Insinyur Bersertifikasi")
-  const title = str(props, "title", "EN: Competent & Licensed Workforce\nID: Tenaga Kerja Kompeten & Berlisensi")
-  const description = str(
-    props,
-    "description",
-    "EN: All field operations and site assessments are led by licensed engineering specialists certified by the Ministry of Manpower, Ministry of Energy and Mineral Resources (ESDM), and global automation principals.\nID: Seluruh operasional lapangan dan asesmen teknis dipimpin oleh tenaga ahli bersertifikasi dari Kementerian Ketenagakerjaan, Kementerian ESDM, dan prinsipal otomasi global.",
+  // `licensedExperts` is the legacy about-page field name.
+  const experts = resolveTextList(
+    prop(props, "experts", prop(props, "licensedExperts", LICENSED_EXPERTS)),
+    lang,
   )
-
-  const rawExperts = lines(props, "experts")
-  // also check licensedExperts for compatibility
-  const altExperts = lines(props, "licensedExperts")
-  const experts = rawExperts.length > 0 ? rawExperts : altExperts.length > 0 ? altExperts : DEFAULT_LICENSED_EXPERTS
 
   return (
     <section className="border-b border-border/60 bg-background py-16">
@@ -37,15 +28,15 @@ export function LicensedExpertsSection({ props }: { props: Record<string, unknow
                 </span>
                 <div>
                   <h3 className="font-display text-lg font-bold text-foreground">
-                    <BilingualText text={eyebrow} />
+                    {eyebrow}
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    <BilingualText text={title} />
+                    {title}
                   </p>
                 </div>
               </div>
               <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                <BilingualText text={description} />
+                {description}
               </p>
             </div>
 
@@ -58,7 +49,7 @@ export function LicensedExpertsSection({ props }: { props: Record<string, unknow
                   >
                     <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                     <span>
-                      <BilingualText text={expert} />
+                      {expert}
                     </span>
                   </div>
                 ))}

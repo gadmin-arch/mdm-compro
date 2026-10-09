@@ -10,9 +10,9 @@ import {
   specsToText,
   toDateTimeLocal,
 } from "@/lib/admin-content"
-import { extractBilingualText } from "@/lib/bilingual"
-import { useContentLanguage } from "@/components/cms/content-language"
-import { cn } from "@/lib/utils"
+import { serializeLocalizedText } from "@/lib/i18n"
+import { toLocalizedText } from "@/lib/localized"
+import { LocalizedFormField, LocalizedTextInput, type LocalizedValue } from "@/components/admin/localized-field"
 import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -682,17 +682,10 @@ function TextAreaField({
   )
 }
 
-function BilingualField({
-  label,
-  nameId,
-  nameEn,
-  nameFallback,
-  defaultValue,
-  required,
-  error,
-  placeholderId,
-  placeholderEn,
-}: {
+// Translatable form fields: Indonesian and English side by side, posted as
+// `<name>_id` / `<name>_en`. Stored values are read strictly — a value with
+// no English keeps English empty instead of inventing one.
+type BilingualFieldProps = {
   label: string
   nameId: string
   nameEn: string
@@ -702,263 +695,62 @@ function BilingualField({
   error?: string
   placeholderId?: string
   placeholderEn?: string
-}) {
-  const { lang } = useContentLanguage()
-  const extracted = extractBilingualText(defaultValue)
-  const [idVal, setIdVal] = useState(extracted.id)
-  const [enVal, setEnVal] = useState(extracted.en)
-
-  const hasId = Boolean(idVal.trim())
-  const hasEn = Boolean(enVal.trim())
-
-  const activeVal = lang === "id" ? idVal : enVal
-  const activeLabel = lang === "id" ? "ID" : "EN"
-  const activePlaceholder =
-    lang === "id"
-      ? placeholderId || "Judul dalam Bahasa Indonesia..."
-      : placeholderEn || "Title in English..."
-  const activeMissing = lang === "id" ? !hasId && hasEn : hasId && !hasEn
-
-  function handleActiveChange(val: string) {
-    if (lang === "id") {
-      setIdVal(val)
-    } else {
-      setEnVal(val)
-    }
-  }
-
-  return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={lang === "id" ? nameId : nameEn}>
-            {label}
-            {required && <span className="ml-1 text-destructive">*</span>}
-          </label>
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary">
-            {lang.toUpperCase()}
-          </span>
-        </div>
-        {hasId && hasEn ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
-            ✓ Lengkap (ID + EN)
-          </span>
-        ) : !hasId && hasEn ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-            ⚠️ Versi ID Belum Diisi
-          </span>
-        ) : hasId && !hasEn ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-            ⚠️ Versi EN Belum Diisi
-          </span>
-        ) : (
-          <span className="text-[11px] text-muted-foreground">
-            {lang === "id" ? "Mode ID" : "Mode EN"}
-          </span>
-        )}
-      </div>
-
-      {!hasId && hasEn && (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
-          <span className="text-base leading-none">⚠️</span>
-          <div>
-            <p className="font-semibold">Versi Bahasa Indonesia belum diisi</p>
-            <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
-              Pengunjung berbahasa Indonesia akan melihat teks versi English sebagai fallback. Ganti ke ID di menu atas untuk mengisi.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {hasId && !hasEn && (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
-          <span className="text-base leading-none">⚠️</span>
-          <div>
-            <p className="font-semibold">Versi English belum diisi</p>
-            <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
-              Pengunjung berbahasa English akan melihat teks versi Bahasa Indonesia sebagai fallback. Ganti ke EN di menu atas untuk mengisi.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Hidden inputs to guarantee both ID & EN are always submitted */}
-      {lang === "id" ? (
-        <input type="hidden" name={nameEn} value={enVal} />
-      ) : (
-        <input type="hidden" name={nameId} value={idVal} />
-      )}
-
-      <div className="space-y-1">
-        <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-          <div className="flex items-center gap-1.5">
-            <span
-              className={cn(
-                "inline-block h-2 w-2 rounded-full",
-                lang === "id" ? "bg-red-500" : "bg-blue-500"
-              )}
-            />
-            <span>{activeLabel}</span>
-          </div>
-          {activeMissing && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
-        </div>
-        <Input
-          id={lang === "id" ? nameId : nameEn}
-          name={lang === "id" ? nameId : nameEn}
-          value={activeVal}
-          onChange={(e) => handleActiveChange(e.target.value)}
-          placeholder={activePlaceholder}
-          className={cn("bg-background text-xs", activeMissing && "border-amber-400/80 focus-visible:ring-amber-400/20")}
-        />
-      </div>
-
-      {nameFallback && <input type="hidden" name={nameFallback} value={defaultValue ?? ""} />}
-      <FieldError id={`${nameId}-error`} message={error} />
-    </div>
-  )
+  rows?: number
 }
 
-function BilingualTextAreaField({
+function BilingualField(props: BilingualFieldProps) {
+  return <BilingualInput {...props} multiline={false} />
+}
+
+function BilingualTextAreaField(props: BilingualFieldProps) {
+  return <BilingualInput {...props} multiline />
+}
+
+function BilingualInput({
   label,
   nameId,
   nameEn,
   nameFallback,
   defaultValue,
-  rows = 3,
+  required,
   error,
   placeholderId,
-  placeholderEn,
-}: {
-  label: string
-  nameId: string
-  nameEn: string
-  nameFallback?: string
-  defaultValue?: string
-  rows?: number
-  error?: string
-  placeholderId?: string
-  placeholderEn?: string
-}) {
-  const { lang } = useContentLanguage()
-  const extracted = extractBilingualText(defaultValue)
-  const [idVal, setIdVal] = useState(extracted.id)
-  const [enVal, setEnVal] = useState(extracted.en)
-
-  const hasId = Boolean(idVal.trim())
-  const hasEn = Boolean(enVal.trim())
-
-  const activeVal = lang === "id" ? idVal : enVal
-  const activeLabel = lang === "id" ? "ID" : "EN"
-  const activePlaceholder =
-    lang === "id"
-      ? placeholderId || "Ringkasan dalam Bahasa Indonesia..."
-      : placeholderEn || "Summary in English..."
-  const activeMissing = lang === "id" ? !hasId && hasEn : hasId && !hasEn
-
-  function handleActiveChange(val: string) {
-    if (lang === "id") {
-      setIdVal(val)
-    } else {
-      setEnVal(val)
-    }
-  }
-
+  rows = 3,
+  multiline,
+}: BilingualFieldProps & { multiline: boolean }) {
+  const name = nameId.replace(/_id$/, "")
+  if (nameEn !== `${name}_en`) throw new Error(`BilingualInput expects ${name}_id / ${name}_en, got ${nameId} / ${nameEn}`)
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground" htmlFor={lang === "id" ? nameId : nameEn}>
-            {label}
-          </label>
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary">
-            {lang.toUpperCase()}
-          </span>
-        </div>
-        {hasId && hasEn ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
-            ✓ Lengkap (ID + EN)
-          </span>
-        ) : !hasId && hasEn ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-            ⚠️ Versi ID Belum Diisi
-          </span>
-        ) : hasId && !hasEn ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
-            ⚠️ Versi EN Belum Diisi
-          </span>
-        ) : (
-          <span className="text-[11px] text-muted-foreground">
-            {lang === "id" ? "Mode ID" : "Mode EN"}
-          </span>
-        )}
-      </div>
-
-      {!hasId && hasEn && (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
-          <span className="text-base leading-none">⚠️</span>
-          <div>
-            <p className="font-semibold">Ringkasan versi Bahasa Indonesia belum diisi</p>
-            <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
-              Pengunjung berbahasa Indonesia akan melihat ringkasan versi English. Ganti ke ID di menu atas untuk mengisi.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {hasId && !hasEn && (
-        <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
-          <span className="text-base leading-none">⚠️</span>
-          <div>
-            <p className="font-semibold">Ringkasan versi English belum diisi</p>
-            <p className="text-[11px] text-amber-700/90 dark:text-amber-300/90">
-              Pengunjung berbahasa English akan melihat ringkasan versi Bahasa Indonesia. Ganti ke EN di menu atas untuk mengisi.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Hidden inputs to guarantee both ID & EN are always submitted */}
-      {lang === "id" ? (
-        <input type="hidden" name={nameEn} value={enVal} />
-      ) : (
-        <input type="hidden" name={nameId} value={idVal} />
-      )}
-
-      <div className="space-y-1">
-        <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-          <div className="flex items-center gap-1.5">
-            <span
-              className={cn(
-                "inline-block h-2 w-2 rounded-full",
-                lang === "id" ? "bg-red-500" : "bg-blue-500"
-              )}
-            />
-            <span>{activeLabel}</span>
-          </div>
-          {activeMissing && <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400">(belum diisi)</span>}
-        </div>
-        <Textarea
-          id={lang === "id" ? nameId : nameEn}
-          name={lang === "id" ? nameId : nameEn}
-          rows={rows}
-          value={activeVal}
-          onChange={(e) => handleActiveChange(e.target.value)}
-          placeholder={activePlaceholder}
-          className={cn("bg-background text-xs", activeMissing && "border-amber-400/80 focus-visible:ring-amber-400/20")}
-        />
-      </div>
-
+    <div>
+      <LocalizedFormField
+        name={name}
+        label={label}
+        defaultValue={toLocalizedText(defaultValue)}
+        required={required}
+        error={error}
+        placeholder={placeholderId}
+        multiline={multiline}
+        rows={rows}
+      />
       {nameFallback && <input type="hidden" name={nameFallback} value={defaultValue ?? ""} />}
-      <FieldError id={`${nameId}-error`} message={error} />
     </div>
   )
 }
 
 function NewsCategoryField({ defaultValue = "", error }: { defaultValue?: string; error?: string }) {
-  const isDefaultInList = defaultNewsCategories.includes(defaultValue)
-  const [isCustom, setIsCustom] = useState(!isDefaultInList && Boolean(defaultValue))
-  const [selected, setSelected] = useState(isDefaultInList ? defaultValue : defaultValue ? "__custom__" : defaultNewsCategories[0])
-  const [customValue, setCustomValue] = useState(isDefaultInList ? "" : defaultValue)
+  const current = toLocalizedText(defaultValue)
+  // A stored name matches a listed category in either language, so older
+  // single-language names ("Company News") are saved with their pair.
+  const listed = newsCategories.find(
+    (category) =>
+      (current.id && (category.id === current.id || category.en === current.id)) ||
+      (current.en && category.en === current.en),
+  )
+  const [isCustom, setIsCustom] = useState(!listed && Boolean(defaultValue))
+  const [selected, setSelected] = useState(
+    listed ? serializeLocalizedText(listed) : defaultValue ? "__custom__" : serializeLocalizedText(newsCategories[0]),
+  )
+  const [customValue, setCustomValue] = useState<LocalizedValue>(listed ? { id: "", en: "" } : current)
 
   const handleSelectChange = (val: string) => {
     if (val === "__custom__") {
@@ -967,11 +759,13 @@ function NewsCategoryField({ defaultValue = "", error }: { defaultValue?: string
     } else {
       setIsCustom(false)
       setSelected(val)
-      setCustomValue("")
+      setCustomValue({ id: "", en: "" })
     }
   }
 
-  const finalValue = isCustom ? customValue : selected
+  // Stored as the "EN: …\nID: …" pair; the backend reuses the category with
+  // that exact name.
+  const finalValue = isCustom ? serializeLocalizedText(customValue) : selected
 
   return (
     <div className="space-y-1.5">
@@ -984,7 +778,7 @@ function NewsCategoryField({ defaultValue = "", error }: { defaultValue?: string
           onClick={() => {
             if (isCustom) {
               setIsCustom(false)
-              setSelected(defaultNewsCategories[0])
+              setSelected(serializeLocalizedText(newsCategories[0]))
             } else {
               setIsCustom(true)
               setSelected("__custom__")
@@ -999,13 +793,7 @@ function NewsCategoryField({ defaultValue = "", error }: { defaultValue?: string
       <input type="hidden" name="category" value={finalValue} />
 
       {isCustom ? (
-        <Input
-          placeholder="Ketik nama kategori..."
-          value={customValue}
-          onChange={(e) => setCustomValue(e.target.value)}
-          className="bg-background text-xs"
-          autoFocus
-        />
+        <LocalizedTextInput label="Nama kategori" value={customValue} onChange={setCustomValue} />
       ) : (
         <div className="relative flex items-center">
           <select
@@ -1014,9 +802,13 @@ function NewsCategoryField({ defaultValue = "", error }: { defaultValue?: string
             onChange={(e) => handleSelectChange(e.target.value)}
             className="h-9 w-full appearance-none rounded-lg border border-slate-200/80 bg-white dark:bg-[#0f172a] dark:border-slate-800 px-3 pr-8 text-xs font-medium text-slate-900 dark:text-slate-100 shadow-2xs outline-none transition-colors hover:border-slate-300 dark:hover:border-slate-700 focus-visible:border-sky-500 focus-visible:ring-2 focus-visible:ring-sky-500/20 cursor-pointer"
           >
-            {defaultNewsCategories.map((cat) => (
-              <option key={cat} value={cat} className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">
-                {cat}
+            {newsCategories.map((category) => (
+              <option
+                key={category.en}
+                value={serializeLocalizedText(category)}
+                className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1"
+              >
+                {category.id} / {category.en}
               </option>
             ))}
             <option value="__custom__" className="bg-white dark:bg-[#0f172a] text-slate-900 dark:text-slate-100 py-1">
@@ -1032,16 +824,19 @@ function NewsCategoryField({ defaultValue = "", error }: { defaultValue?: string
   )
 }
 
-const defaultNewsCategories = [
-  "Company News",
-  "Projects & Commissioning",
-  "Product & Technology",
-  "Press Release",
-  "CSR & Sustainability",
-  "Events & Exhibitions",
-  "Awards & Achievements",
-  "Industry Insights",
-  "General",
+// The categories the site uses, in both languages.
+const newsCategories: LocalizedValue[] = [
+  { id: "Berita Perusahaan", en: "Company News" },
+  { id: "Produk & Teknologi", en: "Product & Technology" },
+  { id: "Layanan", en: "Service" },
+  { id: "Proyek Industri", en: "Industrial Projects" },
+  { id: "Wawasan & Edukasi", en: "Insight" },
+  { id: "Wawasan Teknik & Analisis", en: "Engineering Insights" },
+  { id: "Siaran Pers", en: "Press Release" },
+  { id: "CSR & Keberlanjutan", en: "CSR & Sustainability" },
+  { id: "Acara & Pameran", en: "Events & Exhibitions" },
+  { id: "Penghargaan & Prestasi", en: "Awards & Achievements" },
+  { id: "Umum", en: "General" },
 ]
 
 function SelectField({

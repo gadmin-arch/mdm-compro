@@ -1,7 +1,8 @@
 import { Activity } from "lucide-react"
 import { container } from "@/lib/layout"
-import { BilingualText } from "@/components/cms/content-language"
-import { lines, str } from "@/lib/sections"
+import { items, prop } from "@/lib/sections"
+import type { Locale } from "@/lib/i18n"
+import { resolveText, resolveTextList } from "@/lib/localized"
 
 const DEFAULT_TESTING_FLEET = [
   {
@@ -36,45 +37,39 @@ const DEFAULT_TESTING_FLEET = [
   },
 ]
 
-export function TestingEquipmentSection({ props }: { props: Record<string, unknown> }) {
-  const eyebrow = str(props, "eyebrow", "EN: Equipment Fleet\nID: Armada Peralatan")
-  const title = str(
-    props,
-    "title",
-    "EN: Advanced Testing Fleet & Calibrated Instrumentation\nID: Armada Pengujian Mutakhir & Instrumentasi Terkalibrasi",
-  )
-  const description = str(
-    props,
-    "description",
-    "EN: We invest in calibrated, international-grade diagnostic equipment to ensure accurate measurements, rigorous commissioning, and maximum operational safety.\nID: Kami berinvestasi pada peralatan diagnostik terkalibrasi berstandar internasional demi memastikan keakuratan pengukuran, commissioning ketat, dan keselamatan operasi optimal.",
-  )
+export function TestingEquipmentSection({ props, lang }: { props: Record<string, unknown>; lang: Locale }) {
+  const eyebrow = resolveText(prop(props, "eyebrow", "EN: Equipment Fleet\nID: Armada Peralatan"), lang)
+  const title = resolveText(prop(props, "title", "EN: Advanced Testing Fleet & Calibrated Instrumentation\nID: Armada Pengujian Mutakhir & Instrumentasi Terkalibrasi"), lang)
+  const description = resolveText(prop(props, "description", "EN: We invest in calibrated, international-grade diagnostic equipment to ensure accurate measurements, rigorous commissioning, and maximum operational safety.\nID: Kami berinvestasi pada peralatan diagnostik terkalibrasi berstandar internasional demi memastikan keakuratan pengukuran, commissioning ketat, dan keselamatan operasi optimal."), lang)
 
-  let items = DEFAULT_TESTING_FLEET
-  if (Array.isArray(props.items) && props.items.length > 0) {
-    items = props.items.map((item, idx) => {
-      const obj = typeof item === "object" && item !== null ? (item as Record<string, unknown>) : {}
-      const fallback = DEFAULT_TESTING_FLEET[idx % DEFAULT_TESTING_FLEET.length]
-      return {
-        name: String(obj.name || fallback?.name || ""),
-        category: String(obj.category || fallback?.category || ""),
-        desc: String(obj.desc || fallback?.desc || ""),
-      }
-    })
-  } else {
-    const rawLines = lines(props, "testingTools")
-    if (rawLines.length > 0) {
-      items = rawLines.map((line, idx) => {
-        const matched = DEFAULT_TESTING_FLEET.find((t) => t.name.toLowerCase() === line.toLowerCase())
-        if (matched) return matched
-        const fallback = DEFAULT_TESTING_FLEET[idx % DEFAULT_TESTING_FLEET.length]
-        return {
-          name: line,
-          category: fallback?.category || "EN: Diagnostic Tool\nID: Peralatan Diagnostik",
-          desc: fallback?.desc || line,
-        }
-      })
-    }
-  }
+  // Structured items win; the older one-name-per-line field is the fallback.
+  // A page that set either field keeps exactly what it set, even if empty.
+  const listed = items(props, "items", [])
+  const named = resolveTextList(prop(props, "testingTools", []), lang)
+  const hasOwnList = "items" in props || "testingTools" in props
+  const tools =
+    listed.length > 0
+      ? listed.map((tool) => ({
+          name: resolveText(tool.name, lang),
+          category: resolveText(tool.category, lang),
+          desc: resolveText(tool.desc, lang),
+        }))
+      : named.length > 0
+        ? named.map((line) => {
+            const matched = DEFAULT_TESTING_FLEET.find((t) => t.name.toLowerCase() === line.toLowerCase())
+            return {
+              name: line,
+              category: matched ? resolveText(matched.category, lang) : "",
+              desc: matched ? resolveText(matched.desc, lang) : "",
+            }
+          })
+        : hasOwnList
+          ? []
+          : DEFAULT_TESTING_FLEET.map((tool) => ({
+              name: tool.name,
+              category: resolveText(tool.category, lang),
+              desc: resolveText(tool.desc, lang),
+            }))
 
   return (
     <section className="border-b border-border/60 bg-background py-20">
@@ -84,25 +79,25 @@ export function TestingEquipmentSection({ props }: { props: Record<string, unkno
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
                 <span className="rounded-md bg-primary/10 px-2.5 py-1">
-                  <BilingualText text={eyebrow} />
+                  {eyebrow}
                 </span>
               </p>
             )}
             {title && (
               <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                <BilingualText text={title} />
+                {title}
               </h2>
             )}
             {description && (
               <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                <BilingualText text={description} />
+                {description}
               </p>
             )}
           </div>
         </div>
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((tool, idx) => (
+          {tools.map((tool, idx) => (
             <div
               key={`${tool.name}-${idx}`}
               className="flex flex-col justify-between rounded-xl border border-border bg-card p-6 shadow-xs"
@@ -113,12 +108,12 @@ export function TestingEquipmentSection({ props }: { props: Record<string, unkno
                     <Activity className="h-4 w-4" />
                   </span>
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    <BilingualText text={tool.category} />
+                    {tool.category}
                   </span>
                 </div>
                 <h3 className="mt-4 font-display text-base font-semibold text-foreground">{tool.name}</h3>
                 <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                  <BilingualText text={tool.desc} />
+                  {tool.desc}
                 </p>
               </div>
             </div>

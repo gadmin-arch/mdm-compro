@@ -8,8 +8,9 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { container } from "@/lib/layout"
-import { BilingualText } from "@/components/cms/content-language"
-import { str } from "@/lib/sections"
+import { items, prop } from "@/lib/sections"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 
 const IMPACT_ICONS: Record<string, LucideIcon> = {
   I: Lightbulb,
@@ -53,28 +54,17 @@ const DEFAULT_IMPACT_VALUES = [
   },
 ]
 
-export function ImpactValuesSection({ props }: { props: Record<string, unknown> }) {
-  const eyebrow = str(props, "eyebrow", "EN: Core Values\nID: Nilai Utama")
-  const title = str(
-    props,
-    "title",
-    "EN: The IMPACT Values Driving Every Project\nID: Nilai-Nilai IMPACT yang Menjadi Landasan Setiap Proyek",
-  )
-  const culture = str(
-    props,
-    "culture",
-    "EN: Our culture of disciplined engineering, safety commitment, and innovation is built around six foundational principles.\nID: Budaya disiplin rekayasa teknik, komitmen keselamatan, dan inovasi kami dibangun di atas enam prinsip dasar.",
-  )
+export function ImpactValuesSection({ props, lang }: { props: Record<string, unknown>; lang: Locale }) {
+  const eyebrow = resolveText(prop(props, "eyebrow", "EN: Core Values\nID: Nilai Utama"), lang)
+  const title = resolveText(prop(props, "title", "EN: The IMPACT Values Driving Every Project\nID: Nilai-Nilai IMPACT yang Menjadi Landasan Setiap Proyek"), lang)
+  const culture = resolveText(prop(props, "culture", "EN: Our culture of disciplined engineering, safety commitment, and innovation is built around six foundational principles.\nID: Budaya disiplin rekayasa teknik, komitmen keselamatan, dan inovasi kami dibangun di atas enam prinsip dasar."), lang)
 
-  const rawItems = Array.isArray(props.items) && props.items.length > 0 ? props.items : DEFAULT_IMPACT_VALUES
-  const items = rawItems.map((item, idx) => {
-    const fallback = DEFAULT_IMPACT_VALUES[idx] || DEFAULT_IMPACT_VALUES[0]
-    const obj = typeof item === "object" && item !== null ? (item as Record<string, unknown>) : {}
-    const letter = String(obj.letter || fallback.letter || "").toUpperCase()
+  const values = items(props, "items", DEFAULT_IMPACT_VALUES).map((value) => {
+    const letter = String(value.letter || "").toUpperCase()
     return {
       letter,
-      title: String(obj.title || fallback.title || ""),
-      desc: String(obj.desc || fallback.desc || ""),
+      title: resolveText(value.title, lang),
+      desc: resolveText(value.desc, lang),
       icon: IMPACT_ICONS[letter] || Lightbulb,
     }
   })
@@ -86,24 +76,24 @@ export function ImpactValuesSection({ props }: { props: Record<string, unknown> 
           {eyebrow && (
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
               <span className="rounded-md bg-primary/10 px-2.5 py-1">
-                <BilingualText text={eyebrow} />
+                {eyebrow}
               </span>
             </p>
           )}
           {title && (
             <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              <BilingualText text={title} />
+              {title}
             </h2>
           )}
           {culture && (
             <p className="mt-3 text-base text-muted-foreground leading-relaxed">
-              <BilingualText text={culture} />
+              {culture}
             </p>
           )}
         </div>
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((val) => {
+          {values.map((val) => {
             const Icon = val.icon
             return (
               <div
@@ -120,10 +110,10 @@ export function ImpactValuesSection({ props }: { props: Record<string, unknown> 
                     </span>
                   </div>
                   <h3 className="mt-5 font-display text-lg font-semibold text-foreground">
-                    <BilingualText text={val.title} />
+                    {val.title}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    <BilingualText text={val.desc} />
+                    {val.desc}
                   </p>
                 </div>
               </div>

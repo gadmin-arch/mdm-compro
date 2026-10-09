@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { parseMarkedPair, pickLocalized, type LocalizedText } from "@/lib/i18n"
 
 export type ContentLanguage = "id" | "en"
 
@@ -81,9 +82,9 @@ export const DICTIONARY_EN_TO_ID: Record<string, string> = {
     "Didirikan pada tahun 2012, PT Multi Daya Mitra menghadirkan solusi terintegrasi di bidang kelistrikan, otomasi industri, dan proteksi kebakaran di seluruh Indonesia dengan pengalaman industri 14+ tahun, 400+ klien korporasi, serta lebih dari 200 insinyur dan tenaga profesional",
   "established in 2012, pt multi daya mitra delivers integrated electrical, industrial automation, and fire alarm solutions across indonesia with 14+ years of industrial experience, 400+ corporate clients, and over 200 engineers and professionals.":
     "Didirikan pada tahun 2012, PT Multi Daya Mitra menghadirkan solusi terintegrasi di bidang kelistrikan, otomasi industri, dan proteksi kebakaran di seluruh Indonesia dengan pengalaman industri 14+ tahun, 400+ klien korporasi, serta lebih dari 200 insinyur dan tenaga profesional.",
-  "established in 2013, pt multi daya mitra delivers electrical, automation, and fire alarm solutions across indonesia":
+  "established in 2012, pt multi daya mitra delivers electrical, automation, and fire alarm solutions across indonesia":
     "Didirikan pada tahun 2012, PT Multi Daya Mitra menghadirkan solusi kelistrikan, otomasi, dan sistem proteksi kebakaran di seluruh Indonesia",
-  "established in 2013, pt multi daya mitra delivers electrical, automation, and fire alarm solutions across indonesia.":
+  "established in 2012, pt multi daya mitra delivers electrical, automation, and fire alarm solutions across indonesia.":
     "Didirikan pada tahun 2012, PT Multi Daya Mitra menghadirkan solusi kelistrikan, otomasi, dan sistem proteksi kebakaran di seluruh Indonesia.",
 
   // Categories & Tags
@@ -395,6 +396,12 @@ export function filterBilingualText(text: string | undefined | null, lang: Conte
     .trim()
   if (!normalized) return ""
 
+  // 0. Canonical "EN: …\nID: …" (what the admin editors write): split exactly
+  // at the marker line, so text like "Panel ID: MDP-01" stays intact and a
+  // missing language falls back to the other one instead of being guessed.
+  const pair = parseMarkedPair(normalized)
+  if (pair) return pickLocalized(pair, lang)
+
   // 1. Explicit markers: EN: ... ID: ... or [EN] ... [ID] ...
   const enMatch = normalized.match(/(?:^|[\r\n\s|/;,])(?:EN\s*:|\[EN\]|English\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)|$))/i)
   const idMatch = normalized.match(/(?:^|[\r\n\s|/;,])(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:EN\s*:|\[EN\]|English\s*:)|$))/i)
@@ -474,6 +481,9 @@ export function extractBilingualText(raw: string | undefined | null): { id: stri
   const cached = bilingualExtractCache.get(trimmed)
   if (cached) return cached
 
+  const pair = parseMarkedPair(trimmed)
+  if (pair) return { id: pair.id ?? "", en: pair.en ?? "" }
+
   const normalized = trimmed.replace(/\\r\\n/g, "\n").replace(/\\n/g, "\n").trim()
   const enMatch = normalized.match(/(?:^|[\r\n\s|/;,])(?:EN\s*:|\[EN\]|English\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)|$))/i)
   const idMatch = normalized.match(/(?:^|[\r\n\s|/;,])(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:EN\s*:|\[EN\]|English\s*:)|$))/i)
@@ -524,6 +534,28 @@ export function extractBilingualText(raw: string | undefined | null): { id: stri
   }
   bilingualExtractCache.set(trimmed, result)
   return result
+}
+
+const LEGACY_EN_MARKER =
+  /(?:^|[\r\n\s|/;,])(?:EN\s*:|\[EN\]|English\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)|$))/i
+const LEGACY_ID_MARKER =
+  /(?:^|[\r\n\s|/;,])(?:ID\s*:|\[ID\]|Indonesian\s*:|Bahasa\s*:)\s*([\s\S]*?)(?=(?:[\r\n\s|/;,](?:EN\s*:|\[EN\]|English\s*:)|$))/i
+
+/**
+ * Splits legacy strings that carry explicit markers in a non-canonical
+ * layout ("EN: … | ID: …", "[EN] … [ID] …"). Unlike extractBilingualText it
+ * never consults the dictionary or invents a translation: a language without
+ * a marker stays empty. Returns null when the text has no markers at all.
+ */
+export function splitLegacyMarkers(raw: string | undefined | null): LocalizedText | null {
+  if (!raw) return null
+  const normalized = raw.replace(/\\r\\n/g, "\n").replace(/\\n/g, "\n").trim()
+  const enMatch = normalized.match(LEGACY_EN_MARKER)
+  const idMatch = normalized.match(LEGACY_ID_MARKER)
+  if (!enMatch && !idMatch) return null
+  // The capture stops before the next marker but keeps the separator ("Title |").
+  const clean = (value?: string) => (value ?? "").replace(/[\s|/;,]+$/, "").trim()
+  return { id: clean(idMatch?.[1]), en: clean(enMatch?.[1]) }
 }
 
 /**
@@ -1037,7 +1069,7 @@ export function extractBilingualHtml(raw: unknown): { id: string; en: string } {
   return { id: syncBilingualLinks(idHtml, enHtml), en: enHtml }
 }
 
-function htmlFromBlocksHelper(value: unknown): string {
+export function htmlFromBlocksHelper(value: unknown): string {
   if (!value || typeof value !== "object") return ""
   if ("blocks" in value && Array.isArray((value as { blocks?: unknown }).blocks)) {
     const blocks = (value as { blocks: ContentBlock[] }).blocks

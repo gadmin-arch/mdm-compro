@@ -1,3 +1,4 @@
+import { hasStoredContent } from "@/lib/product-bilingual"
 import type { NewsItem } from "@/lib/cms"
 
 export type BilingualNewsEntry = {
@@ -433,7 +434,7 @@ export const BILINGUAL_NEWS_CATALOG: Record<string, BilingualNewsEntry> = {
 <p><strong>Accuracy • Reliability • Efficiency • Documentation</strong></p>
 <h3>Butuh Solusi Monitoring Industri?</h3>
 <p>Diskusikan kebutuhan SCADA, HMI, Centralized Telemetry, dan System Integration bersama tim kami.</p>
-<p><strong>MDM — Engineering Solutions for Better Industrial Performance.</strong></p>
+<p><strong>MDM — Solusi Rekayasa untuk Kinerja Industri yang Lebih Baik.</strong></p>
 <p>Kontak:<br>📱 +62 821-4007-4122<br>📧 <a href="mailto:info@multidayamitra.co.id">info@multidayamitra.co.id</a></p>`,
     },
   },
@@ -542,6 +543,7 @@ export const BILINGUAL_NEWS_CATALOG: Record<string, BilingualNewsEntry> = {
       en: "Insight",
       id: "Wawasan & Edukasi",
     },
+    featuredImageUrl: "/uploads/PM-Partial-Discharge-Analyzer-1.jpg",
     excerpt: {
       en: "Online partial discharge analysis enables early detection of insulation defects in medium and high voltage switchgear, transformers, and cable systems without service interruption.",
       id: "Analisis partial discharge (PD Scan) secara online mendeteksi kerusakan isolasi pada switchgear, transformator, dan kabel tegangan menengah tanpa memutus aliran listrik.",
@@ -673,7 +675,7 @@ export const BILINGUAL_NEWS_CATALOG: Record<string, BilingualNewsEntry> = {
       en: "Understanding how harmonic currents, voltage distortion, and electrical resonance impact industrial power distribution, leading to transformer overheating, capacitor failure, and equipment malfunction.",
       id: "Memahami bagaimana arus harmonisa, distorsi tegangan, dan resonansi kelistrikan memengaruhi sistem distribusi daya industri, memicu panas berlebih pada transformator, kerusakan kapasitor, dan malfungsi peralatan.",
     },
-    featuredImageUrl: "/uploads/Relay-Protection-Study.jpg",
+    featuredImageUrl: "/uploads/mdm/power-quality.jpg",
     featured: false,
     publishedAt: "2020-05-12T00:00:00Z",
     body: {
@@ -814,53 +816,44 @@ export const BILINGUAL_NEWS_CATALOG: Record<string, BilingualNewsEntry> = {
 }
 
 /**
- * Enriches a NewsItem fetched from the API with verified, complete bilingual content
- * ensuring title, category, excerpt, and body are 100% complete and accurate in both ID and EN.
+ * Fills a news item with the built-in catalog copy where the CMS has none.
+ * Values stored in the CMS always win — the catalog only covers empty fields
+ * and stands in for the whole item when the API is unreachable (item null).
  */
 export function enrichNewsWithBilingual(item: NewsItem | null | undefined, slug: string): NewsItem | null {
-  if (!item && !BILINGUAL_NEWS_CATALOG[slug]) return null
-
   const catalogEntry = BILINGUAL_NEWS_CATALOG[slug]
-  if (!catalogEntry) {
-    return item ?? null
-  }
+  if (!catalogEntry) return item ?? null
 
-  const baseItem = item ?? {
-    id: catalogEntry.id ?? `news-${slug}`,
-    slug,
-    title: "",
-    excerpt: "",
-    category: "",
-    status: "published",
-    featured: catalogEntry.featured ?? false,
-    featuredImageUrl: catalogEntry.featuredImageUrl ?? "/placeholder.jpg",
-    publishedAt: catalogEntry.publishedAt ?? "2026-03-01T00:00:00Z",
+  const catalogBody = {
+    bilingual: true,
+    id: { blocks: [{ type: "html", html: catalogEntry.body.id }] },
+    en: { blocks: [{ type: "html", html: catalogEntry.body.en }] },
   }
+  const title = `EN: ${catalogEntry.title.en}\nID: ${catalogEntry.title.id}`
+  const category = `EN: ${catalogEntry.category.en}\nID: ${catalogEntry.category.id}`
+  const excerpt = `EN: ${catalogEntry.excerpt.en}\nID: ${catalogEntry.excerpt.id}`
 
-  const titleString = `EN: ${catalogEntry.title.en}\nID: ${catalogEntry.title.id}`
-  const categoryString = `EN: ${catalogEntry.category.en}\nID: ${catalogEntry.category.id}`
-  const excerptString = `EN: ${catalogEntry.excerpt.en}\nID: ${catalogEntry.excerpt.id}`
+  if (!item) {
+    return {
+      id: catalogEntry.id ?? `news-${slug}`,
+      slug,
+      title,
+      excerpt,
+      category,
+      body: catalogBody,
+      status: "published",
+      featured: catalogEntry.featured ?? false,
+      featuredImageUrl: catalogEntry.featuredImageUrl ?? "/placeholder.jpg",
+      publishedAt: catalogEntry.publishedAt ?? "2026-03-01T00:00:00Z",
+    }
+  }
 
   return {
-    ...baseItem,
-    title: titleString,
-    category: categoryString,
-    excerpt: excerptString,
-    featuredImageUrl: baseItem.featuredImageUrl || catalogEntry.featuredImageUrl || "/placeholder.jpg",
-    body: {
-      bilingual: true,
-      id: {
-        blocks: [{ type: "html", html: catalogEntry.body.id }],
-      },
-      en: {
-        blocks: [{ type: "html", html: catalogEntry.body.en }],
-      },
-      blocks: [
-        {
-          type: "html",
-          html: catalogEntry.body.id,
-        },
-      ],
-    },
+    ...item,
+    title: item.title?.trim() ? item.title : title,
+    category: item.category?.trim() ? item.category : category,
+    excerpt: item.excerpt?.trim() ? item.excerpt : excerpt,
+    featuredImageUrl: item.featuredImageUrl || catalogEntry.featuredImageUrl || "/placeholder.jpg",
+    body: hasStoredContent(item.body) ? item.body : catalogBody,
   }
 }

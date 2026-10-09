@@ -2,8 +2,10 @@ import Image from "next/image"
 import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ArrowRight } from "lucide-react"
 import type { ContentNode, NewsItem } from "@/lib/cms"
-import { formatDate } from "@/lib/cms"
-import { str, num } from "@/lib/sections"
+import { formatDate } from "@/lib/cms-shared"
+import { num, prop, str } from "@/lib/sections"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 import type { SectionData } from "@/components/cms/section-renderer"
 import { container } from "@/lib/layout"
 import { BilingualText } from "@/components/cms/content-language"
@@ -11,14 +13,16 @@ import { BilingualText } from "@/components/cms/content-language"
 export function ContentGridSection({
   props,
   data,
+  lang,
 }: {
   props: Record<string, unknown>
   data: SectionData
+  lang: Locale
 }) {
   const source = str(props, "source", "services")
-  const eyebrow = str(props, "eyebrow")
-  const title = str(props, "title")
-  const description = str(props, "description")
+  const eyebrow = resolveText(prop(props, "eyebrow"), lang)
+  const title = resolveText(prop(props, "title"), lang)
+  const description = resolveText(prop(props, "description"), lang)
   const limit = num(props, "limit", 6)
 
   return (
@@ -28,17 +32,17 @@ export function ContentGridSection({
           <div className="max-w-2xl">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                <BilingualText text={eyebrow} />
+                {eyebrow}
               </p>
             )}
             {title && (
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-                <BilingualText text={title} />
+                {title}
               </h2>
             )}
             {description && (
               <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-                <BilingualText text={description} />
+                {description}
               </p>
             )}
           </div>
@@ -46,11 +50,12 @@ export function ContentGridSection({
 
         <div className="mt-10">
           {source === "news" ? (
-            <NewsCards items={data.news.slice(0, limit)} />
+            <NewsCards items={data.news.slice(0, limit)} lang={lang} />
           ) : (
             <NodeCards
               items={(source === "products" ? data.products : data.services).slice(0, limit)}
               basePath={source === "products" ? "/products" : "/services"}
+              lang={lang}
             />
           )}
         </div>
@@ -59,7 +64,7 @@ export function ContentGridSection({
   )
 }
 
-function NodeCards({ items, basePath }: { items: ContentNode[]; basePath: string }) {
+function NodeCards({ items, basePath, lang }: { items: ContentNode[]; basePath: string; lang: Locale }) {
   if (items.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
@@ -78,7 +83,7 @@ function NodeCards({ items, basePath }: { items: ContentNode[]; basePath: string
             <div className="relative aspect-[16/9] bg-secondary">
               <Image
                 src={item.imageUrl || "/placeholder.jpg"}
-                alt={item.title}
+                alt={resolveText(item.title, lang)}
                 fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
               />
@@ -104,7 +109,7 @@ function NodeCards({ items, basePath }: { items: ContentNode[]; basePath: string
   )
 }
 
-function NewsCards({ items }: { items: NewsItem[] }) {
+function NewsCards({ items, lang }: { items: NewsItem[]; lang: Locale }) {
   if (items.length === 0) {
     return (
       <p className="text-sm text-muted-foreground">
@@ -123,7 +128,7 @@ function NewsCards({ items }: { items: NewsItem[] }) {
             <div className="relative aspect-[16/9] bg-secondary">
               <Image
                 src={item.featuredImageUrl || "/placeholder.jpg"}
-                alt={item.title}
+                alt={resolveText(item.title, lang)}
                 fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
               />

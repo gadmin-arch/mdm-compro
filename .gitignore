@@ -17,8 +17,8 @@ tmp/
 /Backend/mdm-api
 mdm-api
 
-# Local media uploads (STORAGE_DRIVER=local)
-data/media/
+# Local media uploads (STORAGE_DRIVER=local; the API runs from Backend/)
+**/data/media/
 
 # Personal Claude Code settings & scratch data
 .claude/settings.local.json

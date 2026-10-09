@@ -20,7 +20,7 @@ import {
   newsSchema,
   zodFields,
 } from "@/lib/admin-schemas"
-import { combineBilingualText } from "@/lib/bilingual"
+import { serializeLocalizedText } from "@/lib/i18n"
 import { notifySearchEngines } from "@/lib/seo-indexing"
 
 type Resource = "services" | "products" | "news" | "careers"
@@ -264,14 +264,14 @@ async function contentPayload(formData: FormData, nextPath: string): Promise<Con
   const rawTitleEn = String(formData.get("title_en") ?? "").trim()
   const rawTitle = String(formData.get("title") ?? "").trim()
   const resolvedTitle = (rawTitleId || rawTitleEn)
-    ? combineBilingualText({ en: rawTitleEn, id: rawTitleId })
+    ? serializeLocalizedText({ en: rawTitleEn, id: rawTitleId })
     : rawTitle
 
   const rawSummaryId = String(formData.get("summary_id") ?? "").trim()
   const rawSummaryEn = String(formData.get("summary_en") ?? "").trim()
   const rawSummary = String(formData.get("summary") ?? "").trim()
   const resolvedSummary = (rawSummaryId || rawSummaryEn)
-    ? combineBilingualText({ en: rawSummaryEn, id: rawSummaryId })
+    ? serializeLocalizedText({ en: rawSummaryEn, id: rawSummaryId })
     : rawSummary
 
   const baseSlugInput = String(formData.get("slug") || rawTitleEn || rawTitleId || rawTitle)
@@ -328,14 +328,14 @@ async function newsPayload(formData: FormData, nextPath: string): Promise<NewsPa
   const rawTitleEn = String(formData.get("title_en") ?? "").trim()
   const rawTitle = String(formData.get("title") ?? "").trim()
   const resolvedTitle = (rawTitleId || rawTitleEn)
-    ? combineBilingualText({ en: rawTitleEn, id: rawTitleId })
+    ? serializeLocalizedText({ en: rawTitleEn, id: rawTitleId })
     : rawTitle
 
   const rawExcerptId = String(formData.get("excerpt_id") ?? "").trim()
   const rawExcerptEn = String(formData.get("excerpt_en") ?? "").trim()
   const rawExcerpt = String(formData.get("excerpt") ?? "").trim()
   const resolvedExcerpt = (rawExcerptId || rawExcerptEn)
-    ? combineBilingualText({ en: rawExcerptEn, id: rawExcerptId })
+    ? serializeLocalizedText({ en: rawExcerptEn, id: rawExcerptId })
     : rawExcerpt
 
   const baseSlugInput = String(formData.get("slug") || rawTitleEn || rawTitleId || rawTitle)
@@ -372,7 +372,8 @@ async function newsPayload(formData: FormData, nextPath: string): Promise<NewsPa
     title: resolvedTitle,
     excerpt: resolvedExcerpt,
     body: bodyValue,
-    category: String(formData.get("category") ?? ""),
+    // Serialized "EN: …\nID: …" pair; form posts turn its line break into CRLF.
+    category: String(formData.get("category") ?? "").replace(/\r\n?/g, "\n"),
     featuredImageUrl: uploadedImageUrl || String(formData.get("featuredImageUrl") ?? ""),
     featured: formData.get("featured") === "on",
     status: String(formData.get("status") ?? "draft"),
@@ -386,14 +387,14 @@ function careerPayload(formData: FormData): CareerPayload {
   const rawTitleEn = String(formData.get("title_en") ?? "").trim()
   const rawTitle = String(formData.get("title") ?? "").trim()
   const resolvedTitle = (rawTitleId || rawTitleEn)
-    ? combineBilingualText({ en: rawTitleEn, id: rawTitleId })
+    ? serializeLocalizedText({ en: rawTitleEn, id: rawTitleId })
     : rawTitle
 
   const rawSummaryId = String(formData.get("summary_id") ?? "").trim()
   const rawSummaryEn = String(formData.get("summary_en") ?? "").trim()
   const rawSummary = String(formData.get("summary") ?? "").trim()
   const resolvedSummary = (rawSummaryId || rawSummaryEn)
-    ? combineBilingualText({ en: rawSummaryEn, id: rawSummaryId })
+    ? serializeLocalizedText({ en: rawSummaryEn, id: rawSummaryId })
     : rawSummary
 
   const baseSlugInput = String(formData.get("slug") || rawTitleEn || rawTitleId || rawTitle)
@@ -459,12 +460,12 @@ function seoPayload(formData: FormData) {
   const titleId = String(formData.get("seoTitle_id") ?? "").trim()
   const titleEn = String(formData.get("seoTitle_en") ?? "").trim()
   const rawTitle = String(formData.get("seoTitle") ?? "")
-  const title = (titleId || titleEn) ? combineBilingualText({ id: titleId, en: titleEn }) : rawTitle
+  const title = (titleId || titleEn) ? serializeLocalizedText({ id: titleId, en: titleEn }) : rawTitle
 
   const descId = String(formData.get("seoDescription_id") ?? "").trim()
   const descEn = String(formData.get("seoDescription_en") ?? "").trim()
   const rawDesc = String(formData.get("seoDescription") ?? "")
-  const description = (descId || descEn) ? combineBilingualText({ id: descId, en: descEn }) : rawDesc
+  const description = (descId || descEn) ? serializeLocalizedText({ id: descId, en: descEn }) : rawDesc
 
   return {
     title,
@@ -482,7 +483,8 @@ function revalidateResource(resource: Resource, ...slugs: string[]) {
   const { adminPath, publicPath } = resourceConfig[resource]
   // Content feeds navigation dropdowns and section grids everywhere.
   updateTag("cms")
-  revalidatePath("/")
+  // Public pages live under app/[lang]; this covers both languages.
+  revalidatePath("/[lang]", "layout")
   revalidatePath(adminPath)
   revalidatePath(publicPath)
   revalidatePath("/sitemap.xml")

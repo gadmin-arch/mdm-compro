@@ -1,7 +1,13 @@
+import { readFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+
+// Filter and page parameters of each listing page (see lib/listing-query.ts).
+const listingQueries = JSON.parse(
+  readFileSync(new URL('./lib/listing-queries.json', import.meta.url), 'utf8'),
+)
 
 // Allow next/image to load absolute URLs that point at our own site (e.g. an
 // editor pastes "https://v2.multidayamitra.co.id/uploads/..."). Relative paths
@@ -200,30 +206,62 @@ const nextConfig = {
     const adminApiBase = publicApiBase.replace(/\/public$/, '/admin')
     const authApiBase = publicApiBase.replace(/\/public$/, '/auth')
 
-    return [
-      {
-        source: '/api/v1/public/:path*',
-        destination: `${publicApiBase}/:path*`,
-      },
-      {
-        source: '/api/v1/admin/:path*',
-        destination: `${adminApiBase}/:path*`,
-      },
-      {
-        source: '/api/v1/auth/:path*',
-        destination: `${authApiBase}/:path*`,
-      },
-      {
-        source: '/en',
-        destination: '/?lang=en',
-      },
-      {
-        source: '/en/:path*',
-        destination: '/:path*?lang=en',
-      },
-    ]
+    return {
+      // Listings are prerendered without filters; a request carrying one of
+      // the listing's filter or page parameters (lib/listing-queries.json)
+      // goes to its on-demand <listing>/~list route instead. These run before
+      // the file system so "/en/products?page=2" doesn't get the prerendered
+      // "/en/products".
+      beforeFiles: Object.entries(listingQueries).flatMap(([listing, keys]) =>
+        keys.flatMap((key) => [
+          {
+            source: `/${listing}`,
+            has: [{ type: 'query', key }],
+            destination: `/id/${listing}/~list`,
+          },
+          {
+            source: `/en/${listing}`,
+            has: [{ type: 'query', key }],
+            destination: `/en/${listing}/~list`,
+          },
+        ]),
+      ),
+      afterFiles: [
+        {
+          source: '/api/v1/public/:path*',
+          destination: `${publicApiBase}/:path*`,
+        },
+        {
+          source: '/api/v1/admin/:path*',
+          destination: `${adminApiBase}/:path*`,
+        },
+        {
+          source: '/api/v1/auth/:path*',
+          destination: `${authApiBase}/:path*`,
+        },
+        // Indonesian is the unprefixed default: "/about" renders
+        // app/[lang]/about with lang "id" while the browser keeps the clean
+        // URL; "/en/about" matches app/[lang] as is. These run after public
+        // files and app routes (/admin, /api, robots.txt…), and as static rules
+        // Vercel applies them on its CDN — a proxy.ts rewrite would invoke a
+        // function before every cached page view and prefetch. Paths already
+        // under /id come from the rewrites above (visitors' /id/… URLs are
+        // redirected first).
+        {
+          source: '/',
+          destination: '/id',
+        },
+        {
+          source: '/:path((?!(?:en|id|admin|api)(?:/|$)|_next/|_vercel/|__|.*\\.).+)',
+          destination: '/id/:path',
+        },
+      ],
+    }
   },
   experimental: {
+    // Two root layouts (app/[lang], app/admin) need app/global-not-found.tsx
+    // for URLs that match no route.
+    globalNotFound: true,
     serverActions: {
       bodySizeLimit: '25mb',
     },

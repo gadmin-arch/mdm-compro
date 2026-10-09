@@ -1,5 +1,6 @@
-import { combineBilingualText, extractBilingualText } from "@/lib/bilingual"
 import type { SEO } from "@/lib/cms"
+import { parseMarkedPair, type LocalizedText } from "@/lib/i18n"
+import { OFFICE_COPY } from "@/lib/section-defaults"
 
 export type BilingualPageEntry = {
   key: string
@@ -161,9 +162,10 @@ export const BILINGUAL_PAGE_FIELDS: Record<string, Record<string, { en: string; 
 }
 
 /**
- * Normalizes and enriches a PageContent object so that its title,
- * SEO metadata, and custom page content fields (overview, vision, mission, etc.)
- * always contain complete bilingual Indonesian and English strings.
+ * Fills a system page's title and SEO with the built-in copy when the CMS has
+ * none, and reads seeded single-language content as its bilingual copy (see
+ * pairSeededPageContent). Stored values always win — what the admin saved is
+ * what renders.
  */
 export function enrichPageWithBilingual<
   T extends {
@@ -175,169 +177,30 @@ export function enrichPageWithBilingual<
 >(page: T, fallbackKey?: string): T {
   if (!page) return page
   const pageKey = (page.key || fallbackKey || "").toLowerCase().trim()
-  const catalogEntry = BILINGUAL_PAGE_CATALOG[pageKey]
+  const entry = BILINGUAL_PAGE_CATALOG[pageKey]
+  if (!entry) return page
 
-  const rawTitle = page.title ?? ""
-  const extracted = extractBilingualText(rawTitle)
-
-  let idTitle = extracted.id
-  let enTitle = extracted.en
-
-  if (catalogEntry) {
-    if (!idTitle) {
-      idTitle = catalogEntry.title.id
-    }
-    if (!enTitle) {
-      enTitle = catalogEntry.title.en
-    }
-  } else {
-    // If not in catalog, fallback if one language is missing
-    if (!idTitle && enTitle) {
-      idTitle = enTitle
-    } else if (!enTitle && idTitle) {
-      enTitle = idTitle
-    }
-  }
-
-  const enrichedTitle = combineBilingualText({ id: idTitle, en: enTitle }) || rawTitle
-
-  let enrichedSeo: SEO | undefined = page.seo
-  if (catalogEntry?.seo) {
-    const currentSeoTitle = page.seo?.title
-    const currentSeoDesc = page.seo?.description
-
-    const extractedSeoTitle = extractBilingualText(currentSeoTitle)
-    const seoTitleId = extractedSeoTitle.id || catalogEntry.seo.title.id
-    const seoTitleEn = extractedSeoTitle.en || catalogEntry.seo.title.en
-    const combinedSeoTitle = combineBilingualText({ id: seoTitleId, en: seoTitleEn })
-
-    const extractedSeoDesc = extractBilingualText(currentSeoDesc)
-    const seoDescId = extractedSeoDesc.id || catalogEntry.seo.description.id
-    const seoDescEn = extractedSeoDesc.en || catalogEntry.seo.description.en
-    const combinedSeoDesc = combineBilingualText({ id: seoDescId, en: seoDescEn })
-
-    enrichedSeo = {
-      ...page.seo,
-      title: combinedSeoTitle || currentSeoTitle,
-      description: combinedSeoDesc || currentSeoDesc,
-    }
-  }
-
-  let enrichedContent: Record<string, unknown> | undefined = page.content
-  const knownFields = BILINGUAL_PAGE_FIELDS[pageKey]
-
-  if (enrichedContent && typeof enrichedContent === "object") {
-    enrichedContent = { ...enrichedContent }
-
-    // 1. Enrich existing string fields in content
-    for (const [key, val] of Object.entries(enrichedContent)) {
-      if (typeof val === "string" && val.trim()) {
-        const { id: extId, en: extEn } = extractBilingualText(val)
-        let resolvedId = extId
-        let resolvedEn = extEn
-
-        const known = knownFields?.[key]
-        if (known) {
-          if (!resolvedId || resolvedId === resolvedEn) resolvedId = known.id
-          if (!resolvedEn) resolvedEn = known.en
-        }
-
-        if (resolvedId && resolvedEn) {
-          enrichedContent[key] = combineBilingualText({ id: resolvedId, en: resolvedEn })
-        }
-      }
-    }
-
-    // 2. Add any missing known fields from catalog
-    if (knownFields) {
-      for (const [key, pair] of Object.entries(knownFields)) {
-        if (!enrichedContent[key] || enrichedContent[key] === "") {
-          enrichedContent[key] = combineBilingualText({ id: pair.id, en: pair.en })
-        }
-      }
-    }
-
-    // 3. Enrich impactValues if page is about
-    if (pageKey === "about") {
-      if (Array.isArray(enrichedContent.impactValues) && enrichedContent.impactValues.length > 0) {
-        enrichedContent.impactValues = (enrichedContent.impactValues as Array<Record<string, unknown>>).map((item, idx) => {
-          const defaultItem = DEFAULT_BILINGUAL_IMPACT_VALUES[idx] || DEFAULT_BILINGUAL_IMPACT_VALUES[0]
-          const letter = String(item.letter || defaultItem.letter || "")
-
-          let title = String(item.title || "")
-          if (title) {
-            const ext = extractBilingualText(title)
-            if (!ext.id || ext.id === ext.en) {
-              const matched = DEFAULT_BILINGUAL_IMPACT_VALUES.find((d) => d.letter === letter)
-              if (matched) title = matched.title
-            } else {
-              title = combineBilingualText(ext)
-            }
-          } else {
-            title = defaultItem.title
-          }
-
-          let desc = String(item.desc || "")
-          if (desc) {
-            const ext = extractBilingualText(desc)
-            if (!ext.id || ext.id === ext.en) {
-              const matched = DEFAULT_BILINGUAL_IMPACT_VALUES.find((d) => d.letter === letter)
-              if (matched) desc = matched.desc
-            } else {
-              desc = combineBilingualText(ext)
-            }
-          } else {
-            desc = defaultItem.desc
-          }
-
-          return {
-            letter,
-            title,
-            desc,
-          }
-        })
-      } else {
-        enrichedContent.impactValues = DEFAULT_BILINGUAL_IMPACT_VALUES
-      }
-
-      if (!Array.isArray(enrichedContent.licensedExperts) || enrichedContent.licensedExperts.length === 0) {
-        enrichedContent.licensedExperts = DEFAULT_LICENSED_EXPERTS
-      }
-      if (!Array.isArray(enrichedContent.testingTools) || enrichedContent.testingTools.length === 0) {
-        enrichedContent.testingTools = DEFAULT_TESTING_TOOLS
-      }
-      if (!Array.isArray(enrichedContent.partnerships) || enrichedContent.partnerships.length === 0) {
-        enrichedContent.partnerships = DEFAULT_PARTNERSHIPS
-      }
-    }
-  } else if (knownFields) {
-    // If content is empty/undefined, initialize with known fields
-    enrichedContent = {}
-    for (const [key, pair] of Object.entries(knownFields)) {
-      enrichedContent[key] = combineBilingualText({ id: pair.id, en: pair.en })
-    }
-    if (pageKey === "about") {
-      enrichedContent.impactValues = DEFAULT_BILINGUAL_IMPACT_VALUES
-      enrichedContent.licensedExperts = DEFAULT_LICENSED_EXPERTS
-      enrichedContent.testingTools = DEFAULT_TESTING_TOOLS
-      enrichedContent.partnerships = DEFAULT_PARTNERSHIPS
-    }
-  }
-
+  const pair = (value: { en: string; id: string }) => `EN: ${value.en}\nID: ${value.id}`
   return {
     ...page,
-    title: enrichedTitle,
-    seo: enrichedSeo,
-    content: enrichedContent,
+    content: page.content ? pairSeededPageContent(pageKey, page.content) : page.content,
+    title: page.title?.trim() ? page.title : pair(entry.title),
+    seo: entry.seo
+      ? {
+          ...page.seo,
+          title: page.seo?.title?.trim() ? page.seo.title : pair(entry.seo.title),
+          description: page.seo?.description?.trim() ? page.seo.description : pair(entry.seo.description),
+        }
+      : page.seo,
   }
 }
 
-export const DEFAULT_LICENSED_EXPERTS = [
-  "AK3 Listrik (Ahli K3 Listrik Kemnaker)",
-  "AK3 Umum (Ahli K3 Umum)",
-  "AK3 Kebakaran (Kelas A, B, C, D)",
-  "Teknisi Kompetensi Tegangan Menengah ESDM",
-  "Licensed Mechanical & Termination Specialists",
+export const LICENSED_EXPERTS: Required<LocalizedText>[] = [
+  { id: "AK3 Listrik (Ahli K3 Listrik Kemnaker)", en: "AK3 Listrik (Electrical Safety Expert, Ministry of Manpower)" },
+  { id: "AK3 Umum (Ahli K3 Umum)", en: "AK3 Umum (General Occupational Safety & Health Expert)" },
+  { id: "AK3 Kebakaran (Kelas A, B, C, D)", en: "AK3 Kebakaran (Fire Safety Expert, Classes A, B, C, D)" },
+  { id: "Teknisi Kompetensi Tegangan Menengah ESDM", en: "ESDM-Certified Medium Voltage Technicians" },
+  { id: "Spesialis Mekanikal & Terminasi Berlisensi", en: "Licensed Mechanical & Termination Specialists" },
 ]
 
 export const DEFAULT_TESTING_TOOLS = [
@@ -396,4 +259,95 @@ export const DEFAULT_BILINGUAL_IMPACT_VALUES = [
     desc: "EN: End-to-end coverage from design, assembly, and installation to testing, commissioning, and lifecycle maintenance.\nID: Cakupan menyeluruh dari perancangan, perakitan, dan instalasi hingga pengujian, commissioning, serta pemeliharaan siklus hidup aset.",
   },
 ]
+
+// --- single-language seeds ---
+
+// Migrations before 040 seeded About and Contact copy in one language without
+// EN:/ID: markers; 040 rewrote About bilingually, but a database where it did
+// not run still holds the old text. A stored value that exactly matches a
+// known seed reads as its bilingual copy. Anything else was edited by an
+// admin and is left untouched — the builder flags it as missing a language.
+type SeedCopy = { id: string; en: string; seeds?: string[] }
+
+const ABOUT_OVERVIEW_SEED =
+  "PT Multi Daya Mitra was established in 2012 as a multidisciplinary engineering company specializing in electrical systems, industrial automation, fire alarm solutions, and mechanical works. With over 14 years of business experience, 400+ clients across multi-segments, and a dedicated team of over 200 engineers and professionals, we deliver reliable, safe, and integrated engineering solutions across Indonesia and international assignments."
+
+// IMPACT descriptions as migration 017 wrote them, by letter.
+const IMPACT_DESC_SEEDS: Record<string, string> = {
+  I: "Building trust through honesty, responsibility, and advancing through modern technology.",
+  M: "Deep technical mastery, analytical thinking, precision engineering without assumptions.",
+  P: "Discipline, consistency, and long-term strategic engineering partnership.",
+  A: "Swift response to evolving project conditions and technological changes.",
+  C: "Safety is non-negotiable, operational continuity, asset reliability.",
+  T: "End-to-end solutions from design & installation to testing, commissioning & lifecycle maintenance.",
+}
+
+function markedPair(value: string): SeedCopy {
+  const pair = parseMarkedPair(value)
+  return { id: pair?.id ?? value, en: pair?.en ?? value }
+}
+
+const ABOUT_SEEDS: SeedCopy[] = [
+  { ...BILINGUAL_PAGE_FIELDS.about.overview, seeds: [ABOUT_OVERVIEW_SEED] },
+  BILINGUAL_PAGE_FIELDS.about.vision,
+  BILINGUAL_PAGE_FIELDS.about.mission,
+  BILINGUAL_PAGE_FIELDS.about.tagline,
+  BILINGUAL_PAGE_FIELDS.about.culture,
+  ...DEFAULT_BILINGUAL_IMPACT_VALUES.flatMap((value) => [
+    markedPair(value.title),
+    { ...markedPair(value.desc), seeds: [IMPACT_DESC_SEEDS[value.letter]] },
+  ]),
+  ...LICENSED_EXPERTS,
+]
+
+const CONTACT_SEEDS: SeedCopy[] = OFFICE_COPY.flatMap((office) => [office.name, office.address])
+
+const MARKER_LINE = /(^|\n)[ \t]*(EN|ID)[ \t]*:/
+const normalizeSeed = (text: string) => text.replace(/\s+/g, " ").trim()
+
+function withSeedTranslation(value: unknown, seeds: SeedCopy[]): unknown {
+  if (typeof value !== "string" || MARKER_LINE.test(value)) return value
+  const text = normalizeSeed(value)
+  if (!text) return value
+  // Numbers and symbols ("14+", "400+") read the same in both languages.
+  if (!/\p{L}/u.test(text)) return { id: text, en: text }
+  const match = seeds.find((entry) =>
+    [entry.id, entry.en, ...(entry.seeds ?? [])].some((seed) => normalizeSeed(seed) === text),
+  )
+  return match ? { id: match.id, en: match.en } : value
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value)
+}
+
+// Reads the seeded single-language fields of a built-in page's content as
+// { id, en } pairs (see the seed tables above); every other value passes
+// through.
+export function pairSeededPageContent(key: string, content: Record<string, unknown>): Record<string, unknown> {
+  if (key === "about") {
+    const pair = (value: unknown) => withSeedTranslation(value, ABOUT_SEEDS)
+    const next: Record<string, unknown> = { ...content }
+    for (const field of ["overview", "vision", "mission", "tagline", "culture", "experienceYears"]) {
+      if (field in next) next[field] = pair(next[field])
+    }
+    if (Array.isArray(next.impactValues)) {
+      next.impactValues = next.impactValues.map((item) =>
+        isRecord(item) ? { ...item, title: pair(item.title), desc: pair(item.desc) } : item,
+      )
+    }
+    if (Array.isArray(next.licensedExperts)) next.licensedExperts = next.licensedExperts.map(pair)
+    return next
+  }
+  if (key === "contact" && Array.isArray(content.offices)) {
+    const pair = (value: unknown) => withSeedTranslation(value, CONTACT_SEEDS)
+    return {
+      ...content,
+      offices: content.offices.map((office) =>
+        isRecord(office) ? { ...office, name: pair(office.name), address: pair(office.address) } : office,
+      ),
+    }
+  }
+  return content
+}
 

@@ -1,6 +1,7 @@
 import { container } from "@/lib/layout"
-import { BilingualText } from "@/components/cms/content-language"
-import { str } from "@/lib/sections"
+import { items, prop } from "@/lib/sections"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 
 const DEFAULT_MILESTONES = [
   {
@@ -65,29 +66,16 @@ const DEFAULT_MILESTONES = [
   },
 ]
 
-export function MilestonesSection({ props }: { props: Record<string, unknown> }) {
-  const eyebrow = str(props, "eyebrow", "EN: Journey & Evolution\nID: Perjalanan & Perkembangan")
-  const title = str(
-    props,
-    "title",
-    "EN: 14 Years of Continuous Growth (2012 – 2026)\nID: 14 Tahun Pertumbuhan Berkelanjutan (2012 – 2026)",
-  )
-  const description = str(
-    props,
-    "description",
-    "EN: Step-by-step development of technical mastery, international accreditations, and nationwide execution excellence.\nID: Perkembangan bertahap dalam keahlian teknis, akreditasi internasional, dan keunggulan eksekusi berskala nasional.",
-  )
+export function MilestonesSection({ props, lang }: { props: Record<string, unknown>; lang: Locale }) {
+  const eyebrow = resolveText(prop(props, "eyebrow", "EN: Journey & Evolution\nID: Perjalanan & Perkembangan"), lang)
+  const title = resolveText(prop(props, "title", "EN: 14 Years of Continuous Growth (2012 – 2026)\nID: 14 Tahun Pertumbuhan Berkelanjutan (2012 – 2026)"), lang)
+  const description = resolveText(prop(props, "description", "EN: Step-by-step development of technical mastery, international accreditations, and nationwide execution excellence.\nID: Perkembangan bertahap dalam keahlian teknis, akreditasi internasional, dan keunggulan eksekusi berskala nasional."), lang)
 
-  const rawItems = Array.isArray(props.items) && props.items.length > 0 ? props.items : DEFAULT_MILESTONES
-  const items = rawItems.map((item, idx) => {
-    const fallback = DEFAULT_MILESTONES[idx] || DEFAULT_MILESTONES[0]
-    const obj = typeof item === "object" && item !== null ? (item as Record<string, unknown>) : {}
-    return {
-      year: String(obj.year || fallback.year || ""),
-      title: String(obj.title || fallback.title || ""),
-      desc: String(obj.desc || fallback.desc || ""),
-    }
-  })
+  const milestones = items(props, "items", DEFAULT_MILESTONES).map((milestone) => ({
+    year: String(milestone.year ?? ""),
+    title: resolveText(milestone.title, lang),
+    desc: resolveText(milestone.desc, lang),
+  }))
 
   return (
     <section className="border-b border-border/60 bg-background py-20">
@@ -96,24 +84,24 @@ export function MilestonesSection({ props }: { props: Record<string, unknown> })
           {eyebrow && (
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
               <span className="rounded-md bg-primary/10 px-2.5 py-1">
-                <BilingualText text={eyebrow} />
+                {eyebrow}
               </span>
             </p>
           )}
           {title && (
             <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              <BilingualText text={title} />
+              {title}
             </h2>
           )}
           {description && (
             <p className="mt-3 text-base text-muted-foreground leading-relaxed">
-              <BilingualText text={description} />
+              {description}
             </p>
           )}
         </div>
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {items.map((m) => (
+          {milestones.map((m) => (
             <div
               key={m.year}
               className="relative rounded-xl border border-border bg-card p-5 shadow-xs transition-shadow hover:shadow-md flex flex-col justify-between"
@@ -123,10 +111,10 @@ export function MilestonesSection({ props }: { props: Record<string, unknown> })
                   {m.year}
                 </span>
                 <h4 className="mt-3 font-display text-base font-semibold text-foreground">
-                  <BilingualText text={m.title} />
+                  {m.title}
                 </h4>
                 <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-                  <BilingualText text={m.desc} />
+                  {m.desc}
                 </p>
               </div>
             </div>

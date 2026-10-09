@@ -14,6 +14,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { AdminPageHeader } from "@/components/admin/admin-page-header"
+import { resolveText } from "@/lib/localized"
 import { KpiCard } from "@/components/admin/kpi-card"
 import { Button } from "@/components/ui/button"
 import {
@@ -191,7 +192,7 @@ export default async function AdminPage() {
                   <span className="font-medium">{entry.actorName || "Someone"}</span>{" "}
                   <span className="text-muted-foreground">{actionVerb(entry.action)}</span>{" "}
                   {entityLabel(entry.entityType)}
-                  {entry.label && <span className="text-muted-foreground"> “{entry.label}”</span>}
+                  {entry.label && <span className="text-muted-foreground"> “{resolveText(entry.label, "id")}”</span>}
                 </span>
                 <time className="shrink-0 text-xs text-muted-foreground">
                   {formatDateTime(entry.createdAt)}

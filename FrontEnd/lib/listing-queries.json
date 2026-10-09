@@ -1,0 +1,6 @@
+{
+  "products": ["search", "category", "sort", "page"],
+  "services": ["search", "category", "sort", "page"],
+  "news": ["search", "category", "sort", "page", "featured", "publishedDate"],
+  "career": ["search", "location", "department", "type", "sort", "page"]
+}

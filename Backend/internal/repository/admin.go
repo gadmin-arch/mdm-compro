@@ -1105,16 +1105,32 @@ func (r AdminRepository) contentPath(ctx context.Context, tx pgx.Tx, table strin
 }
 
 func (r AdminRepository) newsCategoryID(ctx context.Context, tx pgx.Tx, name string) (*string, error) {
-	name = strings.TrimSpace(name)
+	// Bilingual names arrive with CRLF line breaks from form posts.
+	name = strings.TrimSpace(strings.ReplaceAll(name, "\r\n", "\n"))
 	if name == "" {
 		return nil, nil
 	}
-	slug := slugifyText(name)
+	// A category is identified by its exact name, so saving a news item never
+	// adds a second row for a category that already exists.
+	var existing string
+	err := tx.QueryRow(ctx, `
+		SELECT id::text FROM news_categories
+		WHERE replace(name, E'\r', '') = $1 AND deleted_at IS NULL
+		ORDER BY created_at
+		LIMIT 1
+	`, name).Scan(&existing)
+	if err == nil {
+		return &existing, nil
+	}
+	if !errors.Is(err, pgx.ErrNoRows) {
+		return nil, err
+	}
+	slug := slugifyText(categorySlugSource(name))
 	if slug == "" {
 		return nil, nil
 	}
 	id := uuid.NewString()
-	err := tx.QueryRow(ctx, `
+	err = tx.QueryRow(ctx, `
 		INSERT INTO news_categories (id, name, slug)
 		VALUES ($1, $2, $3)
 		ON CONFLICT (slug) WHERE deleted_at IS NULL
@@ -1125,6 +1141,20 @@ func (r AdminRepository) newsCategoryID(ctx context.Context, tx pgx.Tx, name str
 		return nil, err
 	}
 	return &id, nil
+}
+
+// categorySlugSource is the English half of a bilingual "EN: …\nID: …" name,
+// or the name itself, so a category gets a readable slug.
+func categorySlugSource(name string) string {
+	for _, line := range strings.Split(name, "\n") {
+		line = strings.TrimSpace(line)
+		if len(line) > 3 && strings.EqualFold(line[:3], "EN:") {
+			if english := strings.TrimSpace(line[3:]); english != "" {
+				return english
+			}
+		}
+	}
+	return name
 }
 
 func scanAdminPage(row rowScanner) (model.Page, int, error) {

@@ -46,7 +46,8 @@ export async function restoreItemAction(formData: FormData) {
   } catch {
     // ignore
   }
-  revalidatePath("/")
+  // Public pages live under app/[lang]; this covers both languages.
+  revalidatePath("/[lang]", "layout")
   revalidatePath("/admin")
   revalidatePath("/admin/archive")
   revalidatePath("/admin/pages")

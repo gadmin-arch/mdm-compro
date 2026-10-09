@@ -4,15 +4,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { str, records } from "@/lib/sections"
+import { items, prop } from "@/lib/sections"
 import { container } from "@/lib/layout"
-import { BilingualText } from "@/components/cms/content-language"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 
-export function FaqSection({ props }: { props: Record<string, unknown> }) {
-  const eyebrow = str(props, "eyebrow")
-  const title = str(props, "title")
-  const items = records(props, "items").filter((item) => item.question)
-  if (items.length === 0) return null
+export function FaqSection({ props, lang }: { props: Record<string, unknown>; lang: Locale }) {
+  const eyebrow = resolveText(prop(props, "eyebrow"), lang)
+  const title = resolveText(prop(props, "title"), lang)
+  const entries = items(props, "items")
+    .map((item) => ({ question: resolveText(item.question, lang), answer: resolveText(item.answer, lang) }))
+    .filter((item) => item.question)
+  if (entries.length === 0) return null
 
   return (
     <section className="border-b border-border/60 bg-background">
@@ -20,24 +23,24 @@ export function FaqSection({ props }: { props: Record<string, unknown> }) {
         <div className="lg:col-span-4">
           {eyebrow && (
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              <BilingualText text={eyebrow} />
+              {eyebrow}
             </p>
           )}
           {title && (
             <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-              <BilingualText text={title} />
+              {title}
             </h2>
           )}
         </div>
         <div className="lg:col-span-8">
           <Accordion type="single" collapsible className="w-full">
-            {items.map((item, index) => (
+            {entries.map((item, index) => (
               <AccordionItem key={`${item.question}-${index}`} value={`item-${index}`}>
                 <AccordionTrigger className="text-left font-medium">
-                  <BilingualText text={item.question} />
+                  {item.question}
                 </AccordionTrigger>
                 <AccordionContent className="whitespace-pre-line text-muted-foreground">
-                  <BilingualText text={item.answer} />
+                  {item.answer}
                 </AccordionContent>
               </AccordionItem>
             ))}

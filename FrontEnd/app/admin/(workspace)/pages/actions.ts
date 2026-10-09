@@ -10,7 +10,8 @@ import {
 } from "@/lib/admin-api"
 import type { PageContent } from "@/lib/cms"
 import type { SaveResult } from "@/lib/save-result"
-import { combineBilingualText } from "@/lib/bilingual"
+import { serializeLocalizedText } from "@/lib/i18n"
+import { toLocalizedText } from "@/lib/localized"
 import { notifySearchEngines } from "@/lib/seo-indexing"
 
 function pagePayload(formData: FormData): PageCreatePayload {
@@ -22,11 +23,12 @@ function pagePayload(formData: FormData): PageCreatePayload {
     throw new Error("invalid_json")
   }
 
-  const titleId = String(formData.get("title_id") ?? "").trim()
-  const titleEn = String(formData.get("title_en") ?? "").trim()
-  const combinedTitle = combineBilingualText({ id: titleId, en: titleEn })
-  const fallbackTitle = String(formData.get("title") ?? "").trim()
-  const title = combinedTitle || fallbackTitle
+  // Stored as "EN: …\nID: …" with both markers; a missing language stays
+  // empty instead of being filled in by guesswork.
+  const title = serializeLocalizedText({
+    id: String(formData.get("title_id") ?? ""),
+    en: String(formData.get("title_en") ?? ""),
+  })
 
   const publishedAtValue = String(formData.get("publishedAt") ?? "")
   return {
@@ -36,8 +38,9 @@ function pagePayload(formData: FormData): PageCreatePayload {
     status: String(formData.get("status") ?? "draft"),
     publishedAt: publishedAtValue || null,
     seo: {
-      title: String(formData.get("seoTitle") ?? ""),
-      description: String(formData.get("seoDescription") ?? ""),
+      // Serialized "EN: …\nID: …" pairs; form posts turn line breaks into CRLF.
+      title: String(formData.get("seoTitle") ?? "").replace(/\r\n?/g, "\n"),
+      description: String(formData.get("seoDescription") ?? "").replace(/\r\n?/g, "\n"),
       canonical: String(formData.get("seoCanonical") ?? ""),
       noIndex: formData.get("seoNoIndex") === "on",
     },
@@ -62,19 +65,12 @@ function revalidatePagePaths(...keys: string[]) {
   } catch {
     // ignore
   }
-  revalidatePath("/", "layout")
-  revalidatePath("/", "page")
-  revalidatePath("/about", "page")
-  revalidatePath("/contact", "page")
-  revalidatePath("/services", "page")
-  revalidatePath("/products", "page")
-  revalidatePath("/news", "page")
-  revalidatePath("/career", "page")
+  // Every public page lives under app/[lang] (/about and /en/about are the
+  // same route), so revalidating that layout covers both languages.
+  revalidatePath("/[lang]", "layout")
   for (const key of keys) {
     if (key) {
-      revalidatePath(`/${key}`, "page")
-      revalidatePath(`/${key}`, "layout")
-      notifySearchEngines(`/${key}`)
+      notifySearchEngines(key === "home" ? "/" : `/${key}`)
     }
   }
   revalidatePath("/admin", "layout")
@@ -202,7 +198,7 @@ export async function duplicatePageAction(formData: FormData) {
       method: "POST",
       body: JSON.stringify({
         key,
-        title: `${source.title} Copy`,
+        title: copyTitle(source.title),
         content: source.content,
         status: "draft",
         publishedAt: null,
@@ -259,4 +255,13 @@ export async function deletePageAction(formData: FormData) {
 
 function uniqueCopyKey(key: string) {
   return `${key.replace(/-copy(?:-[a-z0-9]+)?$/, "")}-copy-${Date.now().toString(36)}`
+}
+
+// "Copy" is appended to each language of the duplicated page's title.
+function copyTitle(title: string) {
+  const value = toLocalizedText(title)
+  return serializeLocalizedText({
+    id: value.id ? `${value.id} (Salinan)` : "",
+    en: value.en ? `${value.en} (Copy)` : "",
+  })
 }

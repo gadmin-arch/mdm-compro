@@ -2045,60 +2045,61 @@ export function findBilingualProductEntry(fullPathOrSlug: string): BilingualProd
 }
 
 /**
- * Enriches a product node with complete bilingual translations.
+ * Fills a product with the built-in catalog copy where the CMS has none.
+ * Values stored in the CMS always win — the catalog only covers empty fields
+ * and stands in for the whole node when the API is unreachable (node null).
  */
 export function enrichProductWithBilingual(
   node: ContentNode | null | undefined,
   fullPathOrSlug: string
 ): ContentNode | null {
   const entry = findBilingualProductEntry(fullPathOrSlug)
-  if (!node && !entry) return null
+  if (!entry) return node ?? null
 
-  if (!entry) {
-    return node ?? null
+  const catalogContent = {
+    bilingual: true,
+    id: { blocks: [{ type: "html", html: entry.content.id }] },
+    en: { blocks: [{ type: "html", html: entry.content.en }] },
   }
 
-  const baseNode: ContentNode = node ?? {
-    id: entry.id ?? `prod-${entry.slug}`,
-    slug: entry.slug,
-    fullPath: entry.fullPath,
-    title: "",
-    summary: "",
-    imageUrl: entry.imageUrl,
-    specs: entry.specs,
-    status: entry.status ?? "published",
-    sortOrder: entry.sortOrder ?? 1,
-    depth: entry.depth ?? 0,
-    version: 1,
-    children: [],
+  if (!node) {
+    return {
+      id: entry.id ?? `prod-${entry.slug}`,
+      slug: entry.slug,
+      fullPath: entry.fullPath,
+      title: `EN: ${entry.title.en}\nID: ${entry.title.id}`,
+      summary: `EN: ${entry.summary.en}\nID: ${entry.summary.id}`,
+      content: catalogContent,
+      imageUrl: entry.imageUrl,
+      specs: entry.specs,
+      status: entry.status ?? "published",
+      sortOrder: entry.sortOrder ?? 1,
+      depth: entry.depth ?? 0,
+      version: 1,
+      children: [],
+    }
   }
-
-  const titleString = `EN: ${entry.title.en}\nID: ${entry.title.id}`
-  const summaryString = `EN: ${entry.summary.en}\nID: ${entry.summary.id}`
 
   return {
-    ...baseNode,
-    version: baseNode.version ?? 1,
-    title: titleString,
-    summary: summaryString,
-    imageUrl: baseNode.imageUrl || entry.imageUrl,
-    specs: entry.specs || baseNode.specs,
-    content: {
-      bilingual: true,
-      id: {
-        blocks: [{ type: "html", html: entry.content.id }],
-      },
-      en: {
-        blocks: [{ type: "html", html: entry.content.en }],
-      },
-      blocks: [
-        {
-          type: "html",
-          html: `EN: ${entry.content.en}\nID: ${entry.content.id}`,
-        },
-      ],
-    },
+    ...node,
+    title: node.title?.trim() ? node.title : `EN: ${entry.title.en}\nID: ${entry.title.id}`,
+    summary: node.summary?.trim() ? node.summary : `EN: ${entry.summary.en}\nID: ${entry.summary.id}`,
+    content: hasStoredContent(node.content) ? node.content : catalogContent,
+    imageUrl: node.imageUrl || entry.imageUrl,
+    specs: node.specs && Object.keys(node.specs).length > 0 ? node.specs : entry.specs,
   }
+}
+
+// Stored body content: anything other than an empty object or empty blocks.
+export function hasStoredContent(content: unknown): boolean {
+  if (!content || typeof content !== "object") return typeof content === "string" && content.trim().length > 0
+  const value = content as Record<string, unknown>
+  if (Array.isArray(value.blocks) && value.blocks.length > 0) return true
+  return ["id", "en", "html"].some((key) => {
+    const part = value[key]
+    if (typeof part === "string") return part.trim().length > 0
+    return Boolean(part && typeof part === "object" && Array.isArray((part as { blocks?: unknown[] }).blocks) && (part as { blocks: unknown[] }).blocks.length > 0)
+  })
 }
 
 export const PRODUCT_TREE_STRUCTURE: { root: string; children: string[] }[] = [

@@ -1,6 +1,7 @@
 "use client"
 
-import React, { createContext, useContext, useEffect, useState, useTransition, type ReactNode } from "react"
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react"
+import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import {
   type ContentBlock,
@@ -12,6 +13,8 @@ import {
   extractBilingualHtml,
   isBilingualEnvelope,
 } from "@/lib/bilingual"
+import { isLocale, localizePath, type LocalizedText } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 
 export type { ContentBlock, ContentLanguage, BilingualEnvelope }
 export { filterBilingualBlocks, filterBilingualHtml, filterBilingualText, extractBilingualHtml, isBilingualEnvelope }
@@ -23,7 +26,6 @@ type ContentLanguageContextType = {
 }
 
 const STORAGE_KEY = "mdm_content_lang"
-const COOKIE_KEY = "mdm_content_lang"
 
 const ContentLanguageContext = createContext<ContentLanguageContextType>({
   lang: "id",
@@ -31,154 +33,66 @@ const ContentLanguageContext = createContext<ContentLanguageContextType>({
   isIndonesian: true,
 })
 
-function getCookie(name: string): string | null {
-  if (typeof document === "undefined") return null
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`))
-  return match ? decodeURIComponent(match[1]) : null
-}
-
-function setCookie(name: string, value: string, days = 365) {
-  if (typeof document === "undefined") return
-  const maxAge = days * 24 * 60 * 60
-  document.cookie = `${name}=${encodeURIComponent(value)};path=/;max-age=${maxAge};SameSite=Lax`
-}
-
-function detectInitialLanguage(initialLang?: ContentLanguage): ContentLanguage {
-  if (initialLang) return initialLang
-
-  if (typeof window === "undefined") return "id"
-
-  // 1. Subpath URL prefix check (/en or /en/...) — highest priority for SEO & direct links
-  try {
-    const pathname = window.location.pathname.toLowerCase()
-    if (pathname === "/en" || pathname.startsWith("/en/")) {
-      return "en"
-    }
-  } catch {
-    // ignore
-  }
-
-  // 2. URL parameter check (?lang=id or ?lang=en)
-  try {
-    const params = new URLSearchParams(window.location.search)
-    const urlLang = params.get("lang")?.toLowerCase()
-    if (urlLang === "id" || urlLang === "en") {
-      return urlLang
-    }
-  } catch {
-    // ignore
-  }
-
-  // 3. LocalStorage user preference
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY)?.toLowerCase()
-    if (stored === "id" || stored === "en") {
-      return stored
-    }
-  } catch {
-    // ignore
-  }
-
-  // 4. Cookie preference
-  const cookieLang = getCookie(COOKIE_KEY)?.toLowerCase()
-  if (cookieLang === "id" || cookieLang === "en") {
-    return cookieLang
-  }
-
-  // 5. Browser / OS language detection
-  try {
-    const navLangs = navigator.languages || [navigator.language]
-    for (const l of navLangs) {
-      if (l && l.toLowerCase().startsWith("id")) {
-        return "id"
-      }
-    }
-  } catch {
-    // ignore
-  }
-
-  // Default fallback: Indonesian (as requested for ID market by default)
-  return "id"
-}
+// "site": the URL decides the language — the server already rendered the
+// page in it, and switching navigates to the other language's URL.
+// "admin": a remembered preference that only changes previews and labels.
+type Mode = "site" | "admin"
 
 export function ContentLanguageProvider({
   children,
   initialLang,
+  mode = "site",
 }: {
   children: ReactNode
   initialLang?: ContentLanguage
+  mode?: Mode
 }) {
-  // Always initialize with deterministic initialLang or "id" so server and client match 100% during initial hydration
-  const [lang, setLangState] = useState<ContentLanguage>(initialLang || "id")
-  const [, startTransition] = useTransition()
+  const router = useRouter()
+  const [adminLang, setAdminLang] = useState<ContentLanguage>(initialLang ?? "id")
 
-  // Sync if URL parameter or pathname changed (runs on client only after hydration)
+  // Admin only: follow the stored preference (and changes made in other tabs).
   useEffect(() => {
-    const handleSync = () => {
-      const detected = detectInitialLanguage(initialLang)
-      setLangState((current) => (current !== detected ? detected : current))
-    }
-
-    handleSync()
-
-    window.addEventListener("popstate", handleSync)
-    window.addEventListener("storage", handleSync)
-    return () => {
-      window.removeEventListener("popstate", handleSync)
-      window.removeEventListener("storage", handleSync)
-    }
-  }, [initialLang])
-
-  const setLang = (newLang: ContentLanguage) => {
-    startTransition(() => {
-      setLangState(newLang)
-    })
-
-    try {
-      localStorage.setItem(STORAGE_KEY, newLang)
-      setCookie(COOKIE_KEY, newLang)
-
-      // Update URL subpath (/en/...) cleanly without reload
-      if (typeof window !== "undefined") {
-        const url = new URL(window.location.href)
-        const currentPath = url.pathname
-
-        // Do not alter /admin paths
-        if (!currentPath.startsWith("/admin")) {
-          if (newLang === "en") {
-            if (!currentPath.startsWith("/en")) {
-              url.pathname = currentPath === "/" ? "/en" : `/en${currentPath}`
-            }
-          } else {
-            if (currentPath === "/en") {
-              url.pathname = "/"
-            } else if (currentPath.startsWith("/en/")) {
-              url.pathname = currentPath.slice(3)
-            }
-          }
-          url.searchParams.delete("lang")
-          window.history.replaceState(window.history.state, "", url.toString())
-        } else {
-          url.searchParams.set("lang", newLang)
-          window.history.replaceState(window.history.state, "", url.toString())
-        }
+    if (mode !== "admin") return
+    const sync = () => {
+      try {
+        const fromQuery = new URLSearchParams(window.location.search).get("lang")
+        const stored = fromQuery ?? localStorage.getItem(STORAGE_KEY)
+        if (isLocale(stored)) setAdminLang(stored)
+      } catch {
+        // Storage can be unavailable (private mode); the default stays.
       }
-    } catch {
-      // ignore
     }
-  }
+    sync()
+    window.addEventListener("storage", sync)
+    return () => window.removeEventListener("storage", sync)
+  }, [mode])
 
-  return (
-    <ContentLanguageContext.Provider
-      value={{
-        lang,
-        setLang,
-        isIndonesian: lang === "id",
-      }}
-    >
-      {children}
-    </ContentLanguageContext.Provider>
+  const lang: ContentLanguage = mode === "site" ? (initialLang ?? "id") : adminLang
+
+  const setLang = useCallback(
+    (next: ContentLanguage) => {
+      if (mode === "site") {
+        if (next === lang) return
+        const { pathname, search, hash } = window.location
+        router.push(localizePath(`${pathname}${search}${hash}`, next))
+        return
+      }
+      setAdminLang(next)
+      try {
+        localStorage.setItem(STORAGE_KEY, next)
+        const url = new URL(window.location.href)
+        url.searchParams.set("lang", next)
+        window.history.replaceState(window.history.state, "", url.toString())
+      } catch {
+        // Not persisted; the in-memory choice still applies.
+      }
+    },
+    [lang, mode, router],
   )
+
+  const value = useMemo(() => ({ lang, setLang, isIndonesian: lang === "id" }), [lang, setLang])
+
+  return <ContentLanguageContext.Provider value={value}>{children}</ContentLanguageContext.Provider>
 }
 
 export function useContentLanguage(): ContentLanguageContextType {
@@ -217,6 +131,7 @@ export function ContentLanguageToggle({
             : "text-muted-foreground hover:bg-secondary hover:text-foreground"
         )}
         aria-pressed={lang === "id"}
+        lang="id"
       >
         ID
       </button>
@@ -231,6 +146,7 @@ export function ContentLanguageToggle({
             : "text-muted-foreground hover:bg-secondary hover:text-foreground"
         )}
         aria-pressed={lang === "en"}
+        lang="en"
       >
         EN
       </button>
@@ -239,22 +155,22 @@ export function ContentLanguageToggle({
 }
 
 /**
- * Component to render bilingual text with automatic language detection
+ * Renders CMS text in the active language: LocalizedText objects or legacy
+ * "EN: …\nID: …" strings.
  */
 export function BilingualText({
   text,
   as: Component = "span",
   className,
 }: {
-  text?: string | null
+  text?: string | LocalizedText | null
   as?: React.ElementType
   className?: string
 }) {
   const { lang } = useContentLanguage()
-  const content = filterBilingualText(text, lang)
+  const content = resolveText(text, lang)
   if (!content) return null
   return <Component className={className}>{content}</Component>
 }
 
-export { LocalizedLink, localizeHref, useLocalizedHref } from "./localized-link"
-
+export { LocalizedLink, localizeHref, useLocalizedHref, usePublicPathname } from "./localized-link"

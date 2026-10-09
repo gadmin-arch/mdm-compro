@@ -116,6 +116,19 @@ func TestPublicCacheHandlerOverrideWins(t *testing.T) {
 	}
 }
 
+func TestPublicCacheSkipsErrors(t *testing.T) {
+	for _, status := range []int{http.StatusNotFound, http.StatusInternalServerError} {
+		next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(status)
+		})
+		rec := httptest.NewRecorder()
+		publicCache(300)(next).ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/api/v1/public/news/missing", nil))
+		if got := rec.Header().Get("Cache-Control"); got != "no-store" {
+			t.Errorf("status %d: Cache-Control = %q, want no-store", status, got)
+		}
+	}
+}
+
 func TestSecureHeaders(t *testing.T) {
 	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)

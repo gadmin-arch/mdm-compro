@@ -57,7 +57,8 @@ export async function saveNavigationAction(formData: FormData): Promise<SaveResu
   } catch {
     // ignore
   }
-  revalidatePath("/", "layout")
+  // Public pages live under app/[lang]; this covers both languages.
+  revalidatePath("/[lang]", "layout")
   revalidatePath("/admin/navigation")
   redirect("/admin/navigation?saved=1")
 }

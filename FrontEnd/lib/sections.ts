@@ -1,6 +1,30 @@
 // Section catalog shared by the public renderer and the admin page builder.
 // A CMS page stores `content.sections` as Section[]; every entry maps to a
 // React section component via components/cms/section-renderer.tsx.
+//
+// Fields marked `localized` hold a LocalizedText ({ id, en }) — or, for
+// `lines`, an array of them. Older pages may still carry "EN: …\nID: …"
+// strings there; normalizeSectionForEditor() converts them on load, and the
+// renderer accepts both.
+
+import { isLocalizedText, type Locale, type LocalizedText } from "@/lib/i18n"
+import { toLocalizedHtml, toLocalizedList, toLocalizedText } from "@/lib/localized"
+import { LICENSED_EXPERTS, pairSeededPageContent } from "@/lib/page-bilingual"
+import { CONTACT_DEFAULTS, DEFAULT_OFFICES, HERO_DEFAULTS, sameInBoth } from "@/lib/section-defaults"
+
+// Defined in lib/section-defaults so client components can use them
+// without loading this catalog; re-exported for everything else.
+export {
+  CONTACT_DEFAULTS,
+  DEFAULT_OFFICES,
+  STALE_MAP_EMBEDS,
+  items,
+  lines,
+  num,
+  prop,
+  records,
+  str,
+} from "@/lib/section-defaults"
 
 export const SECTION_ICON_NAMES = [
   "zap",
@@ -45,21 +69,29 @@ export type Section = {
   id: string
   type: string
   props: Record<string, unknown>
+  // Hidden sections stay in the builder but are skipped on the public site.
+  hidden?: boolean
+  // Admin-only name shown in the builder list; never rendered publicly.
+  label?: string
 }
 
 export type FieldOption = { value: string; label: string }
 
 export type FieldDef =
-  | { kind: "text"; name: string; label: string; placeholder?: string }
-  | { kind: "textarea"; name: string; label: string; placeholder?: string }
-  | { kind: "lines"; name: string; label: string; placeholder?: string }
+  | { kind: "text"; name: string; label: string; placeholder?: string; localized?: boolean }
+  | { kind: "textarea"; name: string; label: string; placeholder?: string; localized?: boolean }
+  | { kind: "lines"; name: string; label: string; placeholder?: string; localized?: boolean }
   | { kind: "image"; name: string; label: string }
   | { kind: "toggle"; name: string; label: string }
   | { kind: "number"; name: string; label: string; min?: number; max?: number }
   | { kind: "select"; name: string; label: string; options: FieldOption[] }
   | { kind: "icon"; name: string; label: string }
-  | { kind: "richtext"; name: string; label: string }
+  | { kind: "richtext"; name: string; label: string; localized?: boolean }
   | { kind: "list"; name: string; label: string; itemLabel: string; fields: FieldDef[]; max?: number }
+
+export function isLocalizedField(def: FieldDef): boolean {
+  return "localized" in def && def.localized === true
+}
 
 export type SectionDef = {
   type: string
@@ -71,8 +103,126 @@ export type SectionDef = {
 }
 
 const linkFields = (prefix: string, label: string): FieldDef[] => [
-  { kind: "text", name: `${prefix}Label`, label: `${label} label` },
+  { kind: "text", name: `${prefix}Label`, localized: true, label: `${label} label` },
   { kind: "text", name: `${prefix}Href`, label: `${label} link`, placeholder: "/contact" },
+]
+
+const officeFields: FieldDef[] = [
+  { kind: "text", name: "name", localized: true, label: "Office name" },
+  { kind: "textarea", name: "address", localized: true, label: "Address" },
+  { kind: "text", name: "phone", label: "Phone" },
+  { kind: "text", name: "fax", label: "Fax" },
+  { kind: "text", name: "email", label: "Email" },
+  {
+    kind: "text",
+    name: "mapEmbedUrl",
+    label: "Google Maps Embed URL (iframe src)",
+    placeholder: "https://www.google.com/maps/embed?pb=...",
+  },
+]
+
+// Shared by the certifications section defaults and its renderer, which also
+// matches the older one-name-per-line list against these titles.
+export const DEFAULT_CERTIFICATIONS: Record<"title" | "desc" | "badge", Required<LocalizedText>>[] = [
+  {
+    title: sameInBoth("ISO 9001:2015"),
+    desc: { id: "Sistem Manajemen Mutu (Terakreditasi KAN)", en: "Quality Management System (KAN Accredited)" },
+    badge: { id: "Mutu", en: "Quality" },
+  },
+  {
+    title: sameInBoth("ISO 14001:2015"),
+    desc: { id: "Sistem Manajemen Lingkungan", en: "Environmental Management System" },
+    badge: { id: "Lingkungan", en: "Environment" },
+  },
+  {
+    title: sameInBoth("ISO 45001:2018"),
+    desc: {
+      id: "Sistem Manajemen Keselamatan & Kesehatan Kerja (KAN)",
+      en: "Occupational Health & Safety (KAN Accredited)",
+    },
+    badge: { id: "K3", en: "Safety" },
+  },
+  {
+    title: sameInBoth("Ecovadis Silver"),
+    desc: {
+      id: "Peringkat Keberlanjutan Global 15% Terbaik (Nov 2024)",
+      en: "Top 15% Global Sustainability Rating (Nov 2024)",
+    },
+    badge: sameInBoth("ESG"),
+  },
+  {
+    title: { id: "Anggota Avetta", en: "Avetta Member" },
+    desc: { id: "Jaringan Kepatuhan & Keselamatan Kontraktor Global", en: "Global Contractor Safety & Compliance Network" },
+    badge: { id: "Kepatuhan", en: "Compliance" },
+  },
+  {
+    title: sameInBoth("SBUJTL & IUJPTL ESDM"),
+    desc: {
+      id: "Izin Usaha Jasa Penunjang Tenaga Listrik Resmi ESDM",
+      en: "Official Electrical Power Support Services License (ESDM)",
+    },
+    badge: { id: "Perizinan", en: "License" },
+  },
+  {
+    title: { id: "Kompetensi Level 6 ESDM", en: "ESDM Level 6 Competency" },
+    desc: {
+      id: "Sertifikat Kompetensi Teknis Tegangan Menengah Level 6 ESDM",
+      en: "Certified Medium-Voltage Technical Competency (ESDM)",
+    },
+    badge: { id: "Teknis", en: "Technical" },
+  },
+  {
+    title: sameInBoth("SMK3 Kemenaker"),
+    desc: {
+      id: "Sistem Manajemen Keselamatan dan Kesehatan Kerja Nasional",
+      en: "National Occupational Safety & Health Management System",
+    },
+    badge: { id: "K3L", en: "HSE" },
+  },
+  {
+    title: { id: "Anggota NFPA", en: "NFPA Member" },
+    desc: {
+      id: "Anggota National Fire Protection Association Global",
+      en: "National Fire Protection Association Member",
+    },
+    badge: { id: "Sistem Kebakaran", en: "Fire System" },
+  },
+  {
+    title: { id: "Peringkat D&B", en: "D&B Rating" },
+    desc: {
+      id: "Kredensial Korporasi Terverifikasi Dun & Bradstreet",
+      en: "Dun & Bradstreet Verified Corporate Credential",
+    },
+    badge: { id: "Korporasi", en: "Corporate" },
+  },
+]
+
+// Shared by the brand partners section defaults and its renderer.
+export const DEFAULT_PARTNERS: Record<string, unknown>[] = [
+  {
+    name: "Rittal",
+    logoUrl: "",
+    role: { id: "Distributor Resmi", en: "Authorized Distributor" },
+    country: { id: "Jerman", en: "Germany" },
+  },
+  {
+    name: "Schneider Electric",
+    logoUrl: "",
+    role: sameInBoth("Certified System Integrator"),
+    country: { id: "Prancis / Global", en: "France / Global" },
+  },
+  {
+    name: "xArrow",
+    logoUrl: "",
+    role: { id: "Mitra Solusi Resmi", en: "Authorized Solutions Partner" },
+    country: sameInBoth("Global"),
+  },
+  {
+    name: "Mundung",
+    logoUrl: "",
+    role: { id: "Mitra Resmi", en: "Authorized Partner" },
+    country: sameInBoth("Global"),
+  },
 ]
 
 export const sectionDefs: SectionDef[] = [
@@ -82,14 +232,14 @@ export const sectionDefs: SectionDef[] = [
     description: "Full hero with headline, CTAs, stats, and image card.",
     icon: "sparkles",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow badge" },
-      { kind: "textarea", name: "title", label: "Headline" },
-      { kind: "text", name: "highlight", label: "Highlighted word in headline" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow badge" },
+      { kind: "textarea", name: "title", localized: true, label: "Headline" },
+      { kind: "text", name: "highlight", localized: true, label: "Highlighted word in headline" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
       ...linkFields("primary", "Primary button"),
       ...linkFields("secondary", "Secondary button"),
       { kind: "image", name: "imageUrl", label: "Hero image" },
-      { kind: "text", name: "imageAlt", label: "Image alt text" },
+      { kind: "text", name: "imageAlt", localized: true, label: "Image alt text" },
       {
         kind: "list",
         name: "stats",
@@ -97,33 +247,14 @@ export const sectionDefs: SectionDef[] = [
         itemLabel: "Stat",
         max: 4,
         fields: [
-          { kind: "text", name: "label", label: "Label" },
+          { kind: "text", name: "label", localized: true, label: "Label" },
           { kind: "text", name: "value", label: "Value" },
         ],
       },
-      { kind: "text", name: "cardEyebrow", label: "Floating card eyebrow" },
-      { kind: "textarea", name: "cardTitle", label: "Floating card text" },
+      { kind: "text", name: "cardEyebrow", localized: true, label: "Floating card eyebrow" },
+      { kind: "textarea", name: "cardTitle", localized: true, label: "Floating card text" },
     ],
-    defaults: {
-      eyebrow: "EN: Trusted partner since 2012\nID: Mitra Terpercaya Sejak 2012",
-      title: "EN: Powering industry with reliable electrical & automation services.\nID: Menggerakkan industri dengan layanan kelistrikan & otomasi yang andal.",
-      highlight: "EN: reliable\nID: andal",
-      description:
-        "EN: PT Multi Daya Mitra delivers end-to-end electrical, industrial automation, and fire alarm solutions with 14+ years of engineering experience across Indonesia and beyond.\nID: PT Multi Daya Mitra menghadirkan solusi menyeluruh untuk kelistrikan, otomasi industri, dan proteksi kebakaran dengan lebih dari 14 tahun pengalaman rekayasa di Indonesia dan mancanegara.",
-      primaryLabel: "EN: Start a Project\nID: Mulai Proyek",
-      primaryHref: "/contact",
-      secondaryLabel: "EN: Explore Services\nID: Jelajahi Layanan",
-      secondaryHref: "/services",
-      imageUrl: "/uploads/hero-project.jpg",
-      imageAlt: "Engineer inspecting medium voltage substation switchgear",
-      stats: [
-        { label: "EN: Established\nID: Didirikan", value: "2012" },
-        { label: "EN: Corporate Clients\nID: Klien Korporat", value: "400+" },
-        { label: "EN: Certified Team\nID: Tim Tersertifikasi", value: "ISO & ESDM" },
-      ],
-      cardEyebrow: "EN: Now offering\nID: Layanan Terbaru",
-      cardTitle: "EN: Energy Monitoring System for Sustainability & ESG Reporting\nID: Sistem Monitoring Energi untuk Keberlanjutan & Pelaporan ESG",
-    },
+    defaults: HERO_DEFAULTS,
   },
   {
     type: "pageHero",
@@ -131,9 +262,9 @@ export const sectionDefs: SectionDef[] = [
     description: "Dark page header with eyebrow, title, and description.",
     icon: "panel-top",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
     ],
     defaults: {
       eyebrow: "EN: Page\nID: Halaman",
@@ -147,12 +278,12 @@ export const sectionDefs: SectionDef[] = [
     description: "Image beside rich copy with optional bullets and CTA.",
     icon: "image",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "body", label: "Body (blank line = new paragraph)" },
-      { kind: "lines", name: "bullets", label: "Bullet points (one per line)" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "body", localized: true, label: "Body (blank line = new paragraph)" },
+      { kind: "lines", name: "bullets", localized: true, label: "Bullet points (one per line)" },
       { kind: "image", name: "imageUrl", label: "Image" },
-      { kind: "text", name: "imageAlt", label: "Image alt text" },
+      { kind: "text", name: "imageAlt", localized: true, label: "Image alt text" },
       {
         kind: "select",
         name: "imagePosition",
@@ -167,7 +298,7 @@ export const sectionDefs: SectionDef[] = [
     defaults: {
       eyebrow: "EN: About the company\nID: Tentang Perusahaan",
       title: "EN: A team built for your most demanding projects.\nID: Tim yang siap menangani proyek paling menantang Anda.",
-      body: "EN: Established in 2013, PT Multi Daya Mitra delivers electrical, automation, and fire alarm solutions across Indonesia.\nID: Didirikan pada tahun 2013, PT Multi Daya Mitra menyediakan solusi kelistrikan, otomasi, dan sistem proteksi kebakaran di seluruh Indonesia.",
+      body: "EN: Established in 2012, PT Multi Daya Mitra delivers electrical, automation, and fire alarm solutions across Indonesia.\nID: Didirikan pada tahun 2012, PT Multi Daya Mitra menyediakan solusi kelistrikan, otomasi, dan sistem proteksi kebakaran di seluruh Indonesia.",
       bullets: [],
       imageUrl: "/placeholder.jpg",
       imageAlt: "",
@@ -182,15 +313,15 @@ export const sectionDefs: SectionDef[] = [
     description: "Company intro with image, story, and vision/mission/culture cards.",
     icon: "building",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "overview", label: "Opening paragraph" },
-      { kind: "textarea", name: "body", label: "Second paragraph" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "overview", localized: true, label: "Opening paragraph" },
+      { kind: "textarea", name: "body", localized: true, label: "Second paragraph" },
       { kind: "image", name: "imageUrl", label: "Image" },
-      { kind: "text", name: "imageAlt", label: "Image alt text" },
-      { kind: "textarea", name: "vision", label: "Vision" },
-      { kind: "textarea", name: "mission", label: "Mission" },
-      { kind: "textarea", name: "culture", label: "Culture" },
+      { kind: "text", name: "imageAlt", localized: true, label: "Image alt text" },
+      { kind: "textarea", name: "vision", localized: true, label: "Vision" },
+      { kind: "textarea", name: "mission", localized: true, label: "Mission" },
+      { kind: "textarea", name: "culture", localized: true, label: "Culture" },
     ],
     defaults: {
       eyebrow: "EN: About the company\nID: Tentang Perusahaan",
@@ -200,7 +331,10 @@ export const sectionDefs: SectionDef[] = [
       body:
         "EN: We have grown into one of the largest electrical service partners in East Java with over 400 clients and 200+ professionals — delivering projects across Indonesia and on selected overseas assignments. Our company culture of professional discipline drives every milestone, and we are certified to ISO 9001, ISO 14001, ISO 45001, Ecovadis Silver, and SMK3.\nID: Kami telah berkembang menjadi salah satu mitra jasa kelistrikan terbesar di Jawa Timur dengan lebih dari 400 klien dan 200+ profesional — menangani proyek di seluruh Indonesia dan penugasan luar negeri terpilih. Budaya disiplin profesional kami mendorong setiap pencapaian, didukung sertifikasi ISO 9001, ISO 14001, ISO 45001, Ecovadis Silver, dan SMK3.",
       imageUrl: "/placeholder.jpg",
-      imageAlt: "Industrial automation control room with engineers monitoring SCADA systems",
+      imageAlt: {
+        id: "Ruang kontrol otomasi industri dengan para insinyur memantau sistem SCADA",
+        en: "Industrial automation control room with engineers monitoring SCADA systems",
+      },
       vision: "EN: Global Electrical, Automation and Fire Alarm Services Company.\nID: Perusahaan Layanan Kelistrikan, Otomasi, dan Proteksi Kebakaran Berstandar Global.",
       mission: "EN: Mutual Partnership and Professionalism in delivering every engineering engagement.\nID: Kemitraan Strategis dan Profesionalisme Tinggi dalam Menghadirkan Solusi Rekayasa.",
       culture:
@@ -213,70 +347,39 @@ export const sectionDefs: SectionDef[] = [
     description: "Office cards with address, contacts, and an embedded map.",
     icon: "compass",
     fields: [
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
-      {
-        kind: "list",
-        name: "items",
-        label: "Offices",
-        itemLabel: "Office",
-        fields: [
-          { kind: "text", name: "name", label: "Office name" },
-          { kind: "textarea", name: "address", label: "Address" },
-          { kind: "text", name: "phone", label: "Phone" },
-          { kind: "text", name: "fax", label: "Fax" },
-          { kind: "text", name: "email", label: "Email" },
-          {
-            kind: "text",
-            name: "mapEmbedUrl",
-            label: "Google Maps Embed URL (iframe src)",
-            placeholder: "https://www.google.com/maps/embed?pb=...",
-          },
-        ],
-      },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
+      { kind: "list", name: "items", label: "Offices", itemLabel: "Office", fields: officeFields },
     ],
     defaults: {
-      title: "EN: Our Offices\nID: Lokasi Kantor Kami",
-      description: "EN: Find our physical offices across Indonesia.\nID: Temukan jaringan kantor fisik kami di seluruh Indonesia.",
-      items: [
-        {
-          name: "EN: Head Office (Surabaya)\nID: Kantor Pusat (Surabaya)",
-          address: "EN: Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, East Java, Indonesia\nID: Ruko Klampis Megah D-12, Klampis Ngasem, Sukolilo, Surabaya 60117, Jawa Timur, Indonesia",
-          phone: "+62 31 592 1256",
-          fax: "+62 31 591 7845",
-          email: "info@multidayamitra.co.id",
-          mapEmbedUrl:
-            "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.574636906236!2d112.7747579!3d-7.2854787!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbc8a9c411c1%3A0x3f527ebff4e81cdd!2sMulti%20Daya%20Mitra%20PT.!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid",
-        },
-        {
-          name: "EN: Engineering Office & Workshop\nID: Kantor Rekayasa & Workshop",
-          address: "EN: Ruko Jati Kepuh Indah F-26 & E-21, Sidoarjo 61271, East Java, Indonesia\nID: Ruko Jati Kepuh Indah F-26 & E-21, Sidoarjo 61271, Jawa Timur, Indonesia",
-          phone: "+62 811-8303-250 · +62 821-4007-4122",
-          fax: "",
-          email: "sales@multidayamitra.co.id",
-          mapEmbedUrl:
-            "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1978.1062972986427!2d112.7157486!3d-7.4685927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e74726f32b8d%3A0xf8229e5934963dc6!2sPT.%20Multi%20Daya%20Mitra%20(Workshop)!5e0!3m2!1sen!2sid!4v1710000000000!5m2!1sen!2sid",
-        },
-      ],
+      title: { id: "Lokasi Kantor Kami", en: "Our Offices" },
+      description: {
+        id: "Temukan jaringan kantor fisik kami di seluruh Indonesia.",
+        en: "Find our physical offices across Indonesia.",
+      },
+      items: DEFAULT_OFFICES,
     },
   },
   {
     type: "contact",
     label: "Contact & Inquiry",
-    description: "Interactive inquiry form, quick contact channels, and office location details.",
+    description: "Contact channels, office cards with maps, and the inquiry form.",
     icon: "mail",
     fields: [
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
       { kind: "text", name: "email", label: "Email", placeholder: "info@multidayamitra.co.id" },
-      { kind: "text", name: "phone", label: "General Phone", placeholder: "+62 31 592 1256" },
-      { kind: "text", name: "salesPhone", label: "Sales Hotline", placeholder: "+62 821-4007-4122" },
-      { kind: "text", name: "technicalPhone", label: "Technical Phone", placeholder: "+62 811-8303-250" },
+      { kind: "text", name: "phone", label: "Head office phone", placeholder: "+62 31 592 1256" },
+      { kind: "text", name: "technicalPhone", label: "Technical expert WhatsApp", placeholder: "+62 811-8303-250" },
+      { kind: "text", name: "salesPhone", label: "Sales WhatsApp", placeholder: "+62 821-4007-4122" },
+      { kind: "textarea", name: "officesTitle", localized: true, label: "Offices heading" },
+      { kind: "textarea", name: "officesDescription", localized: true, label: "Offices description" },
+      { kind: "list", name: "offices", label: "Offices", itemLabel: "Office", fields: officeFields },
+      { kind: "textarea", name: "formTitle", localized: true, label: "Form heading" },
+      { kind: "textarea", name: "formDescription", localized: true, label: "Form description" },
     ],
-    defaults: {
-      email: "info@multidayamitra.co.id",
-      phone: "+62 31 592 1256",
-      salesPhone: "+62 821-4007-4122",
-      technicalPhone: "+62 811-8303-250",
-    },
+    defaults: CONTACT_DEFAULTS,
   },
   {
     type: "aboutStory",
@@ -284,19 +387,19 @@ export const sectionDefs: SectionDef[] = [
     description: "Company overview, key numbers, vision, mission, tagline, and corporate photo.",
     icon: "building",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "overview", label: "Company Overview" },
-      { kind: "textarea", name: "description", label: "Description / Reach" },
-      { kind: "textarea", name: "tagline", label: "Tagline" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "overview", localized: true, label: "Company Overview" },
+      { kind: "textarea", name: "description", localized: true, label: "Description / Reach" },
+      { kind: "textarea", name: "tagline", localized: true, label: "Tagline" },
       { kind: "text", name: "established", label: "Established Year" },
-      { kind: "text", name: "experienceYears", label: "Experience Years" },
+      { kind: "text", name: "experienceYears", localized: true, label: "Experience Years" },
       { kind: "text", name: "clientCount", label: "Client Count" },
       { kind: "text", name: "teamCount", label: "Team Count" },
-      { kind: "textarea", name: "vision", label: "Vision" },
-      { kind: "textarea", name: "mission", label: "Mission" },
+      { kind: "textarea", name: "vision", localized: true, label: "Vision" },
+      { kind: "textarea", name: "mission", localized: true, label: "Mission" },
       { kind: "image", name: "imageUrl", label: "Photo" },
-      { kind: "text", name: "imageAlt", label: "Image alt text" },
+      { kind: "text", name: "imageAlt", localized: true, label: "Image alt text" },
     ],
     defaults: {
       eyebrow: "EN: About PT Multi Daya Mitra\nID: Tentang PT Multi Daya Mitra",
@@ -308,7 +411,7 @@ export const sectionDefs: SectionDef[] = [
       tagline:
         "EN: Always Make an IMPACT — Powering Solution, Creating Impact\nID: Always Make an IMPACT — Solusi Kelistrikan Andal, Menciptakan Dampak Nyata",
       established: "2012",
-      experienceYears: "14+ Years",
+      experienceYears: { id: "14+ Tahun", en: "14+ Years" },
       clientCount: "400+",
       teamCount: "200+",
       vision:
@@ -316,7 +419,10 @@ export const sectionDefs: SectionDef[] = [
       mission:
         "EN: Mutual Partnership and Professionalism in delivering every engineering engagement.\nID: Menjalin Kemitraan Strategis dan Profesionalisme Tinggi dalam Setiap Layanan Rekayasa Teknik.",
       imageUrl: "/uploads/automation-project.jpg",
-      imageAlt: "PT Multi Daya Mitra industrial automation and electrical team",
+      imageAlt: {
+        id: "Tim kelistrikan dan otomasi industri PT Multi Daya Mitra",
+        en: "PT Multi Daya Mitra industrial automation and electrical team",
+      },
     },
   },
   {
@@ -325,9 +431,9 @@ export const sectionDefs: SectionDef[] = [
     description: "The 6 IMPACT values (Integrity, Mastery, Partnership, Agile, Safety Commitment, Total Solutions).",
     icon: "target",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "culture", label: "Culture Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "culture", localized: true, label: "Culture Description" },
       {
         kind: "list",
         name: "items",
@@ -335,8 +441,8 @@ export const sectionDefs: SectionDef[] = [
         itemLabel: "Value",
         fields: [
           { kind: "text", name: "letter", label: "Letter (I, M, P, A, C, T)" },
-          { kind: "textarea", name: "title", label: "Title" },
-          { kind: "textarea", name: "desc", label: "Description" },
+          { kind: "textarea", name: "title", localized: true, label: "Title" },
+          { kind: "textarea", name: "desc", localized: true, label: "Description" },
         ],
       },
     ],
@@ -361,9 +467,9 @@ export const sectionDefs: SectionDef[] = [
     description: "14-year evolution timeline (2012–2026) with milestones.",
     icon: "history",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
       {
         kind: "list",
         name: "items",
@@ -371,8 +477,8 @@ export const sectionDefs: SectionDef[] = [
         itemLabel: "Milestone",
         fields: [
           { kind: "text", name: "year", label: "Year" },
-          { kind: "textarea", name: "title", label: "Title" },
-          { kind: "textarea", name: "desc", label: "Description" },
+          { kind: "textarea", name: "title", localized: true, label: "Title" },
+          { kind: "textarea", name: "desc", localized: true, label: "Description" },
         ],
       },
     ],
@@ -403,20 +509,20 @@ export const sectionDefs: SectionDef[] = [
     description: "'Saya Pilih Selamat' commitment, zero-accident policy, and 4 HSE pillars (PROTECT, CARE, COMMIT, SUSTAIN).",
     icon: "shield-check",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "text", name: "subtitle", label: "Subtitle" },
-      { kind: "textarea", name: "description", label: "Description" },
-      { kind: "lines", name: "highlights", label: "Key Policies / Accreditations (one per line)" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "text", name: "subtitle", localized: true, label: "Subtitle" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
+      { kind: "lines", name: "highlights", localized: true, label: "Key Policies / Accreditations (one per line)" },
       {
         kind: "list",
         name: "pillars",
         label: "HSE Pillars",
         itemLabel: "Pillar",
         fields: [
-          { kind: "text", name: "title", label: "Title" },
-          { kind: "text", name: "subtitle", label: "Subtitle" },
-          { kind: "textarea", name: "desc", label: "Description" },
+          { kind: "text", name: "title", localized: true, label: "Title" },
+          { kind: "text", name: "subtitle", localized: true, label: "Subtitle" },
+          { kind: "textarea", name: "desc", localized: true, label: "Description" },
           { kind: "icon", name: "icon", label: "Icon" },
         ],
       },
@@ -447,18 +553,18 @@ export const sectionDefs: SectionDef[] = [
     description: "ISO 9001, 14001, 45001, Ecovadis Silver, Avetta, and ESDM legal compliance grid.",
     icon: "award",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
       {
         kind: "list",
         name: "items",
         label: "Certifications",
         itemLabel: "Certificate",
         fields: [
-          { kind: "text", name: "title", label: "Title (e.g. ISO 9001:2015)" },
-          { kind: "textarea", name: "desc", label: "Description" },
-          { kind: "text", name: "badge", label: "Badge Tag" },
+          { kind: "text", name: "title", localized: true, label: "Title (e.g. ISO 9001:2015)" },
+          { kind: "textarea", name: "desc", localized: true, label: "Description" },
+          { kind: "text", name: "badge", localized: true, label: "Badge Tag" },
         ],
       },
       { kind: "lines", name: "certifications", label: "Certifications as Lines (alternative)" },
@@ -468,18 +574,7 @@ export const sectionDefs: SectionDef[] = [
       title: "EN: Legal Compliance, ISO Certifications & Official Credentials\nID: Kepatuhan Hukum, Sertifikasi ISO & Kredensial Resmi",
       description:
         "EN: Documented compliance, safety accreditations, and official licensing supporting industrial vendor qualification and tender audits.\nID: Kepatuhan terdokumentasi, akreditasi keselamatan, dan perizinan resmi untuk kualifikasi vendor industri serta audit tender.",
-      items: [
-        { title: "ISO 9001:2015", desc: "EN: Quality Management System (KAN Accredited)\nID: Sistem Manajemen Mutu (Terakreditasi KAN)", badge: "Quality" },
-        { title: "ISO 14001:2015", desc: "EN: Environmental Management System\nID: Sistem Manajemen Lingkungan", badge: "Environment" },
-        { title: "ISO 45001:2018", desc: "EN: Occupational Health & Safety (KAN Accredited)\nID: Sistem Manajemen Keselamatan & Kesehatan Kerja (KAN)", badge: "Safety" },
-        { title: "Ecovadis Silver", desc: "EN: Top 15% Global Sustainability Rating (Nov 2024)\nID: Peringkat Keberlanjutan Global 15% Terbaik (Nov 2024)", badge: "ESG" },
-        { title: "Avetta Member", desc: "EN: Global Contractor Safety & Compliance Network\nID: Jaringan Kepatuhan & Keselamatan Kontraktor Global", badge: "Compliance" },
-        { title: "SBUJTL & IUJPTL ESDM", desc: "EN: Official Electrical Power Support Services License (ESDM)\nID: Izin Usaha Jasa Penunjang Tenaga Listrik Resmi ESDM", badge: "License" },
-        { title: "Kompetensi Level 6 ESDM", desc: "EN: Certified Medium-Voltage Technical Competency (ESDM)\nID: Sertifikat Kompetensi Teknis Tegangan Menengah Level 6 ESDM", badge: "Technical" },
-        { title: "SMK3 Kemenaker", desc: "EN: National Occupational Safety & Health Management System\nID: Sistem Manajemen Keselamatan dan Kesehatan Kerja Nasional", badge: "HSE" },
-        { title: "NFPA Member", desc: "EN: National Fire Protection Association Member\nID: Anggota National Fire Protection Association Global", badge: "Fire System" },
-        { title: "D&B Rating", desc: "EN: Dun & Bradstreet Verified Corporate Credential\nID: Kredensial Korporasi Terverifikasi Dun & Bradstreet", badge: "Corporate" },
-      ],
+      items: DEFAULT_CERTIFICATIONS,
     },
   },
   {
@@ -488,12 +583,13 @@ export const sectionDefs: SectionDef[] = [
     description: "Licensed workforce credentials (AK3 Listrik Kemnaker, AK3 Umum, AK3 Kebakaran, ESDM MV, etc.).",
     icon: "users",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
       {
         kind: "lines",
         name: "experts",
+        localized: true,
         label: "Licensed Experts (one per line)",
         placeholder: "AK3 Listrik (Ahli K3 Listrik Kemnaker)\nAK3 Umum (Ahli K3 Umum)...",
       },
@@ -503,13 +599,7 @@ export const sectionDefs: SectionDef[] = [
       title: "EN: Competent & Licensed Workforce\nID: Tenaga Kerja Kompeten & Berlisensi",
       description:
         "EN: All field operations and site assessments are led by licensed engineering specialists certified by the Ministry of Manpower, Ministry of Energy and Mineral Resources (ESDM), and global automation principals.\nID: Seluruh operasional lapangan dan asesmen teknis dipimpin oleh tenaga ahli bersertifikasi dari Kementerian Ketenagakerjaan, Kementerian ESDM, dan prinsipal otomasi global.",
-      experts: [
-        "AK3 Listrik (Ahli K3 Listrik Kemnaker)",
-        "AK3 Umum (Ahli K3 Umum)",
-        "AK3 Kebakaran (Kelas A, B, C, D)",
-        "Teknisi Kompetensi Tegangan Menengah ESDM",
-        "Licensed Mechanical & Termination Specialists",
-      ],
+      experts: LICENSED_EXPERTS,
     },
   },
   {
@@ -518,9 +608,9 @@ export const sectionDefs: SectionDef[] = [
     description: "Calibrated testing equipment fleet (Omicron, Megger, Fluke, Partial Discharge, etc.).",
     icon: "activity",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
       {
         kind: "list",
         name: "items",
@@ -528,8 +618,8 @@ export const sectionDefs: SectionDef[] = [
         itemLabel: "Equipment",
         fields: [
           { kind: "text", name: "name", label: "Tool Name" },
-          { kind: "text", name: "category", label: "Category" },
-          { kind: "textarea", name: "desc", label: "Description" },
+          { kind: "text", name: "category", localized: true, label: "Category" },
+          { kind: "textarea", name: "desc", localized: true, label: "Description" },
         ],
       },
       { kind: "lines", name: "testingTools", label: "Testing Tools as Lines (alternative)" },
@@ -555,8 +645,8 @@ export const sectionDefs: SectionDef[] = [
     description: "Authorized partnerships (Rittal, Schneider Electric, etc.) and brand marquee.",
     icon: "handshake",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
       {
         kind: "list",
         name: "partners",
@@ -565,11 +655,11 @@ export const sectionDefs: SectionDef[] = [
         fields: [
           { kind: "text", name: "name", label: "Brand / Vendor Name (e.g. Rittal, Schneider Electric)" },
           { kind: "image", name: "logoUrl", label: "Logo Vendor (Upload Gambar / URL)" },
-          { kind: "text", name: "role", label: "Role / Status (e.g. Authorized Distributor)" },
-          { kind: "text", name: "country", label: "Country (e.g. Germany)" },
+          { kind: "text", name: "role", localized: true, label: "Role / Status (e.g. Authorized Distributor)" },
+          { kind: "text", name: "country", localized: true, label: "Country (e.g. Germany)" },
         ],
       },
-      { kind: "text", name: "marqueeTitle", label: "Marquee Title (Judul Banner Bergerak)" },
+      { kind: "text", name: "marqueeTitle", localized: true, label: "Marquee Title (Judul Banner Bergerak)" },
       { kind: "lines", name: "brands", label: "Experienced Brands / Marquee (1 nama per baris - Otomatis mencocokkan logo resmi, atau format: Nama | URL)" },
       {
         kind: "list",
@@ -585,12 +675,7 @@ export const sectionDefs: SectionDef[] = [
     defaults: {
       eyebrow: "EN: Authorized Partnership\nID: Kemitraan Resmi Principal",
       title: "EN: Strategic Alliances & Multi-Brand Engineering Experience\nID: Aliansi Strategis & Pengalaman Rekayasa Berbagai Brand",
-      partners: [
-        { name: "Rittal", logoUrl: "", role: "EN: Authorized Distributor\nID: Distributor Resmi", country: "Germany" },
-        { name: "Schneider Electric", logoUrl: "", role: "EN: Certified System Integrator\nID: Certified System Integrator", country: "France / Global" },
-        { name: "xArrow", logoUrl: "", role: "EN: Authorized Solutions Partner\nID: Mitra Solusi Resmi", country: "Global" },
-        { name: "Mundung", logoUrl: "", role: "EN: Authorized Partner\nID: Mitra Resmi", country: "Global" },
-      ],
+      partners: DEFAULT_PARTNERS,
       marqueeTitle: "EN: Experienced Work With Brand\nID: Pengalaman Proyek Berbagai Brand",
       brands: [
         "ABB", "Siemens", "Hitachi", "TRAFINDO", "B&D Transformer", "Raychem", "3M", "Legrand", "Socomec", "Autonics", "Omron", "CHINT", "MSA", "Honeywell", "Bosch", "Asenware", "Hooseki", "Simplex", "Hikvision", "Advantech", "Pepperl+Fuchs", "Moxa", "Phoenix Contact", "Weidmüller", "Supreme", "KMI Wire and Cable", "GE", "Danfoss", "GAE", "LS Electric", "Megger", "Fluke", "FLIR", "Huazheng"
@@ -604,16 +689,16 @@ export const sectionDefs: SectionDef[] = [
     description: "Legacy composite block: overview, IMPACT values, ISO certifications, licensed experts, testing fleet, and partnerships.",
     icon: "building-2",
     fields: [
-      { kind: "textarea", name: "overview", label: "Overview" },
-      { kind: "textarea", name: "vision", label: "Vision" },
-      { kind: "textarea", name: "mission", label: "Mission" },
-      { kind: "textarea", name: "tagline", label: "Tagline" },
-      { kind: "textarea", name: "culture", label: "Culture" },
+      { kind: "textarea", name: "overview", localized: true, label: "Overview" },
+      { kind: "textarea", name: "vision", localized: true, label: "Vision" },
+      { kind: "textarea", name: "mission", localized: true, label: "Mission" },
+      { kind: "textarea", name: "tagline", localized: true, label: "Tagline" },
+      { kind: "textarea", name: "culture", localized: true, label: "Culture" },
       { kind: "text", name: "established", label: "Established Year" },
-      { kind: "text", name: "experienceYears", label: "Experience Years" },
+      { kind: "text", name: "experienceYears", localized: true, label: "Experience Years" },
       { kind: "text", name: "clientCount", label: "Client Count" },
       { kind: "text", name: "teamCount", label: "Team Count" },
-      { kind: "lines", name: "licensedExperts", label: "Licensed Experts (one per line)" },
+      { kind: "lines", name: "licensedExperts", localized: true, label: "Licensed Experts (one per line)" },
       { kind: "lines", name: "certifications", label: "Certifications (one per line)" },
       { kind: "lines", name: "testingTools", label: "Testing Tools (one per line)" },
     ],
@@ -629,16 +714,10 @@ export const sectionDefs: SectionDef[] = [
       culture:
         "EN: Our culture of disciplined engineering, safety commitment, and innovation is built around six foundational principles.\nID: Budaya disiplin rekayasa teknik, komitmen keselamatan, dan inovasi kami dibangun di atas enam prinsip dasar.",
       established: "2012",
-      experienceYears: "14+",
+      experienceYears: sameInBoth("14+"),
       clientCount: "400+",
       teamCount: "200+",
-      licensedExperts: [
-        "AK3 Listrik (Ahli K3 Listrik Kemnaker)",
-        "AK3 Umum (Ahli K3 Umum)",
-        "AK3 Kebakaran (Kelas A, B, C, D)",
-        "Teknisi Kompetensi Tegangan Menengah ESDM",
-        "Licensed Mechanical & Termination Specialists",
-      ],
+      licensedExperts: LICENSED_EXPERTS,
       certifications: [
         "ISO 9001:2015 (Quality Management - KAN)",
         "ISO 14001:2015 (Environmental Management)",
@@ -668,9 +747,9 @@ export const sectionDefs: SectionDef[] = [
     description: "Compact icon tiles listing engineering capabilities.",
     icon: "wrench",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
       {
         kind: "list",
         name: "items",
@@ -678,7 +757,7 @@ export const sectionDefs: SectionDef[] = [
         itemLabel: "Capability",
         fields: [
           { kind: "icon", name: "icon", label: "Icon" },
-          { kind: "text", name: "label", label: "Label" },
+          { kind: "text", name: "label", localized: true, label: "Label" },
         ],
       },
     ],
@@ -709,9 +788,9 @@ export const sectionDefs: SectionDef[] = [
     description: "The three service cards with detail lists, pulled from CMS services.",
     icon: "layout-grid",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
     ],
     defaults: {
       eyebrow: "EN: What we do\nID: Layanan Utama",
@@ -726,8 +805,8 @@ export const sectionDefs: SectionDef[] = [
     description: "Visual editor with headings, lists, links, quotes, and images.",
     icon: "text",
     fields: [
-      { kind: "textarea", name: "title", label: "Judul Elemen / Heading (Optional)" },
-      { kind: "richtext", name: "html", label: "Content" },
+      { kind: "textarea", name: "title", localized: true, label: "Judul Elemen / Heading (Optional)" },
+      { kind: "richtext", name: "html", localized: true, label: "Content" },
       {
         kind: "list",
         name: "blocks",
@@ -745,7 +824,7 @@ export const sectionDefs: SectionDef[] = [
               { value: "list", label: "List (one item per line)" },
             ],
           },
-          { kind: "textarea", name: "text", label: "Text" },
+          { kind: "textarea", name: "text", localized: true, label: "Text" },
         ],
       },
     ],
@@ -760,9 +839,9 @@ export const sectionDefs: SectionDef[] = [
     description: "Icon cards in a grid, with intro copy (e.g. Why Us).",
     icon: "layout-grid",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
       {
         kind: "list",
         name: "items",
@@ -770,8 +849,8 @@ export const sectionDefs: SectionDef[] = [
         itemLabel: "Card",
         fields: [
           { kind: "icon", name: "icon", label: "Icon" },
-          { kind: "text", name: "title", label: "Title" },
-          { kind: "textarea", name: "body", label: "Body" },
+          { kind: "text", name: "title", localized: true, label: "Title" },
+          { kind: "textarea", name: "body", localized: true, label: "Body" },
         ],
       },
     ],
@@ -810,8 +889,8 @@ export const sectionDefs: SectionDef[] = [
     description: "Row of key numbers with labels.",
     icon: "bar-chart",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
       {
         kind: "list",
         name: "items",
@@ -820,7 +899,7 @@ export const sectionDefs: SectionDef[] = [
         max: 6,
         fields: [
           { kind: "text", name: "value", label: "Value", placeholder: "120+" },
-          { kind: "text", name: "label", label: "Label", placeholder: "Projects delivered" },
+          { kind: "text", name: "label", localized: true, label: "Label", placeholder: "Projects delivered" },
         ],
       },
     ],
@@ -850,9 +929,9 @@ export const sectionDefs: SectionDef[] = [
           { value: "news", label: "News" },
         ],
       },
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
       { kind: "number", name: "limit", label: "Max items", min: 1, max: 12 },
     ],
     defaults: {
@@ -869,9 +948,9 @@ export const sectionDefs: SectionDef[] = [
     description: "Dark band with icon tiles for industries served.",
     icon: "factory",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
       { kind: "image", name: "imageUrl", label: "Background image" },
       {
         kind: "list",
@@ -880,7 +959,7 @@ export const sectionDefs: SectionDef[] = [
         itemLabel: "Tile",
         fields: [
           { kind: "icon", name: "icon", label: "Icon" },
-          { kind: "text", name: "label", label: "Label" },
+          { kind: "text", name: "label", localized: true, label: "Label" },
         ],
       },
     ],
@@ -912,8 +991,8 @@ export const sectionDefs: SectionDef[] = [
     description: "Responsive grid of images with optional captions.",
     icon: "images",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
       {
         kind: "list",
         name: "images",
@@ -921,8 +1000,8 @@ export const sectionDefs: SectionDef[] = [
         itemLabel: "Image",
         fields: [
           { kind: "image", name: "url", label: "Image" },
-          { kind: "text", name: "alt", label: "Alt text" },
-          { kind: "text", name: "caption", label: "Caption" },
+          { kind: "text", name: "alt", localized: true, label: "Alt text" },
+          { kind: "text", name: "caption", localized: true, label: "Caption" },
         ],
       },
     ],
@@ -938,16 +1017,16 @@ export const sectionDefs: SectionDef[] = [
     description: "Accordion of questions and answers.",
     icon: "help-circle",
     fields: [
-      { kind: "text", name: "eyebrow", label: "Eyebrow" },
-      { kind: "textarea", name: "title", label: "Title" },
+      { kind: "text", name: "eyebrow", localized: true, label: "Eyebrow" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
       {
         kind: "list",
         name: "items",
         label: "Questions",
         itemLabel: "Question",
         fields: [
-          { kind: "text", name: "question", label: "Question" },
-          { kind: "textarea", name: "answer", label: "Answer" },
+          { kind: "text", name: "question", localized: true, label: "Question" },
+          { kind: "textarea", name: "answer", localized: true, label: "Answer" },
         ],
       },
     ],
@@ -963,8 +1042,8 @@ export const sectionDefs: SectionDef[] = [
     description: "Banner with heading, description, and buttons.",
     icon: "megaphone",
     fields: [
-      { kind: "textarea", name: "title", label: "Title" },
-      { kind: "textarea", name: "description", label: "Description" },
+      { kind: "textarea", name: "title", localized: true, label: "Title" },
+      { kind: "textarea", name: "description", localized: true, label: "Description" },
       ...linkFields("primary", "Primary button"),
       ...linkFields("secondary", "Secondary button"),
     ],
@@ -984,7 +1063,7 @@ export const sectionDefs: SectionDef[] = [
     description: "Embed a video, map, or other iframe by URL.",
     icon: "monitor-play",
     fields: [
-      { kind: "text", name: "title", label: "Title" },
+      { kind: "text", name: "title", localized: true, label: "Title" },
       { kind: "text", name: "url", label: "Embed URL (iframe src)", placeholder: "https://www.youtube.com/embed/..." },
       {
         kind: "select",
@@ -996,7 +1075,7 @@ export const sectionDefs: SectionDef[] = [
           { value: "1/1", label: "Square" },
         ],
       },
-      { kind: "text", name: "caption", label: "Caption" },
+      { kind: "text", name: "caption", localized: true, label: "Caption" },
     ],
     defaults: {
       title: "",
@@ -1039,8 +1118,48 @@ export function createSection(type: string): Section {
   return {
     id: makeSectionId(),
     type,
-    props: def ? structuredClone(def.defaults) : {},
+    props: def ? localizeProps(def.fields, structuredClone(def.defaults)) : {},
   }
+}
+
+// Converts the localized fields of a props object (and of list items) to the
+// stored shape: LocalizedText, LocalizedText[] for `lines`, and one HTML
+// document per language for rich text. Values already in that shape pass
+// through; fields that are not localized are left untouched.
+export function localizeProps(fields: FieldDef[], props: Record<string, unknown>): Record<string, unknown> {
+  const next: Record<string, unknown> = { ...props }
+  for (const field of fields) {
+    if (!Object.prototype.hasOwnProperty.call(next, field.name)) continue
+    const value = next[field.name]
+    if (field.kind === "list") {
+      if (Array.isArray(value)) {
+        next[field.name] = value.map((item) =>
+          item && typeof item === "object" && !Array.isArray(item)
+            ? localizeProps(field.fields, item as Record<string, unknown>)
+            : item,
+        )
+      }
+      continue
+    }
+    if (!isLocalizedField(field)) continue
+    if (field.kind === "lines") next[field.name] = toLocalizedList(value)
+    else if (field.kind === "richtext") next[field.name] = toLocalizedHtml(value)
+    else next[field.name] = toLocalizedText(value)
+  }
+  return next
+}
+
+// Builder load: legacy "EN: …\nID: …" strings become LocalizedText so every
+// field edits as a clean Indonesian / English pair, and the page is stored in
+// the new shape the next time it is saved.
+export function normalizeSectionForEditor(section: Section): Section {
+  const def = sectionDefsByType[section.type]
+  if (!def) return section
+  return { ...section, props: localizeProps(def.fields, section.props ?? {}) }
+}
+
+export function isLocalizedValue(value: unknown): value is LocalizedText {
+  return isLocalizedText(value)
 }
 
 export function makeSectionId() {
@@ -1077,56 +1196,105 @@ export function sectionsFromContent(content: unknown): Section[] {
   if (!Array.isArray(raw)) return []
   const parsed = raw
     .filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === "object")
-    .map((item, index) => ({
+    .map((item, index): Section => ({
       id: typeof item.id === "string" && item.id ? item.id : `sec-${index}`,
       type: typeof item.type === "string" ? item.type : "richText",
       props:
         item.props && typeof item.props === "object" ? (item.props as Record<string, unknown>) : {},
+      ...(item.hidden === true ? { hidden: true } : {}),
+      ...(typeof item.label === "string" && item.label.trim() ? { label: item.label.trim() } : {}),
     }))
   return unpackLegacySections(parsed)
+}
+
+// The sections visitors see: hidden ones stay in the builder only.
+export function visibleSections(sections: Section[]): Section[] {
+  return sections.filter((section) => !section.hidden)
+}
+
+// --- translation completeness ---
+
+// A translatable value that has text in one language only.
+export type TranslationGap = { field: string; missing: Locale }
+
+export type TranslationStatus = {
+  // Values with text in at least one language; empty in both means an
+  // optional field that was left blank and is not counted.
+  total: number
+  // Values with text in both languages.
+  complete: number
+  gaps: TranslationGap[]
+}
+
+export function emptyTranslation(): TranslationStatus {
+  return { total: 0, complete: 0, gaps: [] }
+}
+
+function hasContent(value: string): boolean {
+  return value.replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").trim().length > 0 || /<img\b/i.test(value)
+}
+
+export function addTranslation(
+  status: TranslationStatus,
+  value: unknown,
+  field: string,
+  kind: "text" | "richtext" = "text",
+): void {
+  const pair = kind === "richtext" ? toLocalizedHtml(value) : toLocalizedText(value)
+  const id = hasContent(pair.id)
+  const en = hasContent(pair.en)
+  if (!id && !en) return
+  status.total++
+  if (id && en) status.complete++
+  else status.gaps.push({ field, missing: id ? "en" : "id" })
+}
+
+// Every localized field of a section, list items and `lines` entries
+// included, labelled the way the builder shows them ("Offices 2 › Address").
+export function sectionTranslation(section: Section): TranslationStatus {
+  const status = emptyTranslation()
+  const def = sectionDefsByType[section.type]
+  if (def) collectTranslation(def.fields, section.props ?? {}, "", status)
+  return status
+}
+
+function collectTranslation(
+  fields: FieldDef[],
+  props: Record<string, unknown>,
+  prefix: string,
+  status: TranslationStatus,
+) {
+  for (const field of fields) {
+    const value = props[field.name]
+    const label = prefix ? `${prefix} › ${field.label}` : field.label
+    if (field.kind === "list") {
+      if (!Array.isArray(value)) continue
+      value.forEach((item, index) => {
+        if (item && typeof item === "object" && !Array.isArray(item)) {
+          collectTranslation(field.fields, item as Record<string, unknown>, `${label} ${index + 1}`, status)
+        }
+      })
+    } else if (isLocalizedField(field)) {
+      if (field.kind === "lines") {
+        toLocalizedList(value).forEach((line, index) => addTranslation(status, line, `${label} · baris ${index + 1}`))
+      } else {
+        addTranslation(status, value, label, field.kind === "richtext" ? "richtext" : "text")
+      }
+    }
+  }
 }
 
 export function hasSections(content: unknown): boolean {
   return sectionsFromContent(content).length > 0
 }
 
-// --- prop coercion helpers used by section components ---
-
-export function str(props: Record<string, unknown>, name: string, fallback = ""): string {
-  const value = props[name]
-  return typeof value === "string" ? value : fallback
-}
-
-export function num(props: Record<string, unknown>, name: string, fallback: number): number {
-  const value = Number(props[name])
-  return Number.isFinite(value) && value > 0 ? value : fallback
-}
-
-export function lines(props: Record<string, unknown>, name: string): string[] {
-  const value = props[name]
-  if (Array.isArray(value)) return value.map((item) => String(item)).filter(Boolean)
-  if (typeof value === "string") {
-    return value
-      .split("\n")
-      .map((item) => item.trim())
-      .filter(Boolean)
-  }
-  return []
-}
-
-export function records(props: Record<string, unknown>, name: string): Record<string, string>[] {
-  const value = props[name]
-  if (!Array.isArray(value)) return []
-  return value
-    .filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === "object")
-    .map((item) =>
-      Object.fromEntries(
-        Object.entries(item).map(([key, entryValue]) => [key, entryValue == null ? "" : String(entryValue)]),
-      ),
-    )
-}
-
 // --- presets replicating the live built-in pages ---
+
+// Presets override props with "EN: …\nID: …" copy; store it as LocalizedText
+// like every other builder value.
+function localizeSections(sections: Section[]): Section[] {
+  return sections.map(normalizeSectionForEditor)
+}
 // Editing these in the admin edits exactly what visitors see, because the
 // section defaults equal the hardcoded copy of the original components.
 
@@ -1142,16 +1310,17 @@ export function homePresetSections(): Section[] {
     secondaryLabel: "EN: View Services\nID: Lihat Layanan",
     secondaryHref: "/services",
   }
-  return [
+  return localizeSections([
     createSection("hero"),
     createSection("servicesShowcase"),
     createSection("features"),
     createSection("industries"),
     cta,
-  ]
+  ])
 }
 
-export function aboutPresetSections(content: Record<string, unknown> = {}): Section[] {
+export function aboutPresetSections(rawContent: Record<string, unknown> = {}): Section[] {
+  const content = pairSeededPageContent("about", rawContent)
   const pageHero = createSection("pageHero")
   pageHero.props = {
     eyebrow: "EN: About Us\nID: Tentang Kami",
@@ -1217,7 +1386,7 @@ export function aboutPresetSections(content: Record<string, unknown> = {}): Sect
     secondaryHref: "",
   }
 
-  return [
+  return localizeSections([
     pageHero,
     aboutStory,
     impactValues,
@@ -1231,7 +1400,7 @@ export function aboutPresetSections(content: Record<string, unknown> = {}): Sect
     createSection("capabilities"),
     createSection("offices"),
     cta,
-  ]
+  ])
 }
 
 function listingSection(source: string): Section {
@@ -1259,13 +1428,13 @@ export function servicesPresetSections(): Section[] {
     secondaryLabel: "EN: WhatsApp Hotline\nID: Hotline WhatsApp",
     secondaryHref: "https://wa.me/628118303250?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20would%20like%20to%20inquire%20about%20your%20engineering%20and%20maintenance%20services.",
   }
-  return [
+  return localizeSections([
     pageHero,
     createSection("servicesShowcase"),
     listingSection("services"),
     createSection("capabilities"),
     cta,
-  ]
+  ])
 }
 
 export function productsPresetSections(): Section[] {
@@ -1287,7 +1456,7 @@ export function productsPresetSections(): Section[] {
     secondaryLabel: "EN: WhatsApp Sales Hotline\nID: Hotline Sales WhatsApp",
     secondaryHref: "https://wa.me/628118303250?text=Hello%20PT%20Multi%20Daya%20Mitra,%20I%20would%20like%20to%20inquire%20about%20product%20pricing%20and%20availability.",
   }
-  return [pageHero, listingSection("products"), cta]
+  return localizeSections([pageHero, listingSection("products"), cta])
 }
 
 export function newsPresetSections(): Section[] {
@@ -1309,7 +1478,7 @@ export function newsPresetSections(): Section[] {
     secondaryLabel: "",
     secondaryHref: "",
   }
-  return [pageHero, listingSection("news"), cta]
+  return localizeSections([pageHero, listingSection("news"), cta])
 }
 
 export function careerPresetSections(): Section[] {
@@ -1331,10 +1500,11 @@ export function careerPresetSections(): Section[] {
     secondaryLabel: "",
     secondaryHref: "",
   }
-  return [pageHero, listingSection("careers"), cta]
+  return localizeSections([pageHero, listingSection("careers"), cta])
 }
 
-function contactPresetSections(content: Record<string, unknown> = {}): Section[] {
+function contactPresetSections(rawContent: Record<string, unknown> = {}): Section[] {
+  const content = pairSeededPageContent("contact", rawContent)
   const pageHero = createSection("pageHero")
   pageHero.props = {
     ...pageHero.props,
@@ -1355,7 +1525,7 @@ function contactPresetSections(content: Record<string, unknown> = {}): Section[]
       offices: content.offices ?? contact.props.offices,
     }
   }
-  return [pageHero, contact]
+  return localizeSections([pageHero, contact])
 }
 
 // Sections to prefill the builder with when a built-in page has no sections

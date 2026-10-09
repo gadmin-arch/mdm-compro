@@ -38,7 +38,7 @@ func Load() Config {
 	frontendOrigins := listEnv("FRONTEND_ORIGINS", env("FRONTEND_ORIGIN", "http://localhost:3010"))
 	return Config{
 		AppEnv:             env("APP_ENV", "development"),
-		HTTPAddr:           env("HTTP_ADDR", ":8080"),
+		HTTPAddr:           env("HTTP_ADDR", ":"+env("PORT", "8080")), // Render and similar hosts pass PORT
 		FrontendOrigins:    frontendOrigins,
 		DatabaseURL:        env("DATABASE_URL", "postgres://mdm:mdm@localhost:5432/mdm_compro?sslmode=disable"),
 		JWTSecret:          env("JWT_SECRET", "change-me-in-production"),

@@ -4,6 +4,7 @@ import { revalidatePath, revalidateTag, updateTag, refresh } from "next/cache"
 import { redirect } from "next/navigation"
 import { AdminApiError, adminFetch, type AdminSetting } from "@/lib/admin-api"
 import type { SaveResult } from "@/lib/save-result"
+import { serializeLocalizedText } from "@/lib/i18n"
 
 export async function saveSiteSettingsAction(formData: FormData): Promise<SaveResult | void> {
   const version = Number(formData.get("version") ?? 0)
@@ -30,12 +31,23 @@ export async function saveSiteSettingsAction(formData: FormData): Promise<SaveRe
   const salesEmail = String(formData.get("salesEmail") ?? "").trim()
 
   const value = {
-    tagline: String(formData.get("tagline") ?? "").trim(),
-    footerDescription: String(formData.get("footerDescription") ?? "").trim(),
+    // Both languages come from side-by-side fields and are stored as
+    // "EN: …\nID: …" in the site document.
+    tagline: serializeLocalizedText({
+      id: String(formData.get("tagline_id") ?? ""),
+      en: String(formData.get("tagline_en") ?? ""),
+    }),
+    footerDescription: serializeLocalizedText({
+      id: String(formData.get("footerDescription_id") ?? ""),
+      en: String(formData.get("footerDescription_en") ?? ""),
+    }),
     email: String(formData.get("email") ?? "").trim(),
     phone: String(formData.get("phone") ?? "").trim(),
     fax: String(formData.get("fax") ?? "").trim(),
-    address: String(formData.get("address") ?? "").trim(),
+    address: serializeLocalizedText({
+      id: String(formData.get("address_id") ?? ""),
+      en: String(formData.get("address_en") ?? ""),
+    }),
     salesPhone,
     whatsappPhone: salesPhone,
     hotlinePhone: salesPhone,
@@ -85,7 +97,8 @@ export async function saveSiteSettingsAction(formData: FormData): Promise<SaveRe
   } catch {
     // ignore
   }
-  revalidatePath("/", "layout")
+  // Public pages live under app/[lang]; this covers both languages.
+  revalidatePath("/[lang]", "layout")
   revalidatePath("/admin/site-settings")
   redirect("/admin/site-settings?saved=1")
 }
@@ -144,7 +157,8 @@ export async function saveAnalyticsSettingsAction(formData: FormData): Promise<S
   } catch {
     // ignore
   }
-  revalidatePath("/", "layout")
+  // Public pages live under app/[lang]; this covers both languages.
+  revalidatePath("/[lang]", "layout")
   revalidatePath("/admin/site-settings")
   redirect("/admin/site-settings?saved=analytics")
 }

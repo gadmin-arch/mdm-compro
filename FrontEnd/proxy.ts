@@ -9,15 +9,25 @@ const API_BASE =
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return guardAdmin(request)
+  }
+
   // Branded short links: single-segment paths that aren't known routes get
   // one fast (memory-cached) resolve call; hits redirect with a real
   // 301/302, misses fall through to the CMS [pageKey] route.
-  if (!pathname.startsWith("/admin")) {
+  if (isShortLinkCandidate(pathname)) {
     const shortLink = await resolveShortLink(request)
     if (shortLink) return shortLink
-    return NextResponse.next()
   }
 
+  // On to the language rewrite in next.config.mjs ("/x" → app/[lang] with
+  // lang "id").
+  return NextResponse.next()
+}
+
+function guardAdmin(request: NextRequest) {
+  const { pathname } = request.nextUrl
   const publicAdminPaths = [
     "/admin/login",
     "/admin/forgot-password",
@@ -39,6 +49,32 @@ export async function proxy(request: NextRequest) {
   }
 
   return NextResponse.next()
+}
+
+// First path segments that belong to real routes (or the language prefix)
+// and must never be looked up as short links. The matcher below repeats the
+// list, as matchers must be static.
+const RESERVED_SEGMENTS = new Set([
+  "admin",
+  "api",
+  "en",
+  "id",
+  "home",
+  "about",
+  "contact",
+  "services",
+  "products",
+  "industries",
+  "news",
+  "career",
+  "careers",
+  "search",
+  "login",
+])
+
+function isShortLinkCandidate(pathname: string): boolean {
+  const match = /^\/([a-z0-9-]+)$/.exec(pathname)
+  return Boolean(match && !RESERVED_SEGMENTS.has(match[1]))
 }
 
 // Visitor context forwarded so the API can log the scan (asynchronously)
@@ -82,9 +118,11 @@ async function resolveShortLink(request: NextRequest): Promise<NextResponse | nu
 
 export const config = {
   matcher: [
+    "/admin",
     "/admin/:path*",
-    // One lowercase slug segment that is not a known route, an asset, or a
-    // Next internal — the short-link candidates.
-    "/:slug((?!admin$|api$|_next|home$|about$|contact$|services$|products$|industries$|news$|career$|careers$|search$|login$|favicon\\.ico$|robots\\.txt$|sitemap\\.xml$|.*\\.)[a-z0-9-]+)",
+    // Single-segment paths outside RESERVED_SEGMENTS: possible short links.
+    // Every other page skips the proxy, so cached pages are served without
+    // running any code.
+    "/((?!(?:admin|api|en|id|home|about|contact|services|products|industries|news|career|careers|search|login)(?:/|$))[a-z0-9-]+)",
   ],
 }

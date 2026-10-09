@@ -7,6 +7,8 @@ interface BrandLogoProps {
   className?: string
 }
 
+const LOGO_HEIGHT = 32
+
 const BRAND_ASSETS: Record<string, { src: string; width: number; height: number; alt: string }> = {
   // Authorized Partners
   rittal: { src: "/brands/rittal.png", width: 380, height: 526, alt: "Rittal" },
@@ -99,6 +101,8 @@ export function BrandLogo({ brand, className }: BrandLogoProps) {
       <img
         src={customLogoUrl}
         alt={cleanName}
+        loading="lazy"
+        decoding="async"
         className={cn(
           "h-7 sm:h-8 w-auto max-w-[130px] object-contain shrink-0 select-none transition-transform duration-300 group-hover:scale-105 pointer-events-none",
           className
@@ -129,18 +133,22 @@ export function BrandLogo({ brand, className }: BrandLogoProps) {
   }
 
   if (asset) {
+    // Logos render at most 32px tall (h-8), so the image is sized to that:
+    // next/image then serves a thumbnail of a few KB instead of the full PNG
+    // (some are 1,400px wide and 300 KB). SVGs go out as they are. Logo rows
+    // sit below the fold, so they load lazily instead of being preloaded.
+    const width = Math.round((asset.width / asset.height) * LOGO_HEIGHT)
     return (
       <Image
         src={asset.src}
         alt={asset.alt}
-        width={asset.width}
-        height={asset.height}
+        width={width}
+        height={LOGO_HEIGHT}
         className={cn(
           "h-7 sm:h-8 w-auto max-w-[130px] object-contain shrink-0 select-none transition-transform duration-300 group-hover:scale-105 pointer-events-none",
           className
         )}
-        priority
-        unoptimized
+        unoptimized={asset.src.endsWith(".svg")}
       />
     )
   }

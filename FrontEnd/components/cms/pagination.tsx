@@ -1,6 +1,6 @@
 "use client"
 
-import { useSearchParams, usePathname } from "next/navigation"
+import { usePublicPathname } from "@/components/cms/localized-link"
 import {
   Pagination as UIPagination,
   PaginationContent,
@@ -14,22 +14,26 @@ import {
 type PaginationProps = {
   page: number
   totalPages: number
+  // The listing's current filters, kept on every page link. They come from
+  // the server page rather than useSearchParams() so the unfiltered listing
+  // can be prerendered (see lib/listing-query.ts).
+  query?: Record<string, string>
 }
 
-export function Pagination({ page, totalPages }: PaginationProps) {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+export function Pagination({ page, totalPages, query = {} }: PaginationProps) {
+  const pathname = usePublicPathname()
 
   if (totalPages <= 1) return null
 
   const createPageUrl = (pageNumber: number) => {
-    const params = new URLSearchParams(searchParams.toString())
+    const params = new URLSearchParams(query)
     if (pageNumber > 1) {
       params.set("page", pageNumber.toString())
     } else {
       params.delete("page")
     }
-    return `${pathname}?${params.toString()}`
+    const search = params.toString()
+    return search ? `${pathname}?${search}` : pathname
   }
 
   // Generate page numbers to display

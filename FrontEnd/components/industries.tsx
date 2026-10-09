@@ -1,22 +1,26 @@
 import Image from "next/image"
 import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons"
-import { sectionDefsByType, str, records } from "@/lib/sections"
+import { items, sectionDefsByType, str } from "@/lib/sections"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 import { container } from "@/lib/layout"
-import { BilingualText } from "@/components/cms/content-language"
 
 export type IndustriesProps = {
   props?: Record<string, unknown>
+  lang: Locale
 }
 
 const defaults = sectionDefsByType.industries.defaults
 
-export function Industries({ props = {} }: IndustriesProps) {
+export function Industries({ props = {}, lang }: IndustriesProps) {
   const merged = { ...defaults, ...props }
-  const eyebrow = str(merged, "eyebrow")
-  const title = str(merged, "title")
-  const description = str(merged, "description")
+  const eyebrow = resolveText(merged.eyebrow, lang)
+  const title = resolveText(merged.title, lang)
+  const description = resolveText(merged.description, lang)
   const imageUrl = str(merged, "imageUrl", "/placeholder.jpg")
-  const items = records(merged, "items").filter((item) => item.label)
+  const tiles = items(merged, "items")
+    .map((item) => ({ icon: String(item.icon ?? ""), label: resolveText(item.label, lang) }))
+    .filter((item) => item.label)
 
   return (
     <section className="relative border-b border-border/60 bg-primary text-primary-foreground">
@@ -29,24 +33,24 @@ export function Industries({ props = {} }: IndustriesProps) {
         <div className="max-w-2xl">
           {eyebrow && (
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-              <BilingualText text={eyebrow} />
+              {eyebrow}
             </p>
           )}
           {title && (
             <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-              <BilingualText text={title} />
+              {title}
             </h2>
           )}
           {description && (
             <p className="mt-4 text-base leading-relaxed text-primary-foreground/80">
-              <BilingualText text={description} />
+              {description}
             </p>
           )}
         </div>
 
-        {items.length > 0 && (
+        {tiles.length > 0 && (
           <ul className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-primary-foreground/15 bg-primary-foreground/15 sm:grid-cols-3 lg:grid-cols-4">
-            {items.map((industry, index) => {
+            {tiles.map((industry, index) => {
               const Icon = sectionIcons[industry.icon ?? ""] ?? DefaultSectionIcon
               return (
                 <li
@@ -57,7 +61,7 @@ export function Industries({ props = {} }: IndustriesProps) {
                     <Icon className="h-5 w-5" />
                   </span>
                   <span className="text-sm font-medium leading-tight">
-                    <BilingualText text={industry.label} />
+                    {industry.label}
                   </span>
                 </li>
               )

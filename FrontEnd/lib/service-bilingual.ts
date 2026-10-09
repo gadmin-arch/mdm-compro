@@ -1,5 +1,6 @@
+import { extractBilingualText } from "@/lib/bilingual"
+import { hasStoredContent } from "@/lib/product-bilingual"
 import type { ContentNode } from "@/lib/cms"
-import { extractBilingualText, combineBilingualText } from "@/lib/bilingual"
 
 export type BilingualServiceEntry = {
   id?: string
@@ -938,95 +939,46 @@ export function findBilingualServiceEntry(fullPathOrSlug: string, titleHint?: st
 }
 
 /**
- * Enriches a service node with complete bilingual translations.
- * Guarantees that neither ID nor EN title or summary is ever empty.
+ * Fills a service with the built-in catalog copy where the CMS has none.
+ * Values stored in the CMS always win — the catalog only covers empty fields
+ * and stands in for the whole node when the API is unreachable (node null).
  */
 export function enrichServiceWithBilingual(
   node: ContentNode | null | undefined,
   fullPathOrSlug: string
 ): ContentNode | null {
   const entry = findBilingualServiceEntry(fullPathOrSlug, node?.title)
-  if (!node && !entry) return null
+  if (!entry) return node ?? null
 
-  if (!entry) {
-    if (!node) return null
-    // Fallback: extract and complete bilingual text from node itself
-    const titleExt = extractBilingualText(node.title)
-    const summaryExt = extractBilingualText(node.summary)
-    const finalTitle = combineBilingualText(titleExt) || node.title
-    const finalSummary = combineBilingualText(summaryExt) || (node.summary ?? "")
+  const catalogContent = {
+    bilingual: true,
+    id: { blocks: [{ type: "html", html: entry.content.id }] },
+    en: { blocks: [{ type: "html", html: entry.content.en }] },
+  }
 
+  if (!node) {
     return {
-      ...node,
-      title: finalTitle,
-      summary: finalSummary,
-      content: node.content ?? {
-        bilingual: true,
-        id: { blocks: [{ type: "paragraph", text: finalSummary }] },
-        en: { blocks: [{ type: "paragraph", text: finalSummary }] },
-        blocks: [{ type: "paragraph", text: finalSummary }],
-      },
-    }
-  }
-
-  const baseNode: ContentNode = node ?? {
-    id: entry.id ?? `serv-${entry.slug}`,
-    slug: entry.slug,
-    fullPath: entry.fullPath,
-    title: "",
-    summary: "",
-    imageUrl: entry.imageUrl,
-    status: entry.status ?? "published",
-    sortOrder: entry.sortOrder ?? 1,
-    depth: entry.depth ?? 0,
-    version: 1,
-    children: [],
-  }
-
-  // Preserve any custom node bilingual translations ONLY if explicitly provided with bilingual markers
-  let titleString = `EN: ${entry.title.en}\nID: ${entry.title.id}`
-  if (node?.title) {
-    const hasExplicitBilingual = /(?:EN\s*:|\[EN\])/i.test(node.title) && /(?:ID\s*:|\[ID\])/i.test(node.title)
-    if (hasExplicitBilingual) {
-      const customTitle = extractBilingualText(node.title)
-      if (customTitle.id && customTitle.en) {
-        titleString = combineBilingualText(customTitle)
-      }
-    }
-  }
-
-  let summaryString = `EN: ${entry.summary.en}\nID: ${entry.summary.id}`
-  if (node?.summary) {
-    const hasExplicitBilingual = /(?:EN\s*:|\[EN\])/i.test(node.summary) && /(?:ID\s*:|\[ID\])/i.test(node.summary)
-    if (hasExplicitBilingual) {
-      const customSummary = extractBilingualText(node.summary)
-      if (customSummary.id && customSummary.en) {
-        summaryString = combineBilingualText(customSummary)
-      }
+      id: entry.id ?? `serv-${entry.slug}`,
+      slug: entry.slug,
+      fullPath: entry.fullPath,
+      title: `EN: ${entry.title.en}\nID: ${entry.title.id}`,
+      summary: `EN: ${entry.summary.en}\nID: ${entry.summary.id}`,
+      content: catalogContent,
+      imageUrl: entry.imageUrl,
+      status: entry.status ?? "published",
+      sortOrder: entry.sortOrder ?? 1,
+      depth: entry.depth ?? 0,
+      version: 1,
+      children: [],
     }
   }
 
   return {
-    ...baseNode,
-    version: baseNode.version ?? 1,
-    title: titleString,
-    summary: summaryString,
-    imageUrl: baseNode.imageUrl || entry.imageUrl,
-    content: {
-      bilingual: true,
-      id: {
-        blocks: [{ type: "html", html: entry.content.id }],
-      },
-      en: {
-        blocks: [{ type: "html", html: entry.content.en }],
-      },
-      blocks: [
-        {
-          type: "html",
-          html: `EN: ${entry.content.en}\nID: ${entry.content.id}`,
-        },
-      ],
-    },
+    ...node,
+    title: node.title?.trim() ? node.title : `EN: ${entry.title.en}\nID: ${entry.title.id}`,
+    summary: node.summary?.trim() ? node.summary : `EN: ${entry.summary.en}\nID: ${entry.summary.id}`,
+    content: hasStoredContent(node.content) ? node.content : catalogContent,
+    imageUrl: node.imageUrl || entry.imageUrl,
   }
 }
 

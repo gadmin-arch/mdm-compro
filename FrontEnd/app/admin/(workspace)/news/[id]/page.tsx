@@ -6,6 +6,7 @@ import { NewsForm } from "@/components/admin/resource-forms"
 import { Button } from "@/components/ui/button"
 import { AdminApiError, adminFetch } from "@/lib/admin-api"
 import type { NewsItem } from "@/lib/cms"
+import { resolveText } from "@/lib/localized"
 import { enrichNewsWithBilingual } from "@/lib/news-bilingual"
 import { updateNewsAction } from "../../content-actions"
 
@@ -32,7 +33,7 @@ export default async function AdminEditNewsPage({
       <AdminPageHeader
       breadcrumbs={[{ label: "News", href: "/admin/news" }, { label: "Edit" }]}
       eyebrow="Editorial"
-      title={item?.title ?? "Edit News"}
+      title={resolveText(item?.title, "id") || "Edit News"}
       actions={
         <>
           {item && (

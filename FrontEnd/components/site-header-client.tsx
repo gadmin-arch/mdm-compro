@@ -2,8 +2,8 @@
 
 import Image from "next/image"
 import { LocalizedLink as Link } from "@/components/cms/localized-link"
-import { usePathname } from "next/navigation"
-import { useLayoutEffect, useRef, useState } from "react"
+import { usePublicPathname } from "@/components/cms/localized-link"
+import { useCallback, useLayoutEffect, useRef, useState } from "react"
 import { ChevronDown, ChevronRight, Menu, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -18,7 +18,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { defaultMenuItems, type ContentNode, type MenuItem, type Navigation } from "@/lib/cms"
+import { defaultMenuItems } from "@/lib/cms-shared"
+import type { ContentNode, MenuItem, Navigation } from "@/lib/cms"
 import { filterBilingualText } from "@/lib/bilingual"
 import { cn } from "@/lib/utils"
 import { container } from "@/lib/layout"
@@ -53,7 +54,7 @@ function buildEntries(navigation: Navigation, lang: ContentLanguage = "id"): Nav
         .map((child) => menuNode(child, lang))
 
       return {
-        id: item.id,
+        id: `menu:${item.id}`,
         label: filterBilingualText(item.label, lang) || item.label,
         href: item.href || "#",
         children: [...autoChildren, ...manualChildren],
@@ -63,7 +64,7 @@ function buildEntries(navigation: Navigation, lang: ContentLanguage = "id"): Nav
 
 function menuNode(item: MenuItem, lang: ContentLanguage = "id"): NavNode {
   return {
-    id: item.id,
+    id: `menu:${item.id}`,
     label: filterBilingualText(item.label, lang) || item.label,
     href: item.href || "#",
     children: (item.children ?? []).filter((child) => child.visible !== false).map((child) => menuNode(child, lang)),
@@ -74,7 +75,9 @@ function contentNodes(nodes: ContentNode[], basePath: string, lang: ContentLangu
   return nodes
     .filter((node) => node.slug !== "enclosure-climate-control")
     .map((node) => ({
-      id: node.id,
+      // Keyed by URL: each path appears once, while ids from the database
+      // and the catalogs can repeat.
+      id: `${basePath}/${node.fullPath}`,
       label: filterBilingualText(node.title, lang) || node.title,
       href: `${basePath}/${node.fullPath}`,
       summary: filterBilingualText(node.summary, lang) || node.summary,
@@ -85,6 +88,7 @@ function contentNodes(nodes: ContentNode[], basePath: string, lang: ContentLangu
 function DesktopNavItem({ entry, active }: { entry: NavNode; active: boolean }) {
   const [activeTrail, setActiveTrail] = useState<string[]>([])
   const [maxWidth, setMaxWidth] = useState<number>()
+  const [maxHeight, setMaxHeight] = useState<number>()
   const panelRef = useRef<HTMLDivElement>(null)
 
   const selectNode = (level: number, node: NavNode) => {
@@ -94,13 +98,18 @@ function DesktopNavItem({ entry, active }: { entry: NavNode; active: boolean }) 
   // The panel stays glued to the trigger's left edge; it never shifts. When
   // expanded columns would cross the viewport's right edge, the panel is capped
   // there instead and the deeper columns become horizontally scrollable.
-  // Re-measure on resize — window resizes and browser zoom move the anchor.
+  // Columns longer than the space below the sticky header scroll on their own.
+  // Re-measure on resize — window resizes and browser zoom move the anchor —
+  // and on open, since the header may sit lower before the page scrolls.
+  const measure = useCallback(() => {
+    const anchor = panelRef.current?.parentElement
+    if (!anchor) return
+    const rect = anchor.getBoundingClientRect()
+    setMaxWidth(Math.max(280, window.innerWidth - 16 - rect.left))
+    setMaxHeight(Math.max(240, window.innerHeight - 16 - rect.bottom))
+  }, [])
+
   useLayoutEffect(() => {
-    const measure = () => {
-      const anchor = panelRef.current?.parentElement
-      if (!anchor) return
-      setMaxWidth(Math.max(280, window.innerWidth - 16 - anchor.getBoundingClientRect().left))
-    }
     measure()
     window.addEventListener("resize", measure)
     const observer = new ResizeObserver(measure)
@@ -109,10 +118,15 @@ function DesktopNavItem({ entry, active }: { entry: NavNode; active: boolean }) 
       window.removeEventListener("resize", measure)
       observer.disconnect()
     }
-  }, [])
+  }, [measure])
 
   return (
-    <div className="group/menu relative" onMouseLeave={() => setActiveTrail([])}>
+    <div
+      className="group/menu relative"
+      onMouseEnter={measure}
+      onFocus={measure}
+      onMouseLeave={() => setActiveTrail([])}
+    >
       <Link
         href={entry.href}
         aria-current={active ? "page" : undefined}
@@ -138,6 +152,7 @@ function DesktopNavItem({ entry, active }: { entry: NavNode; active: boolean }) 
           level={0}
           activeTrail={activeTrail}
           onSelect={selectNode}
+          maxHeight={maxHeight}
         />
       </div>
     </div>
@@ -149,11 +164,13 @@ function MegaMenuColumn({
   level,
   activeTrail,
   onSelect,
+  maxHeight,
 }: {
   nodes: NavNode[]
   level: number
   activeTrail: string[]
   onSelect: (level: number, node: NavNode) => void
+  maxHeight?: number
 }) {
   const activeNode = nodes.find((node) => node.id === activeTrail[level])
   const showSummary = level === 0
@@ -161,8 +178,9 @@ function MegaMenuColumn({
   return (
     <>
       <section
+        style={{ maxHeight }}
         className={cn(
-          "shrink-0 border-r border-border/70 bg-popover p-2 last:border-r-0",
+          "shrink-0 overflow-y-auto overscroll-contain border-r border-border/70 bg-popover p-2 last:border-r-0",
           showSummary ? "w-80" : "w-72",
         )}
       >
@@ -212,6 +230,7 @@ function MegaMenuColumn({
           level={level + 1}
           activeTrail={activeTrail}
           onSelect={onSelect}
+          maxHeight={maxHeight}
         />
       ) : null}
     </>
@@ -291,7 +310,7 @@ function MobileMenuBranch({
 export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
   const [open, setOpen] = useState(false)
   const [openMobileNodeIds, setOpenMobileNodeIds] = useState<Set<string>>(new Set())
-  const pathname = usePathname()
+  const pathname = usePublicPathname()
   const { lang } = useContentLanguage()
   const entries = buildEntries(navigation, lang)
 
@@ -335,7 +354,9 @@ export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
+        {/* Seven items, the language toggle, search and the CTA only fit on
+            one line from xl; narrower screens use the menu sheet. */}
+        <nav className="hidden items-center gap-1 xl:flex" aria-label="Main navigation">
           {entries.map((item) => {
             const hasChildren = item.children.length > 0
 
@@ -361,7 +382,7 @@ export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
           })}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-3 xl:flex">
           <ContentLanguageToggle size="sm" />
           <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
             <Link href="/search" aria-label={lang === "id" ? "Pencarian" : "Search"}>
@@ -375,7 +396,7 @@ export function SiteHeaderClient({ navigation }: { navigation: Navigation }) {
           </Button>
         </div>
 
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-2 xl:hidden">
           <ContentLanguageToggle size="sm" />
           <Button asChild variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
             <Link href="/search" aria-label={lang === "id" ? "Pencarian" : "Search"}>

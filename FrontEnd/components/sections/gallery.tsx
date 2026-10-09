@@ -1,12 +1,19 @@
 import Image from "next/image"
-import { str, records } from "@/lib/sections"
+import { items, prop } from "@/lib/sections"
 import { container } from "@/lib/layout"
-import { BilingualText } from "@/components/cms/content-language"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 
-export function GallerySection({ props }: { props: Record<string, unknown> }) {
-  const eyebrow = str(props, "eyebrow")
-  const title = str(props, "title")
-  const images = records(props, "images").filter((image) => image.url)
+export function GallerySection({ props, lang }: { props: Record<string, unknown>; lang: Locale }) {
+  const eyebrow = resolveText(prop(props, "eyebrow"), lang)
+  const title = resolveText(prop(props, "title"), lang)
+  const images = items(props, "images")
+    .map((image) => ({
+      url: String(image.url ?? ""),
+      alt: resolveText(image.alt, lang),
+      caption: resolveText(image.caption, lang),
+    }))
+    .filter((image) => image.url)
   if (images.length === 0) return null
 
   return (
@@ -16,12 +23,12 @@ export function GallerySection({ props }: { props: Record<string, unknown> }) {
           <div className="mb-10 max-w-2xl">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                <BilingualText text={eyebrow} />
+                {eyebrow}
               </p>
             )}
             {title && (
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-                <BilingualText text={title} />
+                {title}
               </h2>
             )}
           </div>
@@ -33,14 +40,14 @@ export function GallerySection({ props }: { props: Record<string, unknown> }) {
                 <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-secondary">
                   <Image
                     src={image.url}
-                    alt={image.alt ?? ""}
+                    alt={image.alt}
                     fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
                   />
                 </div>
                 {image.caption && (
                   <figcaption className="mt-2 text-sm text-muted-foreground">
-                    <BilingualText text={image.caption} />
+                    {image.caption}
                   </figcaption>
                 )}
               </figure>

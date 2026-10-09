@@ -6,7 +6,8 @@ import { CtaBanner } from "@/components/cta-banner"
 import { PageHero } from "@/components/page-hero"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { employmentTypeLabel, formatDate, isCareerClosed, type Career } from "@/lib/cms"
+import { employmentTypeLabel, formatDate, isCareerClosed } from "@/lib/cms-shared"
+import type { Career } from "@/lib/cms"
 import { container } from "@/lib/layout"
 import {
   BilingualText,

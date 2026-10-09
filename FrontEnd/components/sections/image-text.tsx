@@ -3,19 +3,20 @@ import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ArrowRight, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { str, lines } from "@/lib/sections"
+import { prop, str } from "@/lib/sections"
 import { container } from "@/lib/layout"
-import { BilingualText } from "@/components/cms/content-language"
+import type { Locale } from "@/lib/i18n"
+import { resolveText, resolveTextList } from "@/lib/localized"
 
-export function ImageTextSection({ props }: { props: Record<string, unknown> }) {
-  const eyebrow = str(props, "eyebrow")
-  const title = str(props, "title")
-  const body = str(props, "body")
-  const bullets = lines(props, "bullets")
+export function ImageTextSection({ props, lang }: { props: Record<string, unknown>; lang: Locale }) {
+  const eyebrow = resolveText(prop(props, "eyebrow"), lang)
+  const title = resolveText(prop(props, "title"), lang)
+  const body = resolveText(prop(props, "body"), lang)
+  const bullets = resolveTextList(prop(props, "bullets", []), lang)
   const imageUrl = str(props, "imageUrl", "/placeholder.jpg")
-  const imageAlt = str(props, "imageAlt")
+  const imageAlt = resolveText(prop(props, "imageAlt"), lang)
   const imageRight = str(props, "imagePosition", "left") === "right"
-  const ctaLabel = str(props, "ctaLabel")
+  const ctaLabel = resolveText(prop(props, "ctaLabel"), lang)
   const ctaHref = str(props, "ctaHref")
   const paragraphs = body
     .split(/\n{2,}/)
@@ -36,19 +37,19 @@ export function ImageTextSection({ props }: { props: Record<string, unknown> }) 
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-foreground/80">
                 <span className="rounded-sm bg-accent/30 px-2 py-1">
-                  <BilingualText text={eyebrow} />
+                  {eyebrow}
                 </span>
               </p>
             )}
             {title && (
               <h2 className="mt-5 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-                <BilingualText text={title} />
+                {title}
               </h2>
             )}
             <div className="mt-6 space-y-4 text-base leading-relaxed text-muted-foreground">
               {paragraphs.map((paragraph, index) => (
                 <p key={index}>
-                  <BilingualText text={paragraph} />
+                  {paragraph}
                 </p>
               ))}
             </div>
@@ -58,7 +59,7 @@ export function ImageTextSection({ props }: { props: Record<string, unknown> }) 
                 {bullets.map((bullet, index) => (
                   <li key={`${bullet}-${index}`} className="flex items-start gap-2.5 text-sm text-foreground">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                    <BilingualText text={bullet} />
+                    {bullet}
                   </li>
                 ))}
               </ul>
@@ -68,7 +69,7 @@ export function ImageTextSection({ props }: { props: Record<string, unknown> }) 
               <div className="mt-8">
                 <Button asChild>
                   <Link href={ctaHref}>
-                    <BilingualText text={ctaLabel} />
+                    {ctaLabel}
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Link>
                 </Button>

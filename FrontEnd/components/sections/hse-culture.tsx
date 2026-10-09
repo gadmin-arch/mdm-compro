@@ -8,8 +8,9 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { container } from "@/lib/layout"
-import { BilingualText } from "@/components/cms/content-language"
-import { lines, str } from "@/lib/sections"
+import { items, prop } from "@/lib/sections"
+import type { Locale } from "@/lib/i18n"
+import { resolveText, resolveTextList } from "@/lib/localized"
 
 const HSE_ICONS: Record<string, LucideIcon> = {
   "hard-hat": HardHat,
@@ -51,36 +52,20 @@ const DEFAULT_HIGHLIGHTS = [
   "EN: Avetta Contractor Safety Network Verified\nID: Terverifikasi dalam Jaringan Keselamatan Kontraktor Avetta",
 ]
 
-export function HseCultureSection({ props }: { props: Record<string, unknown> }) {
-  const eyebrow = str(props, "eyebrow", "EN: HSE & Safety Commitment\nID: Komitmen K3 & Keselamatan Kerja")
-  const title = str(props, "title", 'EN: "I Choose Safety"\nID: "Saya Pilih Selamat"')
-  const subtitle = str(
-    props,
-    "subtitle",
-    "EN: Safe & Healthy at All Times · Think Safe, Work Safe, Go Home Safe\nID: Selamat & Sehat Setiap Saat · Pikirkan Selamat, Bekerja Selamat, Pulang Selamat",
-  )
-  const description = str(
-    props,
-    "description",
-    "EN: Safety is non-negotiable. At PT Multi Daya Mitra, every engineer, technician, and subcontractor is empowered with stop-work authority whenever safety conditions are compromised.\nID: Keselamatan tidak dapat ditawar. Di PT Multi Daya Mitra, setiap insinyur, teknisi, dan subkontraktor memiliki otoritas untuk menghentikan pekerjaan (stop-work authority) jika kondisi keselamatan kerja terkompromi.",
-  )
+export function HseCultureSection({ props, lang }: { props: Record<string, unknown>; lang: Locale }) {
+  const eyebrow = resolveText(prop(props, "eyebrow", "EN: HSE & Safety Commitment\nID: Komitmen K3 & Keselamatan Kerja"), lang)
+  const title = resolveText(prop(props, "title", 'EN: "I Choose Safety"\nID: "Saya Pilih Selamat"'), lang)
+  const subtitle = resolveText(prop(props, "subtitle", "EN: Safe & Healthy at All Times · Think Safe, Work Safe, Go Home Safe\nID: Selamat & Sehat Setiap Saat · Pikirkan Selamat, Bekerja Selamat, Pulang Selamat"), lang)
+  const description = resolveText(prop(props, "description", "EN: Safety is non-negotiable. At PT Multi Daya Mitra, every engineer, technician, and subcontractor is empowered with stop-work authority whenever safety conditions are compromised.\nID: Keselamatan tidak dapat ditawar. Di PT Multi Daya Mitra, setiap insinyur, teknisi, dan subkontraktor memiliki otoritas untuk menghentikan pekerjaan (stop-work authority) jika kondisi keselamatan kerja terkompromi."), lang)
 
-  const rawHighlights = lines(props, "highlights")
-  const highlights = rawHighlights.length > 0 ? rawHighlights : DEFAULT_HIGHLIGHTS
+  const highlights = resolveTextList(prop(props, "highlights", DEFAULT_HIGHLIGHTS), lang)
 
-  const rawPillars = Array.isArray(props.pillars) && props.pillars.length > 0 ? props.pillars : DEFAULT_HSE_PILLARS
-  const pillars = rawPillars.map((p, idx) => {
-    const fallback = DEFAULT_HSE_PILLARS[idx] || DEFAULT_HSE_PILLARS[0]
-    const obj = typeof p === "object" && p !== null ? (p as Record<string, unknown>) : {}
-    const iconName = String(obj.icon || fallback.icon || "shield")
-    const Icon = HSE_ICONS[iconName] || Shield
-    return {
-      title: String(obj.title || fallback.title || ""),
-      subtitle: String(obj.subtitle || fallback.subtitle || ""),
-      desc: String(obj.desc || fallback.desc || ""),
-      Icon,
-    }
-  })
+  const pillars = items(props, "pillars", DEFAULT_HSE_PILLARS).map((pillar) => ({
+    title: resolveText(pillar.title, lang),
+    subtitle: resolveText(pillar.subtitle, lang),
+    desc: resolveText(pillar.desc, lang),
+    Icon: HSE_ICONS[String(pillar.icon || "shield")] || Shield,
+  }))
 
   return (
     <section className="border-b border-border/60 bg-background py-20">
@@ -90,16 +75,16 @@ export function HseCultureSection({ props }: { props: Record<string, unknown> })
             <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/10 dark:bg-emerald-950/20 p-8 shadow-sm">
               <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                <BilingualText text={eyebrow} />
+                {eyebrow}
               </div>
               <h3 className="mt-4 font-display text-2xl font-bold text-foreground">
-                <BilingualText text={title} />
+                {title}
               </h3>
               <p className="mt-1 text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                <BilingualText text={subtitle} />
+                {subtitle}
               </p>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                <BilingualText text={description} />
+                {description}
               </p>
 
               <div className="mt-6 space-y-2.5 border-t border-border/60 pt-5">
@@ -107,7 +92,7 @@ export function HseCultureSection({ props }: { props: Record<string, unknown> })
                   <div key={idx} className="flex items-center gap-2.5 text-xs text-foreground font-medium">
                     <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
                     <span>
-                      <BilingualText text={h} />
+                      {h}
                     </span>
                   </div>
                 ))}
@@ -127,15 +112,15 @@ export function HseCultureSection({ props }: { props: Record<string, unknown> })
                       </span>
                       <div>
                         <h4 className="font-display text-sm font-semibold text-foreground">
-                          <BilingualText text={p.title} />
+                          {p.title}
                         </h4>
                         <p className="text-xs text-muted-foreground italic">
-                          <BilingualText text={p.subtitle} />
+                          {p.subtitle}
                         </p>
                       </div>
                     </div>
                     <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                      <BilingualText text={p.desc} />
+                      {p.desc}
                     </p>
                   </div>
                 )

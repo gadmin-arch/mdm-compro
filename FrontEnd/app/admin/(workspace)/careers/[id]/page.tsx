@@ -6,6 +6,7 @@ import { CareerForm } from "@/components/admin/resource-forms"
 import { Button } from "@/components/ui/button"
 import { AdminApiError, adminFetch } from "@/lib/admin-api"
 import type { Career } from "@/lib/cms"
+import { resolveText } from "@/lib/localized"
 import { updateCareerAction } from "../../content-actions"
 
 export default async function AdminEditCareerPage({
@@ -28,7 +29,7 @@ export default async function AdminEditCareerPage({
       <AdminPageHeader
       breadcrumbs={[{ label: "Careers", href: "/admin/careers" }, { label: "Edit" }]}
       eyebrow="Hiring"
-      title={item?.title ?? "Edit Career"}
+      title={resolveText(item?.title, "id") || "Edit Career"}
       actions={
         <>
           {item && (

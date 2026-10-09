@@ -27,7 +27,7 @@ export function ProductDetailView({
   subProducts?: ContentNode[]
   unoptimizedImage?: boolean
 }) {
-  const { isIndonesian } = useContentLanguage()
+  const { lang, isIndonesian } = useContentLanguage()
   const specs = Object.entries(product.specs ?? {})
 
   return (
@@ -112,6 +112,7 @@ export function ProductDetailView({
             <div className="mt-8">
               <ContentList
                 items={subProducts}
+                lang={lang}
                 basePath="/products"
                 empty={isIndonesian ? "Belum ada produk terkait." : "No sub-products found."}
               />

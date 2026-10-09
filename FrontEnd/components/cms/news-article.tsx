@@ -5,11 +5,13 @@ import { Badge } from "@/components/ui/badge"
 import { RichText } from "@/components/cms/rich-text"
 import { CtaBanner } from "@/components/cta-banner"
 import { PageHero } from "@/components/page-hero"
-import { formatDate, type NewsItem } from "@/lib/cms"
+import { formatDate } from "@/lib/cms-shared"
+import type { NewsItem } from "@/lib/cms"
 import {
   BilingualText,
   useContentLanguage,
 } from "@/components/cms/content-language"
+import { resolveText } from "@/lib/localized"
 
 // The article body, lifted out of app/(site)/news/[slug]/page.tsx so the public
 // page and the admin draft preview render from ONE definition. Purely
@@ -23,7 +25,7 @@ export function NewsArticleView({
   // reject; the preview opts out of optimisation rather than failing to render.
   unoptimizedImage?: boolean
 }) {
-  const { isIndonesian } = useContentLanguage()
+  const { lang, isIndonesian } = useContentLanguage()
 
   return (
     <>
@@ -66,7 +68,7 @@ export function NewsArticleView({
           <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-xl border border-border bg-secondary shadow-xs">
             <Image
               src={news.featuredImageUrl || "/placeholder.jpg"}
-              alt={news.title}
+              alt={resolveText(news.title, lang)}
               fill
               sizes="100vw"
               className="object-cover"

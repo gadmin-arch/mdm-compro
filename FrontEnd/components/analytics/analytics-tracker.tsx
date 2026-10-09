@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { usePathname } from "next/navigation"
+import { usePublicPathname } from "@/components/cms/localized-link"
 import { useReportWebVitals } from "next/web-vitals"
 import {
   classifyClick,
@@ -38,7 +38,7 @@ declare global {
 // batches events and ships them with sendBeacon. It renders nothing, attaches
 // passive listeners only, and never blocks navigation or paint.
 export function AnalyticsTracker({ config }: { config: AnalyticsTrackerConfig }) {
-  const pathname = usePathname()
+  const pathname = usePublicPathname()
   const queue = useRef<TrackerEvent[]>([])
   const flushTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const disabled = useRef(false)

@@ -2,9 +2,11 @@
 
 import { useState } from "react"
 import { ArrowRight, Mail, MapPin, Phone } from "lucide-react"
-import { str, records } from "@/lib/sections"
+import { STALE_MAP_EMBEDS, items, prop } from "@/lib/section-defaults"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 import { container } from "@/lib/layout"
-import { useContentLanguage, BilingualText, filterBilingualText } from "@/components/cms/content-language"
+import { useContentLanguage } from "@/components/cms/content-language"
 
 // Only render embeds that are really Google Maps iframes — the URL is
 // admin-provided free text.
@@ -14,14 +16,29 @@ function isMapEmbedUrl(url: string) {
 
 // Mirrors the "Our Offices" block of the original About component, plus the
 // interactive maps switcher from the Contact page.
-export function OfficesSection({ props }: { props: Record<string, unknown> }) {
-  const { isIndonesian, lang } = useContentLanguage()
-  const title = str(props, "title")
-  const description = str(props, "description")
-  const items = records(props, "items").filter((office) => office.name || office.address)
-  const officesWithMap = items.filter((office) => office.mapEmbedUrl && isMapEmbedUrl(office.mapEmbedUrl))
+export function OfficesSection({ props, lang: pageLang }: { props: Record<string, unknown>; lang?: Locale }) {
+  const { lang: contextLang } = useContentLanguage()
+  const lang = pageLang ?? contextLang
+  const isIndonesian = lang === "id"
+  const title = resolveText(prop(props, "title"), lang)
+  const description = resolveText(prop(props, "description"), lang)
+  const offices = items(props, "items")
+    .map((office) => {
+      const mapEmbedUrl = String(office.mapEmbedUrl ?? "")
+      const stale = Object.keys(STALE_MAP_EMBEDS).find((placeId) => mapEmbedUrl.includes(placeId))
+      return {
+        name: resolveText(office.name, lang),
+        address: resolveText(office.address, lang),
+        phone: String(office.phone ?? ""),
+        fax: String(office.fax ?? ""),
+        email: String(office.email ?? ""),
+        mapEmbedUrl: stale ? STALE_MAP_EMBEDS[stale] : mapEmbedUrl,
+      }
+    })
+    .filter((office) => office.name || office.address)
+  const officesWithMap = offices.filter((office) => office.mapEmbedUrl && isMapEmbedUrl(office.mapEmbedUrl))
   const [activeMapIndex, setActiveMapIndex] = useState(0)
-  if (items.length === 0) return null
+  if (offices.length === 0) return null
 
   const activeMap = officesWithMap[Math.min(activeMapIndex, officesWithMap.length - 1)]
 
@@ -31,25 +48,25 @@ export function OfficesSection({ props }: { props: Record<string, unknown> }) {
         <div className="text-center md:text-left">
           {title && (
             <h2 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              <BilingualText text={title} />
+              {title}
             </h2>
           )}
           {description && (
             <p className="mt-2 text-sm text-muted-foreground">
-              <BilingualText text={description} />
+              {description}
             </p>
           )}
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2">
-          {items.map((office, index) => (
+          {offices.map((office, index) => (
             <div key={`${office.name}-${index}`} className="flex flex-col rounded-xl border border-border bg-card p-6 shadow-xs">
               <h3 className="flex items-center gap-2 font-display text-lg font-semibold text-foreground">
                 <MapPin className="h-5 w-5 text-primary" />
-                <BilingualText text={office.name} />
+                {office.name}
               </h3>
               <p className="mt-3 flex-grow text-sm leading-relaxed text-muted-foreground">
-                <BilingualText text={office.address} />
+                {office.address}
               </p>
               <div className="mt-6 space-y-2 border-t border-border/60 pt-4 text-xs text-muted-foreground">
                 {office.phone && (
@@ -74,7 +91,7 @@ export function OfficesSection({ props }: { props: Record<string, unknown> }) {
               {office.address && (
                 <div className="mt-5">
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(filterBilingualText(office.name, lang) + " " + filterBilingualText(office.address, lang))}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${office.name} ${office.address}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center text-xs font-semibold text-primary hover:underline"
@@ -105,7 +122,7 @@ export function OfficesSection({ props }: { props: Record<string, unknown> }) {
                         : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
                     }`}
                   >
-                    <BilingualText text={office.name} />
+                    {office.name}
                   </button>
                 ))}
               </div>

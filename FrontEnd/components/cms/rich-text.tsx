@@ -39,18 +39,28 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
 export function RichText({
   content,
   lang: forcedLang,
+  resolved: alreadyResolved = false,
 }: {
   content?: { blocks?: ContentBlock[] } | unknown
   lang?: ContentLanguage
+  // Content that is already in one language (a per-language field) renders
+  // as written; only legacy mixed-language content goes through the EN:/ID:
+  // filters below.
+  resolved?: boolean
 }) {
   const { lang: contextLang } = useContentLanguage()
   const activeLang = forcedLang ?? contextLang
 
   let rawBlocks: ContentBlock[] = []
+  let resolved = alreadyResolved
 
-  // 1. Direct language extraction if saved from separate 2-input fields
+  // 1. Separate per-language content: { id, en } (HTML strings or block
+  // documents). An empty language falls back to the other one.
   if (isBilingualEnvelope(content)) {
-    const target = activeLang === "en" ? (content.en ?? content.id) : (content.id ?? content.en)
+    resolved = true
+    const own = activeLang === "en" ? content.en : content.id
+    const other = activeLang === "en" ? content.id : content.en
+    const target = hasContent(own) ? own : other
     if (isBlockContent(target)) {
       rawBlocks = target.blocks
     } else if (typeof target === "string" && target.trim()) {
@@ -60,8 +70,11 @@ export function RichText({
     }
   }
 
-  // 2. Standard block content or raw string fallback
+  // 2. Standard block content or raw string fallback. An envelope whose
+  // languages are both empty lands here with its legacy mixed `blocks`, so the
+  // marker filter applies again.
   if (rawBlocks.length === 0) {
+    resolved = alreadyResolved
     if (isBlockContent(content)) {
       rawBlocks = content.blocks
     } else if (typeof content === "string" && content.trim()) {
@@ -72,7 +85,7 @@ export function RichText({
   }
 
   // Filter bilingual content so only active language (ID or EN) is rendered
-  const blocks = filterBilingualBlocks(rawBlocks, activeLang)
+  const blocks = resolved ? rawBlocks : filterBilingualBlocks(rawBlocks, activeLang)
 
   if (blocks.length === 0) {
     return (
@@ -85,14 +98,14 @@ export function RichText({
   return (
     <div className="space-y-4 text-base leading-relaxed text-muted-foreground">
       {blocks.map((block, index) => {
-        const text = filterBilingualText(block.text ?? block.data?.text, activeLang)
-        const items = (block.items ?? block.data?.items ?? []).map((i) => filterBilingualText(i, activeLang))
+        const text = resolved ? (block.text ?? block.data?.text ?? "") : filterBilingualText(block.text ?? block.data?.text, activeLang)
+        const items = (block.items ?? block.data?.items ?? []).map((i) => (resolved ? i : filterBilingualText(i, activeLang)))
         const type = block.type ?? "paragraph"
 
         if (type === "html") {
           // Rich-text editor output; always sanitized before injection.
           let rawHtml = block.html ?? ""
-          rawHtml = filterBilingualHtml(rawHtml, activeLang)
+          if (!resolved) rawHtml = filterBilingualHtml(rawHtml, activeLang)
           rawHtml = rawHtml.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, anchor, href) => {
             const cleanHref = href.replace(/^https?:\/\/(?:www\.)?multidayamitra\.co\.id/i, "")
             return `<a href="${cleanHref}">${anchor}</a>`
@@ -164,4 +177,11 @@ function isBlockContent(value: unknown): value is { blocks: ContentBlock[] } {
       "blocks" in value &&
       Array.isArray((value as { blocks?: unknown }).blocks)
   )
+}
+
+function hasContent(value: unknown): boolean {
+  if (typeof value === "string") return value.replace(/<[^>]+>/g, "").trim().length > 0 || /<img\b/i.test(value)
+  if (isBlockContent(value)) return value.blocks.length > 0
+  if (value && typeof value === "object" && "html" in value) return hasContent((value as { html: unknown }).html)
+  return false
 }

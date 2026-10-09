@@ -3,23 +3,30 @@ import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ChevronRight } from "lucide-react"
 import { container } from "@/lib/layout"
 import { BilingualText } from "@/components/cms/content-language"
+import { isLocalizedText, type LocalizedText } from "@/lib/i18n"
+import { hasText } from "@/lib/localized"
 
-type Crumb = { label: ReactNode; href?: string }
+// CMS copy (LocalizedText or a legacy "EN: …\nID: …" string) or ready JSX.
+type Copy = ReactNode | LocalizedText
+
+type Crumb = { label: Copy; href?: string }
 
 interface PageHeroProps {
-  eyebrow: ReactNode
-  title: ReactNode
-  description?: ReactNode
+  eyebrow: Copy
+  title: Copy
+  description?: Copy
   breadcrumbs?: Crumb[]
 }
 
 export function PageHero({ eyebrow, title, description, breadcrumbs }: PageHeroProps) {
-  const renderVal = (val: ReactNode) => {
-    if (typeof val === "string") {
+  const renderVal = (val: Copy) => {
+    if (typeof val === "string" || isLocalizedText(val)) {
       return <BilingualText text={val} />
     }
     return val
   }
+  const present = (val: Copy | undefined) =>
+    typeof val === "string" || isLocalizedText(val) ? hasText(val) : val != null && val !== false
 
   return (
     <section className="relative overflow-hidden border-b border-border/60 bg-primary text-primary-foreground">
@@ -55,16 +62,18 @@ export function PageHero({ eyebrow, title, description, breadcrumbs }: PageHeroP
           </nav>
         )}
 
-        <span className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/20 bg-primary-foreground/10 px-3 py-1 text-xs font-medium tracking-wide">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          {renderVal(eyebrow)}
-        </span>
+        {present(eyebrow) && (
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/20 bg-primary-foreground/10 px-3 py-1 text-xs font-medium tracking-wide">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            {renderVal(eyebrow)}
+          </span>
+        )}
 
         <h1 className="mt-5 max-w-3xl font-display text-4xl font-semibold leading-[1.05] tracking-tight text-balance sm:text-5xl">
           {renderVal(title)}
         </h1>
 
-        {description && (
+        {present(description) && (
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-primary-foreground/80 sm:text-lg">
             {renderVal(description)}
           </p>

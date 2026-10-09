@@ -9,10 +9,13 @@ import { Textarea } from "@/components/ui/textarea"
 import dynamic from "next/dynamic"
 import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons"
 import { Skeleton } from "@/components/ui/skeleton"
-import { SECTION_ICON_NAMES, type FieldDef } from "@/lib/sections"
-import { combineBilingualText, extractBilingualText } from "@/lib/bilingual"
-import { useContentLanguage } from "@/components/cms/content-language"
-import { cn } from "@/lib/utils"
+import { SECTION_ICON_NAMES, isLocalizedField, localizeProps, type FieldDef } from "@/lib/sections"
+import { toLocalizedHtml, toLocalizedList, toLocalizedText } from "@/lib/localized"
+import {
+  LocalizedLinesInput,
+  LocalizedRichTextInput,
+  LocalizedTextInput,
+} from "@/components/admin/localized-field"
 
 // TipTap loads only when a section actually renders a rich-text field.
 const RichTextEditor = dynamic(
@@ -53,12 +56,22 @@ function FieldControl({
   value: unknown
   onChange: (value: unknown) => void
 }) {
-  if (isTranslatableField(def)) {
+  // Translatable fields are flagged in the section catalog (lib/sections.ts)
+  // and always edit both languages side by side.
+  if (isLocalizedField(def)) {
+    if (def.kind === "lines") {
+      return <LocalizedLinesInput label={def.label} value={toLocalizedList(value)} onChange={onChange} placeholder={def.placeholder} />
+    }
+    if (def.kind === "richtext") {
+      return <LocalizedRichTextInput label={def.label} value={toLocalizedHtml(value)} onChange={onChange} />
+    }
     return (
-      <BilingualSectionField
-        def={def as Extract<FieldDef, { kind: "text" | "textarea" }>}
-        value={value}
+      <LocalizedTextInput
+        label={def.label}
+        value={toLocalizedText(value)}
         onChange={onChange}
+        multiline={def.kind === "textarea"}
+        placeholder={"placeholder" in def ? def.placeholder : undefined}
       />
     )
   }
@@ -333,7 +346,9 @@ function ListField({
   }
 
   function addItem() {
-    const empty = Object.fromEntries(def.fields.map((field) => [field.name, ""]))
+    // Translatable fields start as empty { id, en } pairs so a new item never
+    // inherits copy from another one.
+    const empty = localizeProps(def.fields, Object.fromEntries(def.fields.map((field) => [field.name, ""])))
     onChange([...items, empty])
   }
 
@@ -419,188 +434,3 @@ function ListField({
 function asString(value: unknown): string {
   return value == null ? "" : String(value)
 }
-
-function isTranslatableField(def: FieldDef): boolean {
-  if (def.kind !== "text" && def.kind !== "textarea") return false
-  const name = def.name.toLowerCase()
-  if (
-    name.endsWith("href") ||
-    name.endsWith("url") ||
-    name.endsWith("path") ||
-    name.endsWith("id") ||
-    name.endsWith("class") ||
-    name.endsWith("color") ||
-    name.endsWith("type")
-  ) {
-    return false
-  }
-  const excluded = new Set([
-    "icon",
-    "source",
-    "aspect",
-    "id",
-    "key",
-    "phone",
-    "fax",
-    "email",
-    "mapembedurl",
-    "color",
-    "theme",
-    "variant",
-    "size",
-    "type",
-    "value",
-    "sortorder",
-    "depth",
-  ])
-  if (excluded.has(name)) return false
-  return true
-}
-
-function BilingualSectionField({
-  def,
-  value,
-  onChange,
-}: {
-  def: Extract<FieldDef, { kind: "text" | "textarea" }>
-  value: unknown
-  onChange: (value: string) => void
-}) {
-  const { lang } = useContentLanguage()
-  const strValue = asString(value)
-  const [showRaw, setShowRaw] = useState(false)
-  const isTextarea = def.kind === "textarea"
-
-  const { id: extractedId, en: extractedEn } = extractBilingualText(strValue)
-
-  function handleIdChange(newId: string) {
-    const combined = combineBilingualText({ id: newId, en: extractedEn })
-    onChange(combined)
-  }
-
-  function handleEnChange(newEn: string) {
-    const combined = combineBilingualText({ id: extractedId, en: newEn })
-    onChange(combined)
-  }
-
-  const hasId = Boolean(extractedId.trim())
-  const hasEn = Boolean(extractedEn.trim())
-
-  return (
-    <div className="rounded-lg border border-border/70 bg-secondary/15 p-3">
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            {def.label}
-          </label>
-          {hasId && hasEn ? (
-            <span
-              title="Lengkap: Versi ID dan EN terisi"
-              className="inline-flex items-center gap-1 rounded bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
-            >
-              ✓ ID + EN
-            </span>
-          ) : !hasId && hasEn ? (
-            <span
-              title="Peringatan: Versi Bahasa Indonesia kosong"
-              className="inline-flex items-center gap-1 rounded bg-amber-50 dark:bg-amber-950/60 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800"
-            >
-              ⚠️ ID Kosong
-            </span>
-          ) : hasId && !hasEn ? (
-            <span
-              title="Peringatan: Versi English kosong"
-              className="inline-flex items-center gap-1 rounded bg-amber-50 dark:bg-amber-950/60 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800"
-            >
-              ⚠️ EN Kosong
-            </span>
-          ) : strValue ? (
-            <span
-              title="Peringatan: Belum terisi"
-              className="inline-flex items-center gap-1 rounded bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.5 text-[10px] font-semibold text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800"
-            >
-              ⚠️ Kosong
-            </span>
-          ) : null}
-        </div>
-        <button
-          type="button"
-          onClick={() => setShowRaw(!showRaw)}
-          className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-        >
-          {showRaw ? "Mode Dwi-Bahasa" : "Raw"}
-        </button>
-      </div>
-
-      {showRaw ? (
-        isTextarea ? (
-          <Textarea
-            className="min-h-20 bg-background font-mono text-xs"
-            placeholder={def.placeholder}
-            value={strValue}
-            onChange={(e) => onChange(e.target.value)}
-          />
-        ) : (
-          <Input
-            className="bg-background font-mono text-xs"
-            placeholder={def.placeholder}
-            value={strValue}
-            onChange={(e) => onChange(e.target.value)}
-          />
-        )
-      ) : (
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-[11px] font-medium text-slate-700 dark:text-slate-300">
-            <div className="flex items-center gap-1.5">
-              <span className={cn("inline-block h-2 w-2 rounded-full", lang === "id" ? "bg-red-500" : "bg-blue-500")} />
-              <span>{lang === "id" ? "Bahasa Indonesia (ID)" : "English (EN)"}</span>
-            </div>
-            <span className="text-[10px] text-muted-foreground">
-              {lang === "id"
-                ? (hasEn ? "Versi EN: ✓" : "(Versi EN belum diisi)")
-                : (hasId ? `Versi ID: "${extractedId.slice(0, 30)}..."` : "(Versi ID belum diisi)")}
-            </span>
-          </div>
-          {isTextarea ? (
-            <Textarea
-              className="min-h-20 bg-background text-xs"
-              placeholder={
-                lang === "id"
-                  ? def.placeholder
-                    ? `[ID] ${def.placeholder}`
-                    : `[ID] ${def.label}...`
-                  : extractedId
-                    ? `[EN] Translation for: "${extractedId.slice(0, 35)}..."`
-                    : `[EN] ${def.label}...`
-              }
-              value={lang === "id" ? extractedId : extractedEn}
-              onChange={(e) => {
-                if (lang === "id") handleIdChange(e.target.value)
-                else handleEnChange(e.target.value)
-              }}
-            />
-          ) : (
-            <Input
-              className="bg-background text-xs"
-              placeholder={
-                lang === "id"
-                  ? def.placeholder
-                    ? `[ID] ${def.placeholder}`
-                    : `[ID] ${def.label}...`
-                  : extractedId
-                    ? `[EN] Translation for: "${extractedId.slice(0, 35)}..."`
-                    : `[EN] ${def.label}...`
-              }
-              value={lang === "id" ? extractedId : extractedEn}
-              onChange={(e) => {
-                if (lang === "id") handleIdChange(e.target.value)
-                else handleEnChange(e.target.value)
-              }}
-            />
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
-

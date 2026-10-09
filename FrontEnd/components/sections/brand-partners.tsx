@@ -1,15 +1,9 @@
 import { container } from "@/lib/layout"
 import { BrandLogo } from "@/components/brand-logos"
 import { BrandMarquee } from "@/components/brand-marquee"
-import { BilingualText } from "@/components/cms/content-language"
-import { lines, str } from "@/lib/sections"
-
-const DEFAULT_AUTHORIZED_PARTNERS = [
-  { name: "Rittal", role: "EN: Authorized Distributor\nID: Distributor Resmi", country: "Germany" },
-  { name: "Schneider Electric", role: "EN: Certified System Integrator\nID: Certified System Integrator", country: "France / Global" },
-  { name: "xArrow", role: "EN: Authorized Solutions Partner\nID: Mitra Solusi Resmi", country: "Global" },
-  { name: "Mundung", role: "EN: Authorized Partner\nID: Mitra Resmi", country: "Global" },
-]
+import { DEFAULT_PARTNERS, items, lines, prop } from "@/lib/sections"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 
 const DEFAULT_EXPERIENCED_BRANDS = [
   "ABB",
@@ -48,31 +42,17 @@ const DEFAULT_EXPERIENCED_BRANDS = [
   "Huazheng",
 ]
 
-export function BrandPartnersSection({ props }: { props: Record<string, unknown> }) {
-  const eyebrow = str(props, "eyebrow", "EN: Authorized Partnership\nID: Kemitraan Resmi Principal")
-  const title = str(
-    props,
-    "title",
-    "EN: Strategic Alliances & Multi-Brand Engineering Experience\nID: Aliansi Strategis & Pengalaman Rekayasa Berbagai Brand",
-  )
-  const marqueeTitle = str(
-    props,
-    "marqueeTitle",
-    "EN: Experienced Work With Brand\nID: Pengalaman Proyek Berbagai Brand",
-  )
+export function BrandPartnersSection({ props, lang }: { props: Record<string, unknown>; lang: Locale }) {
+  const eyebrow = resolveText(prop(props, "eyebrow", "EN: Authorized Partnership\nID: Kemitraan Resmi Principal"), lang)
+  const title = resolveText(prop(props, "title", "EN: Strategic Alliances & Multi-Brand Engineering Experience\nID: Aliansi Strategis & Pengalaman Rekayasa Berbagai Brand"), lang)
+  const marqueeTitle = resolveText(prop(props, "marqueeTitle", "EN: Experienced Work With Brand\nID: Pengalaman Proyek Berbagai Brand"), lang)
 
-  const rawPartners = Array.isArray(props.partners) && props.partners.length > 0 ? props.partners : DEFAULT_AUTHORIZED_PARTNERS
-  const partners = rawPartners.map((p, idx) => {
-    const fallback = DEFAULT_AUTHORIZED_PARTNERS[idx % DEFAULT_AUTHORIZED_PARTNERS.length]
-    const obj = typeof p === "object" && p !== null ? (p as Record<string, unknown>) : {}
-    return {
-      name: String(obj.name || fallback?.name || ""),
-      logoUrl: String(obj.logoUrl || obj.logo || ""),
-      role: String(obj.role || fallback?.role || ""),
-      country: String(obj.country || fallback?.country || ""),
-    }
-  })
-
+  const partners = items(props, "partners", DEFAULT_PARTNERS).map((partner) => ({
+    name: resolveText(partner.name, lang),
+    logoUrl: String(partner.logoUrl || partner.logo || ""),
+    role: resolveText(partner.role, lang),
+    country: resolveText(partner.country, lang),
+  }))
   const rawBrands = lines(props, "brands")
   const altBrands = lines(props, "partnerships")
   const customBrandLogos = Array.isArray(props.brandLogos)
@@ -93,12 +73,12 @@ export function BrandPartnersSection({ props }: { props: Record<string, unknown>
             <div>
               {eyebrow && (
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-                  <BilingualText text={eyebrow} />
+                  {eyebrow}
                 </p>
               )}
               {title && (
                 <h3 className="mt-1 font-display text-xl font-bold text-foreground">
-                  <BilingualText text={title} />
+                  {title}
                 </h3>
               )}
             </div>
@@ -126,7 +106,7 @@ export function BrandPartnersSection({ props }: { props: Record<string, unknown>
                 )}
                 {p.role && (
                   <p className="text-xs font-medium text-primary mt-1">
-                    <BilingualText text={p.role} />
+                    {p.role}
                   </p>
                 )}
               </div>
@@ -137,7 +117,7 @@ export function BrandPartnersSection({ props }: { props: Record<string, unknown>
         {/* Experienced Work With Brand */}
         <div className="mt-8 rounded-2xl border border-border bg-card p-6 lg:p-8">
           <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground mb-4">
-            <BilingualText text={marqueeTitle} />
+            {marqueeTitle}
           </h3>
           <BrandMarquee brands={brands} />
         </div>

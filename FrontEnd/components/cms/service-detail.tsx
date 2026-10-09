@@ -25,7 +25,7 @@ export function ServiceDetailView({
   subServices?: ContentNode[]
   unoptimizedImage?: boolean
 }) {
-  const { isIndonesian } = useContentLanguage()
+  const { lang, isIndonesian } = useContentLanguage()
 
   return (
     <>
@@ -87,6 +87,7 @@ export function ServiceDetailView({
             <div className="mt-8">
               <ContentList
                 items={subServices}
+                lang={lang}
                 basePath="/services"
                 empty={isIndonesian ? "Belum ada sub-layanan." : "No sub-services found."}
               />

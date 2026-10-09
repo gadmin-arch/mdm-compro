@@ -1,8 +1,10 @@
 "use client"
 
 import Link, { type LinkProps } from "next/link"
+import { usePathname } from "next/navigation"
 import React, { forwardRef } from "react"
 import { useContentLanguage, type ContentLanguage } from "@/components/cms/content-language"
+import { localizePath } from "@/lib/i18n"
 
 /**
  * Transforms any internal route to include or exclude the /en prefix
@@ -13,54 +15,11 @@ export function localizeHref(
   lang: ContentLanguage
 ): LinkProps["href"] {
   if (!href) return "/"
-  if (typeof href !== "string") {
-    if (typeof href === "object" && typeof href.pathname === "string") {
-      return {
-        ...href,
-        pathname: localizeHref(href.pathname, lang) as string,
-      }
-    }
-    return href
+  if (typeof href === "string") return localizePath(href, lang)
+  if (typeof href === "object" && typeof href.pathname === "string") {
+    return { ...href, pathname: localizePath(href.pathname, lang) }
   }
-
-  // Skip external, protocol-relative, anchors, mailto, tel, javascript
-  if (
-    href.startsWith("http://") ||
-    href.startsWith("https://") ||
-    href.startsWith("//") ||
-    href.startsWith("mailto:") ||
-    href.startsWith("tel:") ||
-    href.startsWith("#") ||
-    href.startsWith("javascript:")
-  ) {
-    return href
-  }
-
-  // Skip admin, api, uploads, and next internal routes
-  if (
-    href.startsWith("/admin") ||
-    href.startsWith("/api") ||
-    href.startsWith("/_next") ||
-    href.startsWith("/uploads")
-  ) {
-    return href
-  }
-
-  const cleanHref = href.startsWith("/") ? href : `/${href}`
-
-  if (lang === "en") {
-    if (cleanHref === "/") return "/en"
-    if (cleanHref === "/en" || cleanHref.startsWith("/en/")) return cleanHref
-    return `/en${cleanHref}`
-  } else {
-    // Indonesian: default root without /en
-    if (cleanHref === "/en") return "/"
-    if (cleanHref.startsWith("/en/")) {
-      const stripped = cleanHref.slice(3)
-      return stripped.startsWith("/") ? stripped : `/${stripped}`
-    }
-    return cleanHref
-  }
+  return href
 }
 
 /**
@@ -69,6 +28,19 @@ export function localizeHref(
 export function useLocalizedHref(href: LinkProps["href"]): LinkProps["href"] {
   const { lang } = useContentLanguage()
   return localizeHref(href, lang)
+}
+
+/**
+ * The pathname the visitor sees. A rewrite in next.config.mjs serves
+ * Indonesian pages from the internal /id/* routes, and usePathname() reports that internal path for
+ * them — "/id/services" becomes "/services" here. /en paths are unchanged. Filtered listings
+ * render from an internal <listing>/~list route (lib/listing-query.ts); that suffix is dropped too.
+ */
+export function usePublicPathname(): string {
+  const pathname = (usePathname() ?? "/").replace(/\/~list$/, "")
+  if (pathname === "/id") return "/"
+  if (pathname.startsWith("/id/")) return pathname.slice(3)
+  return pathname
 }
 
 export interface LocalizedLinkProps

@@ -9,6 +9,7 @@ import { AdminResourceTable } from "@/components/admin/resource-table"
 import { AdminApiError, adminFetch, type AdminCareersResponse } from "@/lib/admin-api"
 import { deleteCareerAction } from "../content-actions"
 import { isCareerClosed } from "@/lib/cms"
+import { resolveText } from "@/lib/localized"
 
 export default async function AdminCareersPage({
   searchParams,
@@ -65,7 +66,9 @@ export default async function AdminCareersPage({
             slug: item.slug,
             status: isExpired && item.status === "published" ? "closed (expired)" : item.status,
             version: item.version,
-            meta: [item.department, item.location, deadlineText].filter(Boolean).join(" · "),
+            meta: [resolveText(item.department, "id"), resolveText(item.location, "id"), deadlineText]
+              .filter(Boolean)
+              .join(" · "),
           }
         })}
       />

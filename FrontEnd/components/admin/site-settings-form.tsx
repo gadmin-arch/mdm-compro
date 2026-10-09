@@ -4,10 +4,11 @@ import { useMemo, useRef, useState } from "react"
 import { Globe2, Plus, Save, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { SaveErrorBanner, useSaveAction } from "@/components/admin/save-state"
 import type { SiteSettings } from "@/lib/cms"
 import type { SaveAction } from "@/lib/save-result"
+import { LocalizedFormField } from "@/components/admin/localized-field"
+import { toLocalizedText } from "@/lib/localized"
 
 type SocialRow = { id: string; label: string; url: string }
 
@@ -70,30 +71,21 @@ export function SiteSettingsForm({
           <h2 className="font-display text-lg font-semibold text-foreground">Brand</h2>
           <div className="mt-4 grid gap-4">
             <div>
-              <label className="text-sm font-medium text-foreground" htmlFor="tagline">
-                Tagline
-              </label>
-              <Input
-                className="mt-2"
-                id="tagline"
+              <LocalizedFormField
                 name="tagline"
-                defaultValue={initial.tagline}
-                placeholder="Electrical · Automation · Fire System"
+                label="Tagline"
+                defaultValue={toLocalizedText(initial.tagline)}
+                placeholder="Elektrikal · Otomasi · Sistem Fire Alarm"
               />
               <p className="mt-1.5 text-xs text-muted-foreground">Shown in the footer bottom bar.</p>
             </div>
-            <div>
-              <label className="text-sm font-medium text-foreground" htmlFor="footerDescription">
-                Footer description
-              </label>
-              <Textarea
-                className="mt-2"
-                id="footerDescription"
-                name="footerDescription"
-                rows={3}
-                defaultValue={initial.footerDescription}
-              />
-            </div>
+            <LocalizedFormField
+              name="footerDescription"
+              label="Footer description"
+              multiline
+              rows={3}
+              defaultValue={toLocalizedText(initial.footerDescription)}
+            />
           </div>
         </section>
 
@@ -143,10 +135,13 @@ export function SiteSettingsForm({
               <Input className="mt-2" id="fax" name="fax" defaultValue={initial.fax} />
             </div>
             <div className="sm:col-span-2">
-              <label className="text-sm font-medium text-foreground" htmlFor="address">
-                Address
-              </label>
-              <Textarea className="mt-2" id="address" name="address" rows={2} defaultValue={initial.address} />
+              <LocalizedFormField
+                name="address"
+                label="Address"
+                multiline
+                rows={2}
+                defaultValue={toLocalizedText(initial.address)}
+              />
             </div>
           </div>
         </section>

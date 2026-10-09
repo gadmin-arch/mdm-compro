@@ -1,7 +1,8 @@
 "use client"
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useCallback, useEffect, useState, useTransition } from "react"
+import { usePublicPathname } from "@/components/cms/localized-link"
+import { ListingContext } from "@/components/cms/listing-context"
+import { useCallback, useContext, useEffect, useMemo, useState } from "react"
 import { Search, X, SlidersHorizontal, ArrowUpDown } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -32,6 +33,10 @@ export type FilterOption = {
 
 type FilterControlsProps = {
   moduleType: "products" | "services" | "news" | "careers"
+  // The listing's current filters, from the server page. Reading them with
+  // useSearchParams() instead would keep the unfiltered listing from being
+  // prerendered (see lib/listing-query.ts).
+  query?: Record<string, string>
   categories?: FilterOption[]
   locations?: FilterOption[]
   departments?: FilterOption[]
@@ -69,6 +74,7 @@ const getSortOptionsMap = (isIndonesian: boolean) => ({
 
 export function FilterControls({
   moduleType,
+  query = {},
   categories = [],
   locations = [],
   departments = [],
@@ -76,10 +82,13 @@ export function FilterControls({
   years = [],
 }: FilterControlsProps) {
   const { isIndonesian, lang } = useContentLanguage()
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [isPending, startTransition] = useTransition()
+  const pathname = usePublicPathname()
+  // Inside ListingView the URL's live query, which changes the moment a filter
+  // is picked; the server-rendered query until then (the prerendered HTML).
+  const listing = useContext(ListingContext)
+  const queryString = new URLSearchParams(listing?.query ?? query).toString()
+  const searchParams = useMemo(() => new URLSearchParams(queryString), [queryString])
+  const isPending = listing?.pending ?? false
 
   // Local Search Input State with Debounce
   const currentSearch = searchParams.get("search") || ""
@@ -99,10 +108,10 @@ export function FilterControls({
     }
     const queryString = params.toString()
     const href = queryString ? `${pathname}?${queryString}` : pathname
-    startTransition(() => {
-      router.replace(href, { scroll: false })
-    })
-  }, [pathname, router, searchParams])
+    // Change the URL in place; ListingView renders the listing for it. A
+    // router navigation would bring back the prerendered, unfiltered page.
+    window.history.replaceState(null, "", href)
+  }, [pathname, searchParams])
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -114,9 +123,7 @@ export function FilterControls({
   }, [searchInput, currentSearch, updateQueryParam])
 
   const clearAllFilters = () => {
-    startTransition(() => {
-      router.replace(pathname, { scroll: false })
-    })
+    window.history.replaceState(null, "", pathname)
     setSearchState({ param: "", value: "" })
   }
 

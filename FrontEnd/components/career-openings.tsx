@@ -6,12 +6,12 @@ import { ArrowUpRight, Briefcase, CalendarDays, MapPin, XCircle } from "lucide-r
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Career } from "@/lib/cms"
-import { employmentTypeLabel, fallbackCareers, formatDate, isCareerClosed } from "@/lib/cms"
+import { employmentTypeLabel, formatDate, isCareerClosed } from "@/lib/cms-shared"
 import { container } from "@/lib/layout"
 import { cn } from "@/lib/utils"
 import { BilingualText } from "@/components/cms/content-language"
 
-export function CareerOpenings({ jobs = fallbackCareers.data }: { jobs?: Career[] }) {
+export function CareerOpenings({ jobs }: { jobs: Career[] }) {
   const [statusFilter, setStatusFilter] = useState<"all" | "open" | "closed">("all")
 
   const openJobs = jobs.filter((j) => !isCareerClosed(j))

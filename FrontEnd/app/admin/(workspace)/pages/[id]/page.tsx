@@ -10,8 +10,7 @@ const PageEditor = dynamic(() =>
 import { Button } from "@/components/ui/button"
 import { AdminApiError, adminFetch } from "@/lib/admin-api"
 import { resolveAllSectionData, type PageContent } from "@/lib/cms"
-import { enrichPageWithBilingual } from "@/lib/page-bilingual"
-import { filterBilingualText } from "@/lib/bilingual"
+import { resolveText } from "@/lib/localized"
 import { updatePageAction } from "../actions"
 
 export default async function AdminEditPage({
@@ -27,9 +26,6 @@ export default async function AdminEditPage({
 
   try {
     page = await adminFetch<PageContent>(`/pages/${id}`, {}, `/admin/pages/${id}`)
-    if (page) {
-      page = enrichPageWithBilingual(page, page.key)
-    }
   } catch (error) {
     if (error instanceof AdminApiError) {
       apiError = true
@@ -57,7 +53,7 @@ export default async function AdminEditPage({
       <AdminPageHeader
       breadcrumbs={[{ label: "Pages", href: "/admin/pages" }, { label: "Edit" }]}
       eyebrow="CMS Pages"
-      title={page?.title ? (filterBilingualText(page.title, "id") || filterBilingualText(page.title, "en")) : "Page editor"}
+      title={page?.title ? resolveText(page.title, "id") || "Page editor" : "Page editor"}
       actions={
         <Button asChild variant="outline">
           <Link href="/admin/pages">

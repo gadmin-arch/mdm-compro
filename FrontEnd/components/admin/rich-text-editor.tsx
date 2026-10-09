@@ -35,8 +35,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
-import { extractBilingualHtml } from "@/lib/bilingual"
-import { useContentLanguage } from "@/components/cms/content-language"
+import { contentToLocalizedHtml } from "@/lib/localized"
 
 type RichTextEditorProps = {
   value: string
@@ -576,11 +575,12 @@ export function BilingualRichTextField({
   className?: string
 }) {
   const extracted = rawDefaultValue
-    ? extractBilingualHtml(rawDefaultValue)
+    ? contentToLocalizedHtml(rawDefaultValue)
     : { id: defaultIdValue, en: defaultEnValue }
 
-  const { lang, setLang } = useContentLanguage()
-  const activeTab = lang
+  // The tabs belong to this field; switching them does not change the admin's
+  // preview language.
+  const [activeTab, setActiveTab] = useState<"id" | "en">("id")
   const [htmlId, setHtmlId] = useState(extracted.id || defaultIdValue)
   const [htmlEn, setHtmlEn] = useState(extracted.en || defaultEnValue)
 
@@ -592,12 +592,9 @@ export function BilingualRichTextField({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</label>
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold text-primary">
-            {lang.toUpperCase()}
-          </span>
         </div>
         <span className="text-[11px] text-muted-foreground">
-          Bahasa tersinkron dengan menu atas ({lang.toUpperCase()})
+          Isi versi Indonesia dan English di tab masing-masing
         </span>
       </div>
 
@@ -605,7 +602,7 @@ export function BilingualRichTextField({
       <input type="hidden" name={nameEn} value={htmlEn} />
       {nameFallback && <input type="hidden" name={nameFallback} value={htmlId || htmlEn} />}
 
-      <Tabs value={activeTab} onValueChange={(v) => setLang(v as "id" | "en")} className="w-full">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "id" | "en")} className="w-full">
         <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-slate-50/80 dark:bg-slate-900/60 p-1.5">
           <TabsList className="bg-muted/70 p-1 h-auto">
             <TabsTrigger

@@ -10,7 +10,8 @@ import {
 import type { ContentNode } from "@/lib/cms"
 import { fallbackServices } from "@/lib/cms"
 import { container } from "@/lib/layout"
-import { BilingualText } from "@/components/cms/content-language"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 
 const serviceDetails: Record<string, { icon: React.ElementType; items: string[] }> = {
   "electrical-construction-installation": {
@@ -68,6 +69,7 @@ const serviceDetails: Record<string, { icon: React.ElementType; items: string[] 
 type ServicesProps = {
   services?: ContentNode[]
   props?: Record<string, unknown>
+  lang: Locale
 }
 
 const headingDefaults = {
@@ -77,11 +79,11 @@ const headingDefaults = {
     "EN: Delivering end-to-end engineering, testing, commissioning, maintenance, and lifecycle support for critical industrial assets across Indonesia.\nID: Menghadirkan solusi menyeluruh untuk rekayasa teknik, pengujian, komisioning, pemeliharaan, dan dukungan siklus hidup aset industri vital di seluruh Indonesia.",
 }
 
-export function Services({ services = fallbackServices, props = {} }: ServicesProps) {
+export function Services({ services = fallbackServices, props = {}, lang }: ServicesProps) {
   const merged = { ...headingDefaults, ...props }
-  const eyebrow = typeof merged.eyebrow === "string" ? merged.eyebrow : ""
-  const title = typeof merged.title === "string" ? merged.title : ""
-  const description = typeof merged.description === "string" ? merged.description : ""
+  const eyebrow = resolveText(merged.eyebrow, lang)
+  const title = resolveText(merged.title, lang)
+  const description = resolveText(merged.description, lang)
 
   const displayServices = services && services.length > 0 ? services : fallbackServices
 
@@ -92,18 +94,18 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
           {eyebrow && (
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
               <span className="rounded-md bg-primary/10 px-2.5 py-1">
-                <BilingualText text={eyebrow} />
+                {eyebrow}
               </span>
             </p>
           )}
           {title && (
             <h2 className="mt-4 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-              <BilingualText text={title} />
+              {title}
             </h2>
           )}
           {description && (
             <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-              <BilingualText text={description} />
+              {description}
             </p>
           )}
         </div>
@@ -114,6 +116,11 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
               serviceDetails[service.slug] ??
               serviceDetails["electrical-construction-installation"]
             const Icon = detail.icon
+            // The service's own sub-services from the CMS; the per-slug list
+            // only fills in for services that have none yet.
+            const bullets = service.children?.length
+              ? service.children.slice(0, 6).map((child) => child.title)
+              : detail.items
             return (
               <Card
                 key={service.id}
@@ -128,17 +135,17 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
                     <Icon className="h-5 w-5" />
                   </span>
                   <CardTitle className="font-display text-xl leading-snug">
-                    <BilingualText text={service.title} />
+                    {resolveText(service.title, lang)}
                   </CardTitle>
                   <CardDescription className="text-sm leading-relaxed line-clamp-2">
-                    <BilingualText text={service.summary} />
+                    {resolveText(service.summary, lang)}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col justify-between flex-1">
                   <ul className="space-y-2 border-t border-border/70 pt-4">
-                    {detail.items.map((item) => (
+                    {bullets.map((item, index) => (
                       <li
-                        key={item}
+                        key={`${index}-${item}`}
                         className="flex items-start gap-2 text-xs leading-relaxed text-foreground"
                       >
                         <span
@@ -146,7 +153,7 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
                           className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
                         />
                         <span>
-                          <BilingualText text={item} />
+                          {resolveText(item, lang)}
                         </span>
                       </li>
                     ))}
@@ -155,7 +162,7 @@ export function Services({ services = fallbackServices, props = {} }: ServicesPr
                     href={`/services/${service.fullPath}`}
                     className="mt-6 inline-flex items-center gap-1.5 text-xs font-semibold text-primary transition-colors hover:underline"
                   >
-                    <BilingualText text="EN: Explore Service Details\nID: Lihat Detail Layanan" />
+                    {lang === "id" ? "Lihat Detail Layanan" : "Explore Service Details"}
                     <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </Link>
                 </CardContent>

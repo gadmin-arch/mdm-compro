@@ -3,19 +3,23 @@ import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ArrowUpRight } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { ContentNode } from "@/lib/cms"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 import { BilingualText } from "@/components/cms/content-language"
 
 export function ContentList({
   items,
   basePath,
   empty,
+  lang,
 }: {
-  items: ContentNode[]
+  items: Pick<ContentNode, "id" | "fullPath" | "title" | "summary" | "imageUrl">[]
   basePath: "/services" | "/products"
   empty: string
+  lang: Locale
 }) {
   if (items.length === 0) {
-    return <p className="text-sm text-muted-foreground">{empty}</p>
+    return <p className="text-sm text-muted-foreground">{resolveText(empty, lang)}</p>
   }
 
   return (
@@ -26,7 +30,7 @@ export function ContentList({
             <div className="relative aspect-[16/10] bg-secondary">
               <Image
                 src={item.imageUrl || "/placeholder.jpg"}
-                alt={item.title}
+                alt={resolveText(item.title, lang)}
                 fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
               />

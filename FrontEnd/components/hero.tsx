@@ -4,37 +4,42 @@ import Image from "next/image"
 import { LocalizedLink as Link } from "@/components/cms/localized-link"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { sectionDefsByType, str, records } from "@/lib/sections"
+import { HERO_DEFAULTS, items, str } from "@/lib/section-defaults"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 import { container } from "@/lib/layout"
-import { useContentLanguage, filterBilingualText } from "@/components/cms/content-language"
+import { useContentLanguage } from "@/components/cms/content-language"
 
 export type HeroProps = {
   props?: Record<string, unknown>
+  // Page language; the admin preview omits it and follows its own toggle.
+  lang?: Locale
 }
 
-// Defaults live in the section catalog so the builder and the static
+// The hero section's builder defaults, so the builder and the static
 // homepage fallback always show the same copy.
-const defaults = sectionDefsByType.hero.defaults
+const defaults = HERO_DEFAULTS
 
-export function Hero({ props = {} }: HeroProps) {
-  const { lang } = useContentLanguage()
+export function Hero({ props = {}, lang: pageLang }: HeroProps) {
+  const { lang: contextLang } = useContentLanguage()
+  const lang = pageLang ?? contextLang
   const merged = { ...defaults, ...props }
-  const eyebrow = filterBilingualText(str(merged, "eyebrow"), lang)
-  const title = filterBilingualText(str(merged, "title"), lang)
-  const highlight = filterBilingualText(str(merged, "highlight"), lang)
-  const description = filterBilingualText(str(merged, "description"), lang)
-  const primaryLabel = filterBilingualText(str(merged, "primaryLabel"), lang)
+  const eyebrow = resolveText(merged.eyebrow, lang)
+  const title = resolveText(merged.title, lang)
+  const highlight = resolveText(merged.highlight, lang)
+  const description = resolveText(merged.description, lang)
+  const primaryLabel = resolveText(merged.primaryLabel, lang)
   const primaryHref = str(merged, "primaryHref", "/contact")
-  const secondaryLabel = filterBilingualText(str(merged, "secondaryLabel"), lang)
+  const secondaryLabel = resolveText(merged.secondaryLabel, lang)
   const secondaryHref = str(merged, "secondaryHref", "/services")
   const imageUrl = str(merged, "imageUrl", "/placeholder.jpg")
-  const imageAlt = filterBilingualText(str(merged, "imageAlt"), lang)
-  const cardEyebrow = filterBilingualText(str(merged, "cardEyebrow"), lang)
-  const cardTitle = filterBilingualText(str(merged, "cardTitle"), lang)
-  const stats = records(merged, "stats")
+  const imageAlt = resolveText(merged.imageAlt, lang)
+  const cardEyebrow = resolveText(merged.cardEyebrow, lang)
+  const cardTitle = resolveText(merged.cardTitle, lang)
+  const stats = items(merged, "stats")
     .map((stat) => ({
-      label: filterBilingualText(stat.label, lang),
-      value: filterBilingualText(stat.value, lang),
+      label: resolveText(stat.label, lang),
+      value: resolveText(stat.value, lang),
     }))
     .filter((stat) => stat.value || stat.label)
 

@@ -1,20 +1,24 @@
 import { DefaultSectionIcon, sectionIcons } from "@/components/cms/section-icons"
-import { sectionDefsByType, str, records } from "@/lib/sections"
+import { items, sectionDefsByType } from "@/lib/sections"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 import { container } from "@/lib/layout"
-import { BilingualText } from "@/components/cms/content-language"
 
 export type CapabilitiesProps = {
   props?: Record<string, unknown>
+  lang: Locale
 }
 
 const defaults = sectionDefsByType.capabilities.defaults
 
-export function Capabilities({ props = {} }: CapabilitiesProps) {
+export function Capabilities({ props = {}, lang }: CapabilitiesProps) {
   const merged = { ...defaults, ...props }
-  const eyebrow = str(merged, "eyebrow")
-  const title = str(merged, "title")
-  const description = str(merged, "description")
-  const items = records(merged, "items").filter((item) => item.label)
+  const eyebrow = resolveText(merged.eyebrow, lang)
+  const title = resolveText(merged.title, lang)
+  const description = resolveText(merged.description, lang)
+  const list = items(merged, "items")
+    .map((item) => ({ icon: String(item.icon ?? ""), label: resolveText(item.label, lang) }))
+    .filter((item) => item.label)
 
   return (
     <section className="border-b border-border/60 bg-background">
@@ -23,25 +27,25 @@ export function Capabilities({ props = {} }: CapabilitiesProps) {
           <div className="max-w-2xl">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                <BilingualText text={eyebrow} />
+                {eyebrow}
               </p>
             )}
             {title && (
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-                <BilingualText text={title} />
+                {title}
               </h2>
             )}
           </div>
           {description && (
             <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
-              <BilingualText text={description} />
+              {description}
             </p>
           )}
         </div>
 
-        {items.length > 0 && (
+        {list.length > 0 && (
           <ul className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {items.map((cap, index) => {
+            {list.map((cap, index) => {
               const Icon = sectionIcons[cap.icon ?? ""] ?? DefaultSectionIcon
               return (
                 <li
@@ -52,7 +56,7 @@ export function Capabilities({ props = {} }: CapabilitiesProps) {
                     <Icon className="h-4 w-4" />
                   </span>
                   <span className="text-sm font-medium leading-tight text-foreground">
-                    <BilingualText text={cap.label} />
+                    {cap.label}
                   </span>
                 </li>
               )

@@ -41,6 +41,9 @@ import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { SaveErrorBanner, useSaveAction } from "@/components/admin/save-state"
 import type { MenuItem } from "@/lib/cms"
+import { LocalizedTextInput } from "@/components/admin/localized-field"
+import { serializeLocalizedText } from "@/lib/i18n"
+import { resolveText, toLocalizedText } from "@/lib/localized"
 import type { SaveAction } from "@/lib/save-result"
 import { cn } from "@/lib/utils"
 
@@ -344,7 +347,7 @@ export function NavigationEditor({ action, initialItems, version, pageOptions, a
                           className="flex items-center gap-2 rounded-md border border-dashed border-border bg-secondary/20 px-3 py-1.5 text-sm text-muted-foreground"
                         >
                           <CornerDownRight className="h-3.5 w-3.5 shrink-0" />
-                          <span className="truncate font-medium">{child.label}</span>
+                          <span className="truncate font-medium">{resolveText(child.label, "id")}</span>
                           <span className="hidden truncate text-xs sm:inline">{child.href}</span>
                           <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
                             <Sparkles className="h-2.5 w-2.5" />
@@ -361,7 +364,7 @@ export function NavigationEditor({ action, initialItems, version, pageOptions, a
               {activeRow && (
                 <div className="flex items-center gap-2 rounded-md border border-primary/40 bg-background px-3 py-2 text-sm font-medium shadow-lg">
                   <GripVertical className="h-4 w-4 text-muted-foreground" />
-                  {activeRow.item.label}
+                  {resolveText(activeRow.item.label, "id")}
                   {activeRow.childCount > 0 && (
                     <span className="rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground">
                       +{activeRow.childCount}
@@ -467,7 +470,7 @@ function SortableNavRow({
         {row.depth === 1 && <CornerDownRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />}
 
         <button type="button" onClick={onToggle} className="flex min-w-0 flex-1 items-center gap-2 text-left">
-          <span className="truncate text-sm font-medium text-foreground">{item.label}</span>
+          <span className="truncate text-sm font-medium text-foreground">{resolveText(item.label, "id")}</span>
           <span className="hidden truncate text-xs text-muted-foreground sm:inline">{item.href}</span>
         </button>
 
@@ -544,14 +547,13 @@ function SortableNavRow({
 
       {expanded && (
         <div className="grid gap-3 border-t border-border bg-secondary/20 p-3 sm:grid-cols-2">
-          <div>
-            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Label
-            </label>
-            <Input
-              className="mt-1 bg-background"
-              value={item.label}
-              onChange={(event) => onUpdate({ label: event.target.value })}
+          {/* Menu labels are stored as "EN: …\nID: …" (the navigation document is
+              plain text); both languages are edited side by side here. */}
+          <div className="sm:col-span-2">
+            <LocalizedTextInput
+              label="Label"
+              value={toLocalizedText(item.label)}
+              onChange={(next) => onUpdate({ label: serializeLocalizedText(next) })}
             />
           </div>
 

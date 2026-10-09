@@ -1,5 +1,6 @@
-import { str } from "@/lib/sections"
-import { BilingualText } from "@/components/cms/content-language"
+import { prop, str } from "@/lib/sections"
+import type { Locale } from "@/lib/i18n"
+import { resolveText } from "@/lib/localized"
 
 const aspectClasses: Record<string, string> = {
   "16/9": "aspect-video",
@@ -7,10 +8,10 @@ const aspectClasses: Record<string, string> = {
   "1/1": "aspect-square",
 }
 
-export function EmbedSection({ props }: { props: Record<string, unknown> }) {
-  const title = str(props, "title")
+export function EmbedSection({ props, lang }: { props: Record<string, unknown>; lang: Locale }) {
+  const title = resolveText(prop(props, "title"), lang)
   const url = str(props, "url")
-  const caption = str(props, "caption")
+  const caption = resolveText(prop(props, "caption"), lang)
   const aspect = aspectClasses[str(props, "aspect", "16/9")] ?? "aspect-video"
   if (!url) return null
 
@@ -19,7 +20,7 @@ export function EmbedSection({ props }: { props: Record<string, unknown> }) {
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
         {title && (
           <h2 className="mb-8 font-display text-3xl font-semibold tracking-tight text-foreground text-balance sm:text-4xl">
-            <BilingualText text={title} />
+            {title}
           </h2>
         )}
         <figure>
@@ -35,7 +36,7 @@ export function EmbedSection({ props }: { props: Record<string, unknown> }) {
           </div>
           {caption && (
             <figcaption className="mt-3 text-sm text-muted-foreground">
-              <BilingualText text={caption} />
+              {caption}
             </figcaption>
           )}
         </figure>

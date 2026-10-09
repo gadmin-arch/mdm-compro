@@ -1,3 +1,4 @@
+import { hasStoredContent } from "@/lib/product-bilingual"
 import type { Career } from "@/lib/cms"
 
 export type BilingualCareerEntry = {
@@ -483,59 +484,47 @@ export const BILINGUAL_CAREER_CATALOG: Record<string, BilingualCareerEntry> = {
 }
 
 /**
- * Enriches a Career fetched from the API with verified, complete bilingual content
- * ensuring title, department, location, summary, and description are 100% complete in both ID and EN.
+ * Fills a career opening with the built-in catalog copy where the CMS has
+ * none. Values stored in the CMS always win — the catalog only covers empty
+ * fields and stands in for the whole item when the API is unreachable.
  */
 export function enrichCareerWithBilingual(item: Career | null | undefined, slug: string): Career | null {
-  if (!item && !BILINGUAL_CAREER_CATALOG[slug]) return null
-
   const catalogEntry = BILINGUAL_CAREER_CATALOG[slug]
-  if (!catalogEntry) {
-    return item ?? null
-  }
+  if (!catalogEntry) return item ?? null
 
-  const baseItem = item ?? {
-    id: catalogEntry.id ?? `career-${slug}`,
-    slug,
-    title: "",
-    summary: "",
-    department: "",
-    location: "",
-    employmentType: catalogEntry.employmentType,
-    status: "published",
-    applyUrl: catalogEntry.applyUrl ?? "mailto:hr@multidayamitra.co.id",
-    deadline: catalogEntry.deadline,
-    publishedAt: catalogEntry.publishedAt ?? "2026-08-18T09:00:00Z",
+  const description = {
+    bilingual: true,
+    id: { blocks: [{ type: "html", html: catalogEntry.description.id }] },
+    en: { blocks: [{ type: "html", html: catalogEntry.description.en }] },
   }
+  const pair = (value: { en: string; id: string }) => `EN: ${value.en}\nID: ${value.id}`
 
-  const titleString = `EN: ${catalogEntry.title.en}\nID: ${catalogEntry.title.id}`
-  const departmentString = `EN: ${catalogEntry.department.en}\nID: ${catalogEntry.department.id}`
-  const locationString = `EN: ${catalogEntry.location.en}\nID: ${catalogEntry.location.id}`
-  const summaryString = `EN: ${catalogEntry.summary.en}\nID: ${catalogEntry.summary.id}`
+  if (!item) {
+    return {
+      id: catalogEntry.id ?? `career-${slug}`,
+      slug,
+      title: pair(catalogEntry.title),
+      summary: pair(catalogEntry.summary),
+      description,
+      department: pair(catalogEntry.department),
+      location: pair(catalogEntry.location),
+      employmentType: catalogEntry.employmentType,
+      status: "published",
+      applyUrl: catalogEntry.applyUrl ?? "mailto:hr@multidayamitra.co.id",
+      deadline: catalogEntry.deadline,
+      publishedAt: catalogEntry.publishedAt ?? "2026-08-18T09:00:00Z",
+    }
+  }
 
   return {
-    ...baseItem,
-    title: titleString,
-    department: departmentString,
-    location: locationString,
-    summary: summaryString,
-    employmentType: baseItem.employmentType || catalogEntry.employmentType,
-    applyUrl: baseItem.applyUrl || catalogEntry.applyUrl,
-    deadline: baseItem.deadline || catalogEntry.deadline,
-    description: {
-      bilingual: true,
-      id: {
-        blocks: [{ type: "html", html: catalogEntry.description.id }],
-      },
-      en: {
-        blocks: [{ type: "html", html: catalogEntry.description.en }],
-      },
-      blocks: [
-        {
-          type: "html",
-          html: catalogEntry.description.id,
-        },
-      ],
-    },
+    ...item,
+    title: item.title?.trim() ? item.title : pair(catalogEntry.title),
+    summary: item.summary?.trim() ? item.summary : pair(catalogEntry.summary),
+    department: item.department?.trim() ? item.department : pair(catalogEntry.department),
+    location: item.location?.trim() ? item.location : pair(catalogEntry.location),
+    employmentType: item.employmentType || catalogEntry.employmentType,
+    applyUrl: item.applyUrl || catalogEntry.applyUrl,
+    deadline: item.deadline || catalogEntry.deadline,
+    description: hasStoredContent(item.description) ? item.description : description,
   }
 }
